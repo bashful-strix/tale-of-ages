@@ -3,10 +3,10 @@ module Test.Main where
 import Prelude
 
 import Effect (Effect)
-import Effect.Class.Console (log)
+
+import Test.Spec.Discovery (discoverAndRunSpecs)
+import Test.Spec.Reporter (consoleReporter)
 
 main :: Effect Unit
-main = do
-  log "🍕"
-  log "You should add some tests."
-
+main =
+  discoverAndRunSpecs [ consoleReporter ] """Test\.ToA\..*"""
