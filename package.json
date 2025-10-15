@@ -3,14 +3,26 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
+  "browserslist": [
+    "defaults"
+  ],
   "scripts": {
     "build": "spago build",
+    "bundle": "vite build",
+    "run": "vite",
+    "start": "vite --debug html-fallback",
     "test": "spago test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@tailwindcss/vite": "4.1.14",
     "purescript": "0.15.15",
-    "spago": "0.93.44"
+    "spago": "0.93.44",
+    "vite": "6.4.0"
+  },
+  "dependencies": {
+    "tailwindcss": "4.1.14"
   }
 }
