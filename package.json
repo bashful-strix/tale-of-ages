@@ -10,6 +10,8 @@
   "scripts": {
     "build": "spago build",
     "bundle": "vite build",
+    "format": "purs-tidy check 'src/**/*.purs'",
+    "format:write": "purs-tidy format-in-place 'src/**/*.purs'",
     "run": "vite",
     "start": "vite --debug html-fallback",
     "test": "spago test"
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "4.1.14",
     "purescript": "0.15.15",
+    "purs-tidy": "0.11.1",
     "spago": "0.93.44",
     "vite": "6.4.0"
   },
