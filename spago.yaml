@@ -1,13 +1,68 @@
 package:
   name: tale-of-ages
   dependencies:
+    - arrays
     - console
+    - control
+    - deku-core
+    - deku-dom
     - effect
+    - either
+    - filterable
+    - foldable-traversable
+    - foreign
+    - hyrule
+    - lists
+    - maybe
+    - ordered-collections
+    - parsing
+    - point-free
     - prelude
+    - profunctor-lenses
+    - random
+    - routing
+    - routing-duplex
+    - run
+    - st
+    - strings
+    - tuples
+    - typelevel-prelude
+    - web-cssom-view
+    - web-dom
+    - web-events
+    - web-html
+    - web-pointerevents
+    - web-storage
+
   test:
     main: Test.Main
-    dependencies: []
+    dependencies:
+      - spec
+      - spec-discovery
+
 workspace:
   packageSet:
     registry: 66.9.1
-  extraPackages: {}
+
+  extraPackages:
+    hyrule:
+      git: https://github.com/mikesol/purescript-hyrule.git
+      ref: v2.5.2
+      dependencies:
+        - js-timers
+        - unsafe-reference
+
+    deku:
+      git: https://github.com/mikesol/purescript-deku.git
+      subdir: deku
+      ref: v0.12.0
+
+    deku-core:
+      git: https://github.com/mikesol/purescript-deku.git
+      subdir: deku-core
+      ref: v0.12.0
+
+    deku-dom:
+      git: https://github.com/mikesol/purescript-deku.git
+      subdir: deku-dom
+      ref: v0.12.0
