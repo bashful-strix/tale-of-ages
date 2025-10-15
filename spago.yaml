@@ -1,13 +1,45 @@
 package:
   name: tale-of-ages
   dependencies:
+    - arrays
     - console
+    - control
     - effect
+    - either
+    - filterable
+    - foldable-traversable
+    - foreign
+    - halogen
+    - lists
+    - maybe
+    - ordered-collections
+    - parsing
+    - point-free
     - prelude
+    - profunctor-lenses
+    - random
+    - routing
+    - routing-duplex
+    - run
+    - st
+    - strings
+    - tuples
+    - typelevel-prelude
+    - web-cssom-view
+    - web-dom
+    - web-events
+    - web-html
+    - web-pointerevents
+    - web-storage
+
   test:
     main: Test.Main
-    dependencies: []
+    dependencies:
+      - spec
+      - spec-discovery
+
 workspace:
   packageSet:
     registry: 66.9.1
+
   extraPackages: {}
