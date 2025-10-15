@@ -1,0 +1,13 @@
+package:
+  name: tale-of-ages
+  dependencies:
+    - console
+    - effect
+    - prelude
+  test:
+    main: Test.Main
+    dependencies: []
+workspace:
+  packageSet:
+    registry: 66.9.1
+  extraPackages: {}
