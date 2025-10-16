@@ -2,6 +2,8 @@ package:
   name: tale-of-ages
   dependencies:
     - arrays
+    - codec
+    - codec-json
     - console
     - control
     - effect
@@ -10,6 +12,7 @@ package:
     - foldable-traversable
     - foreign
     - halogen
+    - json
     - lists
     - maybe
     - ordered-collections

@@ -2,25 +2,36 @@ module ToA where
 
 import Prelude
 
-import Halogen  as HC
+import Halogen as HC
 import Halogen.HTML as H
 
+import Run (Run, AFF, EFFECT)
 import Type.Proxy (Proxy(..))
+import Type.Row (type (+))
 
+import ToA.Capability.Log (LOG, debug)
 import ToA.Component.TitleBar (titleBar)
 import ToA.Util.Html (css)
 
 type Slots = (titleBar :: ∀ q. HC.Slot q Void Unit)
 
-toa :: ∀ q i o m. HC.Component q i o m
+data Action = Init
+
+toa :: ∀ q i o r. HC.Component q i o (Run (AFF + EFFECT + LOG + r))
 toa =
   HC.mkComponent
     { initialState: const unit
     , render
-    , eval: HC.mkEval HC.defaultEval
+    , eval: HC.mkEval $ HC.defaultEval
+        { initialize = pure Init
+        , handleAction = act
+        }
     }
 
   where
+  act = case _ of
+    Init -> HC.lift $ debug "started!"
+
   render _ =
     H.div
       [ css
