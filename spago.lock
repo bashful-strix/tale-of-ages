@@ -6,6 +6,8 @@
         "core": {
           "dependencies": [
             "arrays",
+            "codec",
+            "codec-json",
             "console",
             "control",
             "deku-core",
@@ -16,6 +18,7 @@
             "foldable-traversable",
             "foreign",
             "hyrule",
+            "json",
             "lists",
             "maybe",
             "ordered-collections",
@@ -44,6 +47,8 @@
             "assert",
             "bifunctors",
             "catenable-lists",
+            "codec",
+            "codec-json",
             "console",
             "const",
             "contravariant",
@@ -76,6 +81,7 @@
             "js-date",
             "js-timers",
             "js-uri",
+            "json",
             "lazy",
             "lcg",
             "lists",
@@ -941,6 +947,29 @@
         "unfoldable"
       ]
     },
+    "codec": {
+      "type": "registry",
+      "version": "6.1.0",
+      "integrity": "sha256-6vMLNlsJxQarVQ9cn1FYfl5x6opfzxAza15SzRdxFxQ=",
+      "dependencies": [
+        "bifunctors",
+        "profunctor"
+      ]
+    },
+    "codec-json": {
+      "type": "registry",
+      "version": "2.0.0",
+      "integrity": "sha256-NLm5BmDZKKexQwtnoZ/NI4yI16srsqIe0M7NdlqB96U=",
+      "dependencies": [
+        "codec",
+        "foreign-object",
+        "json",
+        "ordered-collections",
+        "transformers",
+        "type-equality",
+        "variant"
+      ]
+    },
     "console": {
       "type": "registry",
       "version": "6.1.0",
@@ -1396,6 +1425,23 @@
       "dependencies": [
         "functions",
         "maybe"
+      ]
+    },
+    "json": {
+      "type": "registry",
+      "version": "1.1.0",
+      "integrity": "sha256-LuN8PyX/gvRR4/7X7M9P+zL7BKbv34NcUE/7MILXQSA=",
+      "dependencies": [
+        "either",
+        "foldable-traversable",
+        "functions",
+        "gen",
+        "integers",
+        "maybe",
+        "prelude",
+        "strings",
+        "tuples",
+        "unfoldable"
       ]
     },
     "lazy": {

@@ -2,6 +2,8 @@ package:
   name: tale-of-ages
   dependencies:
     - arrays
+    - codec
+    - codec-json
     - console
     - control
     - deku-core
@@ -12,6 +14,7 @@ package:
     - foldable-traversable
     - foreign
     - hyrule
+    - json
     - lists
     - maybe
     - ordered-collections
