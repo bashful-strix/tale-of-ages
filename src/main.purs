@@ -12,14 +12,23 @@ import Halogen.VDom.Driver (runUI)
 import Run (Run, AFF, EFFECT, runBaseAff')
 import Type.Row (type (+))
 
+import Web.HTML (window)
+import Web.HTML.Window (localStorage)
+import Web.Storage.Storage (Storage)
+
 import ToA (toa)
 import ToA.Capability.Log (LOG, runLog)
+import ToA.Capability.Storage (STORAGE, runStorage)
 import ToA.Data.Log (Level(Debug))
 
 main :: Effect Unit
-main =
-  runHalogenAff $ awaitBody >>= runUI (hoist (runEffects Debug) toa) unit
+main = do
+  win <- window
+  storage <- localStorage win
 
-runEffects :: Level -> Run (AFF + EFFECT + LOG + ()) ~> Aff
-runEffects logLevel =
-  runBaseAff' <<< runLog logLevel
+  runHalogenAff $ awaitBody
+    >>= runUI (hoist (runEffects Debug storage) toa) unit
+
+runEffects :: Level -> Storage -> Run (AFF + EFFECT + LOG + STORAGE + ()) ~> Aff
+runEffects logLevel storage =
+  runBaseAff' <<< runLog logLevel <<< runStorage storage
