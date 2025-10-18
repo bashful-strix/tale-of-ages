@@ -8,23 +8,28 @@ module ToA.Data.Env
 import Data.Maybe (Maybe(..))
 
 import ToA.Data.Theme (Theme(..))
+import ToA.Data.Route (Route)
 
 type Env =
-  { systemTheme :: Theme
+  { route :: Maybe Route
+  , systemTheme :: Theme
   , theme :: Maybe Theme
   }
 
 data EnvAction
-  = SetSystemTheme Theme
+  = SetRoute (Maybe Route)
+  | SetSystemTheme Theme
   | SetTheme (Maybe Theme)
 
 initialEnv :: Env
 initialEnv =
-  { systemTheme: Light
+  { route: Nothing
+  , systemTheme: Light
   , theme: Nothing
   }
 
 reduce :: Env -> EnvAction -> Env
 reduce env = case _ of
+  SetRoute route -> env { route = route }
   SetSystemTheme theme -> env { systemTheme = theme }
   SetTheme theme -> env { theme = theme }

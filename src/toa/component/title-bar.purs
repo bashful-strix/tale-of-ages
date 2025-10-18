@@ -4,10 +4,9 @@ module ToA.Component.TitleBar
 
 import Prelude
 
-import Control.Monad.Trans.Class (lift)
-
 import Data.Codec (decode, encode)
 import Data.Maybe (Maybe(..))
+import Data.Tuple.Nested ((/\))
 
 import Halogen as HC
 import Halogen.HTML as H
@@ -17,12 +16,18 @@ import Halogen.Store.Connect (Connected, connect)
 import Halogen.Store.Monad (StoreT, updateStore)
 import Halogen.Store.Select (selectEq)
 
+import Routing.Duplex (print)
+
 import Run (Run, EFFECT)
 import Type.Row (type (+))
 
+import Web.UIEvent.MouseEvent (MouseEvent)
+
+import ToA.Capability.Navigate (NAVIGATE, navigate)
 import ToA.Capability.Theme (THEME, save)
-import ToA.Data.Theme (Theme(..), themeCodec)
 import ToA.Data.Env (Env, EnvAction(..))
+import ToA.Data.Route (Route(..), routeCodec)
+import ToA.Data.Theme (Theme(..), themeCodec)
 import ToA.Util.Html (css)
 
 type State =
@@ -31,6 +36,7 @@ type State =
 
 data Action
   = SelectTheme String
+  | ClickLink Route MouseEvent
   | Receive (Connected (Maybe Theme) Unit)
 
 deriveState :: Connected (Maybe Theme) Unit -> State
@@ -38,7 +44,8 @@ deriveState { context } = { theme: context }
 
 titleBar
   :: ∀ q o r
-  . HC.Component q Unit o (StoreT EnvAction Env (Run (EFFECT + THEME + r)))
+  . HC.Component q Unit o
+      (StoreT EnvAction Env (Run (EFFECT + NAVIGATE + THEME + r)))
 titleBar =
   connect (selectEq _.theme) $ HC.mkComponent
     { initialState: deriveState
@@ -54,7 +61,10 @@ titleBar =
     SelectTheme e -> do
       let theme = decode themeCodec e
       updateStore $ SetTheme theme
-      lift $ HC.lift $ save theme
+      HC.lift $ HC.lift $ save theme
+
+    ClickLink route e ->
+      HC.lift $ HC.lift $ navigate route (pure e)
 
     Receive env ->
       HC.put $ deriveState env
@@ -67,14 +77,25 @@ titleBar =
           , "flex"
           , "items-center"
           , "justify-between"
-          , "p-2"
+          , "px-2"
           , "bg-stone-500"
           , "text-stone-800"
           , "dark:bg-stone-700"
           , "dark:text-stone-300"
           ]
       ]
-      [ H.div [] [ H.text "ToA" ]
+      [ H.nav
+          [ css [ "flex", "h-full" ] ]
+          [ H.ul
+              [ css [ "flex", "h-full" ] ] $
+              [ "ToA" /\ Home
+              , "Test" /\ Test "test"
+              ] <#> \(label /\ route) ->
+                H.li
+                  [ css [ "flex", "h-full" ] ]
+                  [ routeLink label route ]
+          ]
+
       , H.div
           []
           [ H.select
@@ -83,21 +104,34 @@ titleBar =
               [ H.option
                   [ HP.value $ encode themeCodec Light
                   , HP.selected $ theme == Just Light
-                  -- , DA.unset @"selected" $ filter (not <<< eq (Just Light)) theme
                   ]
                   [ H.text "Light" ]
               , H.option
                   [ HP.value $ encode themeCodec Dark
                   , HP.selected $ theme == Just Dark
-                  -- , DA.unset @"selected" $ filter (not <<< eq (Just Dark)) theme
                   ]
                   [ H.text "Dark" ]
               , H.option
                   [ HP.value ""
                   , HP.selected $ theme == Nothing
-                  -- , DA.unset @"selected" $ filter (not <<< eq Nothing) theme
                   ]
                   [ H.text "System" ]
               ]
           ]
       ]
+
+  routeLink label route =
+    H.a
+      [ HP.href $ print routeCodec route
+      , HE.onClick $ ClickLink route
+      , css
+          [ "h-full"
+          , "content-center"
+          , "px-2"
+          , "hover:bg-stone-400"
+          , "focus:bg-stone-400"
+          , "dark:hover:bg-stone-500"
+          , "dark:focus:bg-stone-500"
+          ]
+      ]
+      [ H.text label ]
