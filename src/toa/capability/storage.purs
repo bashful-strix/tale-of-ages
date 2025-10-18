@@ -42,21 +42,24 @@ delete :: ∀ r. String -> Run (STORAGE + r) Unit
 delete key = lift _storage (Delete key unit)
 
 localStorage :: ∀ r. Storage -> StorageF ~> Run (EFFECT + LOG + r)
-localStorage storage instr = do
-  case instr of
-    Read key reply -> do
-      debug $ "read storage: " <> key
-      item <- liftEffect $ getItem key storage
-      pure $ reply item
-    Write key value next -> do
-      debug $ "write storage: " <> key <> " | " <> value
-      liftEffect $ setItem key value storage
-      pure next
-    Delete key next -> do
-      debug $ "delete storage: " <> key
-      liftEffect $ removeItem key storage
-      pure next
+localStorage storage = case _ of
+  Read key reply -> do
+    debug $ "read storage: " <> key
+    item <- liftEffect $ getItem key storage
+    pure $ reply item
+
+  Write key value next -> do
+    debug $ "write storage: " <> key <> " | " <> value
+    liftEffect $ setItem key value storage
+    pure next
+
+  Delete key next -> do
+    debug $ "delete storage: " <> key
+    liftEffect $ removeItem key storage
+    pure next
 
 runStorage
-  :: ∀ r. Storage -> Run (EFFECT + LOG + STORAGE + r) ~> Run (EFFECT + LOG + r)
+  :: ∀ r
+   . Storage
+  -> Run (EFFECT + LOG + STORAGE + r) ~> Run (EFFECT + LOG + r)
 runStorage storage = interpret (on _storage (localStorage storage) send)

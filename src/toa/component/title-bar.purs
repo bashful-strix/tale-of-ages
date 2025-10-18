@@ -1,4 +1,6 @@
-module ToA.Component.TitleBar (titleBar) where
+module ToA.Component.TitleBar
+  ( titleBar
+  ) where
 
 import Prelude
 import Data.Lens ((^.))
@@ -6,37 +8,51 @@ import Data.Lens ((^.))
 import Data.Codec (decode, encode)
 import Data.Filterable (filter)
 import Data.Maybe (Maybe(..))
+import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
 import Deku.DOM as D
 import Deku.DOM.Attributes as DA
 import Deku.DOM.Listeners as DL
 
+import Routing.Duplex (print)
+
+import ToA.Data.Env (Env, _navigateRoute, _saveTheme)
+import ToA.Data.Route (Route(..), routeCodec)
 import ToA.Data.Theme (Theme(..), themeCodec)
-import ToA.Data.Env (Env, _saveTheme)
 import ToA.Util.Html (css_)
 
 titleBar :: Env -> Nut
-titleBar world@{ theme } =
+titleBar env@{ theme } =
   D.div
     [ css_
         [ "h-10"
         , "flex"
         , "items-center"
         , "justify-between"
-        , "p-2"
+        , "px-2"
         , "bg-stone-500"
         , "text-stone-800"
         , "dark:bg-stone-700"
         , "dark:text-stone-300"
         ]
     ]
-    [ D.div [] [ D.text_ "ToA" ]
-    , D.div
-        []
+    [ D.nav
+        [ css_ [ "flex", "h-full" ] ]
+        [ D.ul
+            [ css_ [ "flex", "h-full" ] ] $
+            [ "ToA" /\ Home
+            , "Test" /\ Test "test"
+            ] <#> \(label /\ route) ->
+              D.li
+                [ css_ [ "flex", "h-full" ] ]
+                [ routeLink env label route ]
+        ]
+
+    , D.div []
         [ D.select
             [ DL.selectOn_ DL.change $
-                (world ^. _saveTheme) <<< decode themeCodec
+                (env ^. _saveTheme) <<< decode themeCodec
             ]
             [ D.option
                 [ DA.value_ $ encode themeCodec Light
@@ -59,3 +75,20 @@ titleBar world@{ theme } =
             ]
         ]
     ]
+
+routeLink :: Env -> String -> Route -> Nut
+routeLink env label route =
+  D.a
+    [ DA.href_ $ print routeCodec route
+    , DL.click_ $ (env ^. _navigateRoute) route <<< pure
+    , css_
+        [ "h-full"
+        , "content-center"
+        , "px-2"
+        , "hover:bg-stone-400"
+        , "focus:bg-stone-400"
+        , "dark:hover:bg-stone-500"
+        , "dark:focus:bg-stone-500"
+        ]
+    ]
+    [ D.text_ label ]

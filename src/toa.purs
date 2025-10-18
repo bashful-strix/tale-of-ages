@@ -1,20 +1,26 @@
-module ToA (toa) where
+module ToA
+  ( toa
+  ) where
 
 import Prelude
 
 import Data.Codec (encode)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe)
 
 import Deku.Core (Nut)
 import Deku.DOM as D
+import Deku.Hooks ((<#~>))
 
 import ToA.Component.TitleBar (titleBar)
-import ToA.Data.Theme (themeCodec)
 import ToA.Data.Env (Env)
+import ToA.Data.Route (Route(..))
+import ToA.Data.Theme (themeCodec)
+import ToA.Page.Home (homePage)
+import ToA.Page.Unknown (unknownPage)
 import ToA.Util.Html (css, css_)
 
 toa :: Env -> Nut
-toa world@{ systemTheme, theme } =
+toa world@{ route, systemTheme, theme } =
   D.div
     [ css $ theme <#> \t ->
         [ "w-dvw"
@@ -30,13 +36,10 @@ toa world@{ systemTheme, theme } =
     ]
     [ titleBar world
     , D.div
-        [ css_
-            [ "flex"
-            , "grow"
-            , "items-center"
-            , "justify-center"
-            , "overflow-hidden"
-            ]
+        [ css_ [ "flex", "grow", "overflow-scroll", "p-2" ] ]
+        [ route <#~> case _ of
+            Just Home -> homePage
+            Just (Test s) -> D.text_ s
+            Nothing -> unknownPage
         ]
-        [ D.text_ "Tale of Ages" ]
     ]

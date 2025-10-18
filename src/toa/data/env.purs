@@ -7,6 +7,9 @@ module ToA.Data.Env
   , _infoLog
   , _debugLog
 
+  , _navigateRoute
+  , _matchRoutesRoute
+
   , _readStore
   , _writeStore
   , _deleteStore
@@ -23,15 +26,19 @@ import Data.Lens.Record (prop)
 import Data.Maybe (Maybe)
 import FRP.Poll (Poll)
 import Type.Proxy (Proxy(..))
+import Web.PointerEvent.PointerEvent (PointerEvent)
 
-import ToA.Data.Theme (Theme)
-import ToA.Data.Env.Effects (EnvEffects, _log, _storage, _theme)
+import ToA.Data.Env.Effects (EnvEffects, _log, _route, _storage, _theme)
 import ToA.Data.Env.Effects.Log (_debug, _error, _info, _warn)
+import ToA.Data.Env.Effects.Route (_matchRoutes, _navigate)
 import ToA.Data.Env.Effects.Storage (_delete, _read, _write)
 import ToA.Data.Env.Effects.Theme (_readStorage, _readSystem, _save)
+import ToA.Data.Route (Route)
+import ToA.Data.Theme (Theme)
 
 type Env =
   { effects :: EnvEffects
+  , route :: Poll (Maybe Route)
   , systemTheme :: Theme
   , theme :: Poll (Maybe Theme)
   }
@@ -52,6 +59,12 @@ _infoLog = _effects <<< _log <<< _info
 
 _debugLog :: Lens' Env (String -> Effect Unit)
 _debugLog = _effects <<< _log <<< _debug
+
+_navigateRoute :: Lens' Env (Route -> Maybe PointerEvent -> Effect Unit)
+_navigateRoute = _effects <<< _route <<< _navigate
+
+_matchRoutesRoute :: Lens' Env ((Route -> Effect Unit) -> Effect Unit)
+_matchRoutesRoute = _effects <<< _route <<< _matchRoutes
 
 _readStore :: Lens' Env (String -> Effect (Maybe String))
 _readStore = _effects <<< _storage <<< _read

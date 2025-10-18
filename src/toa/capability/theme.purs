@@ -53,10 +53,12 @@ browserTheme = case _ of
     debug $ "save theme: " <> show t
     t # maybe (delete "theme") (write "theme")
     pure next
+
   ReadStorage reply -> do
     debug $ "read storage theme"
     read "theme"
       <#> reply <<< (decode themeCodec =<< _)
+
   ReadSystem reply -> do
     debug $ "read system theme"
     liftEffect $ window
