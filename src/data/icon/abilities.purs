@@ -16,7 +16,6 @@ import ToA.Data.Icon.Ability.Tactician
   , baitAndSwitch
   , holdTheCenter
   , mightyStandard
-  , mightyCommand
   ) 
 
 abilities :: Array Ability
@@ -32,5 +31,4 @@ abilities =
   , baitAndSwitch
   , holdTheCenter
   , mightyStandard
-  , mightyCommand
   ]

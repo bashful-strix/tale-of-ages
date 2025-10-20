@@ -3,7 +3,6 @@ module ToA.Data.Icon.Ability.Tactician
   , baitAndSwitch
   , holdTheCenter
   , mightyStandard
-  , mightyCommand
   ) where
 
 import Prelude
@@ -22,6 +21,3 @@ holdTheCenter = Ability $ Name "Hold the Center"
 
 mightyStandard :: Ability
 mightyStandard = Ability $ Name "Mighty Standard"
-
-mightyCommand :: Ability
-mightyCommand = LimitBreak (Name "Mighty Command") 2
