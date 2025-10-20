@@ -10,6 +10,7 @@ package:
     - deku-dom
     - effect
     - either
+    - fast-vect
     - filterable
     - foldable-traversable
     - foreign

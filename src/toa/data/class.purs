@@ -5,7 +5,6 @@ module ToA.Data.Icon.Class
 import Prelude
 
 import ToA.Data.Icon.Name (Name)
-import ToA.Data.Icon.Trait (Trait)
 
 data Class = Class
   { name :: Name
@@ -17,7 +16,7 @@ data Class = Class
   , move :: Int
   , hp :: Int
   , defense :: Int
-  , trait :: Trait
+  , trait :: Name
   , basic :: Name
   , keywords :: Array Name
   , apprentice :: Array Name
