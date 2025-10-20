@@ -18,7 +18,7 @@ import Deku.DOM.Listeners as DL
 import Routing.Duplex (print)
 
 import ToA.Data.Env (Env, _navigate, _saveTheme)
-import ToA.Data.Route (Route(..), routeCodec)
+import ToA.Data.Route (Route(..), JobPath(..), routeCodec)
 import ToA.Data.Theme (Theme(..), themeCodec)
 import ToA.Util.Html (css_)
 
@@ -26,8 +26,9 @@ titleBar :: Env -> Nut
 titleBar env@{ theme } =
   D.div
     [ css_
-        [ "h-10"
+        [ "h-8"
         , "flex"
+        , "shrink-0"
         , "items-center"
         , "justify-between"
         , "px-2"
@@ -42,7 +43,7 @@ titleBar env@{ theme } =
         [ D.ul
             [ css_ [ "flex", "h-full" ] ] $
             [ "ToA" /\ Home
-            , "Test" /\ Test "test"
+            , "Jobs" /\ Jobs None
             ] <#> \(label /\ route) ->
               D.li
                 [ css_ [ "flex", "h-full" ] ]

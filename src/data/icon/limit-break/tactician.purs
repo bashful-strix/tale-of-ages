@@ -9,4 +9,7 @@ import ToA.Data.Icon.LimitBreak (LimitBreak(..))
 import ToA.Data.Icon.Name (Name(..))
 
 mightyCommand :: LimitBreak
-mightyCommand = LimitBreak 2 (Ability $ Name "Mighty Command")
+mightyCommand = LimitBreak
+  { resolve: 2
+  , ability: Ability $ Name "Mighty Command"
+  }

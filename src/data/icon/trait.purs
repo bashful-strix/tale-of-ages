@@ -1,9 +1,14 @@
 module ToA.Data.Icon.Trait
   ( Trait(..)
+  , class Traited
+  , getTrait
+  , setTrait
+  , _trait
   ) where
 
 import Prelude
 
+import Data.Lens (Lens', lens)
 import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Description (class Described)
@@ -25,3 +30,10 @@ instance Named Trait where
 instance Described Trait where
   getDesc (Trait { description }) = description
   setDesc (Trait t) d = Trait t { description = d }
+
+class Traited a where
+  getTrait :: a -> Name
+  setTrait :: a -> Name -> a
+
+_trait :: ∀ a. Traited a => Lens' a Name
+_trait = lens getTrait setTrait

@@ -4,7 +4,8 @@ module ToA.Data.Icon.Abilities
 
 import ToA.Data.Icon.Ability (Ability)
 import ToA.Data.Icon.Ability.Stalwart
-  ( interpose
+  ( furor
+  , interpose
   , impel
   , hook
   , mightyHew
@@ -20,7 +21,8 @@ import ToA.Data.Icon.Ability.Tactician
 
 abilities :: Array Ability
 abilities =
-  [ interpose
+  [ furor
+  , interpose
   , impel
   , hook
   , mightyHew

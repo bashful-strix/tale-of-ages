@@ -1,7 +1,6 @@
 module ToA.Data.Icon.Job
   ( Job(..)
   , _soul
-  , _trait
   , _keyword
   , _abilities
   , _limitBreak
@@ -26,6 +25,7 @@ import Data.Tuple.Nested (type (/\))
 import ToA.Data.Icon.Class (class Classed)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Trait (class Traited)
 import ToA.Util.Optic (key)
 
 newtype Job = Job
@@ -56,11 +56,12 @@ instance Described Job where
   getDesc (Job { description }) = description
   setDesc (Job j) d = Job j { description = d }
 
+instance Traited Job where
+  getTrait (Job { trait }) = trait
+  setTrait (Job j) d = Job j { trait = d }
+
 _soul :: Lens' Job Name
 _soul = _Newtype <<< key @"soul"
-
-_trait :: Lens' Job Name
-_trait = _Newtype <<< key @"trait"
 
 _keyword :: Lens' Job Name
 _keyword = _Newtype <<< key @"keyword"

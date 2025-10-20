@@ -16,6 +16,7 @@ import ToA.Data.Env (Env)
 import ToA.Data.Route (Route(..))
 import ToA.Data.Theme (themeCodec)
 import ToA.Page.Home (homePage)
+import ToA.Page.Jobs (jobsPage)
 import ToA.Page.Unknown (unknownPage)
 import ToA.Util.Html (css, css_)
 
@@ -27,6 +28,7 @@ toa env@{ route, systemTheme, theme } =
         , "h-dvh"
         , "flex"
         , "flex-col"
+        , "overflow-hidden"
         , "bg-stone-300"
         , "text-stone-700"
         , "dark:bg-stone-900"
@@ -36,10 +38,10 @@ toa env@{ route, systemTheme, theme } =
     ]
     [ titleBar env
     , D.div
-        [ css_ [ "flex", "grow", "overflow-scroll", "p-2" ] ]
+        [ css_ [ "flex", "grow", "overflow-hidden", "m-2" ] ]
         [ route <#~> case _ of
             Just Home -> homePage
-            Just (Test s) -> D.text_ s
+            Just (Jobs path) -> jobsPage env path
             Nothing -> unknownPage
         ]
     ]

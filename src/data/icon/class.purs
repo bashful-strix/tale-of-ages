@@ -11,7 +11,6 @@ module ToA.Data.Icon.Class
   , _move
   , _hp
   , _defense
-  , _trait
   , _basic
   , _keywords
   , _apprentice
@@ -25,6 +24,7 @@ import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Trait (class Traited)
 import ToA.Util.Optic (key)
 
 newtype Class = Class
@@ -55,6 +55,10 @@ instance Described Class where
   getDesc (Class { description }) = description
   setDesc (Class c) d = Class c { description = d }
 
+instance Traited Class where
+  getTrait (Class { trait }) = trait
+  setTrait (Class j) d = Class j { trait = d }
+
 _tagline :: Lens' Class String
 _tagline = _Newtype <<< key @"tagline"
 
@@ -75,9 +79,6 @@ _hp = _Newtype <<< key @"hp"
 
 _defense :: Lens' Class Int
 _defense = _Newtype <<< key @"defense"
-
-_trait :: Lens' Class Name
-_trait = _Newtype <<< key @"trait"
 
 _basic :: Lens' Class Name
 _basic = _Newtype <<< key @"basic"

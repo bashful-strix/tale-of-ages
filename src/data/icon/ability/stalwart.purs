@@ -1,5 +1,6 @@
 module ToA.Data.Icon.Ability.Stalwart
-  ( interpose
+  ( furor
+  , interpose
   , impel
   , hook
   , mightyHew
@@ -11,6 +12,9 @@ import Prelude
 
 import ToA.Data.Icon.Ability (Ability(..))
 import ToA.Data.Icon.Name (Name(..))
+
+furor :: Ability
+furor = Ability $ Name "Furor"
 
 interpose :: Ability
 interpose = Ability $ Name "Interpose"
