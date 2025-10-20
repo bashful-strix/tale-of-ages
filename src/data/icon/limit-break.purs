@@ -1,17 +1,34 @@
 module ToA.Data.Icon.LimitBreak
   ( LimitBreak(..)
+  , _resolve
+  , _ability
   ) where
 
 import Prelude
 
+import Data.Lens (Lens')
+import Data.Lens.Iso.Newtype (_Newtype)
+import Data.Newtype (class Newtype)
+
 import ToA.Data.Icon.Ability (Ability)
 import ToA.Data.Icon.Name (class Named, getName, setName)
+import ToA.Util.Optic (key)
 
-data LimitBreak = LimitBreak Int Ability
+newtype LimitBreak = LimitBreak
+  { resolve :: Int
+  , ability :: Ability
+  }
 
+derive instance Newtype LimitBreak _
 instance Eq LimitBreak where
-  eq (LimitBreak _ n) (LimitBreak _ m) = n == m
+  eq (LimitBreak { ability: a }) (LimitBreak { ability: b }) = a == b
 
 instance Named LimitBreak where
-  getName (LimitBreak _ a) = getName a
-  setName (LimitBreak r a) n = LimitBreak r $ setName a n
+  getName (LimitBreak { ability }) = getName ability
+  setName (LimitBreak lb) n = LimitBreak lb { ability = setName lb.ability n }
+
+_resolve :: Lens' LimitBreak Int
+_resolve = _Newtype <<< key @"resolve"
+
+_ability :: Lens' LimitBreak Ability
+_ability = _Newtype <<< key @"ability"

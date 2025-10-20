@@ -13,8 +13,8 @@ import Data.Newtype (class Newtype)
 
 newtype Name = Name String
 
-derive newtype instance Eq Name
 derive instance Newtype Name _
+derive newtype instance Eq Name
 
 class Named a where
   getName :: a -> Name
