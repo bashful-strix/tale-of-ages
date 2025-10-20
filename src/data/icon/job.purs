@@ -8,7 +8,7 @@ import Prelude
 import Data.FastVect.FastVect (Vect)
 import Data.Tuple.Nested (type (/\))
 
-import ToA.Data.Icon.Name (Name)
+import ToA.Data.Icon.Name (Name, class Named)
 
 data Job = Job
   { name :: Name
@@ -24,6 +24,10 @@ data Job = Job
 
 instance Eq Job where
   eq (Job { name: n }) (Job { name: m }) = n == m
+
+instance Named Job where
+  getName (Job { name }) = name
+  setName (Job j) n = Job j { name = n }
 
 data JobLevel
   = One

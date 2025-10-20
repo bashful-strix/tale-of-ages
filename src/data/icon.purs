@@ -26,6 +26,7 @@ icon =
   , traits
   , talents
   , abilities
+  , limitBreaks
   }
 
 type Icon =
@@ -35,4 +36,5 @@ type Icon =
   , traits :: Array Trait
   , talents :: Array Talent
   , abilities :: Array Ability
+  , limitBreaks :: Array LimitBreak
   }

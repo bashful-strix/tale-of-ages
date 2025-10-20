@@ -4,13 +4,13 @@ module ToA.Data.Icon.Ability
 
 import Prelude
 
-import ToA.Data.Icon.Name (Name)
+import ToA.Data.Icon.Name (Name, class Named)
 
-data Ability
-  = Ability Name
-  | LimitBreak Name Int
+data Ability = Ability Name
 
 instance Eq Ability where
   eq (Ability n) (Ability m) = n == m
-  eq (LimitBreak n _) (LimitBreak m _) = n == m
-  eq _ _ = false
+
+instance Named Ability where
+  getName (Ability n) = n
+  setName (Ability _) n = Ability n

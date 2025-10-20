@@ -4,7 +4,7 @@ module ToA.Data.Icon.Class
 
 import Prelude
 
-import ToA.Data.Icon.Name (Name)
+import ToA.Data.Icon.Name (Name, class Named)
 
 data Class = Class
   { name :: Name
@@ -24,3 +24,7 @@ data Class = Class
 
 instance Eq Class where
   eq (Class { name: n }) (Class { name: m }) = n == m
+
+instance Named Class where
+  getName (Class { name }) = name
+  setName (Class c) n = Class c { name = n }
