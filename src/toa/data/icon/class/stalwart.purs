@@ -4,12 +4,12 @@ module ToA.Data.Icon.Class.Stalwart
 
 import Prelude
 
-import ToA.Data.Icon.Class (Class)
+import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
 stalwart :: Class
-stalwart =
+stalwart = Class
   { name: Name "Stalwart"
   , tagline: "Weapon master and unparalleled soldier"
   , strengths:
