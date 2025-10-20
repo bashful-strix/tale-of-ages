@@ -6,7 +6,6 @@ import Prelude
 
 import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Name (Name(..))
-import ToA.Data.Icon.Trait (Trait(..))
 
 stalwart :: Class
 stalwart = Class
@@ -28,16 +27,7 @@ stalwart = Class
   , move: 4
   , hp: 40
   , defense: 3
-  , trait: Trait (Name "Rampart")
-      $ "You are an imposing sight on the battlefield. "
-          <> "Whether through gear, training, or simple "
-          <> "toughness, you gain the following benefits:\n"
-          <> "- You have 1 armor\n"
-          <> "- Once a round, before you or an adjacent ally is "
-          <> "targeted by a foe's ability, you may grant that "
-          <> "character +1d3 _armor_ against the entire ability\n"
-          <> "- Foes must spend +1 movement to exit a space "
-          <> "adjecent to you"
+  , trait: Name "Rampart"
   , basic: Name "Furor"
   , keywords:
       [ Name "Daze"
