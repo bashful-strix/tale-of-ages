@@ -30,6 +30,7 @@ import ToA.Capability.Log (LOG, debug, error, info, runLog, warn)
 import ToA.Capability.Navigate (NAVIGATE, matchRoutes, navigate, runNavigate)
 import ToA.Capability.Storage (STORAGE, delete, read, runStorage, write)
 import ToA.Capability.Theme (THEME, readStorage, readSystem, save, runTheme)
+import ToA.Data.Icon (icon)
 import ToA.Data.Log (Level(Debug))
 
 main :: Effect Unit
@@ -71,6 +72,7 @@ main = do
 
   void $ runInBody $ toa
     { effects
+    , icon: pure icon
     , route: pure Nothing <|> sham route
     , systemTheme
     , theme: pure storageTheme <|> sham theme

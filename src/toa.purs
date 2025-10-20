@@ -20,7 +20,7 @@ import ToA.Page.Unknown (unknownPage)
 import ToA.Util.Html (css, css_)
 
 toa :: Env -> Nut
-toa world@{ route, systemTheme, theme } =
+toa env@{ route, systemTheme, theme } =
   D.div
     [ css $ theme <#> \t ->
         [ "w-dvw"
@@ -34,7 +34,7 @@ toa world@{ route, systemTheme, theme } =
         , encode themeCodec (fromMaybe systemTheme t)
         ]
     ]
-    [ titleBar world
+    [ titleBar env
     , D.div
         [ css_ [ "flex", "grow", "overflow-scroll", "p-2" ] ]
         [ route <#~> case _ of
