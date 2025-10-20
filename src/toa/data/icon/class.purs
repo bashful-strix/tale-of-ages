@@ -1,18 +1,26 @@
 module ToA.Data.Icon.Class
-  ( Class
-  , Trait
+  ( Class(..)
   ) where
+
+import Prelude
 
 import ToA.Data.Icon.Name (Name)
 
-data Trait = Trait Name String
-
-type Class =
+data Class = Class
   { name :: Name
-  , trait :: Trait
+  , tagline :: String
+  , strengths :: String
+  , weaknesses :: String
+  , complexity :: String
+  , description :: String
   , move :: Int
   , hp :: Int
   , defense :: Int
+  , trait :: Name
   , basic :: Name
+  , keywords :: Array Name
   , apprentice :: Array Name
   }
+
+instance Eq Class where
+  eq (Class { name: n }) (Class { name: m }) = n == m
