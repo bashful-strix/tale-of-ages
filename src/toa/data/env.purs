@@ -1,18 +1,17 @@
 module ToA.Data.Env
   ( Env
-  , _effects
 
   , _errorLog
   , _warnLog
   , _infoLog
   , _debugLog
 
-  , _navigateRoute
-  , _matchRoutesRoute
+  , _navigate
+  , _matchRoutes
 
-  , _readStore
-  , _writeStore
-  , _deleteStore
+  , _read
+  , _write
+  , _delete
 
   , _saveTheme
   , _storageTheme
@@ -22,64 +21,90 @@ module ToA.Data.Env
 import Prelude
 import Effect (Effect)
 import Data.Lens (Lens')
-import Data.Lens.Record (prop)
 import Data.Maybe (Maybe)
 import FRP.Poll (Poll)
-import Type.Proxy (Proxy(..))
 import Web.PointerEvent.PointerEvent (PointerEvent)
 
-import ToA.Data.Env.Effects (EnvEffects, _log, _route, _storage, _theme)
-import ToA.Data.Env.Effects.Log (_debug, _error, _info, _warn)
-import ToA.Data.Env.Effects.Route (_matchRoutes, _navigate)
-import ToA.Data.Env.Effects.Storage (_delete, _read, _write)
-import ToA.Data.Env.Effects.Theme (_readStorage, _readSystem, _save)
 import ToA.Data.Route (Route)
 import ToA.Data.Theme (Theme)
+import ToA.Util.Optic (key)
 
 type Env =
-  { effects :: EnvEffects
-  , route :: Poll (Maybe Route)
+  { route :: Poll (Maybe Route)
   , systemTheme :: Theme
   , theme :: Poll (Maybe Theme)
+
+  , effects ::
+      { log ::
+          { error :: String -> Effect Unit
+          , warn :: String -> Effect Unit
+          , info :: String -> Effect Unit
+          , debug :: String -> Effect Unit
+          }
+      , route ::
+          { navigate :: Route -> Maybe PointerEvent -> Effect Unit
+          , matchRoutes :: (Route -> Effect Unit) -> Effect Unit
+          }
+      , storage ::
+          { read :: String -> Effect (Maybe String)
+          , write :: String -> String -> Effect Unit
+          , delete :: String -> Effect Unit
+          }
+      , theme ::
+          { save :: Maybe Theme -> Effect Unit
+          , readStorage :: Effect (Maybe Theme)
+          , readSystem :: Effect Theme
+          }
+      }
   }
 
-_effects :: Lens' Env EnvEffects
-_effects = prop (Proxy :: _ "effects")
+_effects :: ∀ r a. Lens' { effects :: a | r } a
+_effects = key @"effects"
 
--- compositions
+_log :: ∀ r a. Lens' { log :: a | r } a
+_log = key @"log"
+
+_route :: ∀ r a. Lens' { route :: a | r } a
+_route = key @"route"
+
+_storage :: ∀ r a. Lens' { storage :: a | r } a
+_storage = key @"storage"
+
+_theme :: ∀ r a. Lens' { theme :: a | r } a
+_theme = key @"theme"
 
 _errorLog :: Lens' Env (String -> Effect Unit)
-_errorLog = _effects <<< _log <<< _error
+_errorLog = _effects <<< _log <<< key @"error"
 
 _warnLog :: Lens' Env (String -> Effect Unit)
-_warnLog = _effects <<< _log <<< _warn
+_warnLog = _effects <<< _log <<< key @"warn"
 
 _infoLog :: Lens' Env (String -> Effect Unit)
-_infoLog = _effects <<< _log <<< _info
+_infoLog = _effects <<< _log <<< key @"info"
 
 _debugLog :: Lens' Env (String -> Effect Unit)
-_debugLog = _effects <<< _log <<< _debug
+_debugLog = _effects <<< _log <<< key @"debug"
 
-_navigateRoute :: Lens' Env (Route -> Maybe PointerEvent -> Effect Unit)
-_navigateRoute = _effects <<< _route <<< _navigate
+_navigate :: Lens' Env (Route -> Maybe PointerEvent -> Effect Unit)
+_navigate = _effects <<< _route <<< key @"navigate"
 
-_matchRoutesRoute :: Lens' Env ((Route -> Effect Unit) -> Effect Unit)
-_matchRoutesRoute = _effects <<< _route <<< _matchRoutes
+_matchRoutes :: Lens' Env ((Route -> Effect Unit) -> Effect Unit)
+_matchRoutes = _effects <<< _route <<< key @"matchRoutes"
 
-_readStore :: Lens' Env (String -> Effect (Maybe String))
-_readStore = _effects <<< _storage <<< _read
+_read :: Lens' Env (String -> Effect (Maybe String))
+_read = _effects <<< _storage <<< key @"read"
 
-_writeStore :: Lens' Env (String -> String -> Effect Unit)
-_writeStore = _effects <<< _storage <<< _write
+_write :: Lens' Env (String -> String -> Effect Unit)
+_write = _effects <<< _storage <<< key @"write"
 
-_deleteStore :: Lens' Env (String -> Effect Unit)
-_deleteStore = _effects <<< _storage <<< _delete
+_delete :: Lens' Env (String -> Effect Unit)
+_delete = _effects <<< _storage <<< key @"delete"
 
 _saveTheme :: Lens' Env (Maybe Theme -> Effect Unit)
-_saveTheme = _effects <<< _theme <<< _save
+_saveTheme = _effects <<< _theme <<< key @"save"
 
 _storageTheme :: Lens' Env (Effect (Maybe Theme))
-_storageTheme = _effects <<< _theme <<< _readStorage
+_storageTheme = _effects <<< _theme <<< key @"readStorage"
 
 _systemTheme :: Lens' Env (Effect Theme)
-_systemTheme = _effects <<< _theme <<< _readSystem
+_systemTheme = _effects <<< _theme <<< key @"readSystem"

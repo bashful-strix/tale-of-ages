@@ -17,7 +17,7 @@ import Deku.DOM.Listeners as DL
 
 import Routing.Duplex (print)
 
-import ToA.Data.Env (Env, _navigateRoute, _saveTheme)
+import ToA.Data.Env (Env, _navigate, _saveTheme)
 import ToA.Data.Route (Route(..), routeCodec)
 import ToA.Data.Theme (Theme(..), themeCodec)
 import ToA.Util.Html (css_)
@@ -80,7 +80,7 @@ routeLink :: Env -> String -> Route -> Nut
 routeLink env label route =
   D.a
     [ DA.href_ $ print routeCodec route
-    , DL.click_ $ (env ^. _navigateRoute) route <<< pure
+    , DL.click_ $ (env ^. _navigate) route <<< pure
     , css_
         [ "h-full"
         , "content-center"
