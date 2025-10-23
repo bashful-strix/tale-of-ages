@@ -25,7 +25,7 @@ instance Named Keyword where
   getName (Keyword { name }) = name
   setName (Keyword k) n = Keyword k { name = n }
 
-instance Described Keyword where
+instance Described Keyword String where
   getDesc (Keyword { description }) = description
   setDesc (Keyword k) d = Keyword k { description = d }
 

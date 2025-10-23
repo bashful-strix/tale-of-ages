@@ -17,11 +17,12 @@ import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Dice (Die)
+import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 
 newtype Ability = Ability
   { name :: Name
-  , description :: String
+  , description :: Markup
   , action :: Action
   , tags :: Array Tag
   , summon :: Maybe Name
@@ -37,7 +38,7 @@ instance Named Ability where
   getName (Ability { name }) = name
   setName (Ability a) n = Ability a { name = n }
 
-instance Described Ability where
+instance Described Ability Markup where
   getDesc (Ability { description }) = description
   setDesc (Ability a) d = Ability a { description = d }
 
@@ -81,13 +82,13 @@ data Damage
   | Roll Int Die
 
 data StepType
-  = Eff String
+  = Eff Markup
   | AttackStep (Maybe Damage) (Maybe Damage)
-  | OnHit String
-  | AreaEff String
-  | KeywordStep Name String
-  | TriggerStep String
-  | OtherStep String String
+  | OnHit Markup
+  | AreaEff Markup
+  | KeywordStep Name Markup
+  | TriggerStep Markup
+  | OtherStep Markup Markup
 
 data Step
   = Step StepType

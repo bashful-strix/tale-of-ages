@@ -7,9 +7,9 @@ module ToA.Data.Icon.Description
 
 import Data.Lens (Lens', lens)
 
-class Described a where
-  getDesc :: a -> String
-  setDesc :: a -> String -> a
+class Described a b where
+  getDesc :: a -> b
+  setDesc :: a -> b -> a
 
-_desc :: ∀ a. Described a => Lens' a String
+_desc :: ∀ a b. Described a b => Lens' a b
 _desc = lens getDesc setDesc

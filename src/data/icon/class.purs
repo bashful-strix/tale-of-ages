@@ -51,7 +51,7 @@ instance Named Class where
   getName (Class { name }) = name
   setName (Class c) n = Class c { name = n }
 
-instance Described Class where
+instance Described Class String where
   getDesc (Class { description }) = description
   setDesc (Class c) d = Class c { description = d }
 

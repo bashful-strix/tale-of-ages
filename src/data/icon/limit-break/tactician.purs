@@ -15,6 +15,7 @@ import ToA.Data.Icon.Ability
   , Target(..)
   )
 import ToA.Data.Icon.LimitBreak (LimitBreak(..))
+import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
 
 mightyCommand :: LimitBreak
@@ -23,23 +24,33 @@ mightyCommand = LimitBreak
   , ability: Ability
       { name: Name "Mighty Command"
       , description:
-          "You issue an earth shattering command, breaking enemy "
-            <> "morale and driving your allies on."
+          [ Text """
+              You issue an earth shattering command, breaking
+              enemy morale and driving your allies on."""
+          ]
       , action: One
       , tags: [ TargetTag Ally, TargetTag Foe ]
       , summon: Nothing
       , sub: Nothing
       , steps:
-          [ Step $ Eff $
-              "Every other character on the battlefield, "
-                <> "regardless of range and line of sight is "
-                <> "pushed or pulled 1 space in any direction of "
-                <> "your choice. You may move them in any order, "
-                <> "and may choose different directions for each "
-                <> "character."
-          , Step $ Eff "Bloodied characters or pushed +2 spaces."
+          [ Step $ Eff
+              [ Text """
+                  Every other character on the battlefield,
+                  regardless of range and line of sight is pushed
+                  or pulled 1 space in any direction of your
+                  choice. You may move them in any order, and may
+                  choose different directions for each character.
+                  """
+              ]
           , Step $ Eff
-              "Foes in _crisis_ are additionally _stunned_."
+              [ Text "Bloodied characters or pushed +2 spaces." ]
+          , Step $ Eff
+              [ Text "Foes in"
+              , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
+              , Text "are additionally"
+              , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
+              , Text "."
+              ]
           ]
       }
   }

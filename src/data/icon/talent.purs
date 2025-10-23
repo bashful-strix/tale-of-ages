@@ -22,6 +22,6 @@ instance Named Talent where
   getName (Talent { name }) = name
   setName (Talent t) n = Talent t { name = n }
 
-instance Described Talent where
+instance Described Talent String where
   getDesc (Talent { description }) = description
   setDesc (Talent t) d = Talent t { description = d }

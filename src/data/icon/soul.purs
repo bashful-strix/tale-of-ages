@@ -28,6 +28,6 @@ instance Classed Soul where
   getClass (Soul s) = s.class
   setClass (Soul s) c = Soul s { class = c }
 
-instance Described Soul where
+instance Described Soul String where
   getDesc (Soul { description }) = description
   setDesc (Soul s) d = Soul s { description = d }

@@ -52,7 +52,7 @@ instance Classed Job where
   getClass (Job j) = j.class
   setClass (Job j) c = Job j { class = c }
 
-instance Described Job where
+instance Described Job String where
   getDesc (Job { description }) = description
   setDesc (Job j) d = Job j { description = d }
 

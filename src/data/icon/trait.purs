@@ -27,7 +27,7 @@ instance Named Trait where
   getName (Trait { name }) = name
   setName (Trait t) n = Trait t { name = n }
 
-instance Described Trait where
+instance Described Trait String where
   getDesc (Trait { description }) = description
   setDesc (Trait t) d = Trait t { description = d }
 
