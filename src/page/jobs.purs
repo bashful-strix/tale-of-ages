@@ -44,6 +44,7 @@ import ToA.Data.Icon.Class
   , _tagline
   , _weaknesses
   )
+import ToA.Component.Markup (markup)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Job (_abilities, _limitBreak, _talents, _soul)
 import ToA.Data.Icon.Name (Name, class Named, _name)
@@ -406,32 +407,51 @@ renderJobAbilities :: Poll Icon -> Name -> Nut
 renderJobAbilities icon name = icon <#~> \{ abilities, jobs, limitBreaks } ->
   jobs # traversed <<< filtered (has (_name <<< only name)) #~ \j ->
     D.div
-      [ css_ [ "overflow-scroll" ] ]
-      [ D.div []
-          [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Limit Break" ]
-          , D.text_ $ limitBreaks
-              ^. traversed
-                <<< filtered (has (_name <<< only (j ^. _limitBreak)))
-                <<< _name
-                <<< _Newtype
-          ]
+      [ css_ [ "flex", "gap-2" ] ]
+      [ D.div
+          [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+          [ D.div []
+              [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Limit Break" ]
+              , D.text_ $ limitBreaks
+                  ^. traversed
+                    <<< filtered (has (_name <<< only (j ^. _limitBreak)))
+                    <<< _name
+                    <<< _Newtype
+              ]
 
-      , D.div []
-          [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Abilities" ]
-          , D.ol []
-              $ abilities #
-                  ( traversed
-                      <<< filtered
-                        ( view
-                            ( _name <<< to
-                                ( elem ~$
-                                    (j ^:: _abilities <<< traversed <<< _2)
+          , D.div []
+              [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Abilities" ]
+              , D.ol []
+                  $ abilities #
+                      ( traversed
+                          <<< filtered
+                            ( view
+                                ( _name <<< to
+                                    ( elem ~$
+                                        (j ^:: _abilities <<< traversed <<< _2)
+                                    )
                                 )
                             )
+                          <<< _name
+                          <<< _Newtype
+                      ) #~ \a ->
+                        pure $ D.li [] [ D.text_ a ]
+              ]
+          ]
+
+      , D.div
+          [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+          [ abilities #
+              ( traversed
+                  <<< filtered
+                    ( view
+                        ( _name <<< to
+                            ( elem ~$
+                                (j ^:: _abilities <<< traversed <<< _2)
+                            )
                         )
-                      <<< _name
-                      <<< _Newtype
-                  ) #~ \a ->
-                    pure $ D.li [] [ D.text_ a ]
+                    )
+                  <<< _desc
+              ) #~ markup
           ]
       ]
