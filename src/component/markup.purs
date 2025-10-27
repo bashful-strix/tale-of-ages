@@ -35,7 +35,7 @@ markup = foldMap $ case _ of
   Weakness -> D.span [] [ D.text_ "[-]" ]
 
   Dice n d ->
-    D.span [ css_ [ "font-bold" ] ] [ D.text_ $ show n <> show d ]
+    D.span [] [ D.text_ $ show n <> show d ]
 
   Bold text -> D.span [ css_ [ "font-bold" ] ] [ markup text ]
   Italic text -> D.span [ css_ [ "italic" ] ] [ markup text ]

@@ -36,17 +36,17 @@ pincerAttack = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ AttackStep (Just $ Flat 1) (Just $ Roll 1 D3)
-      , Step $ OnHit
+      [ Step Nothing $ AttackStep (Just $ Flat 1) (Just $ Roll 1 D3)
+      , Step Nothing $ OnHit
           [ Text """
               Push 1. If your foe would be pushed into an ally's
-              space, that ally deals 2"""
+              space, that ally deals 2 """
           , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
-          , Text "damage to that foe and gains"
+          , Text " damage to that foe and gains "
           , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
-          , Text """
+          , Text """.
               Double these effects if your ally or you target is
-              in"""
+              in """
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
           ]
       ]
@@ -65,14 +65,14 @@ baitAndSwitch = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ Eff [ Text "Swap places with an ally in range." ]
-      , Step $ Eff
+      [ Step Nothing $ Eff [ Text "Swap places with an ally in range." ]
+      , Step Nothing $ Eff
           [ Text """
               If your ally was adjacent to at least one foe, you
               may then deal 2 damage to one of those foes after
-              swapping and"""
+              swapping and """
           , Italic [ Ref (Name "Daze") [ Text "daze" ] ]
-          , Text "them."
+          , Text " them."
           ]
       ]
   }
@@ -90,18 +90,18 @@ holdTheCenter = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ TriggerStep
+      [ Step Nothing $ TriggerStep
           [ Text "An adjacent ally is damaged." ]
-      , RollStep $ Eff
+      , Step (Just D6) $ Eff
           [ Text """
               Reduce that damage by the number of adjacent allies
               to you, then push all adjacent foes 1, (4+) two, or
               (6+) four spaces."""
           ]
-      , Step $ Eff
-          [ Text "If that ally was in"
+      , Step Nothing $ Eff
+          [ Text "If that ally was in "
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
-          , Text "double damage reduction and push."
+          , Text " double damage reduction and push."
           ]
       ]
   }
@@ -119,30 +119,30 @@ mightyStandard = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ KeywordStep (Name "Zone")
+      [ Step Nothing $ KeywordStep (Name "Zone")
           [ Bold [ Text "End your turn" ]
-          , Text "and designate a blast 3"
+          , Text " and designate a blast 3 "
           , Italic [ Ref (Name "Zone") [ Text "zone" ] ]
           , Text """
-              with at one space in range, which could overlap
+              with at least one space in range, which could overlap
               characters. Allies that end their turn inside the
-              zone gain"""
+              zone gain """
           , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
-          , Text ". If they are in"
+          , Text ". If they are in "
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
-          , Text """
-              , they also gain +1 armor while inside the zone."""
+          , Text """,
+              they also gain +1 armor while inside the zone."""
           ]
-      , RollStep $ Eff
+      , Step (Just D3) $ Eff
           [ Text """
               While inside the zone, you can pick up the banner as
-              a"""
+              a """
           , Bold [ Text "quick" ]
           , Text """
               ability and swing it, pushing all other characters
-              inside"""
+              inside """
           , Italic [ Dice 1 D3 ]
-          , Text ", but removing the zone. Foes pushed are"
+          , Text ", but removing the zone. Foes pushed are "
           , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
           , Text "."
           ]

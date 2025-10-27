@@ -2,16 +2,43 @@ module ToA.Data.Icon.Keywords
   ( keywords
   ) where
 
-import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Keyword (Keyword)
+import ToA.Data.Icon.Keyword.Status
+  ( strength
+  , keen
+  , shield
+  , haste
 
-keywords :: Array Name
+  , daze
+  , blind
+  , brand
+  , slow
+  , stun
+  )
+import ToA.Data.Icon.Keyword.Tag
+  ( immobile
+  , push
+  , stance
+  , unstoppable
+  , zone
+  )
+
+keywords :: Array Keyword
 keywords =
-  [ Name "Daze"
-  , Name "Immobile"
-  , Name "Push"
-  , Name "Shield"
-  , Name "Stance"
-  , Name "Sturdy"
-  , Name "Stun"
-  , Name "Unstoppable"
+  [ immobile
+  , push
+  , stance
+  , unstoppable
+  , zone
+
+  , strength
+  , keen
+  , shield
+  , haste
+
+  , daze
+  , blind
+  , brand
+  , slow
+  , stun
   ]

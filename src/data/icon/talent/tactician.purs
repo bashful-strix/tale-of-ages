@@ -22,7 +22,7 @@ spur = Talent
   { name: Name "Spur"
   , description:
       "Once a round, when an ally starts their turn in range 1-3, "
-        <> "you man push or pull them 2 spaces, or 4 if they're "
+        <> "you may push or pull them 2 spaces, or 4 if they're "
         <> "in crisis."
   }
 

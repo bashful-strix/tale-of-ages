@@ -8,10 +8,18 @@ module ToA.Data.Icon.Ability
   , StepType(..)
   , Tag(..)
   , Target(..)
+
+  , _action
+  , _steps
+  , _sub
+  , _summon
+  , _tags
   ) where
 
 import Prelude
 
+import Data.Lens (Lens')
+import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe)
 import Data.Newtype (class Newtype)
 
@@ -19,6 +27,7 @@ import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Util.Optic (key)
 
 newtype Ability = Ability
   { name :: Name
@@ -41,6 +50,21 @@ instance Named Ability where
 instance Described Ability Markup where
   getDesc (Ability { description }) = description
   setDesc (Ability a) d = Ability a { description = d }
+
+_action :: Lens' Ability Action
+_action = _Newtype <<< key @"action"
+
+_tags :: Lens' Ability (Array Tag)
+_tags = _Newtype <<< key @"tags"
+
+_summon :: Lens' Ability (Maybe Name)
+_summon = _Newtype <<< key @"summon"
+
+_sub :: Lens' Ability (Maybe Name)
+_sub = _Newtype <<< key @"sub"
+
+_steps :: Lens' Ability (Array Step)
+_steps = _Newtype <<< key @"steps"
 
 data Action
  = Quick
@@ -70,8 +94,8 @@ data Target
 
 data Tag
   = Attack
-  | Close
   | End
+  | Close
   | RangeTag Range
   | AreaTag Pattern
   | TargetTag Target
@@ -90,6 +114,4 @@ data StepType
   | TriggerStep Markup
   | OtherStep Markup Markup
 
-data Step
-  = Step StepType
-  | RollStep StepType
+data Step = Step (Maybe Die) StepType

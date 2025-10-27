@@ -6,10 +6,11 @@ import Prelude
 import PointFree ((~$))
 
 import Data.Filterable (filter)
-import Data.Foldable (elem)
+import Data.Foldable (elem, foldMap, intercalate)
 import Data.Lens
   ( (^.)
-  , (^?)
+  , (.~)
+  , preview
   , view
   , elemOf
   , filtered
@@ -17,10 +18,13 @@ import Data.Lens
   , only
   , to
   , traversed
-  , _2
+  , _Just
   )
+import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (maybe)
+import Data.Maybe (Maybe(..))
+import Data.Monoid (guard)
+import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
 import Deku.DOM as D
@@ -31,6 +35,21 @@ import FRP.Poll (Poll)
 
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon (Icon)
+import ToA.Data.Icon.Ability
+  ( Ability
+  , Action(..)
+  , Damage(..)
+  , Pattern(..)
+  , Range(..)
+  , Step(..)
+  , StepType(..)
+  , Tag(..)
+  , Target(..)
+  , _action
+  , _steps
+  , _summon
+  , _tags
+  )
 import ToA.Data.Icon.Class
   ( _apprentice
   , _basic
@@ -46,18 +65,18 @@ import ToA.Data.Icon.Class
   )
 import ToA.Component.Markup (markup)
 import ToA.Data.Icon.Description (_desc)
+import ToA.Data.Icon.Job (JobLevel(..)) as IJ
 import ToA.Data.Icon.Job (_abilities, _limitBreak, _talents, _soul)
 import ToA.Data.Icon.Name (Name, class Named, _name)
 import ToA.Data.Icon.Trait (_trait)
-import ToA.Data.Route (Route(..), JobPath(..))
+import ToA.Data.Route (Route(..), JobPath(..), _ability)
 import ToA.Util.Optic ((^::), (#~))
 import ToA.Util.Html (css_)
 
 jobsPage :: Env -> JobPath -> Nut
 jobsPage env@{ icon } path =
   D.div
-    [ css_ [ "flex", "grow", "gap-2" ]
-    ]
+    [ css_ [ "flex", "grow", "gap-2" ] ]
     [ D.div
         [ css_
             [ "w-1/5"
@@ -78,7 +97,8 @@ jobsPage env@{ icon } path =
                     [ css_ [ "bg-red-600" ] ]
                     [ D.span
                         [ DL.click_ $
-                            (env ^. _navigate) (Jobs $ WithClass $ c ^. _name)
+                            (env ^. _navigate)
+                              (Jobs $ WithClass (c ^. _name) Nothing)
                               <<< pure
                         ]
                         [ D.text_ $ viewName c ]
@@ -90,8 +110,10 @@ jobsPage env@{ icon } path =
                               [ D.span
                                   [ DL.click_ $
                                       (env ^. _navigate)
-                                        ( Jobs $ WithSoul (c ^. _name)
+                                        ( Jobs $ WithSoul
+                                            (c ^. _name)
                                             (s ^. _name)
+                                            Nothing
                                         ) <<< pure
                                   ]
                                   [ D.text_ $ viewName s ]
@@ -108,6 +130,7 @@ jobsPage env@{ icon } path =
                                                         (c ^. _name)
                                                         (s ^. _name)
                                                         (j ^. _name)
+                                                        Nothing
                                                     ) <<< pure
                                               ]
                                               [ D.text_ $ viewName j ]
@@ -132,9 +155,9 @@ jobsPage env@{ icon } path =
             ]
             [ case path of
                 None -> D.text_ "No class selected"
-                WithClass c -> renderClassStats icon c
-                WithSoul c _ -> renderClassStats icon c
-                WithJob c _ _ -> renderClassStats icon c
+                WithClass c _ -> renderClassStats icon c
+                WithSoul c _ _ -> renderClassStats icon c
+                WithJob c _ _ _ -> renderClassStats icon c
             ]
 
         , D.div
@@ -151,9 +174,9 @@ jobsPage env@{ icon } path =
             ]
             [ case path of
                 None -> mempty
-                WithClass c -> renderClassDesc icon c
-                WithSoul _ s -> renderSoul icon s
-                WithJob _ _ j -> renderJobDesc icon j
+                WithClass c _ -> renderClassDesc icon c
+                WithSoul _ s _ -> renderSoul icon s
+                WithJob _ _ j _ -> renderJobDesc icon j
             ]
 
         , D.div
@@ -170,9 +193,9 @@ jobsPage env@{ icon } path =
             ]
             [ case path of
                 None -> mempty
-                WithClass c -> renderClassAbilities icon c
-                WithSoul c _ -> renderClassAbilities icon c
-                WithJob _ _ j -> renderJobAbilities icon j
+                WithClass c a -> renderClassAbilities env path c a
+                WithSoul c _ a -> renderClassAbilities env path c a
+                WithJob _ _ j a -> renderJobAbilities env path j a
             ]
         ]
     ]
@@ -184,7 +207,7 @@ renderClassStats :: Poll Icon -> Name -> Nut
 renderClassStats icon name = icon <#~> \{ classes, keywords, traits } ->
   classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
     D.div
-      [ css_ [ "flex", "flex-col" ] ]
+      [ css_ [ "w-full", "flex", "flex-col" ] ]
       [ D.div
           [ css_ [ "flex", "gap-2" ] ]
           [ D.h3
@@ -254,10 +277,12 @@ renderClassStats icon name = icon <#~> \{ classes, keywords, traits } ->
                   [ css_ [ "overflow-scroll" ] ]
                   [ D.ol []
                       $ keywords #
-                        traversed
-                          <<< filtered (elem ~$ (c ^. _keywords))
-                          <<< _Newtype
-                          #~ \k -> pure $ D.li [] [ D.text_ k ]
+                          traversed
+                            <<< filtered
+                              (view (_name <<< to (elem ~$ (c ^. _keywords))))
+                            <<< _name
+                            <<< _Newtype
+                              #~ \k -> pure $ D.li [] [ D.text_ k ]
                   ]
               ]
           ]
@@ -267,7 +292,7 @@ renderClassDesc :: Poll Icon -> Name -> Nut
 renderClassDesc icon name = icon <#~> \{ classes } ->
   classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
     D.div
-      [ css_ [ "flex", "overflow-hidden" ] ]
+      [ css_ [ "w-full", "flex", "gap-2" ] ]
       [ D.div
           [ css_ [ "flex", "basis-1/3", "overflow-scroll", "gap-2" ] ]
           [ D.p [ css_ [ "italic" ] ] [ D.text_ $ c ^. _desc ] ]
@@ -285,40 +310,91 @@ renderClassDesc icon name = icon <#~> \{ classes } ->
           ]
       ]
 
-renderClassAbilities :: Poll Icon -> Name -> Nut
-renderClassAbilities icon name = icon <#~> \{ abilities, classes } ->
-  classes ^? traversed <<< filtered (has (_name <<< only name))
-    # maybe mempty \c ->
-        D.div
-          [ css_ [ "overflow-scroll" ] ]
-          [ D.div []
-              [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Basic Attack" ]
-              , D.text_ $ abilities
-                  ^. traversed
-                    <<< filtered (has (_name <<< only (c ^. _basic)))
-                    <<< _name
-                    <<< _Newtype
-              ]
+renderClassAbilities :: Env -> JobPath -> Name -> Maybe Name -> Nut
+renderClassAbilities env@{ icon } path name ability = icon <#~>
+  \{ abilities, classes } ->
+    classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
+      D.div
+        [ css_ [ "w-full", "flex", "gap-2" ] ]
+        [ D.div
+            [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+            [ D.div []
+                [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Basic Attack" ]
+                , c # _basic #~ \a ->
+                    D.div
+                      [ css_ $
+                          [ "hover:bg-stone-500"
+                          , "focus:bg-stone-500"
+                          , "hover:text-stone-800"
+                          , "dark:hover:text-stone-300"
+                          ] <> guard (pure a == ability)
+                            [ "bg-stone-500"
+                            , "dark:bg-stone-700"
+                            , "text-stone-800"
+                            , "dark:text-stone-300"
+                            ]
+                      ]
+                      [ D.span
+                          [ DL.click_ $
+                              (env ^. _navigate)
+                                (Jobs $ path # _ability .~ Just a)
+                                <<< pure
+                          ]
+                          [ D.text_ $ a ^. simple _Newtype ]
+                      ]
+                ]
 
-          , D.div []
-              [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Abilities" ]
-              , D.ol []
-                  $ abilities #
-                      ( traversed
-                          <<< filtered
-                            (view (_name <<< to (elem ~$ (c ^. _apprentice))))
-                          <<< _name
-                          <<< _Newtype
-                      ) #~ \a ->
-                        pure $ D.li [] [ D.text_ a ]
-              ]
-          ]
+            , D.div []
+                [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Abilities" ]
+                , D.ol []
+                    $ c # _apprentice <<< traversed #~ \a ->
+                        pure $ D.li
+                          [ css_ $
+                              [ "hover:bg-stone-500"
+                              , "focus:bg-stone-500"
+                              , "hover:text-stone-800"
+                              , "dark:hover:text-stone-300"
+                              ] <> guard (pure a == ability)
+                                [ "bg-stone-500"
+                                , "dark:bg-stone-700"
+                                , "text-stone-800"
+                                , "dark:text-stone-300"
+                                ]
+                          ]
+                          [ D.span
+                              [ DL.click_ $
+                                  (env ^. _navigate)
+                                    (Jobs $ path # _ability .~ Just a)
+                                    <<< pure
+                              ]
+                              [ D.text_ $ a ^. simple _Newtype ]
+                          ]
+                ]
+            ]
+
+        , D.div
+            [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+            [ abilities # traversed <<< filtered (eq ability <<< preview _name)
+                #~ renderAbility
+            ]
+
+        , D.div
+            [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+            [ D.text_ $ abilities
+                # traversed
+                    <<< filtered (eq ability <<< preview _name)
+                    <<< _summon
+                    <<< _Just
+                    <<< _Newtype
+                      #~ identity
+            ]
+        ]
 
 renderSoul :: Poll Icon -> Name -> Nut
 renderSoul icon name = icon <#~> \{ jobs, souls } ->
   souls # traversed <<< filtered (has (_name <<< only name)) #~ \s ->
     D.div
-      []
+      [ css_ [ "w-full", "flex", "flex-col", "gap-2" ] ]
       [ D.div
           [ css_ [ "flex", "gap-2" ] ]
           [ D.h3 []
@@ -341,7 +417,7 @@ renderJobDesc :: Poll Icon -> Name -> Nut
 renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
   jobs # traversed <<< filtered (has (_name <<< only name)) #~ \j ->
     D.div
-      [ css_ [ "flex", "flex-col" ] ]
+      [ css_ [ "w-full", "flex", "flex-col" ] ]
       [ D.div
           [ css_ [ "flex", "gap-2" ] ]
           [ D.h3
@@ -403,55 +479,191 @@ renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
           ]
       ]
 
-renderJobAbilities :: Poll Icon -> Name -> Nut
-renderJobAbilities icon name = icon <#~> \{ abilities, jobs, limitBreaks } ->
-  jobs # traversed <<< filtered (has (_name <<< only name)) #~ \j ->
-    D.div
-      [ css_ [ "flex", "gap-2" ] ]
-      [ D.div
-          [ css_ [ "basis-1/3", "overflow-scroll" ] ]
-          [ D.div []
-              [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Limit Break" ]
-              , D.text_ $ limitBreaks
-                  ^. traversed
-                    <<< filtered (has (_name <<< only (j ^. _limitBreak)))
-                    <<< _name
+renderJobAbilities :: Env -> JobPath -> Name -> Maybe Name -> Nut
+renderJobAbilities env@{ icon } path name ability = icon <#~>
+  \{ abilities, jobs } ->
+    jobs # traversed <<< filtered (has (_name <<< only name)) #~ \j ->
+      D.div
+        [ css_ [ "w-full", "flex", "gap-2" ] ]
+        [ D.div
+            [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+            [ D.div []
+                [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Limit Break" ]
+                , j # _limitBreak #~ \a ->
+                    D.div
+                      [ css_ $
+                          [ "hover:bg-stone-500"
+                          , "focus:bg-stone-500"
+                          , "hover:text-stone-300"
+                          , "focus:text-stone-300"
+                          ] <> guard (pure a == ability)
+                            [ "bg-stone-400"
+                            , "text-stone-900"
+                            , "dark:bg-stone-700"
+                            , "dark:text-stone-300"
+                            ]
+                      ]
+                      [ D.span
+                          [ DL.click_ $
+                              (env ^. _navigate)
+                                (Jobs $ path # _ability .~ Just a)
+                                <<< pure
+                          ]
+                          [ D.text_ $ a ^. simple _Newtype ]
+                      ]
+                ]
+
+            , D.div []
+                [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Abilities" ]
+                , D.ol []
+                    $ j # _abilities <<< traversed #~ \(l /\ a) ->
+                        pure $ D.li
+                          [ css_ $
+                              [ "flex"
+                              , "justify-between"
+                              , "hover:bg-stone-500"
+                              , "focus:bg-stone-500"
+                              , "hover:text-stone-300"
+                              , "focus:text-stone-300"
+                              ] <> guard (pure a == ability)
+                                [ "bg-stone-400"
+                                , "text-stone-900"
+                                , "dark:bg-stone-700"
+                                , "dark:text-stone-300"
+                                ]
+                          ]
+                          [ D.span
+                              [ DL.click_ $
+                                  (env ^. _navigate)
+                                    (Jobs $ path # _ability .~ Just a)
+                                    <<< pure
+                              ]
+                              [ D.text_ $ a ^. simple _Newtype ]
+                          , D.span []
+                              [ D.text_ $ l # case _ of
+                                  IJ.One -> "I"
+                                  IJ.Two -> "II"
+                                  IJ.Three -> "III"
+                                  IJ.Four -> "IV"
+                              ]
+                          ]
+                ]
+            ]
+
+        , D.div
+            [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+            [ abilities # traversed <<< filtered (eq ability <<< preview _name)
+                #~ renderAbility
+            ]
+
+        , D.div
+            [ css_ [ "basis-1/3", "overflow-scroll" ] ]
+            [ D.text_ $ abilities
+                # traversed
+                    <<< filtered (eq ability <<< preview _name)
+                    <<< _summon
+                    <<< _Just
                     <<< _Newtype
-              ]
+                      #~ identity
+            ]
+        ]
 
-          , D.div []
-              [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Abilities" ]
-              , D.ol []
-                  $ abilities #
-                      ( traversed
-                          <<< filtered
-                            ( view
-                                ( _name <<< to
-                                    ( elem ~$
-                                        (j ^:: _abilities <<< traversed <<< _2)
-                                    )
-                                )
-                            )
-                          <<< _name
-                          <<< _Newtype
-                      ) #~ \a ->
-                        pure $ D.li [] [ D.text_ a ]
-              ]
-          ]
+renderAbility :: Ability -> Nut
+renderAbility a =
+  D.div
+    []
+    [ D.h3
+        [ css_ [ "bg-red-600", "text-white", "font-bold" ] ]
+        [ D.text_ $ viewName a ]
 
-      , D.div
-          [ css_ [ "basis-1/3", "overflow-scroll" ] ]
-          [ abilities #
-              ( traversed
-                  <<< filtered
-                    ( view
-                        ( _name <<< to
-                            ( elem ~$
-                                (j ^:: _abilities <<< traversed <<< _2)
-                            )
-                        )
+    , D.div
+        []
+        [ D.span []
+            [ D.text_
+                $ intercalate ", "
+                $
+                  [ a # _action #~ case _ of
+                      Quick -> "Quick"
+                      One -> "1 action"
+                      Two -> "2 actions"
+                      Interrupt n -> "Interrupt " <> show n
+                  ] <>
+                    ( a # _tags <<< traversed #~ pure <<< case _ of
+                        Attack -> "Attack"
+                        End -> "End"
+                        Close -> "Close"
+                        RangeTag r -> case r of
+                          Range i j -> "Range " <> show i <> "-" <> show j
+                          Melee -> "Melee"
+                          Adjacent -> "Adjacent"
+                        AreaTag p -> case p of
+                          Line n -> "Line " <> show n
+                          Arc n -> "Arc " <> show n
+                          Blast n -> "Blast " <> show n
+                          Burst n x -> "Burst " <> show n <> "("
+                            <> (if x then "self" else "target")
+                            <> ")"
+                          Cross n -> "Cross " <> show n
+                        TargetTag t -> case t of
+                          Self -> "Self"
+                          Ally -> "Ally"
+                          Foe -> "Foe"
+                          Summon -> "Summon"
+                          Space -> "Space"
+                          Object -> "Object"
+                        KeywordTag k -> k ^. simple _Newtype
                     )
-                  <<< _desc
-              ) #~ markup
-          ]
-      ]
+            ]
+        ]
+
+    , D.div [ css_ [ "italic" ] ] [ markup $ a ^. _desc ]
+
+    , D.div []
+        [ D.ol []
+            $ a # _steps <<< traversed #~ pure <<< \(Step d s) ->
+                D.li
+                  []
+                  [ D.span
+                      [ css_ [ "font-bold" ] ]
+                      [ case s of
+                          Eff _ -> D.text_ "Effect"
+                          AttackStep _ _ -> D.text_ "Attack"
+                          OnHit _ -> D.text_ "On hit"
+                          AreaEff _ -> D.text_ "Area effect"
+                          KeywordStep k _ -> D.text_ $ k ^. simple _Newtype
+                          TriggerStep _ -> D.text_ "Trigger"
+                          OtherStep k _ -> markup k
+                      , D.text_ $ foldMap (const " [X]") d
+                      , D.text_ ": "
+                      ]
+
+                  , D.span []
+                      [ case s of
+                          Eff t -> markup t
+                          AttackStep m h ->
+                            D.span []
+                              [ m # foldMap case _ of
+                                  Flat x -> D.text_ $ show x <> " damage."
+                                  Roll n x -> D.text_ $ show n <> show x <>
+                                    " damage."
+                              , h # foldMap \hd ->
+                                  D.span []
+                                    [ D.span [ css_ [ "italic" ] ]
+                                        [ D.text_ " Hit: " ]
+                                    , D.text_ "+"
+                                    , case hd of
+                                        Flat x -> D.text_ $ show x <>
+                                          "  damage."
+                                        Roll n x -> D.text_ $ show n <> show x
+                                          <> " damage."
+                                    ]
+                              ]
+                          OnHit t -> markup t
+                          AreaEff t -> markup t
+                          KeywordStep _ t -> markup t
+                          TriggerStep t -> markup t
+                          OtherStep _ t -> markup t
+                      ]
+                  ]
+        ]
+    ]

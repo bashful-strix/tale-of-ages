@@ -36,13 +36,13 @@ furor = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ AttackStep (Just $ Flat 2) (Just $ Roll 1 D6)
-      , Step $ OnHit
-          [ Text "Gain 2 vigor. If you or your target is in"
+      [ Step Nothing $ AttackStep (Just $ Flat 2) (Just $ Roll 1 D6)
+      , Step Nothing $ OnHit
+          [ Text "Gain 2 vigor. If you or your target is in "
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
-          , Text ", deals dmaage"
+          , Text ", deals damage"
           , Power
-          , Text "and double vigor gain."
+          , Text " and double vigor gain."
           ]
       ]
   }
@@ -60,13 +60,14 @@ interpose = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ TriggerStep
+      [ Step Nothing $ TriggerStep
           [ Text "An ally ends their turn in range." ]
-      , Step $ Eff
+      , Step Nothing $ Eff
           [ Text """
               Dash 2. If you end this move adjacent to that ally,
-              they gain"""
+              they gain """
           , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
+          , Text "."
           ]
       ]
   }
@@ -80,10 +81,10 @@ impel = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ RollStep $ Eff
-          [ Text "Dash 1, then an adjacent foe is"
+      [ Step (Just D6) $ Eff
+          [ Text "Dash 1, then an adjacent foe is "
           , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
-          , Text "and pushed 1 (4+) two or (6+) four spaces."
+          , Text " and pushed 1 (4+) two or (6+) four spaces."
           ]
       ]
   }
@@ -101,13 +102,12 @@ hook = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ Eff
-          [ Text "Pull target 1. They are"
-          , Italic
-              [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
-          , Text "and"
+      [ Step Nothing $ Eff
+          [ Text "Pull target 1. They are "
+          , Italic [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
+          , Text " and "
           , Italic [ Ref (Name "Immune") [ Text "immune" ] ]
-          , Text "to all damage while moving this way."
+          , Text " to all damage while moving this way."
           ]
       ]
   }
@@ -121,13 +121,13 @@ mightyHew = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ AttackStep (Just $ Flat 3) (Just $ Roll 2 D6)
-      , RollStep $ OnHit
-          [ Text "Deal a follow up blow against"
+      [ Step Nothing $ AttackStep (Just $ Flat 3) (Just $ Roll 2 D6)
+      , Step (Just D6) $ OnHit
+          [ Text "Deal a follow up blow against "
           , Italic [ Ref (Name "Afflicted") [ Text "afflicted" ] ]
-          , Text "foes, dealing 2 damage again (5+) and"
+          , Text " foes, dealing 2 damage again (5+) and "
           , Italic [ Ref (Name "Stun") [ Text "stunning" ] ]
-          , Text "them."
+          , Text " them."
           ]
       ]
   }
@@ -142,19 +142,19 @@ secondWind = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ RollStep $ Eff
+      [ Step (Just D6) $ Eff
           [ Text """
               Gain 2 vigor and end a negative status token. If
-              you're in"""
+              you're in """
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
-          , Text "increase vigor by +"
+          , Text " increase vigor by +"
           , Dice 1 D6
           , Text "."
           ]
-      , Step $ Eff
-          [ Text "Gain"
+      , Step Nothing $ Eff
+          [ Text "Gain "
           , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
-          , Text "or grant it to an adjacent ally. Then"
+          , Text " or grant it to an adjacent ally. Then "
           , Bold [ Text "end your turn" ]
           , Text "."
           ] 
@@ -174,14 +174,14 @@ shatter = Ability
   , summon: Nothing
   , sub: Nothing
   , steps:
-      [ Step $ AreaEff [ Dice 1 D6, Text "+2 damage, push 1." ]
-      , Step $ Eff
+      [ Step Nothing $ AreaEff [ Dice 1 D6, Text "+2 damage, push 1." ]
+      , Step Nothing $ Eff
           [ Text """
-              If you catch three or more characters in the area, "
+              If you catch three or more characters in the area,
               increase area damage by +2."""
           ]
-      , Step $ Eff
-          [ Text "One character in the area is"
+      , Step Nothing $ Eff
+          [ Text "One character in the area is "
           , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
           , Text "."
           ]

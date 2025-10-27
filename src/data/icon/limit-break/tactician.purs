@@ -33,7 +33,7 @@ mightyCommand = LimitBreak
       , summon: Nothing
       , sub: Nothing
       , steps:
-          [ Step $ Eff
+          [ Step Nothing $ Eff
               [ Text """
                   Every other character on the battlefield,
                   regardless of range and line of sight is pushed
@@ -42,9 +42,9 @@ mightyCommand = LimitBreak
                   choose different directions for each character.
                   """
               ]
-          , Step $ Eff
+          , Step Nothing $ Eff
               [ Text "Bloodied characters or pushed +2 spaces." ]
-          , Step $ Eff
+          , Step Nothing $ Eff
               [ Text "Foes in"
               , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
               , Text "are additionally"

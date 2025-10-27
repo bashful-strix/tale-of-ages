@@ -19,10 +19,10 @@ import ToA.Data.Icon.Class (Class)
 import ToA.Data.Icon.Classes (classes)
 import ToA.Data.Icon.Job (Job)
 import ToA.Data.Icon.Jobs (jobs)
+import ToA.Data.Icon.Keyword (Keyword)
 import ToA.Data.Icon.Keywords (keywords)
 import ToA.Data.Icon.LimitBreak (LimitBreak)
 import ToA.Data.Icon.LimitBreaks (limitBreaks)
-import ToA.Data.Icon.Name (Name)
 import ToA.Data.Icon.Soul (Soul)
 import ToA.Data.Icon.Souls (souls)
 import ToA.Data.Icon.Talent (Talent)
@@ -52,7 +52,7 @@ type Icon =
   , talents :: Array Talent
   , abilities :: Array Ability
   , limitBreaks :: Array LimitBreak
-  , keywords :: Array Name
+  , keywords :: Array Keyword
   }
 
 _classes :: Lens' Icon (Array Class)
@@ -76,5 +76,5 @@ _abilities = key @"abilities"
 _limitBreak :: Lens' Icon (Array LimitBreak)
 _limitBreak = key @"limitBreaks"
 
-_keywords :: Lens' Icon (Array Name)
+_keywords :: Lens' Icon (Array Keyword)
 _keywords = key @"keywords"

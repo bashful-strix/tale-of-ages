@@ -16,7 +16,7 @@ tactician = Job
   , soul: Name "Knight"
   , class: Name "Stalwart"
   , description:
-      "Veterans, advisors, and upstart geniuses, teacticians "
+      "Veterans, advisors, and upstart geniuses, tacticians "
         <> "wield their understanding of battle like a well "
         <> "balanced blade. The hammering of metal on metal and "
         <> "cries of men and horses beat like a drum for them, "
