@@ -9,7 +9,12 @@ module ToA.Data.Icon.Ability
   , Tag(..)
   , Target(..)
 
+  , AbilityData
+
+  , _Ability
+  , _LimitBreak
   , _action
+  , _resolve
   , _steps
   , _sub
   , _summon
@@ -18,10 +23,12 @@ module ToA.Data.Icon.Ability
 
 import Prelude
 
-import Data.Lens (Lens')
-import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (Maybe)
-import Data.Newtype (class Newtype)
+import Data.Lens (Lens', _1, _2)
+import Data.Lens.AffineTraversal (AffineTraversal')
+import Data.Lens.Lens (lens', lensStore)
+import Data.Lens.Prism (Prism', prism')
+import Data.Maybe (Maybe(..))
+import Data.Tuple.Nested (type (/\))
 
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Dice (Die)
@@ -29,48 +36,90 @@ import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 import ToA.Util.Optic (key)
 
-newtype Ability = Ability
+type AbilityData a =
   { name :: Name
   , description :: Markup
-  , action :: Action
+  , cost :: a
   , tags :: Array Tag
   , summon :: Maybe Name
   , sub :: Maybe Name
   , steps :: Array Step
   }
 
-derive instance Newtype Ability _
+data Ability
+  = Ability (AbilityData Action)
+  | LimitBreak (AbilityData (Action /\ Int))
+
 instance Eq Ability where
   eq (Ability { name: n }) (Ability { name: m }) = n == m
+  eq (LimitBreak { name: n }) (LimitBreak { name: m }) = n == m
+  eq _ _ = false
 
 instance Named Ability where
   getName (Ability { name }) = name
+  getName (LimitBreak { name }) = name
   setName (Ability a) n = Ability a { name = n }
+  setName (LimitBreak a) n = LimitBreak a { name = n }
 
 instance Described Ability Markup where
   getDesc (Ability { description }) = description
+  getDesc (LimitBreak { description }) = description
   setDesc (Ability a) d = Ability a { description = d }
+  setDesc (LimitBreak a) d = LimitBreak a { description = d }
+
+_Ability :: Prism' Ability (AbilityData Action)
+_Ability = prism' Ability case _ of
+  Ability a -> Just a
+  _ -> Nothing
+
+_LimitBreak :: Prism' Ability (AbilityData (Action /\ Int))
+_LimitBreak = prism' LimitBreak case _ of
+  LimitBreak a -> Just a
+  _ -> Nothing
 
 _action :: Lens' Ability Action
-_action = _Newtype <<< key @"action"
+_action = lens' case _ of
+  Ability a -> map Ability <$> lensStore k a
+  LimitBreak a -> map LimitBreak <$> lensStore (k <<< _1) a
+  where
+  k = key @"cost"
+
+_resolve :: AffineTraversal' Ability Int
+_resolve = _LimitBreak <<< key @"cost" <<< _2
 
 _tags :: Lens' Ability (Array Tag)
-_tags = _Newtype <<< key @"tags"
+_tags = lens' case _ of
+  Ability a -> map Ability <$> lensStore k a
+  LimitBreak a -> map LimitBreak <$> lensStore k a
+  where
+  k = key @"tags"
 
 _summon :: Lens' Ability (Maybe Name)
-_summon = _Newtype <<< key @"summon"
+_summon = lens' case _ of
+  Ability a -> map Ability <$> lensStore k a
+  LimitBreak a -> map LimitBreak <$> lensStore k a
+  where
+  k = key @"summon"
 
 _sub :: Lens' Ability (Maybe Name)
-_sub = _Newtype <<< key @"sub"
+_sub = lens' case _ of
+  Ability a -> map Ability <$> lensStore k a
+  LimitBreak a -> map LimitBreak <$> lensStore k a
+  where
+  k = key @"sub"
 
 _steps :: Lens' Ability (Array Step)
-_steps = _Newtype <<< key @"steps"
+_steps = lens' case _ of
+  Ability a -> map Ability <$> lensStore k a
+  LimitBreak a -> map LimitBreak <$> lensStore k a
+  where
+  k = key @"steps"
 
 data Action
- = Quick
- | One
- | Two
- | Interrupt Int
+  = Quick
+  | One
+  | Two
+  | Interrupt Int
 
 data Range
   = Range Int Int

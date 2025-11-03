@@ -31,7 +31,7 @@ furor :: Ability
 furor = Ability
   { name: Name "Furor"
   , description: [ Text "Strike with your heart." ]
-  , action: One
+  , cost: One
   , tags: [ Attack, RangeTag Melee ]
   , summon: Nothing
   , sub: Nothing
@@ -55,7 +55,7 @@ interpose = Ability
           """You are able to step quickly and rapidly in the midst of
           combat."""
       ]
-  , action: One
+  , cost: One
   , tags: [ RangeTag (Range 1 3), TargetTag Ally ]
   , summon: Nothing
   , sub: Nothing
@@ -76,7 +76,7 @@ impel :: Ability
 impel = Ability
   { name: Name "Impel"
   , description: [ Text "Hurl headlong into battle." ]
-  , action: One
+  , cost: One
   , tags: [ RangeTag Melee, TargetTag Foe ]
   , summon: Nothing
   , sub: Nothing
@@ -96,7 +96,7 @@ hook = Ability
       [ Text
           "You grab an ally and pull them from the teeth of the enemy."
       ]
-  , action: Quick
+  , cost: Quick
   , tags: [ RangeTag (Range 2 3), TargetTag Ally ]
   , summon: Nothing
   , sub: Nothing
@@ -115,7 +115,7 @@ mightyHew :: Ability
 mightyHew = Ability
   { name: Name "Mighty Hew"
   , description: [ Text "Finish them." ]
-  , action: Two
+  , cost: Two
   , tags: [ Attack, RangeTag Melee ]
   , summon: Nothing
   , sub: Nothing
@@ -136,7 +136,7 @@ secondWind = Ability
   { name: Name "Second Wind"
   , description:
       [ Text "You brace and ready yourself for the fray." ]
-  , action: One
+  , cost: One
   , tags: [ End, TargetTag Self ]
   , summon: Nothing
   , sub: Nothing
@@ -167,7 +167,7 @@ shatter = Ability
       [ Text
           "Slam your weapon into the ground, sending up shockwaves."
       ]
-  , action: Two
+  , cost: Two
   , tags: [ Close, AreaTag (Blast 3) ]
   , summon: Nothing
   , sub: Nothing

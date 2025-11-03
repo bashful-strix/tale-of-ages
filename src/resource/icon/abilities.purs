@@ -13,7 +13,8 @@ import ToA.Resource.Icon.Ability.Stalwart
   , shatter
   )
 import ToA.Resource.Icon.Ability.Tactician
-  ( pincerAttack
+  ( mightyCommand
+  , pincerAttack
   , baitAndSwitch
   , holdTheCenter
   , mightyStandard
@@ -29,6 +30,7 @@ abilities =
   , secondWind
   , shatter
 
+  , mightyCommand
   , pincerAttack
   , baitAndSwitch
   , holdTheCenter

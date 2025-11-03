@@ -1,5 +1,6 @@
 module ToA.Resource.Icon.Ability.Tactician
-  ( pincerAttack
+  ( mightyCommand
+  , pincerAttack
   , baitAndSwitch
   , holdTheCenter
   , mightyStandard
@@ -8,6 +9,7 @@ module ToA.Resource.Icon.Ability.Tactician
 import Prelude
 
 import Data.Maybe (Maybe(..))
+import Data.Tuple.Nested ((/\))
 
 import ToA.Data.Icon.Ability
   ( Ability(..)
@@ -23,6 +25,39 @@ import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
 
+mightyCommand :: Ability
+mightyCommand = LimitBreak
+  { name: Name "Mighty Command"
+  , description:
+      [ Text
+          """You issue an earth shattering command, breaking enemy
+          morale and driving your allies on."""
+      ]
+  , cost: One /\ 2
+  , tags: [ TargetTag Ally, TargetTag Foe ]
+  , summon: Nothing
+  , sub: Nothing
+  , steps:
+      [ Step Nothing $ Eff
+          [ Text
+              """Every other character on the battlefield,
+              regardless of range and line of sight is pushed or
+              pulled 1 space in any direction of your choice. You
+              may move them in any order, and may choose different
+              directions for each character."""
+          ]
+      , Step Nothing $ Eff
+          [ Text "Bloodied characters or pushed +2 spaces." ]
+      , Step Nothing $ Eff
+          [ Text "Foes in "
+          , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
+          , Text " are additionally "
+          , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
+          , Text "."
+          ]
+      ]
+  }
+
 pincerAttack :: Ability
 pincerAttack = Ability
   { name: Name "Pincer Attack"
@@ -31,7 +66,7 @@ pincerAttack = Ability
           """Your weapon finds every weakness, driving your foe
           straight into your waiting ally."""
       ]
-  , action: One
+  , cost: One
   , tags: [ Attack, RangeTag Melee ]
   , summon: Nothing
   , sub: Nothing
@@ -61,7 +96,7 @@ baitAndSwitch = Ability
           """You lay a trap for your foe, striking when they
           overextend themselves."""
       ]
-  , action: One
+  , cost: One
   , tags: [ RangeTag (Range 1 2), TargetTag Ally ]
   , summon: Nothing
   , sub: Nothing
@@ -86,7 +121,7 @@ holdTheCenter = Ability
           """You brace with a shield or armor, strengthening your
           formation against incoming blows."""
       ]
-  , action: Interrupt 1
+  , cost: Interrupt 1
   , tags: [ TargetTag Ally, RangeTag Adjacent ]
   , summon: Nothing
   , sub: Nothing
@@ -115,7 +150,7 @@ mightyStandard = Ability
           """You place your banner, striking fear into the hearts of
           your foes."""
       ]
-  , action: One
+  , cost: One
   , tags: [ KeywordTag (Name "Zone"), RangeTag (Range 1 3), End ]
   , summon: Nothing
   , sub: Nothing

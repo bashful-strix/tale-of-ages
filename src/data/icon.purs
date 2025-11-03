@@ -6,7 +6,6 @@ module ToA.Data.Icon
   , _traits
   , _talents
   , _abilities
-  , _limitBreak
   , _keywords
   ) where
 
@@ -16,7 +15,6 @@ import ToA.Data.Icon.Ability (Ability)
 import ToA.Data.Icon.Class (Class)
 import ToA.Data.Icon.Job (Job)
 import ToA.Data.Icon.Keyword (Keyword)
-import ToA.Data.Icon.LimitBreak (LimitBreak)
 import ToA.Data.Icon.Soul (Soul)
 import ToA.Data.Icon.Talent (Talent)
 import ToA.Data.Icon.Trait (Trait)
@@ -30,7 +28,6 @@ type Icon =
   , traits :: Array Trait
   , talents :: Array Talent
   , abilities :: Array Ability
-  , limitBreaks :: Array LimitBreak
   , keywords :: Array Keyword
   }
 
@@ -51,9 +48,6 @@ _talents = key @"talents"
 
 _abilities :: Lens' Icon (Array Ability)
 _abilities = key @"abilities"
-
-_limitBreak :: Lens' Icon (Array LimitBreak)
-_limitBreak = key @"limitBreaks"
 
 _keywords :: Lens' Icon (Array Keyword)
 _keywords = key @"keywords"

@@ -46,6 +46,7 @@ import ToA.Data.Icon.Ability
   , Tag(..)
   , Target(..)
   , _action
+  , _resolve
   , _steps
   , _summon
   , _tags
@@ -587,32 +588,34 @@ renderAbility a =
                       One -> "1 action"
                       Two -> "2 actions"
                       Interrupt n -> "Interrupt " <> show n
-                  ] <>
-                    ( a # _tags <<< traversed #~ pure <<< case _ of
-                        Attack -> "Attack"
-                        End -> "End"
-                        Close -> "Close"
-                        RangeTag r -> case r of
-                          Range i j -> "Range " <> show i <> "-" <> show j
-                          Melee -> "Melee"
-                          Adjacent -> "Adjacent"
-                        AreaTag p -> case p of
-                          Line n -> "Line " <> show n
-                          Arc n -> "Arc " <> show n
-                          Blast n -> "Blast " <> show n
-                          Burst n x -> "Burst " <> show n <> "("
-                            <> (if x then "self" else "target")
-                            <> ")"
-                          Cross n -> "Cross " <> show n
-                        TargetTag t -> case t of
-                          Self -> "Self"
-                          Ally -> "Ally"
-                          Foe -> "Foe"
-                          Summon -> "Summon"
-                          Space -> "Space"
-                          Object -> "Object"
-                        KeywordTag k -> k ^. simple _Newtype
-                    )
+                  ]
+                    <> (a # _resolve #~ pure <<< (_ <> " resolve") <<< show)
+                    <>
+                      ( a # _tags <<< traversed #~ pure <<< case _ of
+                          Attack -> "Attack"
+                          End -> "End"
+                          Close -> "Close"
+                          RangeTag r -> case r of
+                            Range i j -> "Range " <> show i <> "-" <> show j
+                            Melee -> "Melee"
+                            Adjacent -> "Adjacent"
+                          AreaTag p -> case p of
+                            Line n -> "Line " <> show n
+                            Arc n -> "Arc " <> show n
+                            Blast n -> "Blast " <> show n
+                            Burst n x -> "Burst " <> show n <> "("
+                              <> (if x then "self" else "target")
+                              <> ")"
+                            Cross n -> "Cross " <> show n
+                          TargetTag t -> case t of
+                            Self -> "Self"
+                            Ally -> "Ally"
+                            Foe -> "Foe"
+                            Summon -> "Summon"
+                            Space -> "Space"
+                            Object -> "Object"
+                          KeywordTag k -> k ^. simple _Newtype
+                      )
             ]
         ]
 
