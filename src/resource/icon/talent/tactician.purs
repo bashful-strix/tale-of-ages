@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Talent.Tactician
+module ToA.Resource.Icon.Talent.Tactician
   ( mastermind
   , spur
   , fieldwork

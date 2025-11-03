@@ -1,9 +1,9 @@
-module ToA.Data.Icon.Talents
+module ToA.Resource.Icon.Talents
   ( talents
   ) where
 
 import ToA.Data.Icon.Talent (Talent)
-import ToA.Data.Icon.Talent.Tactician (fieldwork, mastermind, spur)
+import ToA.Resource.Icon.Talent.Tactician (fieldwork, mastermind, spur)
 
 talents :: Array Talent
 talents =

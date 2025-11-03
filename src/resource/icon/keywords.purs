@@ -1,9 +1,9 @@
-module ToA.Data.Icon.Keywords
+module ToA.Resource.Icon.Keywords
   ( keywords
   ) where
 
 import ToA.Data.Icon.Keyword (Keyword)
-import ToA.Data.Icon.Keyword.Status
+import ToA.Resource.Icon.Keyword.Status
   ( strength
   , keen
   , shield
@@ -15,7 +15,7 @@ import ToA.Data.Icon.Keyword.Status
   , slow
   , stun
   )
-import ToA.Data.Icon.Keyword.Tag
+import ToA.Resource.Icon.Keyword.Tag
   ( immobile
   , push
   , stance

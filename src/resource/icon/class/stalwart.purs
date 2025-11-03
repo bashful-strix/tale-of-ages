@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Class.Stalwart
+module ToA.Resource.Icon.Class.Stalwart
   ( stalwart
   ) where
 

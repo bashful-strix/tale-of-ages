@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Traits
+module ToA.Resource.Icon.Traits
   ( traits
   ) where
 

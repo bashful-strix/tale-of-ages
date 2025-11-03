@@ -1,9 +1,9 @@
-module ToA.Data.Icon.LimitBreaks
+module ToA.Resource.Icon.LimitBreaks
   ( limitBreaks
   ) where
 
 import ToA.Data.Icon.LimitBreak (LimitBreak)
-import ToA.Data.Icon.LimitBreak.Tactician (mightyCommand)
+import ToA.Resource.Icon.LimitBreak.Tactician (mightyCommand)
 
 limitBreaks :: Array LimitBreak
 limitBreaks =

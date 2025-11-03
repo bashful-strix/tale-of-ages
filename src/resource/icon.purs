@@ -1,5 +1,6 @@
-module ToA.Data.Icon
+module ToA.Resource.Icon
   ( Icon
+  , icon
   , _classes
   , _souls
   , _jobs
@@ -21,7 +22,28 @@ import ToA.Data.Icon.Soul (Soul)
 import ToA.Data.Icon.Talent (Talent)
 import ToA.Data.Icon.Trait (Trait)
 
+import ToA.Resource.Icon.Abilities (abilities)
+import ToA.Resource.Icon.Classes (classes)
+import ToA.Resource.Icon.Jobs (jobs)
+import ToA.Resource.Icon.Keywords (keywords)
+import ToA.Resource.Icon.LimitBreaks (limitBreaks)
+import ToA.Resource.Icon.Souls (souls)
+import ToA.Resource.Icon.Talents (talents)
+import ToA.Resource.Icon.Traits (traits)
+
 import ToA.Util.Optic (key)
+
+icon :: Icon
+icon =
+  { classes
+  , souls
+  , jobs
+  , traits
+  , talents
+  , abilities
+  , limitBreaks
+  , keywords
+  }
 
 type Icon =
   { classes :: Array Class

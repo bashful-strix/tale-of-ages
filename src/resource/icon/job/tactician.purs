@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Job.Tactician
+module ToA.Resource.Icon.Job.Tactician
   ( tactician
   ) where
 

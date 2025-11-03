@@ -1,9 +1,9 @@
-module ToA.Data.Icon.Jobs
+module ToA.Resource.Icon.Jobs
   ( jobs
   ) where
 
 import ToA.Data.Icon.Job (Job)
-import ToA.Data.Icon.Job.Tactician (tactician)
+import ToA.Resource.Icon.Job.Tactician (tactician)
 
 jobs :: Array Job
 jobs =

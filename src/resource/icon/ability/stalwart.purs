@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Ability.Stalwart
+module ToA.Resource.Icon.Ability.Stalwart
   ( furor
   , interpose
   , impel

@@ -30,8 +30,8 @@ import ToA.Capability.Log (LOG, debug, error, info, runLog, warn)
 import ToA.Capability.Navigate (NAVIGATE, matchRoutes, navigate, runNavigate)
 import ToA.Capability.Storage (STORAGE, delete, read, runStorage, write)
 import ToA.Capability.Theme (THEME, readStorage, readSystem, save, runTheme)
-import ToA.Data.Icon (icon)
 import ToA.Data.Log (Level(Debug))
+import ToA.Resource.Icon (icon)
 
 main :: Effect Unit
 main = do

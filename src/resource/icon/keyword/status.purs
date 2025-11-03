@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Keyword.Status
+module ToA.Resource.Icon.Keyword.Status
   ( strength
   , keen
   , shield

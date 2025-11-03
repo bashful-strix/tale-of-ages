@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Soul.Knight
+module ToA.Resource.Icon.Soul.Knight
   ( knight
   ) where
 

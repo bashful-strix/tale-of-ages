@@ -1,4 +1,4 @@
-module ToA.Data.Icon.LimitBreak.Tactician
+module ToA.Resource.Icon.LimitBreak.Tactician
   ( mightyCommand
   ) where
 

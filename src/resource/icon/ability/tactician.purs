@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Ability.Tactician
+module ToA.Resource.Icon.Ability.Tactician
   ( pincerAttack
   , baitAndSwitch
   , holdTheCenter

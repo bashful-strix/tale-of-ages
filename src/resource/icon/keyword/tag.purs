@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Keyword.Tag
+module ToA.Resource.Icon.Keyword.Tag
   ( immobile
   , push
   , stance

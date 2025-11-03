@@ -1,9 +1,9 @@
-module ToA.Data.Icon.Souls
+module ToA.Resource.Icon.Souls
   ( souls
   ) where
 
 import ToA.Data.Icon.Soul (Soul)
-import ToA.Data.Icon.Soul.Knight (knight)
+import ToA.Resource.Icon.Soul.Knight (knight)
 
 souls :: Array Soul
 souls =

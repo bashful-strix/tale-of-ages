@@ -1,9 +1,9 @@
-module ToA.Data.Icon.Abilities
+module ToA.Resource.Icon.Abilities
   ( abilities
   ) where
 
 import ToA.Data.Icon.Ability (Ability)
-import ToA.Data.Icon.Ability.Stalwart
+import ToA.Resource.Icon.Ability.Stalwart
   ( furor
   , interpose
   , impel
@@ -12,7 +12,7 @@ import ToA.Data.Icon.Ability.Stalwart
   , secondWind
   , shatter
   )
-import ToA.Data.Icon.Ability.Tactician
+import ToA.Resource.Icon.Ability.Tactician
   ( pincerAttack
   , baitAndSwitch
   , holdTheCenter
