@@ -8,12 +8,13 @@ import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Class (class Classed)
 import ToA.Data.Icon.Description (class Described)
+import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 
 newtype Soul = Soul
   { name :: Name
   , class :: Name
-  , description :: String
+  , description :: Markup
   }
 
 derive instance Newtype Soul _
@@ -28,6 +29,6 @@ instance Classed Soul where
   getClass (Soul s) = s.class
   setClass (Soul s) c = Soul s { class = c }
 
-instance Described Soul String where
+instance Described Soul Markup where
   getDesc (Soul { description }) = description
   setDesc (Soul s) d = Soul s { description = d }

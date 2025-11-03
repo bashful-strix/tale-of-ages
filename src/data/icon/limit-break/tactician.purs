@@ -24,9 +24,9 @@ mightyCommand = LimitBreak
   , ability: Ability
       { name: Name "Mighty Command"
       , description:
-          [ Text """
-              You issue an earth shattering command, breaking
-              enemy morale and driving your allies on."""
+          [ Text
+              """You issue an earth shattering command, breaking enemy
+              morale and driving your allies on."""
           ]
       , action: One
       , tags: [ TargetTag Ally, TargetTag Foe ]
@@ -34,13 +34,12 @@ mightyCommand = LimitBreak
       , sub: Nothing
       , steps:
           [ Step Nothing $ Eff
-              [ Text """
-                  Every other character on the battlefield,
-                  regardless of range and line of sight is pushed
-                  or pulled 1 space in any direction of your
-                  choice. You may move them in any order, and may
-                  choose different directions for each character.
-                  """
+              [ Text
+                  """Every other character on the battlefield,
+                  regardless of range and line of sight is pushed or
+                  pulled 1 space in any direction of your choice. You
+                  may move them in any order, and may choose different
+                  directions for each character."""
               ]
           , Step Nothing $ Eff
               [ Text "Bloodied characters or pushed +2 spaces." ]

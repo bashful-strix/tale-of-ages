@@ -19,17 +19,9 @@ import ToA.Util.Html (css_)
 markup :: Markup -> Nut
 markup = foldMap $ case _ of
   Text text -> D.span [] [ D.text_ text ]
-
-  List kind items -> case kind of
-    Ordered ->
-      D.ol [] $ items <#> \item ->
-        D.li [ css_ [ "list-decimal" ] ] [ markup item ]
-    Unordered ->
-      D.ul [] $ items <#> \item ->
-        D.li [ css_ [ "list-disc" ] ] [ markup item ]
-
-  Ref ref text ->
-    D.span [ DA.title_ (ref ^. simple _Newtype) ] [ markup text ]
+  Bold text -> D.span [ css_ [ "font-bold" ] ] [ markup text ]
+  Italic text -> D.span [ css_ [ "italic" ] ] [ markup text ]
+  Newline -> D.br [] []
 
   Power -> D.span [] [ D.text_ "[+]" ]
   Weakness -> D.span [] [ D.text_ "[-]" ]
@@ -37,7 +29,15 @@ markup = foldMap $ case _ of
   Dice n d ->
     D.span [] [ D.text_ $ show n <> show d ]
 
-  Bold text -> D.span [ css_ [ "font-bold" ] ] [ markup text ]
-  Italic text -> D.span [ css_ [ "italic" ] ] [ markup text ]
+  Ref ref text ->
+    D.span [ DA.title_ (ref ^. simple _Newtype) ] [ markup text ]
 
-  Newline -> D.br [] []
+  List kind items ->
+    D.ol
+      [ css_
+          [ "ml-4"
+          , case kind of
+              Ordered -> "list-decimal"
+              Unordered -> "list-disc"
+          ]
+      ] $ items <#> \item -> D.li [] [ markup item ]

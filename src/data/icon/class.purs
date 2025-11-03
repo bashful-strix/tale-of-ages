@@ -23,17 +23,18 @@ import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Description (class Described)
+import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 import ToA.Data.Icon.Trait (class Traited)
 import ToA.Util.Optic (key)
 
 newtype Class = Class
   { name :: Name
-  , tagline :: String
-  , strengths :: String
-  , weaknesses :: String
-  , complexity :: String
-  , description :: String
+  , tagline :: Markup
+  , strengths :: Markup
+  , weaknesses :: Markup
+  , complexity :: Markup
+  , description :: Markup
   , move :: Int
   , hp :: Int
   , defense :: Int
@@ -51,7 +52,7 @@ instance Named Class where
   getName (Class { name }) = name
   setName (Class c) n = Class c { name = n }
 
-instance Described Class String where
+instance Described Class Markup where
   getDesc (Class { description }) = description
   setDesc (Class c) d = Class c { description = d }
 
@@ -59,16 +60,16 @@ instance Traited Class where
   getTrait (Class { trait }) = trait
   setTrait (Class j) d = Class j { trait = d }
 
-_tagline :: Lens' Class String
+_tagline :: Lens' Class Markup
 _tagline = _Newtype <<< key @"tagline"
 
-_strengths :: Lens' Class String
+_strengths :: Lens' Class Markup
 _strengths = _Newtype <<< key @"strengths"
 
-_weaknesses :: Lens' Class String
+_weaknesses :: Lens' Class Markup
 _weaknesses = _Newtype <<< key @"weaknesses"
 
-_complexity :: Lens' Class String
+_complexity :: Lens' Class Markup
 _complexity = _Newtype <<< key @"complexity"
 
 _move :: Lens' Class Int

@@ -27,8 +27,8 @@ pincerAttack :: Ability
 pincerAttack = Ability
   { name: Name "Pincer Attack"
   , description:
-      [ Text """
-          Your weapon finds every weakness, driving your foe
+      [ Text
+          """Your weapon finds every weakness, driving your foe
           straight into your waiting ally."""
       ]
   , action: One
@@ -38,16 +38,17 @@ pincerAttack = Ability
   , steps:
       [ Step Nothing $ AttackStep (Just $ Flat 1) (Just $ Roll 1 D3)
       , Step Nothing $ OnHit
-          [ Text """
-              Push 1. If your foe would be pushed into an ally's
+          [ Text
+              """Push 1. If your foe would be pushed into an ally's
               space, that ally deals 2 """
           , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
           , Text " damage to that foe and gains "
           , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
-          , Text """.
-              Double these effects if your ally or you target is
+          , Text
+              """. Double these effects if your ally or you target is
               in """
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
+          , Text "."
           ]
       ]
   }
@@ -56,8 +57,8 @@ baitAndSwitch :: Ability
 baitAndSwitch = Ability
   { name: Name "Bait and Switch"
   , description:
-      [ Text """
-          You lay a trap for your foe, striking when they
+      [ Text
+          """You lay a trap for your foe, striking when they
           overextend themselves."""
       ]
   , action: One
@@ -67,10 +68,10 @@ baitAndSwitch = Ability
   , steps:
       [ Step Nothing $ Eff [ Text "Swap places with an ally in range." ]
       , Step Nothing $ Eff
-          [ Text """
-              If your ally was adjacent to at least one foe, you
-              may then deal 2 damage to one of those foes after
-              swapping and """
+          [ Text
+              """If your ally was adjacent to at least one foe, you may
+              then deal 2 damage to one of those foes after swapping
+              and """
           , Italic [ Ref (Name "Daze") [ Text "daze" ] ]
           , Text " them."
           ]
@@ -81,8 +82,8 @@ holdTheCenter :: Ability
 holdTheCenter = Ability
   { name: Name "Hold the Center"
   , description:
-      [ Text """
-          You brace with a shield or armor, strengthening your
+      [ Text
+          """You brace with a shield or armor, strengthening your
           formation against incoming blows."""
       ]
   , action: Interrupt 1
@@ -93,10 +94,10 @@ holdTheCenter = Ability
       [ Step Nothing $ TriggerStep
           [ Text "An adjacent ally is damaged." ]
       , Step (Just D6) $ Eff
-          [ Text """
-              Reduce that damage by the number of adjacent allies
-              to you, then push all adjacent foes 1, (4+) two, or
-              (6+) four spaces."""
+          [ Text
+              """Reduce that damage by the number of adjacent allies
+              to you, then push all adjacent foes 1, (4+) two, or (6+)
+              four spaces."""
           ]
       , Step Nothing $ Eff
           [ Text "If that ally was in "
@@ -110,8 +111,8 @@ mightyStandard :: Ability
 mightyStandard = Ability
   { name: Name "Mighty Standard"
   , description:
-      [ Text """
-          You place your banner, striking fear into the hearts of
+      [ Text
+          """You place your banner, striking fear into the hearts of
           your foes."""
       ]
   , action: One
@@ -123,23 +124,22 @@ mightyStandard = Ability
           [ Bold [ Text "End your turn" ]
           , Text " and designate a blast 3 "
           , Italic [ Ref (Name "Zone") [ Text "zone" ] ]
-          , Text """
-              with at least one space in range, which could overlap
+          , Text
+              """ with at least one space in range, which could overlap
               characters. Allies that end their turn inside the
               zone gain """
           , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
           , Text ". If they are in "
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
-          , Text """,
-              they also gain +1 armor while inside the zone."""
+          , Text
+              ", they also gain +1 armor while inside the zone."
           ]
       , Step (Just D3) $ Eff
-          [ Text """
-              While inside the zone, you can pick up the banner as
-              a """
+          [ Text
+              "While inside the zone, you can pick up the banner as a "
           , Bold [ Text "quick" ]
-          , Text """
-              ability and swing it, pushing all other characters
+          , Text
+              """ ability and swing it, pushing all other characters
               inside """
           , Italic [ Dice 1 D3 ]
           , Text ", but removing the zone. Foes pushed are "

@@ -51,8 +51,8 @@ interpose :: Ability
 interpose = Ability
   { name: Name "Interpose"
   , description:
-      [ Text """
-          You are able to step quickly and rapidly in the midst of
+      [ Text
+          """You are able to step quickly and rapidly in the midst of
           combat."""
       ]
   , action: One
@@ -63,8 +63,8 @@ interpose = Ability
       [ Step Nothing $ TriggerStep
           [ Text "An ally ends their turn in range." ]
       , Step Nothing $ Eff
-          [ Text """
-              Dash 2. If you end this move adjacent to that ally,
+          [ Text
+              """Dash 2. If you end this move adjacent to that ally,
               they gain """
           , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
           , Text "."
@@ -93,9 +93,8 @@ hook :: Ability
 hook = Ability
   { name: Name "Hook"
   , description:
-      [ Text """
-          You grab an ally and pull them from the teeth of the
-          enemy."""
+      [ Text
+          "You grab an ally and pull them from the teeth of the enemy."
       ]
   , action: Quick
   , tags: [ RangeTag (Range 2 3), TargetTag Ally ]
@@ -143,8 +142,8 @@ secondWind = Ability
   , sub: Nothing
   , steps:
       [ Step (Just D6) $ Eff
-          [ Text """
-              Gain 2 vigor and end a negative status token. If
+          [ Text
+              """Gain 2 vigor and end a negative status token. If
               you're in """
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
           , Text " increase vigor by +"
@@ -165,9 +164,8 @@ shatter :: Ability
 shatter = Ability
   { name: Name "Shatter"
   , description:
-      [ Text """
-          Slam your weapon into the ground, sending up
-          shockwaves."""
+      [ Text
+          "Slam your weapon into the ground, sending up shockwaves."
       ]
   , action: Two
   , tags: [ Close, AreaTag (Blast 3) ]
@@ -176,8 +174,8 @@ shatter = Ability
   , steps:
       [ Step Nothing $ AreaEff [ Dice 1 D6, Text "+2 damage, push 1." ]
       , Step Nothing $ Eff
-          [ Text """
-              If you catch three or more characters in the area,
+          [ Text
+              """If you catch three or more characters in the area,
               increase area damage by +2."""
           ]
       , Step Nothing $ Eff

@@ -12,11 +12,12 @@ import Data.Lens (Lens', lens)
 import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Description (class Described)
+import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 
 newtype Trait = Trait
   { name :: Name
-  , description :: String
+  , description :: Markup
   }
 
 derive instance Newtype Trait _
@@ -27,7 +28,7 @@ instance Named Trait where
   getName (Trait { name }) = name
   setName (Trait t) n = Trait t { name = n }
 
-instance Described Trait String where
+instance Described Trait Markup where
   getDesc (Trait { description }) = description
   setDesc (Trait t) d = Trait t { description = d }
 

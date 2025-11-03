@@ -213,7 +213,7 @@ renderClassStats icon name = icon <#~> \{ classes, keywords, traits } ->
           [ D.h3
               [ css_ [ "bg-red-600", "text-white", "font-bold" ] ]
               [ D.text_ $ viewName c ]
-          , D.h4 [ css_ [ "italic" ] ] [ D.text_ $ c ^. _tagline ]
+          , D.h4 [ css_ [ "italic" ] ] [ c # _tagline #~ markup ]
           ]
 
       , D.div
@@ -250,7 +250,7 @@ renderClassStats icon name = icon <#~> \{ classes, keywords, traits } ->
                       [ D.span
                           [ css_ [ "font-bold" ] ]
                           [ D.text_ "Complexity: " ]
-                      , D.text_ $ c ^. _complexity
+                      , c # _complexity #~ markup
                       ]
                   ]
               ]
@@ -262,11 +262,11 @@ renderClassStats icon name = icon <#~> \{ classes, keywords, traits } ->
                   [ D.text_ $ c ^. _trait <<< _Newtype ]
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
-                  [ D.text_ $ traits ^.
+                  [ traits #
                       ( traversed
                           <<< filtered (_name `elemOf` (c ^. _trait))
                           <<< _desc
-                      )
+                      ) #~ markup
                   ]
               ]
 
@@ -295,18 +295,18 @@ renderClassDesc icon name = icon <#~> \{ classes } ->
       [ css_ [ "w-full", "flex", "gap-2" ] ]
       [ D.div
           [ css_ [ "flex", "basis-1/3", "overflow-scroll", "gap-2" ] ]
-          [ D.p [ css_ [ "italic" ] ] [ D.text_ $ c ^. _desc ] ]
+          [ D.p [ css_ [ "italic" ] ] [ c # _desc #~ markup ] ]
 
       , D.div
           [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
           [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Strengths" ]
-          , D.div [ css_ [ "overflow-scroll" ] ] [ D.text_ $ c ^. _strengths ]
+          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _strengths #~ markup ]
           ]
 
       , D.div
           [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
           [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Weaknesses" ]
-          , D.div [ css_ [ "overflow-scroll" ] ] [ D.text_ $ c ^. _weaknesses ]
+          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _weaknesses #~ markup ]
           ]
       ]
 
@@ -402,7 +402,7 @@ renderSoul icon name = icon <#~> \{ jobs, souls } ->
                   [ css_ [ "bg-red-400", "text-white", "font-bold" ] ]
                   [ D.text_ $ viewName s ]
               ]
-          , D.h4 [ css_ [ "italic" ] ] [ D.text_ $ s ^. _desc ]
+          , D.h4 [ css_ [ "italic" ] ] [ s # _desc #~ markup ]
           ]
 
       , D.ul []
@@ -434,7 +434,7 @@ renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
               [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
               [ D.div
                   [ css_ [ "overflow-scroll", "italic" ] ]
-                  [ D.text_ $ j ^. _desc ]
+                  [ j # _desc #~ markup ]
               ]
 
           , D.div
@@ -444,11 +444,11 @@ renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
                   [ D.text_ $ j ^. _trait <<< _Newtype ]
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
-                  [ D.text_ $ traits ^.
+                  [ traits #
                       ( traversed
                           <<< filtered (_name `elemOf` (j ^. _trait))
                           <<< _desc
-                      )
+                      ) #~ markup
                   ]
               ]
 
@@ -472,7 +472,7 @@ renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
                                     [ D.div
                                         [ css_ [ "text-red-600", "font-bold" ] ]
                                         [ D.text_ $ viewName t ]
-                                    , D.div [] [ D.text_ $ t ^. _desc ]
+                                    , D.div [] [ t # _desc #~ markup ]
                                     ]
                   ]
               ]
@@ -571,7 +571,7 @@ renderJobAbilities env@{ icon } path name ability = icon <#~>
 renderAbility :: Ability -> Nut
 renderAbility a =
   D.div
-    []
+    [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
     [ D.h3
         [ css_ [ "bg-red-600", "text-white", "font-bold" ] ]
         [ D.text_ $ viewName a ]
@@ -619,7 +619,8 @@ renderAbility a =
     , D.div [ css_ [ "italic" ] ] [ markup $ a ^. _desc ]
 
     , D.div []
-        [ D.ol []
+        [ D.ol
+            [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
             $ a # _steps <<< traversed #~ pure <<< \(Step d s) ->
                 D.li
                   []

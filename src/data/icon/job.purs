@@ -24,6 +24,7 @@ import Data.Tuple.Nested (type (/\))
 
 import ToA.Data.Icon.Class (class Classed)
 import ToA.Data.Icon.Description (class Described)
+import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 import ToA.Data.Icon.Trait (class Traited)
 import ToA.Util.Optic (key)
@@ -32,7 +33,7 @@ newtype Job = Job
   { name :: Name
   , soul :: Name
   , class :: Name
-  , description :: String
+  , description :: Markup
   , trait :: Name
   , keyword :: Name
   , abilities :: Vect 4 (JobLevel /\ Name)
@@ -52,7 +53,7 @@ instance Classed Job where
   getClass (Job j) = j.class
   setClass (Job j) c = Job j { class = c }
 
-instance Described Job String where
+instance Described Job Markup where
   getDesc (Job { description }) = description
   setDesc (Job j) d = Job j { description = d }
 
