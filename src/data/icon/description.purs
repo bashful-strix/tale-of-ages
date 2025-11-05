@@ -1,15 +1,11 @@
 module ToA.Data.Icon.Description
   ( class Described
-  , getDesc
-  , setDesc
   , _desc
   ) where
 
-import Data.Lens (Lens', lens)
+import Data.Lens (Lens')
 
-class Described a b where
-  getDesc :: a -> b
-  setDesc :: a -> b -> a
+import ToA.Data.Icon.Markup (Markup)
 
-_desc :: ∀ a b. Described a b => Lens' a b
-_desc = lens getDesc setDesc
+class Described a where
+  _desc :: Lens' a Markup

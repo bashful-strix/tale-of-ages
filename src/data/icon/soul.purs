@@ -4,12 +4,14 @@ module ToA.Data.Icon.Soul
 
 import Prelude
 
+import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Class (class Classed)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Util.Optic (key)
 
 newtype Soul = Soul
   { name :: Name
@@ -22,13 +24,10 @@ instance Eq Soul where
   eq (Soul { name: n }) (Soul { name: m }) = n == m
 
 instance Named Soul where
-  getName (Soul { name }) = name
-  setName (Soul s) n = Soul s { name = n }
+  _name = _Newtype <<< key @"name"
 
 instance Classed Soul where
-  getClass (Soul s) = s.class
-  setClass (Soul s) c = Soul s { class = c }
+  _class = _Newtype <<< key @"class"
 
-instance Described Soul Markup where
-  getDesc (Soul { description }) = description
-  setDesc (Soul s) d = Soul s { description = d }
+instance Described Soul where
+  _desc = _Newtype <<< key @"description"

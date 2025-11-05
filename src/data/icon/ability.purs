@@ -56,16 +56,18 @@ instance Eq Ability where
   eq _ _ = false
 
 instance Named Ability where
-  getName (Ability { name }) = name
-  getName (LimitBreak { name }) = name
-  setName (Ability a) n = Ability a { name = n }
-  setName (LimitBreak a) n = LimitBreak a { name = n }
+  _name = lens' case _ of
+    Ability a -> map Ability <$> lensStore k a
+    LimitBreak a -> map LimitBreak <$> lensStore k a
+    where
+    k = key @"name"
 
-instance Described Ability Markup where
-  getDesc (Ability { description }) = description
-  getDesc (LimitBreak { description }) = description
-  setDesc (Ability a) d = Ability a { description = d }
-  setDesc (LimitBreak a) d = LimitBreak a { description = d }
+instance Described Ability where
+  _desc = lens' case _ of
+    Ability a -> map Ability <$> lensStore k a
+    LimitBreak a -> map LimitBreak <$> lensStore k a
+    where
+    k = key @"description"
 
 _Ability :: Prism' Ability (AbilityData Action)
 _Ability = prism' Ability case _ of

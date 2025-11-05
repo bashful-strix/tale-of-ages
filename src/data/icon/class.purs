@@ -1,8 +1,6 @@
 module ToA.Data.Icon.Class
   ( Class(..)
   , class Classed
-  , getClass
-  , setClass
   , _class
   , _tagline
   , _strengths
@@ -18,7 +16,7 @@ module ToA.Data.Icon.Class
 
 import Prelude
 
-import Data.Lens (Lens', lens)
+import Data.Lens (Lens')
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Newtype (class Newtype)
 
@@ -49,16 +47,13 @@ instance Eq Class where
   eq (Class { name: n }) (Class { name: m }) = n == m
 
 instance Named Class where
-  getName (Class { name }) = name
-  setName (Class c) n = Class c { name = n }
+  _name = _Newtype <<< key @"name"
 
-instance Described Class Markup where
-  getDesc (Class { description }) = description
-  setDesc (Class c) d = Class c { description = d }
+instance Described Class where
+  _desc = _Newtype <<< key @"description"
 
 instance Traited Class where
-  getTrait (Class { trait }) = trait
-  setTrait (Class j) d = Class j { trait = d }
+  _trait = _Newtype <<< key @"trait"
 
 _tagline :: Lens' Class Markup
 _tagline = _Newtype <<< key @"tagline"
@@ -91,8 +86,4 @@ _apprentice :: Lens' Class (Array Name)
 _apprentice = _Newtype <<< key @"apprentice"
 
 class Classed a where
-  getClass :: a -> Name
-  setClass :: a -> Name -> a
-
-_class :: ∀ a. Classed a => Lens' a Name
-_class = lens getClass setClass
+  _class :: Lens' a Name

@@ -46,20 +46,16 @@ instance Eq Job where
   eq (Job { name: n }) (Job { name: m }) = n == m
 
 instance Named Job where
-  getName (Job { name }) = name
-  setName (Job j) n = Job j { name = n }
+  _name = _Newtype <<< key @"name"
 
 instance Classed Job where
-  getClass (Job j) = j.class
-  setClass (Job j) c = Job j { class = c }
+  _class = _Newtype <<< key @"class"
 
-instance Described Job Markup where
-  getDesc (Job { description }) = description
-  setDesc (Job j) d = Job j { description = d }
+instance Described Job where
+  _desc = _Newtype <<< key @"description"
 
 instance Traited Job where
-  getTrait (Job { trait }) = trait
-  setTrait (Job j) d = Job j { trait = d }
+  _trait = _Newtype <<< key @"trait"
 
 _soul :: Lens' Job Name
 _soul = _Newtype <<< key @"soul"

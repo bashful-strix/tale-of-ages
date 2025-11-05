@@ -1,19 +1,19 @@
 module ToA.Data.Icon.Trait
   ( Trait(..)
   , class Traited
-  , getTrait
-  , setTrait
   , _trait
   ) where
 
 import Prelude
 
-import Data.Lens (Lens', lens)
+import Data.Lens (Lens')
+import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Util.Optic (key)
 
 newtype Trait = Trait
   { name :: Name
@@ -25,16 +25,10 @@ instance Eq Trait where
   eq (Trait { name: n }) (Trait { name: m }) = n == m
 
 instance Named Trait where
-  getName (Trait { name }) = name
-  setName (Trait t) n = Trait t { name = n }
+  _name = _Newtype <<< key @"name"
 
-instance Described Trait Markup where
-  getDesc (Trait { description }) = description
-  setDesc (Trait t) d = Trait t { description = d }
+instance Described Trait where
+  _desc = _Newtype <<< key @"description"
 
 class Traited a where
-  getTrait :: a -> Name
-  setTrait :: a -> Name -> a
-
-_trait :: ∀ a. Traited a => Lens' a Name
-_trait = lens getTrait setTrait
+  _trait :: Lens' a Name

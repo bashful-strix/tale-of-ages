@@ -4,11 +4,13 @@ module ToA.Data.Icon.Talent
 
 import Prelude
 
+import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Util.Optic (key)
 
 newtype Talent = Talent
   { name :: Name
@@ -20,9 +22,7 @@ instance Eq Talent where
   eq (Talent { name: n }) (Talent { name: m }) = n == m
 
 instance Named Talent where
-  getName (Talent { name }) = name
-  setName (Talent t) n = Talent t { name = n }
+  _name = _Newtype <<< key @"name"
 
-instance Described Talent Markup where
-  getDesc (Talent { description }) = description
-  setDesc (Talent t) d = Talent t { description = d }
+instance Described Talent where
+  _desc = _Newtype <<< key @"description"
