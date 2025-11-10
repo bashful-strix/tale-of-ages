@@ -66,8 +66,13 @@ import ToA.Data.Icon.Class
   )
 import ToA.Component.Markup (markup)
 import ToA.Data.Icon.Description (_desc)
-import ToA.Data.Icon.Job (JobLevel(..)) as IJ
-import ToA.Data.Icon.Job (_abilities, _limitBreak, _talents, _soul)
+import ToA.Data.Icon.Job
+  ( JobLevel(..)
+  , _abilities
+  , _limitBreak
+  , _talents
+  , _soul
+  )
 import ToA.Data.Icon.Name (Name, class Named, _name)
 import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), JobPath(..), _ability)
@@ -542,10 +547,10 @@ renderJobAbilities env@{ icon } path name ability = icon <#~>
                               [ D.text_ $ a ^. simple _Newtype ]
                           , D.span []
                               [ D.text_ $ l # case _ of
-                                  IJ.One -> "I"
-                                  IJ.Two -> "II"
-                                  IJ.Three -> "III"
-                                  IJ.Four -> "IV"
+                                  I -> "I"
+                                  II -> "II"
+                                  III -> "III"
+                                  IV -> "IV"
                               ]
                           ]
                 ]

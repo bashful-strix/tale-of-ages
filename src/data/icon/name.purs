@@ -13,6 +13,7 @@ newtype Name = Name String
 
 derive instance Newtype Name _
 derive newtype instance Eq Name
+derive newtype instance Ord Name
 
 class Named a where
   _name :: Lens' a Name

@@ -7,10 +7,10 @@ module ToA.Data.Icon.Job
   , _talents
 
   , JobLevel(..)
-  , _One
-  , _Two
-  , _Three
-  , _Four
+  , _I
+  , _II
+  , _III
+  , _IV
   ) where
 
 import Prelude
@@ -73,21 +73,21 @@ _talents :: Lens' Job (Vect 3 Name)
 _talents = _Newtype <<< key @"talents"
 
 data JobLevel
-  = One
-  | Two
-  | Three
-  | Four
+  = I
+  | II
+  | III
+  | IV
 
 derive instance Eq JobLevel
 
-_One :: Prism' JobLevel Unit
-_One = only One
+_I :: Prism' JobLevel Unit
+_I = only I
 
-_Two :: Prism' JobLevel Unit
-_Two = only Two
+_II :: Prism' JobLevel Unit
+_II = only II
 
-_Three :: Prism' JobLevel Unit
-_Three = only Three
+_III :: Prism' JobLevel Unit
+_III = only III
 
-_Four :: Prism' JobLevel Unit
-_Four = only Four
+_IV :: Prism' JobLevel Unit
+_IV = only IV

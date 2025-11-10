@@ -33,10 +33,10 @@ tactician = Job
   , trait: Name "Press the Fight"
   , keyword: Name "Crisis"
   , abilities:
-      (One /\ Name "Pincer Attack")
-        : (One /\ Name "Bait and Switch")
-        : (Two /\ Name "Hold the Center")
-        : (Four /\ Name "Mighty Standard")
+      (I /\ Name "Pincer Attack")
+        : (I /\ Name "Bait and Switch")
+        : (II /\ Name "Hold the Center")
+        : (IV /\ Name "Mighty Standard")
         : empty
   , limitBreak: Name "Mighty Command"
   , talents:

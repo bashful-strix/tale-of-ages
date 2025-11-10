@@ -26,12 +26,14 @@ import FRP.Poll (Poll)
 import Web.PointerEvent.PointerEvent (PointerEvent)
 
 import ToA.Data.Icon (Icon)
+import ToA.Data.Icon.Character (Character)
 import ToA.Data.Route (Route)
 import ToA.Data.Theme (Theme)
 import ToA.Util.Optic (key)
 
 type Env =
   { icon :: Poll Icon
+  , characters :: Poll (Array Character)
   , route :: Poll (Maybe Route)
   , systemTheme :: Theme
   , theme :: Poll (Maybe Theme)
