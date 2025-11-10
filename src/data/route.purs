@@ -2,6 +2,7 @@ module ToA.Data.Route
   ( Route(..)
   , JobPath(..)
   , routeCodec
+  , _Characters
   , _Jobs
   , _ability
   ) where
@@ -24,10 +25,16 @@ import ToA.Data.Icon.Name (Name)
 data Route
   = Home
   | Jobs JobPath
+  | Characters (Maybe Name)
 
 _Jobs :: Prism' Route JobPath
 _Jobs = prism' Jobs case _ of
   Jobs p -> Just p
+  _ -> Nothing
+
+_Characters :: Prism' Route (Maybe Name)
+_Characters = prism' Characters case _ of
+  Characters c -> Just c
   _ -> Nothing
 
 derive instance Eq Route
@@ -38,6 +45,7 @@ routeCodec =
   root $ sum
     { "Home": noArgs
     , "Jobs": "jobs" / jobPath
+    , "Characters": "characters" / optional (name segment)
     }
 
 data JobPath

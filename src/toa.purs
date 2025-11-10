@@ -15,6 +15,7 @@ import ToA.Component.TitleBar (titleBar)
 import ToA.Data.Env (Env)
 import ToA.Data.Route (Route(..))
 import ToA.Data.Theme (themeCodec)
+import ToA.Page.Characters (charactersPage)
 import ToA.Page.Home (homePage)
 import ToA.Page.Jobs (jobsPage)
 import ToA.Page.Unknown (unknownPage)
@@ -42,6 +43,7 @@ toa env@{ route, systemTheme, theme } =
         [ route <#~> case _ of
             Just Home -> homePage
             Just (Jobs path) -> jobsPage env path
+            Just (Characters char) -> charactersPage env char
             Nothing -> unknownPage
         ]
     ]
