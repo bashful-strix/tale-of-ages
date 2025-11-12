@@ -14,6 +14,14 @@ characters =
   [ testana
   , testina
   , testona
+
+  , speckles
+  , speckles1
+  , speckles2
+
+  , arofell
+  , arofell1
+  , arofell2
   ]
 
 testana :: Character
@@ -78,5 +86,155 @@ testona = Character
           , Name "Shift"
           ]
       , talents: [ Name "Spur" ]
+      }
+  }
+
+speckles :: Character
+speckles = Character
+  { name: Name "Speckles"
+  , hp: 40
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: Zero
+      , jobs: empty
+      , primaryJob: Name "Workshop Knight"
+      , abilities:
+          [ Name "Second Wind"
+          , Name "Mighty Hew"
+          ]
+      , prepared:
+          [ Name "Second Wind"
+          , Name "Mighty Hew"
+          ]
+      , talents: []
+      }
+  }
+
+speckles1 :: Character
+speckles1 = Character
+  { name: Name "Speckles 1"
+  , hp: 40
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: One
+      , jobs: fromFoldable [ Name "Workshop Knight" /\ I ]
+      , primaryJob: Name "Workshop Knight"
+      , abilities:
+          [ Name "Second Wind"
+          , Name "Mighty Hew"
+          , Name "Rocket Punch"
+          ]
+      , prepared:
+          [ Name "Second Wind"
+          , Name "Mighty Hew"
+          , Name "Rocket Punch"
+          ]
+      , talents: []
+      }
+  }
+
+speckles2 :: Character
+speckles2 = Character
+  { name: Name "Speckles 2"
+  , hp: 40
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: Two
+      , jobs: fromFoldable [ Name "Workshop Knight" /\ II ]
+      , primaryJob: Name "Workshop Knight"
+      , abilities:
+          [ Name "Second Wind"
+          , Name "Mighty Hew"
+          , Name "Rocket Punch"
+          , Name "Weapon Vault"
+          ]
+      , prepared:
+          [ Name "Second Wind"
+          , Name "Mighty Hew"
+          , Name "Rocket Punch"
+          , Name "Weapon Vault"
+          ]
+      , talents: [ Name "Endure" ]
+      }
+  }
+
+arofell :: Character
+arofell = Character
+  { name: Name "Arofell"
+  , hp: 40
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: Zero
+      , jobs: empty
+      , primaryJob: Name "Spellblade"
+      , abilities:
+          [ Name "Cryo"
+          , Name "Shift"
+          ]
+      , prepared:
+          [ Name "Cryo"
+          , Name "Shift"
+          ]
+      , talents: []
+      }
+  }
+
+arofell1 :: Character
+arofell1 = Character
+  { name: Name "Arofell 1"
+  , hp: 40
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: One
+      , jobs: fromFoldable [ Name "Spellblade" /\ I ]
+      , primaryJob: Name "Spellblade"
+      , abilities:
+          [ Name "Cryo"
+          , Name "Shift"
+          , Name "Gungnir"
+          ]
+      , prepared:
+          [ Name "Cryo"
+          , Name "Shift"
+          , Name "Gungnir"
+          ]
+      , talents: []
+      }
+  }
+
+arofell2 :: Character
+arofell2 = Character
+  { name: Name "Arofell 2"
+  , hp: 40
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: Two
+      , jobs: fromFoldable [ Name "Spellblade" /\ II ]
+      , primaryJob: Name "Spellblade"
+      , abilities:
+          [ Name "Cryo"
+          , Name "Shift"
+          , Name "Gungnir"
+          , Name "Odinforce"
+          ]
+      , prepared:
+          [ Name "Cryo"
+          , Name "Shift"
+          , Name "Gungnir"
+          , Name "Odinforce"
+          ]
+      , talents: [ Name "Vex" ]
       }
   }
