@@ -6,6 +6,7 @@ package:
     - codec-json
     - console
     - control
+    - css
     - deku-core
     - deku-dom
     - effect

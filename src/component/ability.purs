@@ -4,14 +4,17 @@ module ToA.Component.Ability
 
 import Prelude
 
+import CSS (backgroundColor, render, renderedInline)
+
 import Data.Foldable (foldMap, intercalate)
-import Data.Lens ((^.), filtered, to, traversed, view)
+import Data.Lens ((^.), (^?), filtered, to, traversed, view)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe, fromMaybe)
 
 import Deku.Core (Nut)
 import Deku.DOM as D
+import Deku.DOM.Attributes as DA
 
 import ToA.Component.Markup (markup)
 import ToA.Data.Icon (Icon)
@@ -30,6 +33,7 @@ import ToA.Data.Icon.Ability
   , _steps
   , _tags
   )
+import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Name (_name)
@@ -37,11 +41,17 @@ import ToA.Util.Optic ((^::), (#~))
 import ToA.Util.Html (css_)
 
 renderAbility :: Icon -> Ability -> Nut
-renderAbility icon@{ abilities, summons } a =
+renderAbility icon@{ abilities, colours, summons } a =
   D.div
     [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
     [ D.h3
-        [ css_ [ "bg-red-600", "text-white", "font-bold" ] ]
+        [ css_ [ "text-white", "font-bold" ]
+        , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+            backgroundColor <$> colours
+              ^? traversed
+              <<< filtered (view _name >>> eq (a ^. _colour))
+              <<< _value
+        ]
         [ D.text_ $ a ^. _name <<< _Newtype ]
 
     , D.div
@@ -55,7 +65,8 @@ renderAbility icon@{ abilities, summons } a =
                     Interrupt n -> "Interrupt " <> show n
                 ]
                   <> (a # _resolve #~ pure <<< (_ <> " resolve") <<< show)
-                  <> ( a # _tags <<< traversed #~ pure <<< case _ of
+                  <>
+                    ( a # _tags <<< traversed #~ pure <<< case _ of
                         Attack -> "Attack"
                         End -> "End"
                         Close -> "Close"
@@ -99,8 +110,8 @@ renderAbility icon@{ abilities, summons } a =
                         [ css_ [ "pl-8" ] ]
                         [ abilities
                             # traversed
-                            <<< filtered (view _name >>> eq n)
-                            #~ renderAbility icon
+                                <<< filtered (view _name >>> eq n)
+                                  #~ renderAbility icon
                         ]
                     ]
                 SummonStep d n s ->
@@ -109,9 +120,9 @@ renderAbility icon@{ abilities, summons } a =
                     , renderStepDesc s
                     , summons
                         # traversed
-                        <<< filtered (eq n)
-                        <<< _Newtype
-                        #~ D.text_
+                            <<< filtered (eq n)
+                            <<< _Newtype
+                              #~ D.text_
                     ]
         ]
     ]

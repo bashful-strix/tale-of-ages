@@ -20,6 +20,7 @@ import Data.Lens (Lens')
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Newtype (class Newtype)
 
+import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
@@ -28,6 +29,7 @@ import ToA.Util.Optic (key)
 
 newtype Class = Class
   { name :: Name
+  , colour :: Name
   , tagline :: Markup
   , strengths :: Markup
   , weaknesses :: Markup
@@ -48,6 +50,9 @@ instance Eq Class where
 
 instance Named Class where
   _name = _Newtype <<< key @"name"
+
+instance Coloured Class where
+  _colour = _Newtype <<< key @"colour"
 
 instance Described Class where
   _desc = _Newtype <<< key @"description"

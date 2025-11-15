@@ -32,6 +32,7 @@ import ToA.Data.Icon.Name (Name(..))
 magi :: Ability
 magi = Ability
   { name: Name "Magi"
+  , colour: Name "Blue"
   , description:
       [ Text
           """Elementary magic, drawing on fundamental chaos, but no less
@@ -53,6 +54,7 @@ magi = Ability
 ember :: Ability
 ember = Ability
   { name: Name "Ember"
+  , colour: Name "Blue"
   , description:
       [ Text
           """You kindle a fierce ember which explodes into a blossom of
@@ -76,6 +78,7 @@ ember = Ability
 emberZone :: Ability
 emberZone = Ability
   { name: Name "Ember Zone"
+  , colour: Name "Blue"
   , description: []
   , cost: Quick
   , tags: [ KeywordTag (Name "Zone") ]
@@ -94,6 +97,7 @@ emberZone = Ability
 aero :: Ability
 aero = Ability
   { name: Name "Aero"
+  , colour: Name "Blue"
   , description:
       [ Text
           """You mark a foe with pulsing lightning charge, reacting to
@@ -123,6 +127,7 @@ aero = Ability
 geo :: Ability
 geo = Ability
   { name: Name "Geo"
+  , colour: Name "Blue"
   , description:
       [ Text
           """Digging into wells of geothermic power, you will the
@@ -144,6 +149,7 @@ geo = Ability
 cryo :: Ability
 cryo = Ability
   { name: Name "Cryo"
+  , colour: Name "Blue"
   , description:
       [ Text
           """You loose a blast of icy air and wind, freezing foes where
@@ -170,6 +176,7 @@ cryo = Ability
 ruin :: Ability
 ruin = Ability
   { name: Name "Ruin"
+  , colour: Name "Blue"
   , description:
       [ Text
           """Potent chaos magic that draws upon the chaos fundament,
@@ -191,6 +198,7 @@ ruin = Ability
 shift :: Ability
 shift = Ability
   { name: Name "Shift"
+  , colour: Name "Blue"
   , description:
       [ Text
           """Slip between spaces using soul transposition: a miracle for
@@ -210,6 +218,7 @@ shift = Ability
 gleam :: Ability
 gleam = Ability
   { name: Name "Gleam"
+  , colour: Name "Blue"
   , description:
       [ Text "Bend light into a shape that confounds the senses." ]
   , cost: Quick

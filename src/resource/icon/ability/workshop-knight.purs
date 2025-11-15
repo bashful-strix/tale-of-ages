@@ -30,6 +30,7 @@ import ToA.Data.Icon.Name (Name(..))
 masterstroke :: Ability
 masterstroke = LimitBreak
   { name: Name "Masterstroke"
+  , colour: Name "Red"
   , description:
       [ Text
           """Your mind constantly works like a well oiled gear assembly,
@@ -74,6 +75,7 @@ masterstroke = LimitBreak
 rocketPunch :: Ability
 rocketPunch = Ability
   { name: Name "Rocket Punch"
+  , colour: Name "Red"
   , description:
       [ Text
           """The basic move of workshop martial arts, flashy and
@@ -101,6 +103,7 @@ rocketPunch = Ability
 ripperClaw :: Ability
 ripperClaw = Ability
   { name: Name "Ripper Claw"
+  , colour: Name "Red"
   , description:
       [ Text
           """Using a grappling system, reel in a target with explosive
@@ -125,6 +128,7 @@ ripperClaw = Ability
 weaponVault :: Ability
 weaponVault = Ability
   { name: Name "Weapon Vault"
+  , colour: Name "Red"
   , description:
       [ Text "Use your weapon or hilt like a vaulting pole." ]
   , cost: One
@@ -153,6 +157,7 @@ weaponVault = Ability
 arsenal :: Ability
 arsenal = Ability
   { name: Name "Arsenal"
+  , colour: Name "Red"
   , description:
       [ Text "Your bandoliers contain more than just weaponry." ]
   , cost: One
@@ -179,6 +184,7 @@ arsenal = Ability
 arsenalFlashBomb :: Ability
 arsenalFlashBomb = Ability
   { name: Name "Arsenal Flash Bomb"
+  , colour: Name "Red"
   , description: []
   , cost: One
   , tags: [ RangeTag (Range 1 2), KeywordTag (Name "Zone") ]

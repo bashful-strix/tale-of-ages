@@ -5,10 +5,14 @@ module ToA.Page.Jobs
 import Prelude
 import PointFree ((~$))
 
+import Color (lighten)
+import CSS (backgroundColor, color, render, renderedInline)
+
 import Data.Filterable (filter)
 import Data.Foldable (elem)
 import Data.Lens
   ( (^.)
+  , (^?)
   , (.~)
   , preview
   , view
@@ -22,18 +26,20 @@ import Data.Lens
   )
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (guard)
 import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
 import Deku.DOM as D
+import Deku.DOM.Attributes as DA
 import Deku.DOM.Listeners as DL
 import Deku.Hooks ((<#~>))
 
 import FRP.Poll (Poll)
 
 import ToA.Component.Ability (renderAbility)
+import ToA.Component.Markup (markup)
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability (Step(..), _steps)
@@ -50,7 +56,7 @@ import ToA.Data.Icon.Class
   , _tagline
   , _weaknesses
   )
-import ToA.Component.Markup (markup)
+import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Job
   ( JobLevel(..)
@@ -81,54 +87,75 @@ jobsPage env@{ icon } path =
             , "border-sky-800"
             ]
         ]
-        [ icon <#~> \{ classes, jobs, souls } ->
+        [ icon <#~> \{ classes, colours, jobs, souls } ->
             D.ol
               [ css_ [ "text-black" ] ]
               $ classes <#> \c ->
-                  D.li
-                    [ css_ [ "bg-red-600" ] ]
-                    [ D.span
-                        [ DL.click_ $
-                            (env ^. _navigate)
-                              (Jobs $ WithClass (c ^. _name) Nothing)
-                              <<< pure
-                        ]
-                        [ D.text_ $ viewName c ]
+                  let
+                    col = colours
+                      ^? traversed
+                        <<< filtered (view _name >>> eq (c ^. _colour))
+                        <<< _value
+                  in
+                    D.li
+                      [ DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                          backgroundColor <$> col
+                      ]
+                      [ D.span
+                          [ DL.click_ $
+                              (env ^. _navigate)
+                                (Jobs $ WithClass (c ^. _name) Nothing)
+                                <<< pure
+                          ]
+                          [ D.text_ $ viewName c ]
 
-                    , D.ol []
-                        $ filter (_class `elemOf` (c ^. _name)) souls <#> \s ->
-                            D.li
-                              [ css_ [ "bg-red-400" ] ]
-                              [ D.span
-                                  [ DL.click_ $
-                                      (env ^. _navigate)
-                                        ( Jobs $ WithSoul
-                                            (c ^. _name)
-                                            (s ^. _name)
-                                            Nothing
-                                        ) <<< pure
+                      , D.ol []
+                          $ filter (_class `elemOf` (c ^. _name)) souls <#>
+                              \s ->
+                                D.li
+                                  [ DA.style_ $ fromMaybe "" $ renderedInline $
+                                      render =<<
+                                        (backgroundColor <<< lighten 0.2) <$>
+                                          col
                                   ]
-                                  [ D.text_ $ viewName s ]
+                                  [ D.span
+                                      [ DL.click_ $
+                                          (env ^. _navigate)
+                                            ( Jobs $ WithSoul
+                                                (c ^. _name)
+                                                (s ^. _name)
+                                                Nothing
+                                            ) <<< pure
+                                      ]
+                                      [ D.text_ $ viewName s ]
 
-                              , D.ol []
-                                  $ filter (_soul `elemOf` (s ^. _name)) jobs
-                                      <#> \j ->
-                                        D.li
-                                          [ css_ [ "bg-red-200" ] ]
-                                          [ D.span
-                                              [ DL.click_ $
-                                                  (env ^. _navigate)
-                                                    ( Jobs $ WithJob
-                                                        (c ^. _name)
-                                                        (s ^. _name)
-                                                        (j ^. _name)
-                                                        Nothing
-                                                    ) <<< pure
+                                  , D.ol []
+                                      $
+                                        filter (_soul `elemOf` (s ^. _name))
+                                          jobs
+                                          <#> \j ->
+                                            D.li
+                                              [ DA.style_ $ fromMaybe ""
+                                                  $ renderedInline
+                                                  $ render =<<
+                                                      ( backgroundColor <<<
+                                                          lighten 0.4
+                                                      ) <$> col
                                               ]
-                                              [ D.text_ $ viewName j ]
-                                          ]
-                              ]
-                    ]
+                                              [ D.span
+                                                  [ DL.click_ $
+                                                      (env ^. _navigate)
+                                                        ( Jobs $ WithJob
+                                                            (c ^. _name)
+                                                            (s ^. _name)
+                                                            (j ^. _name)
+                                                            Nothing
+                                                        ) <<< pure
+                                                  ]
+                                                  [ D.text_ $ viewName j ]
+                                              ]
+                                  ]
+                      ]
         ]
 
     , D.div
@@ -196,89 +223,96 @@ viewName :: ∀ a. Named a => a -> String
 viewName = view (_name <<< _Newtype)
 
 renderClassStats :: Poll Icon -> Name -> Nut
-renderClassStats icon name = icon <#~> \{ classes, keywords, traits } ->
-  classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
-    D.div
-      [ css_ [ "w-full", "flex", "flex-col" ] ]
-      [ D.div
-          [ css_ [ "flex", "gap-2" ] ]
-          [ D.h3
-              [ css_ [ "bg-red-600", "text-white", "font-bold" ] ]
-              [ D.text_ $ viewName c ]
-          , D.h4 [ css_ [ "italic" ] ] [ c # _tagline #~ markup ]
-          ]
+renderClassStats icon name = icon <#~>
+  \{ classes, colours, keywords, traits } ->
+    classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
+      D.div
+        [ css_ [ "w-full", "flex", "flex-col" ] ]
+        [ D.div
+            [ css_ [ "flex", "gap-2" ] ]
+            [ D.h3
+                [ css_ [ "text-white", "font-bold" ]
+                , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                    backgroundColor <$> colours
+                      ^? traversed
+                        <<< filtered (view _name >>> eq (c ^. _colour))
+                        <<< _value
+                ]
+                [ D.text_ $ viewName c ]
+            , D.h4 [ css_ [ "italic" ] ] [ c # _tagline #~ markup ]
+            ]
 
-      , D.div
-          [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
-          [ D.div
-              [ css_ [ "basis-1/3" ] ]
-              [ D.div []
-                  [ D.div []
-                      [ D.span
-                          [ css_ [ "font-bold" ] ]
-                          [ D.text_ "HP: " ]
-                      , D.text_
-                          $ (c ^. _hp <<< to show)
-                              <> " (25% HP: "
-                              <> (c ^. _hp <<< to (_ / 4) <<< to show)
-                              <> ")"
-                      ]
+        , D.div
+            [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
+            [ D.div
+                [ css_ [ "basis-1/3" ] ]
+                [ D.div []
+                    [ D.div []
+                        [ D.span
+                            [ css_ [ "font-bold" ] ]
+                            [ D.text_ "HP: " ]
+                        , D.text_
+                            $ (c ^. _hp <<< to show)
+                                <> " (25% HP: "
+                                <> (c ^. _hp <<< to (_ / 4) <<< to show)
+                                <> ")"
+                        ]
 
-                  , D.div []
-                      [ D.span
-                          [ css_ [ "font-bold" ] ]
-                          [ D.text_ "Defense: " ]
-                      , D.text_ $ c ^. _defense <<< to show
-                      ]
+                    , D.div []
+                        [ D.span
+                            [ css_ [ "font-bold" ] ]
+                            [ D.text_ "Defense: " ]
+                        , D.text_ $ c ^. _defense <<< to show
+                        ]
 
-                  , D.div []
-                      [ D.span
-                          [ css_ [ "font-bold" ] ]
-                          [ D.text_ "Free Move: " ]
-                      , D.text_ $ c ^. _move <<< to show
-                      ]
+                    , D.div []
+                        [ D.span
+                            [ css_ [ "font-bold" ] ]
+                            [ D.text_ "Free Move: " ]
+                        , D.text_ $ c ^. _move <<< to show
+                        ]
 
-                  , D.div []
-                      [ D.span
-                          [ css_ [ "font-bold" ] ]
-                          [ D.text_ "Complexity: " ]
-                      , c # _complexity #~ markup
-                      ]
-                  ]
-              ]
+                    , D.div []
+                        [ D.span
+                            [ css_ [ "font-bold" ] ]
+                            [ D.text_ "Complexity: " ]
+                        , c # _complexity #~ markup
+                        ]
+                    ]
+                ]
 
-          , D.div
-              [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
-              [ D.h3
-                  [ css_ [ "font-bold" ] ]
-                  [ D.text_ $ c ^. _trait <<< _Newtype ]
-              , D.div
-                  [ css_ [ "overflow-scroll" ] ]
-                  [ traits #
-                      ( traversed
-                          <<< filtered (_name `elemOf` (c ^. _trait))
-                          <<< _desc
-                      ) #~ markup
-                  ]
-              ]
+            , D.div
+                [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
+                [ D.h3
+                    [ css_ [ "font-bold" ] ]
+                    [ D.text_ $ c ^. _trait <<< _Newtype ]
+                , D.div
+                    [ css_ [ "overflow-scroll" ] ]
+                    [ traits #
+                        ( traversed
+                            <<< filtered (_name `elemOf` (c ^. _trait))
+                            <<< _desc
+                        ) #~ markup
+                    ]
+                ]
 
-          , D.div
-              [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
-              [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Keywords" ]
-              , D.div
-                  [ css_ [ "overflow-scroll" ] ]
-                  [ D.ol []
-                      $ keywords #
-                          traversed
-                            <<< filtered
-                              (view (_name <<< to (elem ~$ (c ^. _keywords))))
-                            <<< _name
-                            <<< _Newtype
-                              #~ \k -> pure $ D.li [] [ D.text_ k ]
-                  ]
-              ]
-          ]
-      ]
+            , D.div
+                [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
+                [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Keywords" ]
+                , D.div
+                    [ css_ [ "overflow-scroll" ] ]
+                    [ D.ol []
+                        $ keywords #
+                            traversed
+                              <<< filtered
+                                (view (_name <<< to (elem ~$ (c ^. _keywords))))
+                              <<< _name
+                              <<< _Newtype
+                                #~ \k -> pure $ D.li [] [ D.text_ k ]
+                    ]
+                ]
+            ]
+        ]
 
 renderClassDesc :: Poll Icon -> Name -> Nut
 renderClassDesc icon name = icon <#~> \{ classes } ->
@@ -389,7 +423,7 @@ renderClassAbilities env@{ icon } path name ability = icon <#~>
         ]
 
 renderSoul :: Poll Icon -> Name -> Nut
-renderSoul icon name = icon <#~> \{ jobs, souls } ->
+renderSoul icon name = icon <#~> \{ colours, jobs, souls } ->
   souls # traversed <<< filtered (has (_name <<< only name)) #~ \s ->
     D.div
       [ css_ [ "w-full", "flex", "flex-col", "gap-2" ] ]
@@ -397,7 +431,13 @@ renderSoul icon name = icon <#~> \{ jobs, souls } ->
           [ css_ [ "flex", "gap-2" ] ]
           [ D.h3 []
               [ D.span
-                  [ css_ [ "bg-red-400", "text-white", "font-bold" ] ]
+                  [ css_ [ "text-white", "font-bold" ]
+                  , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                      (backgroundColor <<< lighten 0.2) <$> colours
+                        ^? traversed
+                          <<< filtered (view _name >>> eq (s ^. _colour))
+                          <<< _value
+                  ]
                   [ D.text_ $ viewName s ]
               ]
           , D.h4 [ css_ [ "italic" ] ] [ s # _desc #~ markup ]
@@ -412,14 +452,20 @@ renderSoul icon name = icon <#~> \{ jobs, souls } ->
       ]
 
 renderJobDesc :: Poll Icon -> Name -> Nut
-renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
+renderJobDesc icon name = icon <#~> \{ colours, jobs, talents, traits } ->
   jobs # traversed <<< filtered (has (_name <<< only name)) #~ \j ->
     D.div
       [ css_ [ "w-full", "flex", "flex-col" ] ]
       [ D.div
           [ css_ [ "flex", "gap-2" ] ]
           [ D.h3
-              [ css_ [ "bg-red-200", "text-black", "font-bold" ] ]
+              [ css_ [ "bg-red-200", "text-black", "font-bold" ]
+              , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                  (backgroundColor <<< lighten 0.4) <$> colours
+                    ^? traversed
+                      <<< filtered (view _name >>> eq (j ^. _colour))
+                      <<< _value
+              ]
               [ D.text_ $ viewName j ]
           , D.h4
               [ css_ [ "italic" ] ]
@@ -455,23 +501,30 @@ renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
               [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Talents" ]
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
-                  [ D.ul []
-                      $ talents #
-                          traversed
-                            <<<
-                              filtered
-                                ( view
-                                    ( _name <<< to
-                                        (elem ~$ (j ^:: _talents <<< traversed))
-                                    )
-                                )
-                                #~ \t -> pure $
-                                  D.li []
-                                    [ D.div
-                                        [ css_ [ "text-red-600", "font-bold" ] ]
-                                        [ D.text_ $ viewName t ]
-                                    , D.div [] [ t # _desc #~ markup ]
-                                    ]
+                  [ D.ul [] $
+                      talents
+                        ^:: traversed
+                        <<< filtered
+                          ( view
+                              ( _name <<< to
+                                  (elem ~$ (j ^:: _talents <<< traversed))
+                              )
+                          )
+                        <<< to \t ->
+                          D.li []
+                            [ D.div
+                                [ css_ [ "text-red-600", "font-bold" ]
+                                , DA.style_ $ fromMaybe "" $ renderedInline $
+                                    render =<<
+                                      color <$> colours
+                                        ^? traversed
+                                          <<< filtered
+                                            (view _name >>> eq (t ^. _colour))
+                                          <<< _value
+                                ]
+                                [ D.text_ $ viewName t ]
+                            , D.div [] [ t # _desc #~ markup ]
+                            ]
                   ]
               ]
           ]

@@ -9,6 +9,7 @@ import ToA.Data.Icon.Soul (Soul(..))
 warrior :: Soul
 warrior = Soul
   { name: Name "Warrior"
+  , colour: Name "Red"
   , class: Name "Stalwart"
   , description:
       [ Text "The soul of one who seeks power at all ends."

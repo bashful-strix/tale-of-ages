@@ -28,6 +28,7 @@ import Data.Lens.Prism (Prism', prism')
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested (type (/\))
 
+import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Markup (Markup)
@@ -36,6 +37,7 @@ import ToA.Util.Optic (key)
 
 type AbilityData a =
   { name :: Name
+  , colour :: Name
   , description :: Markup
   , cost :: a
   , tags :: Array Tag
@@ -57,6 +59,13 @@ instance Named Ability where
     LimitBreak a -> map LimitBreak <$> lensStore k a
     where
     k = key @"name"
+
+instance Coloured Ability where
+  _colour = lens' case _ of
+    Ability a -> map Ability <$> lensStore k a
+    LimitBreak a -> map LimitBreak <$> lensStore k a
+    where
+    k = key @"colour"
 
 instance Described Ability where
   _desc = lens' case _ of

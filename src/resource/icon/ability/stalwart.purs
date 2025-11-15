@@ -30,6 +30,7 @@ import ToA.Data.Icon.Name (Name(..))
 furor :: Ability
 furor = Ability
   { name: Name "Furor"
+  , colour: Name "Red"
   , description: [ Text "Strike with your heart." ]
   , cost: One
   , tags: [ Attack, RangeTag Melee ]
@@ -48,6 +49,7 @@ furor = Ability
 interpose :: Ability
 interpose = Ability
   { name: Name "Interpose"
+  , colour: Name "Red"
   , description:
       [ Text
           """You are able to step quickly and rapidly in the midst of
@@ -71,6 +73,7 @@ interpose = Ability
 impel :: Ability
 impel = Ability
   { name: Name "Impel"
+  , colour: Name "Red"
   , description: [ Text "Hurl headlong into battle." ]
   , cost: One
   , tags: [ RangeTag Melee, TargetTag Foe ]
@@ -86,6 +89,7 @@ impel = Ability
 hook :: Ability
 hook = Ability
   { name: Name "Hook"
+  , colour: Name "Red"
   , description:
       [ Text
           "You grab an ally and pull them from the teeth of the enemy."
@@ -106,6 +110,7 @@ hook = Ability
 mightyHew :: Ability
 mightyHew = Ability
   { name: Name "Mighty Hew"
+  , colour: Name "Red"
   , description: [ Text "Finish them." ]
   , cost: Two
   , tags: [ Attack, RangeTag Melee ]
@@ -124,6 +129,7 @@ mightyHew = Ability
 secondWind :: Ability
 secondWind = Ability
   { name: Name "Second Wind"
+  , colour: Name "Red"
   , description:
       [ Text "You brace and ready yourself for the fray." ]
   , cost: One
@@ -151,6 +157,7 @@ secondWind = Ability
 shatter :: Ability
 shatter = Ability
   { name: Name "Shatter"
+  , colour: Name "Red"
   , description:
       [ Text
           "Slam your weapon into the ground, sending up shockwaves."

@@ -9,6 +9,7 @@ import ToA.Data.Icon.Name (Name(..))
 wright :: Class
 wright = Class
   { name: Name "Wright"
+  , colour: Name "Blue"
   , tagline: [ Text "Mage, thaumaturge, and master of the arcane" ]
   , strengths:
       [ Text "High damage and excellent range, strong area of effect" ]

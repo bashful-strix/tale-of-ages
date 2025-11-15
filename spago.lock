@@ -10,6 +10,7 @@
             "codec-json",
             "console",
             "control",
+            "css",
             "deku-core",
             "deku-dom",
             "effect",
@@ -50,10 +51,12 @@
             "catenable-lists",
             "codec",
             "codec-json",
+            "colors",
             "console",
             "const",
             "contravariant",
             "control",
+            "css",
             "datetime",
             "debug",
             "deku-core",
@@ -105,6 +108,7 @@
             "profunctor-lenses",
             "psci-support",
             "quickcheck",
+            "quickcheck-laws",
             "random",
             "record",
             "refs",
@@ -117,6 +121,7 @@
             "strings",
             "stringutils",
             "tailrec",
+            "these",
             "transformers",
             "tuples",
             "type-equality",
@@ -971,6 +976,19 @@
         "variant"
       ]
     },
+    "colors": {
+      "type": "registry",
+      "version": "7.0.1",
+      "integrity": "sha256-udlg/y2PFsHYli8Tgz8BQGGrOjyGo0BcJj36IfgYADs=",
+      "dependencies": [
+        "arrays",
+        "integers",
+        "lists",
+        "numbers",
+        "partial",
+        "strings"
+      ]
+    },
     "console": {
       "type": "registry",
       "version": "6.1.0",
@@ -1009,6 +1027,21 @@
       "dependencies": [
         "newtype",
         "prelude"
+      ]
+    },
+    "css": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-zfSHxgiU4rSWuVxMjSKKh+s7j433wxmsr+CqI6hm9s4=",
+      "dependencies": [
+        "colors",
+        "console",
+        "effect",
+        "nonempty",
+        "profunctor",
+        "strings",
+        "these",
+        "transformers"
       ]
     },
     "datetime": {
@@ -1937,6 +1970,15 @@
         "unfoldable"
       ]
     },
+    "quickcheck-laws": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-rnzVTiDnymzYkvnhI8EvPwrmO8LgcTnrMTuiI172Tkc=",
+      "dependencies": [
+        "enums",
+        "quickcheck"
+      ]
+    },
     "random": {
       "type": "registry",
       "version": "6.0.0",
@@ -2192,6 +2234,19 @@
         "partial",
         "prelude",
         "refs"
+      ]
+    },
+    "these": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-6poQvFzGw7Ir9mTDEbFV9N6+cUeSHe0FdzTR2ZK1o6g=",
+      "dependencies": [
+        "arrays",
+        "gen",
+        "lists",
+        "quickcheck",
+        "quickcheck-laws",
+        "tuples"
       ]
     },
     "transformers": {

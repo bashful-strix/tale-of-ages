@@ -28,6 +28,7 @@ import ToA.Data.Icon.Name (Name(..))
 mightyCommand :: Ability
 mightyCommand = LimitBreak
   { name: Name "Mighty Command"
+  , colour: Name "Red"
   , description:
       [ Text
           """You issue an earth shattering command, breaking enemy
@@ -59,6 +60,7 @@ mightyCommand = LimitBreak
 pincerAttack :: Ability
 pincerAttack = Ability
   { name: Name "Pincer Attack"
+  , colour: Name "Red"
   , description:
       [ Text
           """Your weapon finds every weakness, driving your foe
@@ -87,6 +89,7 @@ pincerAttack = Ability
 baitAndSwitch :: Ability
 baitAndSwitch = Ability
   { name: Name "Bait and Switch"
+  , colour: Name "Red"
   , description:
       [ Text
           """You lay a trap for your foe, striking when they
@@ -110,6 +113,7 @@ baitAndSwitch = Ability
 holdTheCenter :: Ability
 holdTheCenter = Ability
   { name: Name "Hold the Center"
+  , colour: Name "Red"
   , description:
       [ Text
           """You brace with a shield or armor, strengthening your
@@ -137,6 +141,7 @@ holdTheCenter = Ability
 mightyStandard :: Ability
 mightyStandard = Ability
   { name: Name "Mighty Standard"
+  , colour: Name "Red"
   , description:
       [ Text
           """You place your banner, striking fear into the hearts of

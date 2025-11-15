@@ -11,6 +11,7 @@ import ToA.Data.Icon.Talent (Talent(..))
 mastermind :: Talent
 mastermind = Talent
   { name: Name "Mastermind"
+  , colour: Name "Red"
   , description:
       [ Text
           """Increase all pushes and pulls against bloodied
@@ -23,6 +24,7 @@ mastermind = Talent
 spur :: Talent
 spur = Talent
   { name: Name "Spur"
+  , colour: Name "Red"
   , description:
       [ Text
           """Once a round, when an ally starts their turn in range 1-3,
@@ -35,6 +37,7 @@ spur = Talent
 fieldwork :: Talent
 fieldwork = Talent
   { name: Name "Fieldwork"
+  , colour: Name "Red"
   , description:
       [ Text
           """Once a round, when you swap places with a character,

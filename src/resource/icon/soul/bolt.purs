@@ -9,6 +9,7 @@ import ToA.Data.Icon.Soul (Soul(..))
 bolt :: Soul
 bolt = Soul
   { name: Name "Bolt"
+  , colour: Name "Blue"
   , class: Name "Wright"
   , description:
       [ Text "The soul of one riding the flash and the thunderclap."

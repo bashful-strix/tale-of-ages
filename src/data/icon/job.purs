@@ -23,6 +23,7 @@ import Data.Newtype (class Newtype)
 import Data.Tuple.Nested (type (/\))
 
 import ToA.Data.Icon.Class (class Classed)
+import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
@@ -31,6 +32,7 @@ import ToA.Util.Optic (key)
 
 newtype Job = Job
   { name :: Name
+  , colour :: Name
   , soul :: Name
   , class :: Name
   , description :: Markup
@@ -47,6 +49,9 @@ instance Eq Job where
 
 instance Named Job where
   _name = _Newtype <<< key @"name"
+
+instance Coloured Job where
+  _colour = _Newtype <<< key @"colour"
 
 instance Classed Job where
   _class = _Newtype <<< key @"class"

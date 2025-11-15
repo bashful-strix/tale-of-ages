@@ -29,6 +29,7 @@ import ToA.Data.Icon.Name (Name(..))
 granLevincross :: Ability
 granLevincross = LimitBreak
   { name: Name "Gran Levincross"
+  , colour: Name "Blue"
   , description:
       [ Text "I summon thee, bloody gods of the cutting art,"
       , Newline
@@ -75,6 +76,7 @@ granLevincross = LimitBreak
 gungnir :: Ability
 gungnir = Ability
   { name: Name "Gungnir"
+  , colour: Name "Blue"
   , description:
       [ Text
           "A thousand spears of light, each striking a perfect blow."
@@ -96,6 +98,7 @@ gungnir = Ability
 atherwand :: Ability
 atherwand = Ability
   { name: Name "Ätherwand"
+  , colour: Name "Blue"
   , description:
       [ Text
           """You summon the highwinds, swirling around your weapon to
@@ -126,6 +129,7 @@ atherwand = Ability
 odinforce :: Ability
 odinforce = Ability
   { name: Name "Odinforce"
+  , colour: Name "Blue"
   , description:
       [ Text
           """You slash, and phantom images of your blade linger over your
@@ -173,6 +177,7 @@ odinforce = Ability
 nothung :: Ability
 nothung = Ability
   { name: Name "Nothung"
+  , colour: Name "Blue"
   , description:
       [ Text
           """You slash through your target, then cause slashes of damage
@@ -197,6 +202,7 @@ nothung = Ability
 tenThousandCuts :: Ability
 tenThousandCuts = Ability
   { name: Name "Ten Thousand Cuts"
+  , colour: Name "Blue"
   , description: []
   , cost: Interrupt 1
   , tags: []

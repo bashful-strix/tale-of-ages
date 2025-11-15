@@ -9,6 +9,7 @@ import ToA.Data.Icon.Name (Name(..))
 stalwart :: Class
 stalwart = Class
   { name: Name "Stalwart"
+  , colour: Name "Red"
   , tagline: [ Text "Weapon master and unparalleled soldier" ]
   , strengths:
       [ Text

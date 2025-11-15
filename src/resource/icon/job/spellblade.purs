@@ -12,6 +12,7 @@ import ToA.Data.Icon.Name (Name(..))
 spellblade :: Job
 spellblade = Job
   { name: Name "Spellblade"
+  , colour: Name "Blue"
   , soul: Name "Bolt"
   , class: Name "Wright"
   , description:

@@ -12,6 +12,7 @@ import ToA.Data.Icon.Name (Name(..))
 workshopKnight :: Job
 workshopKnight = Job
   { name: Name "Workshop Knight"
+  , colour: Name "Red"
   , soul: Name "Warrior"
   , class: Name "Stalwart"
   , description:

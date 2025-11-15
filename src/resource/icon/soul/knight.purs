@@ -9,6 +9,7 @@ import ToA.Data.Icon.Soul (Soul(..))
 knight :: Soul
 knight = Soul
   { name: Name "Knight"
+  , colour: Name "Red"
   , class: Name "Stalwart"
   , description:
       [ Text

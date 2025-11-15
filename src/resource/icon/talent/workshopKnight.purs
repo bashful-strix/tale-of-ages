@@ -11,6 +11,7 @@ import ToA.Data.Icon.Talent (Talent(..))
 alloy :: Talent
 alloy = Talent
   { name: Name "Alloy"
+  , colour: Name "Red"
   , description:
       [ Text "You improve the effect of "
       , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
@@ -23,6 +24,7 @@ alloy = Talent
 endure :: Talent
 endure = Talent
   { name: Name "Endure"
+  , colour: Name "Red"
   , description:
       [ Text "If you don't attack during your turn, gain "
       , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
@@ -35,6 +37,7 @@ endure = Talent
 bolster :: Talent
 bolster = Talent
   { name: Name "Bolster"
+  , colour: Name "Red"
   , description:
       [ Text
           """Once a round, then you swap places with an ally, they may

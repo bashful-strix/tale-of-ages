@@ -1,11 +1,13 @@
 module ToA.Data.Icon
   ( Icon
   , _classes
+  , _colours
   , _souls
   , _jobs
   , _traits
   , _talents
   , _abilities
+  , _summons
   , _keywords
   ) where
 
@@ -13,6 +15,7 @@ import Data.Lens (Lens')
 
 import ToA.Data.Icon.Ability (Ability)
 import ToA.Data.Icon.Class (Class)
+import ToA.Data.Icon.Colour (Colour)
 import ToA.Data.Icon.Job (Job)
 import ToA.Data.Icon.Keyword (Keyword)
 import ToA.Data.Icon.Name (Name)
@@ -24,6 +27,7 @@ import ToA.Util.Optic (key)
 
 type Icon =
   { classes :: Array Class
+  , colours :: Array Colour
   , souls :: Array Soul
   , jobs :: Array Job
   , traits :: Array Trait
@@ -35,6 +39,9 @@ type Icon =
 
 _classes :: Lens' Icon (Array Class)
 _classes = key @"classes"
+
+_colours :: Lens' Icon (Array Colour)
+_colours = key @"colours"
 
 _souls :: Lens' Icon (Array Soul)
 _souls = key @"souls"
@@ -50,6 +57,9 @@ _talents = key @"talents"
 
 _abilities :: Lens' Icon (Array Ability)
 _abilities = key @"abilities"
+
+_summons :: Lens' Icon (Array Name)
+_summons = key @"summons"
 
 _keywords :: Lens' Icon (Array Keyword)
 _keywords = key @"keywords"
