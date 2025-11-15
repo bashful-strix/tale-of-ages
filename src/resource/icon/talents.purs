@@ -3,8 +3,12 @@ module ToA.Resource.Icon.Talents
   ) where
 
 import ToA.Data.Icon.Talent (Talent)
+
 import ToA.Resource.Icon.Talent.Tactician (fieldwork, mastermind, spur)
+
 import ToA.Resource.Icon.Talent.WorkshopKnight (alloy, endure, bolster)
+
+import ToA.Resource.Icon.Talent.Spellblade (vex, fence, bladework)
 
 talents :: Array Talent
 talents =
@@ -15,4 +19,8 @@ talents =
   , alloy
   , endure
   , bolster
+
+  , vex
+  , fence
+  , bladework
   ]

@@ -41,6 +41,15 @@ import ToA.Resource.Icon.Ability.Wright
   , gleam
   )
 
+import ToA.Resource.Icon.Ability.Spellblade
+  ( granLevincross
+  , gungnir
+  , atherwand
+  , odinforce
+  , nothung
+  , tenThousandCuts
+  )
+
 abilities :: Array Ability
 abilities =
   [ furor
@@ -73,4 +82,11 @@ abilities =
   , weaponVault
   , arsenal
   , arsenalFlashBomb
+
+  , granLevincross
+  , gungnir
+  , atherwand
+  , odinforce
+  , nothung
+  , tenThousandCuts
   ]

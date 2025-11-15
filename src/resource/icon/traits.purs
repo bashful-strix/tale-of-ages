@@ -11,8 +11,12 @@ traits :: Array Trait
 traits =
   [ rampart
   , masterOfAether
+
   , pressTheFight
+
   , ingenuity
+
+  , klingenkunst
   ]
 
 rampart :: Trait
@@ -101,5 +105,19 @@ ingenuity = Trait
             ]
           , [ Text "Deal 2 damage to all adjacent foes and push them 1" ]
           ]
+      ]
+  }
+
+klingenkunst :: Trait
+klingenkunst = Trait
+  { name: Name "Klingenkunst"
+  , description:
+      [ Text "Once a round, you may teleport 2 as a "
+      , Italic [ Ref (Name "Quick") [ Text "quick" ] ]
+      , Text " ability. If you are "
+      , Italic [ Ref (Name "Isolate") [ Text "isolated" ] ]
+      , Text
+          """, you may teleport 4 instead. If there are no other
+          characters in range 1-2, you may teleport 6."""
       ]
   }

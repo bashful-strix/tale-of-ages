@@ -36,13 +36,13 @@ masterstroke = LimitBreak
           finding the perfect spot to tip the fight in your favor."""
       ]
   , cost: One /\ 4
-  , tags: [ TargetTag Ally, KeywordTag (Name "Power Die") ]
+  , tags: [ TargetTag Ally, KeywordTag (Name "Power die") ]
   , steps:
       [ Step Nothing $ Eff
           [ Text
               """At the end of any of your turns you don't attack while
               you have this limit break, gain a d6 """
-          , Italic [ Ref (Name "Power Die") [ Text "power die" ] ]
+          , Italic [ Ref (Name "Power die") [ Text "power die" ] ]
           , Text ", or tick the die up by 1 (max 6)."
           ]
       , Step Nothing $ Eff
