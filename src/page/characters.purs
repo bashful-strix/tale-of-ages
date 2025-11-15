@@ -40,8 +40,9 @@ import ToA.Data.Icon.Character
   , _primaryJob
   , _talents
   )
-import ToA.Data.Icon.Class (_class, _defense, _hp, _move)
+import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
 import ToA.Data.Icon.Description (_desc)
+import ToA.Data.Icon.Job (_limitBreak)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), _Characters)
@@ -51,7 +52,7 @@ import ToA.Util.Optic ((#~), (^::))
 charactersPage :: Env -> Maybe Name -> Nut
 charactersPage env@{ characters, icon, route } pathChar =
   ((/\) <$> characters <*> icon)
-    <#~> \(chars /\ { abilities, classes, jobs, talents, traits }) ->
+    <#~> \(chars /\ icon_@{ abilities, classes, jobs, talents, traits }) ->
       let
         char = chars
           ^? traversed
@@ -208,6 +209,19 @@ charactersPage env@{ characters, icon, route } pathChar =
                                     [ D.text_ $ t ^. _name <<< _Newtype ]
                                 , t # _desc #~ markup
                                 ]
+
+                      , D.div
+                          [ css_ [ "flex", "gap-x-2" ] ] $
+                          abilities
+                            ^:: traversed
+                            <<< filtered
+                              ( preview _name >>>
+                                  eq (job ^? _Just <<< _limitBreak)
+                              )
+                            <<< to \a ->
+                              D.div
+                                [ css_ [ "flex-1", "overflow-scroll" ] ]
+                                [ renderAbility icon_ a ]
                       ]
 
                   , D.div
@@ -223,17 +237,27 @@ charactersPage env@{ characters, icon, route } pathChar =
                           , "border-sky-800"
                           ]
                       ]
-                      $
-                        abilities
-                          ^:: traversed
-                          <<< filtered
-                            ( view _name >>> elem ~$
-                                (char ^. _Just <<< _build <<< _prepared)
-                            )
-                          <<< to \a ->
-                            D.div
-                              [ css_ [ "flex-1", "overflow-scroll" ] ]
-                              [ renderAbility a ]
+                      ( ( abilities
+                            ^:: traversed
+                            <<< filtered
+                              (preview _name >>> eq (cls ^? _Just <<< _basic))
+                            <<< to \a ->
+                              D.div
+                                [ css_ [ "flex-1", "overflow-scroll" ] ]
+                                [ renderAbility icon_ a ]
+                        ) <>
+                          ( abilities
+                              ^:: traversed
+                              <<< filtered
+                                ( view _name >>> elem ~$
+                                    (char ^. _Just <<< _build <<< _prepared)
+                                )
+                              <<< to \a ->
+                                D.div
+                                  [ css_ [ "flex-1", "overflow-scroll" ] ]
+                                  [ renderAbility icon_ a ]
+                          )
+                      )
                   ]
               ]
           ]

@@ -20,5 +20,6 @@ icon =
   , traits
   , talents
   , abilities
+  , summons: []
   , keywords
   }

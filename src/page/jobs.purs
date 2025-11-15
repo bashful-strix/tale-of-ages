@@ -36,7 +36,7 @@ import FRP.Poll (Poll)
 import ToA.Component.Ability (renderAbility)
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Ability (_summon)
+import ToA.Data.Icon.Ability (Step(..), _steps)
 import ToA.Data.Icon.Class
   ( _apprentice
   , _basic
@@ -304,7 +304,7 @@ renderClassDesc icon name = icon <#~> \{ classes } ->
 
 renderClassAbilities :: Env -> JobPath -> Name -> Maybe Name -> Nut
 renderClassAbilities env@{ icon } path name ability = icon <#~>
-  \{ abilities, classes } ->
+  \icon_@{ abilities, classes } ->
     classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
       D.div
         [ css_ [ "w-full", "flex", "gap-2" ] ]
@@ -367,7 +367,7 @@ renderClassAbilities env@{ icon } path name ability = icon <#~>
         , D.div
             [ css_ [ "basis-1/3", "overflow-scroll" ] ]
             [ abilities # traversed <<< filtered (eq ability <<< preview _name)
-                #~ renderAbility
+                #~ renderAbility icon_
             ]
 
         , D.div
@@ -375,9 +375,15 @@ renderClassAbilities env@{ icon } path name ability = icon <#~>
             [ D.text_ $ abilities
                 # traversed
                     <<< filtered (eq ability <<< preview _name)
-                    <<< _summon
+                    <<< _steps
+                    <<< traversed
+                    <<< to
+                      ( case _ of
+                          SummonStep _ n _ -> Just n
+                          _ -> Nothing
+                      )
                     <<< _Just
-                    <<< _Newtype
+                    <<< simple _Newtype
                       #~ identity
             ]
         ]
@@ -473,7 +479,7 @@ renderJobDesc icon name = icon <#~> \{ jobs, talents, traits } ->
 
 renderJobAbilities :: Env -> JobPath -> Name -> Maybe Name -> Nut
 renderJobAbilities env@{ icon } path name ability = icon <#~>
-  \{ abilities, jobs } ->
+  \icon_@{ abilities, jobs } ->
     jobs # traversed <<< filtered (has (_name <<< only name)) #~ \j ->
       D.div
         [ css_ [ "w-full", "flex", "gap-2" ] ]
@@ -545,7 +551,7 @@ renderJobAbilities env@{ icon } path name ability = icon <#~>
         , D.div
             [ css_ [ "basis-1/3", "overflow-scroll" ] ]
             [ abilities # traversed <<< filtered (eq ability <<< preview _name)
-                #~ renderAbility
+                #~ renderAbility icon_
             ]
 
         , D.div
@@ -553,9 +559,15 @@ renderJobAbilities env@{ icon } path name ability = icon <#~>
             [ D.text_ $ abilities
                 # traversed
                     <<< filtered (eq ability <<< preview _name)
-                    <<< _summon
+                    <<< _steps
+                    <<< traversed
+                    <<< to
+                      ( case _ of
+                          SummonStep _ n _ -> Just n
+                          _ -> Nothing
+                      )
                     <<< _Just
-                    <<< _Newtype
+                    <<< simple _Newtype
                       #~ identity
             ]
         ]

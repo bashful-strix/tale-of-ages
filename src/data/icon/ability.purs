@@ -16,8 +16,6 @@ module ToA.Data.Icon.Ability
   , _action
   , _resolve
   , _steps
-  , _sub
-  , _summon
   , _tags
   ) where
 
@@ -41,8 +39,6 @@ type AbilityData a =
   , description :: Markup
   , cost :: a
   , tags :: Array Tag
-  , summon :: Maybe Name
-  , sub :: Maybe Name
   , steps :: Array Step
   }
 
@@ -95,20 +91,6 @@ _tags = lens' case _ of
   LimitBreak a -> map LimitBreak <$> lensStore k a
   where
   k = key @"tags"
-
-_summon :: Lens' Ability (Maybe Name)
-_summon = lens' case _ of
-  Ability a -> map Ability <$> lensStore k a
-  LimitBreak a -> map LimitBreak <$> lensStore k a
-  where
-  k = key @"summon"
-
-_sub :: Lens' Ability (Maybe Name)
-_sub = lens' case _ of
-  Ability a -> map Ability <$> lensStore k a
-  LimitBreak a -> map LimitBreak <$> lensStore k a
-  where
-  k = key @"sub"
 
 _steps :: Lens' Ability (Array Step)
 _steps = lens' case _ of
@@ -165,4 +147,7 @@ data StepType
   | TriggerStep Markup
   | OtherStep Markup Markup
 
-data Step = Step (Maybe Die) StepType
+data Step
+  = Step (Maybe Die) StepType
+  | SubStep (Maybe Die) Name StepType
+  | SummonStep (Maybe Die) Name StepType

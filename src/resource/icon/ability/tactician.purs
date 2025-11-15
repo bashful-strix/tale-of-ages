@@ -35,8 +35,6 @@ mightyCommand = LimitBreak
       ]
   , cost: One /\ 2
   , tags: [ TargetTag Ally, TargetTag Foe ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ Eff
           [ Text
@@ -68,8 +66,6 @@ pincerAttack = Ability
       ]
   , cost: One
   , tags: [ Attack, RangeTag Melee ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ AttackStep (Just $ Flat 1) (Just $ Roll 1 D3)
       , Step Nothing $ OnHit
@@ -98,8 +94,6 @@ baitAndSwitch = Ability
       ]
   , cost: One
   , tags: [ RangeTag (Range 1 2), TargetTag Ally ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ Eff [ Text "Swap places with an ally in range." ]
       , Step Nothing $ Eff
@@ -123,8 +117,6 @@ holdTheCenter = Ability
       ]
   , cost: Interrupt 1
   , tags: [ TargetTag Ally, RangeTag Adjacent ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ TriggerStep
           [ Text "An adjacent ally is damaged." ]
@@ -152,8 +144,6 @@ mightyStandard = Ability
       ]
   , cost: One
   , tags: [ KeywordTag (Name "Zone"), RangeTag (Range 1 3), End ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ KeywordStep (Name "Zone")
           [ Bold [ Text "End your turn" ]

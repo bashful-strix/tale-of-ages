@@ -33,8 +33,6 @@ furor = Ability
   , description: [ Text "Strike with your heart." ]
   , cost: One
   , tags: [ Attack, RangeTag Melee ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ AttackStep (Just $ Flat 2) (Just $ Roll 1 D6)
       , Step Nothing $ OnHit
@@ -57,8 +55,6 @@ interpose = Ability
       ]
   , cost: One
   , tags: [ RangeTag (Range 1 3), TargetTag Ally ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ TriggerStep
           [ Text "An ally ends their turn in range." ]
@@ -78,8 +74,6 @@ impel = Ability
   , description: [ Text "Hurl headlong into battle." ]
   , cost: One
   , tags: [ RangeTag Melee, TargetTag Foe ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step (Just D6) $ Eff
           [ Text "Dash 1, then an adjacent foe is "
@@ -98,8 +92,6 @@ hook = Ability
       ]
   , cost: Quick
   , tags: [ RangeTag (Range 2 3), TargetTag Ally ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ Eff
           [ Text "Pull target 1. They are "
@@ -117,8 +109,6 @@ mightyHew = Ability
   , description: [ Text "Finish them." ]
   , cost: Two
   , tags: [ Attack, RangeTag Melee ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ AttackStep (Just $ Flat 3) (Just $ Roll 2 D6)
       , Step (Just D6) $ OnHit
@@ -138,8 +128,6 @@ secondWind = Ability
       [ Text "You brace and ready yourself for the fray." ]
   , cost: One
   , tags: [ End, TargetTag Self ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step (Just D6) $ Eff
           [ Text
@@ -169,8 +157,6 @@ shatter = Ability
       ]
   , cost: Two
   , tags: [ Close, AreaTag (Blast 3) ]
-  , summon: Nothing
-  , sub: Nothing
   , steps:
       [ Step Nothing $ AreaEff [ Dice 1 D6, Text "+2 damage, push 1." ]
       , Step Nothing $ Eff

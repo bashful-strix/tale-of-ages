@@ -15,6 +15,7 @@ import ToA.Data.Icon.Ability (Ability)
 import ToA.Data.Icon.Class (Class)
 import ToA.Data.Icon.Job (Job)
 import ToA.Data.Icon.Keyword (Keyword)
+import ToA.Data.Icon.Name (Name)
 import ToA.Data.Icon.Soul (Soul)
 import ToA.Data.Icon.Talent (Talent)
 import ToA.Data.Icon.Trait (Trait)
@@ -28,6 +29,7 @@ type Icon =
   , traits :: Array Trait
   , talents :: Array Talent
   , abilities :: Array Ability
+  , summons :: Array Name
   , keywords :: Array Keyword
   }
 
