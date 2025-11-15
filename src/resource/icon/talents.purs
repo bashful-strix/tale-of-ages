@@ -4,10 +4,15 @@ module ToA.Resource.Icon.Talents
 
 import ToA.Data.Icon.Talent (Talent)
 import ToA.Resource.Icon.Talent.Tactician (fieldwork, mastermind, spur)
+import ToA.Resource.Icon.Talent.WorkshopKnight (alloy, endure, bolster)
 
 talents :: Array Talent
 talents =
   [ mastermind
   , spur
   , fieldwork
+  
+  , alloy
+  , endure
+  , bolster
   ]

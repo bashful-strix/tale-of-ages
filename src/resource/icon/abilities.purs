@@ -19,6 +19,14 @@ import ToA.Resource.Icon.Ability.Tactician
   , holdTheCenter
   , mightyStandard
   ) 
+import ToA.Resource.Icon.Ability.WorkshopKnight
+  ( masterstroke
+  , rocketPunch
+  , ripperClaw
+  , weaponVault
+  , arsenal
+  , arsenalFlashBomb
+  )
 
 abilities :: Array Ability
 abilities =
@@ -35,4 +43,11 @@ abilities =
   , baitAndSwitch
   , holdTheCenter
   , mightyStandard
+
+  , masterstroke
+  , rocketPunch
+  , ripperClaw
+  , weaponVault
+  , arsenal
+  , arsenalFlashBomb
   ]
