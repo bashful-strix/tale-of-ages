@@ -3,6 +3,7 @@ module ToA.Resource.Icon.Abilities
   ) where
 
 import ToA.Data.Icon.Ability (Ability)
+
 import ToA.Resource.Icon.Ability.Stalwart
   ( furor
   , interpose
@@ -28,6 +29,18 @@ import ToA.Resource.Icon.Ability.WorkshopKnight
   , arsenalFlashBomb
   )
 
+import ToA.Resource.Icon.Ability.Wright
+  ( magi
+  , ember
+  , emberZone
+  , aero
+  , geo
+  , cryo
+  , ruin
+  , shift
+  , gleam
+  )
+
 abilities :: Array Ability
 abilities =
   [ furor
@@ -37,6 +50,16 @@ abilities =
   , mightyHew
   , secondWind
   , shatter
+
+  , magi
+  , ember
+  , emberZone
+  , aero
+  , geo
+  , cryo
+  , ruin
+  , shift
+  , gleam
 
   , mightyCommand
   , pincerAttack

@@ -10,6 +10,7 @@ import ToA.Data.Icon.Trait (Trait(..))
 traits :: Array Trait
 traits =
   [ rampart
+  , masterOfAether
   , pressTheFight
   , ingenuity
   ]
@@ -37,6 +38,32 @@ rampart = Trait
           , [ Text
                 """Foes must spend +1 movement to exit a space adjecent
                 to you"""
+            ]
+          ]
+      ]
+  }
+
+masterOfAether :: Trait
+masterOfAether = Trait
+  { name: Name "Master of Aether"
+  , description:
+      [ Text
+          """You are the master of manipulating ethereal currents,
+          granting the following benefits."""
+      , Newline
+      , List Unordered
+          [ [ Bold [ Text "Aether Surge:" ]
+            , Text
+                """ At round 3+, you increase all area damage you deal by
+                +2."""
+            ]
+          , [ Bold [ Text "Aether Wall:" ]
+            , Text " You have automatic "
+            , Italic [ Ref (Name "Cover") [ Text "cover" ] ]
+            , Text
+                """ against abilities used by any character 3 or more
+                spaces away.
+                """
             ]
           ]
       ]
