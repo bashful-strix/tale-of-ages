@@ -36,6 +36,22 @@ import ToA.Resource.Icon.Job.Stormscale (stormscale)
 import ToA.Resource.Icon.Job.Warden (warden)
 import ToA.Resource.Icon.Job.Blightrunner (blightrunner)
 
+import ToA.Resource.Icon.Job.Chanter (chanter)
+import ToA.Resource.Icon.Job.Zephyr (zephyr)
+import ToA.Resource.Icon.Job.Raconteur (raconteur)
+
+import ToA.Resource.Icon.Job.Harvester (harvester)
+import ToA.Resource.Icon.Job.FairyWright (fairyWright)
+import ToA.Resource.Icon.Job.Herbalist (herbalist)
+
+import ToA.Resource.Icon.Job.Sealer (sealer)
+import ToA.Resource.Icon.Job.ShrineGuardian (shrineGuardian)
+import ToA.Resource.Icon.Job.Yaman (yaman)
+
+import ToA.Resource.Icon.Job.Seer (seer)
+import ToA.Resource.Icon.Job.Chronomancer (chronomancer)
+import ToA.Resource.Icon.Job.Celestian (celestian)
+
 import ToA.Resource.Icon.Job.Spellblade (spellblade)
 
 jobs :: Array Job
@@ -71,6 +87,22 @@ jobs =
   , stormscale
   , warden
   , blightrunner
+
+  , chanter
+  , zephyr
+  , raconteur
+
+  , harvester
+  , fairyWright
+  , herbalist
+
+  , sealer
+  , shrineGuardian
+  , yaman
+
+  , seer
+  , chronomancer
+  , celestian
 
   , spellblade
   ]

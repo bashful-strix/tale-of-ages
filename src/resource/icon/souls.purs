@@ -14,6 +14,11 @@ import ToA.Resource.Icon.Soul.Gunner (gunner)
 import ToA.Resource.Icon.Soul.Thief (thief)
 import ToA.Resource.Icon.Soul.Ranger (ranger)
 
+import ToA.Resource.Icon.Soul.Bard (bard)
+import ToA.Resource.Icon.Soul.Witch (witch)
+import ToA.Resource.Icon.Soul.Monk (monk)
+import ToA.Resource.Icon.Soul.Oracle (oracle)
+
 import ToA.Resource.Icon.Soul.Bolt (bolt)
 
 souls :: Array Soul
@@ -27,6 +32,11 @@ souls =
   , gunner
   , thief
   , ranger
+
+  , bard
+  , witch
+  , monk
+  , oracle
 
   , bolt
   ]
