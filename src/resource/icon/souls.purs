@@ -19,7 +19,10 @@ import ToA.Resource.Icon.Soul.Witch (witch)
 import ToA.Resource.Icon.Soul.Monk (monk)
 import ToA.Resource.Icon.Soul.Oracle (oracle)
 
+import ToA.Resource.Icon.Soul.Flame (flame)
+import ToA.Resource.Icon.Soul.Earth (earth)
 import ToA.Resource.Icon.Soul.Bolt (bolt)
+import ToA.Resource.Icon.Soul.Water (water)
 
 souls :: Array Soul
 souls =
@@ -38,5 +41,8 @@ souls =
   , monk
   , oracle
 
+  , flame
+  , earth
   , bolt
+  , water
   ]

@@ -52,7 +52,21 @@ import ToA.Resource.Icon.Job.Seer (seer)
 import ToA.Resource.Icon.Job.Chronomancer (chronomancer)
 import ToA.Resource.Icon.Job.Celestian (celestian)
 
+import ToA.Resource.Icon.Job.Enochian (enochian)
+import ToA.Resource.Icon.Job.Theurgist (theurgist)
+import ToA.Resource.Icon.Job.Runesmith (runesmith)
+
+import ToA.Resource.Icon.Job.Geomancer (geomancer)
+import ToA.Resource.Icon.Job.Auran (auran)
+import ToA.Resource.Icon.Job.Alchemist (alchemist)
+
 import ToA.Resource.Icon.Job.Spellblade (spellblade)
+import ToA.Resource.Icon.Job.Wayfarer (wayfarer)
+import ToA.Resource.Icon.Job.Entropist (entropist)
+
+import ToA.Resource.Icon.Job.Stormbender (stormbender)
+import ToA.Resource.Icon.Job.Mistwalker (mistwalker)
+import ToA.Resource.Icon.Job.Snowbinder (snowbinder)
 
 jobs :: Array Job
 jobs =
@@ -104,5 +118,19 @@ jobs =
   , chronomancer
   , celestian
 
+  , enochian
+  , theurgist
+  , runesmith
+
+  , geomancer
+  , auran
+  , alchemist
+
   , spellblade
+  , wayfarer
+  , entropist
+
+  , stormbender
+  , mistwalker
+  , snowbinder
   ]
