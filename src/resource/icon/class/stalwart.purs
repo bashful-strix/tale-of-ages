@@ -27,9 +27,9 @@ stalwart = Class
           foes from approaching or harming allies, and pushing foes
           around with their immense strength."""
       ]
-  , move: 4
   , hp: 40
   , defense: 3
+  , move: 4
   , trait: Name "Rampart"
   , basic: Name "Furor"
   , keywords:

@@ -78,8 +78,7 @@ gungnir = Ability
   { name: Name "Gungnir"
   , colour: Name "Blue"
   , description:
-      [ Text
-          "A thousand spears of light, each striking a perfect blow."
+      [ Text "A thousand spears of light, each striking a perfect blow."
       ]
   , cost: One
   , tags: [ Attack, Close, AreaTag (Line 6) ]

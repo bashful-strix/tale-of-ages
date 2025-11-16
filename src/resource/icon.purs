@@ -10,6 +10,7 @@ import ToA.Resource.Icon.Colours (colours)
 import ToA.Resource.Icon.Jobs (jobs)
 import ToA.Resource.Icon.Keywords (keywords)
 import ToA.Resource.Icon.Souls (souls)
+import ToA.Resource.Icon.Summons (summons)
 import ToA.Resource.Icon.Talents (talents)
 import ToA.Resource.Icon.Traits (traits)
 
@@ -22,6 +23,6 @@ icon =
   , traits
   , talents
   , abilities
-  , summons: []
+  , summons
   , keywords
   }

@@ -10,6 +10,7 @@ import ToA.Data.Icon.Trait (Trait(..))
 traits :: Array Trait
 traits =
   [ rampart
+  , skirmisher
   , masterOfAether
 
   , pressTheFight
@@ -42,6 +43,29 @@ rampart = Trait
           , [ Text
                 """Foes must spend +1 movement to exit a space adjecent
                 to you"""
+            ]
+          ]
+      ]
+  }
+
+skirmisher :: Trait
+skirmisher = Trait
+  { name: Name "Skirmisher"
+  , description:
+      [ Text
+          """You are an agile fighter, able to dodge and weave around the
+          battlefield with skill and precision. You gain the following
+          benefits:"""
+      , Newline
+      , List Unordered
+          [ [ Text "You can move diagonally" ]
+          , [ Text
+                """Once a round, when you make a single move, dash, fly, or
+                teleport, you may extend it by +3"""
+            ]
+          , [ Text
+                """You reduce all damage from missed attacks and successful
+                saves to 1"""
             ]
           ]
       ]

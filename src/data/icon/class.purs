@@ -6,9 +6,9 @@ module ToA.Data.Icon.Class
   , _strengths
   , _weaknesses
   , _complexity
-  , _move
   , _hp
   , _defense
+  , _move
   , _basic
   , _keywords
   , _apprentice
@@ -35,9 +35,9 @@ newtype Class = Class
   , weaknesses :: Markup
   , complexity :: Markup
   , description :: Markup
-  , move :: Int
   , hp :: Int
   , defense :: Int
+  , move :: Int
   , trait :: Name
   , basic :: Name
   , keywords :: Array Name
@@ -72,14 +72,14 @@ _weaknesses = _Newtype <<< key @"weaknesses"
 _complexity :: Lens' Class Markup
 _complexity = _Newtype <<< key @"complexity"
 
-_move :: Lens' Class Int
-_move = _Newtype <<< key @"move"
-
 _hp :: Lens' Class Int
 _hp = _Newtype <<< key @"hp"
 
 _defense :: Lens' Class Int
 _defense = _Newtype <<< key @"defense"
+
+_move :: Lens' Class Int
+_move = _Newtype <<< key @"move"
 
 _basic :: Lens' Class Name
 _basic = _Newtype <<< key @"basic"

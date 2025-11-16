@@ -78,7 +78,7 @@ renderAbility icon@{ abilities, colours, summons } a =
                           Line n -> "Line " <> show n
                           Arc n -> "Arc " <> show n
                           Blast n -> "Blast " <> show n
-                          Burst n x -> "Burst " <> show n <> "("
+                          Burst n x -> "Burst " <> show n <> " ("
                             <> (if x then "self" else "target")
                             <> ")"
                           Cross n -> "Cross " <> show n

@@ -27,9 +27,9 @@ wright = Class
           shape Aether as naturally as they move their own flesh and
           blood. Wrights wield terrifying power - and they know it."""
       ]
-  , move: 4
   , hp: 32
   , defense: 4
+  , move: 4
   , trait: Name "Master of Aether"
   , basic: Name "Magi"
   , keywords:

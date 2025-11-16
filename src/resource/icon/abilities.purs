@@ -29,6 +29,16 @@ import ToA.Resource.Icon.Ability.WorkshopKnight
   , arsenalFlashBomb
   )
 
+import ToA.Resource.Icon.Ability.Vagabond
+  ( windsKiss
+  , track
+  , quickStep
+  , flashPowder
+  , gouge
+  , smokeBomb
+  , deathTrap
+  )
+
 import ToA.Resource.Icon.Ability.Wright
   ( magi
   , ember
@@ -59,6 +69,14 @@ abilities =
   , mightyHew
   , secondWind
   , shatter
+
+  , windsKiss
+  , track
+  , quickStep
+  , flashPowder
+  , gouge
+  , smokeBomb
+  , deathTrap
 
   , magi
   , ember
