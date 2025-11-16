@@ -20,6 +20,22 @@ import ToA.Resource.Icon.Job.Knave (knave)
 import ToA.Resource.Icon.Job.BleakKnight (bleakKnight)
 import ToA.Resource.Icon.Job.Corvidian (corvidian)
 
+import ToA.Resource.Icon.Job.Puppeteer (puppeteer)
+import ToA.Resource.Icon.Job.WeepingAssassin (weepingAssassin)
+import ToA.Resource.Icon.Job.Venomist (venomist)
+
+import ToA.Resource.Icon.Job.Dragoon (dragoon)
+import ToA.Resource.Icon.Job.Pathfinder (pathfinder)
+import ToA.Resource.Icon.Job.Freelancer (freelancer)
+
+import ToA.Resource.Icon.Job.Rake (rake)
+import ToA.Resource.Icon.Job.Fool (fool)
+import ToA.Resource.Icon.Job.Dancer (dancer)
+
+import ToA.Resource.Icon.Job.Stormscale (stormscale)
+import ToA.Resource.Icon.Job.Warden (warden)
+import ToA.Resource.Icon.Job.Blightrunner (blightrunner)
+
 import ToA.Resource.Icon.Job.Spellblade (spellblade)
 
 jobs :: Array Job
@@ -39,6 +55,22 @@ jobs =
   , knave
   , bleakKnight
   , corvidian
+
+  , puppeteer
+  , weepingAssassin
+  , venomist
+
+  , dragoon
+  , pathfinder
+  , freelancer
+
+  , rake
+  , fool
+  , dancer
+
+  , stormscale
+  , warden
+  , blightrunner
 
   , spellblade
   ]
