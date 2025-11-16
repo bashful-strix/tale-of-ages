@@ -84,6 +84,11 @@ data JobLevel
   | IV
 
 derive instance Eq JobLevel
+instance Show JobLevel where
+  show I = "I"
+  show II = "II"
+  show III = "III"
+  show IV = "IV"
 
 _I :: Prism' JobLevel Unit
 _I = only I

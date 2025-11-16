@@ -105,3 +105,17 @@ data Level
 
 derive instance Eq Level
 derive instance Ord Level
+instance Show Level where
+  show Zero = "0"
+  show One = "1"
+  show Two = "2"
+  show Three = "3"
+  show Four = "4"
+  show Five = "5"
+  show Six = "6"
+  show Seven = "7"
+  show Eight = "8"
+  show Nine = "9"
+  show Ten = "10"
+  show Eleven = "11"
+  show Twelve = "12"

@@ -13,6 +13,7 @@ characters :: Array Character
 characters =
   [ testana
   , testina
+  , testona
   ]
 
 testana :: Character
@@ -50,5 +51,32 @@ testina = Character
       , prepared:
           [ Name "Hook", Name "Mighty Hew", Name "Mighty Command" ]
       , talents: []
+      }
+  }
+
+testona :: Character
+testona = Character
+  { name: Name "Testona"
+  , hp: 40
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: Two
+      , jobs: fromFoldable [ Name "Tactician" /\ I, Name "Spellblade" /\ I ]
+      , primaryJob: Name "Tactician"
+      , abilities:
+          [ Name "Hook"
+          , Name "Mighty Hew"
+          , Name "Mighty Command"
+          , Name "Shift"
+          ]
+      , prepared:
+          [ Name "Hook"
+          , Name "Mighty Hew"
+          , Name "Mighty Command"
+          , Name "Shift"
+          ]
+      , talents: [ Name "Spur" ]
       }
   }

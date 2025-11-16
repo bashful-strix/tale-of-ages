@@ -59,8 +59,7 @@ import ToA.Data.Icon.Class
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Job
-  ( JobLevel(..)
-  , _abilities
+  ( _abilities
   , _limitBreak
   , _talents
   , _soul
@@ -590,13 +589,7 @@ renderJobAbilities env@{ icon } path name ability = icon <#~>
                                     <<< pure
                               ]
                               [ D.text_ $ a ^. simple _Newtype ]
-                          , D.span []
-                              [ D.text_ $ l # case _ of
-                                  I -> "I"
-                                  II -> "II"
-                                  III -> "III"
-                                  IV -> "IV"
-                              ]
+                          , D.span [] [ D.text_ $ show l ]
                           ]
                 ]
             ]

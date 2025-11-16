@@ -19,7 +19,10 @@ import Data.Lens
   , to
   , traversed
   , view
+  , ifoldMapOf
   )
+import Data.Lens.Common (simple)
+import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Prism (is, isn't)
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -37,6 +40,7 @@ import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon.Character
   ( Level(..)
   , _build
+  , _jobs
   , _level
   , _prepared
   , _primaryJob
@@ -45,11 +49,11 @@ import ToA.Data.Icon.Character
 import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
-import ToA.Data.Icon.Job (_limitBreak)
+import ToA.Data.Icon.Job (JobLevel(..), _limitBreak)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), _Characters)
-import ToA.Util.Html (css_)
+import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((#~), (^::))
 
 charactersPage :: Env -> Maybe Name -> Nut
@@ -168,8 +172,45 @@ charactersPage env@{ characters, icon, route } pathChar =
                                 [ css_ [ "w-max", "font-bold" ] ]
                                 [ D.text_ $ cls ^. _Just <<< _name <<< _Newtype
                                 ]
+
+                            , hr
+
                             , D.div []
                                 [ D.div
+                                    [ css_ [ "w-max" ] ]
+                                    [ D.span
+                                        [ css_ [ "font-bold" ] ]
+                                        [ D.text_ "Level " ]
+                                    , D.span []
+                                        [ D.text_ $ char
+                                            ^. _Just
+                                              <<< _build
+                                              <<< _level
+                                              <<< to show
+                                        ]
+                                    ]
+                                , D.div
+                                    [ css_ [ "w-max" ] ] $ char
+                                    #
+                                      ( _Just
+                                          <<< _build
+                                          <<< _jobs
+                                          <<< itraversed
+                                      )
+                                        `ifoldMapOf` \n l -> pure $
+                                          D.div []
+                                            [ D.span
+                                                [ css_ [ "font-bold" ] ]
+                                                [ D.text_ $
+                                                    (n ^. simple _Newtype)
+                                                      <> " "
+                                                ]
+                                            , D.span [] [ D.text_ $ show l ]
+                                            ]
+
+                                , hr
+
+                                , D.div
                                     [ css_ [ "w-max" ] ]
                                     [ D.span
                                         [ css_ [ "font-bold" ] ]
