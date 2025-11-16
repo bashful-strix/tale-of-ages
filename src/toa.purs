@@ -16,6 +16,7 @@ import ToA.Data.Env (Env)
 import ToA.Data.Route (Route(..))
 import ToA.Data.Theme (themeCodec)
 import ToA.Page.Characters (charactersPage)
+import ToA.Page.Encounters (encountersPage)
 import ToA.Page.Home (homePage)
 import ToA.Page.Jobs (jobsPage)
 import ToA.Page.Unknown (unknownPage)
@@ -30,6 +31,7 @@ toa env@{ route, systemTheme, theme } =
         , "flex"
         , "flex-col"
         , "overflow-hidden"
+        , "text-sm"
         , "bg-stone-300"
         , "text-stone-700"
         , "dark:bg-stone-900"
@@ -44,6 +46,7 @@ toa env@{ route, systemTheme, theme } =
             Just Home -> homePage
             Just (Jobs path) -> jobsPage env path
             Just (Characters char) -> charactersPage env char
+            Just (Encounters enc) -> encountersPage env enc
             Nothing -> unknownPage
         ]
     ]

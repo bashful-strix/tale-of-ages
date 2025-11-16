@@ -3,6 +3,7 @@ module ToA.Data.Route
   , JobPath(..)
   , routeCodec
   , _Characters
+  , _Encounters
   , _Jobs
   , _ability
   ) where
@@ -26,6 +27,7 @@ data Route
   = Home
   | Jobs JobPath
   | Characters (Maybe Name)
+  | Encounters (Maybe Name)
 
 _Jobs :: Prism' Route JobPath
 _Jobs = prism' Jobs case _ of
@@ -37,6 +39,11 @@ _Characters = prism' Characters case _ of
   Characters c -> Just c
   _ -> Nothing
 
+_Encounters :: Prism' Route (Maybe Name)
+_Encounters = prism' Encounters case _ of
+  Encounters e -> Just e
+  _ -> Nothing
+
 derive instance Eq Route
 derive instance Generic Route _
 
@@ -46,6 +53,7 @@ routeCodec =
     { "Home": noArgs
     , "Jobs": "jobs" / jobPath
     , "Characters": "characters" / optional (name segment)
+    , "Encounters": "encounters" / optional (name segment)
     }
 
 data JobPath

@@ -45,6 +45,7 @@ titleBar env@{ theme } =
             [ "ToA" /\ Home
             , "Jobs" /\ Jobs None
             , "Characters" /\ Characters Nothing
+            , "Encounters" /\ Encounters Nothing
             ] <#> \(label /\ route) ->
               D.li
                 [ css_ [ "flex", "h-full" ] ]
