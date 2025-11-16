@@ -13,4 +13,5 @@ colours =
   , Colour { name: Name "Yellow", value: fromInt 0xd08700 } -- yellow-600
   , Colour { name: Name "Green", value: fromInt 0x5ea500 } -- lime-600
   , Colour { name: Name "Blue", value: fromInt 0x155dfc } -- blue-600
+  , Colour { name: Name "Purple", value: fromInt 0x9810fa } -- pruple-600
   ]

@@ -7,6 +7,9 @@ import ToA.Data.Icon (Icon)
 import ToA.Resource.Icon.Abilities (abilities)
 import ToA.Resource.Icon.Classes (classes)
 import ToA.Resource.Icon.Colours (colours)
+import ToA.Resource.Icon.Foe.Factions (factions)
+import ToA.Resource.Icon.Foe.Foes (foes)
+import ToA.Resource.Icon.Foe.Classes (foeClasses)
 import ToA.Resource.Icon.Jobs (jobs)
 import ToA.Resource.Icon.Keywords (keywords)
 import ToA.Resource.Icon.Souls (souls)
@@ -25,7 +28,7 @@ icon =
   , abilities
   , summons
   , keywords
-  , foes: []
-  , foeClasses: []
-  , factions: []
+  , foes
+  , foeClasses
+  , factions
   }
