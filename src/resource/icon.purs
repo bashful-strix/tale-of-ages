@@ -25,4 +25,7 @@ icon =
   , abilities
   , summons
   , keywords
+  , foes: []
+  , foeClasses: []
+  , factions: []
   }

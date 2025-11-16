@@ -16,6 +16,7 @@ import Data.Lens (Lens')
 import ToA.Data.Icon.Ability (Ability)
 import ToA.Data.Icon.Class (Class)
 import ToA.Data.Icon.Colour (Colour)
+import ToA.Data.Icon.Foe (Faction, Foe, FoeClass)
 import ToA.Data.Icon.Job (Job)
 import ToA.Data.Icon.Keyword (Keyword)
 import ToA.Data.Icon.Name (Name)
@@ -35,6 +36,9 @@ type Icon =
   , abilities :: Array Ability
   , summons :: Array Name
   , keywords :: Array Keyword
+  , foes :: Array Foe
+  , foeClasses :: Array FoeClass
+  , factions :: Array Faction
   }
 
 _classes :: Lens' Icon (Array Class)

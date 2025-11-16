@@ -90,6 +90,7 @@ renderAbility icon@{ abilities, colours, summons } a =
                           Space -> "Space"
                           Object -> "Object"
                         KeywordTag k -> k ^. simple _Newtype
+                        LimitTag n c -> show n <> "/" <> c
                     )
             ]
         ]

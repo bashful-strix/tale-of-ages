@@ -141,6 +141,7 @@ data Tag
   | AreaTag Pattern
   | TargetTag Target
   | KeywordTag Name
+  | LimitTag Int String
 
 data StepType
   = Eff Markup

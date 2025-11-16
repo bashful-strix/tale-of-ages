@@ -49,7 +49,7 @@ import ToA.Data.Icon.Character
 import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
-import ToA.Data.Icon.Job (JobLevel(..), _limitBreak)
+import ToA.Data.Icon.Job (_limitBreak)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), _Characters)
