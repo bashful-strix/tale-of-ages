@@ -6,11 +6,12 @@ import Prelude
 
 import CSS (backgroundColor, render, renderedInline)
 
-import Data.Foldable (foldMap, intercalate)
+import Data.Foldable (foldMap, intercalate, length)
 import Data.Lens ((^.), (^?), filtered, to, traversed, view)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe, fromMaybe)
+import Data.Monoid (guard)
 
 import Deku.Core (Nut)
 import Deku.DOM as D
@@ -21,7 +22,6 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -150,20 +150,12 @@ renderStepDesc s =
         Eff t -> markup t
         AttackStep m h ->
           D.span []
-            [ m # foldMap case _ of
-                Flat x -> D.text_ $ show x <> " damage."
-                Roll n x -> D.text_ $ show n <> show x <>
-                  " damage."
-            , h # foldMap \hd ->
+            [ markup m
+            , D.span [] [ D.text_ "." ]
+            , guard (length h > 0) $
                 D.span []
-                  [ D.span [ css_ [ "italic" ] ]
-                      [ D.text_ " Hit: " ]
-                  , D.text_ "+"
-                  , case hd of
-                      Flat x -> D.text_ $ show x <>
-                        "  damage."
-                      Roll n x -> D.text_ $ show n <> show x
-                        <> " damage."
+                  [ D.span [ css_ [ "italic" ] ] [ D.text_ " Hit: " ]
+                  , markup h
                   ]
             ]
         OnHit t -> markup t

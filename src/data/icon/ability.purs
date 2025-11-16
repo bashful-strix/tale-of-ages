@@ -1,7 +1,6 @@
 module ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -143,13 +142,9 @@ data Tag
   | TargetTag Target
   | KeywordTag Name
 
-data Damage
-  = Flat Int
-  | Roll Int Die
-
 data StepType
   = Eff Markup
-  | AttackStep (Maybe Damage) (Maybe Damage)
+  | AttackStep Markup Markup
   | OnHit Markup
   | AreaEff Markup
   | KeywordStep Name Markup

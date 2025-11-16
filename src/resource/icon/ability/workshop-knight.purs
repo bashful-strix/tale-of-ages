@@ -15,7 +15,6 @@ import Data.Tuple.Nested ((/\))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -164,8 +163,8 @@ arsenal = Ability
   , tags: [ Attack, RangeTag (Range 1 3) ]
   , steps:
       [ Step Nothing $ AttackStep
-          (Just $ Flat 2)
-          (Just $ Roll 1 D6)
+          [ Text "2 damage" ]
+          [ Text "+", Dice 1 D6 ]
       , Step Nothing $ OnHit
           [ Text "Push or pull target 1 space." ]
       , SubStep Nothing (Name "Arsenal Flash Bomb") $ KeywordStep

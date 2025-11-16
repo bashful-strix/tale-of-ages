@@ -14,7 +14,6 @@ import Data.Tuple.Nested ((/\))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Range(..)
   , Step(..)
   , StepType(..)
@@ -69,7 +68,9 @@ pincerAttack = Ability
   , cost: One
   , tags: [ Attack, RangeTag Melee ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 1) (Just $ Roll 1 D3)
+      [ Step Nothing $ AttackStep
+          [ Text "1 damage" ]
+          [ Text "+", Dice 1 D3 ]
       , Step Nothing $ OnHit
           [ Text
               """Push 1. If your foe would be pushed into an ally's

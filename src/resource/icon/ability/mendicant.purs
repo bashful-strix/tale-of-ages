@@ -15,13 +15,11 @@ import Data.Maybe (Maybe(..))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
   , Tag(..)
-  -- , Target(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
@@ -35,7 +33,9 @@ glia = Ability
   , cost: One
   , tags: [ Attack, RangeTag (Range 1 5), KeywordTag (Name "Pierce") ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 1) (Just $ Flat 1)
+      [ Step Nothing $ AttackStep
+          [ Text "1 piercing damage" ]
+          [ Text "+1 piercing damage" ]
       , Step (Just D3) $ OnHit
           [ Text "Gain "
           , Italic [ Dice 1 D3 ]
@@ -58,7 +58,9 @@ gliaga = Ability
   , cost: Two
   , tags: [ Attack, AreaTag (Blast 3), RangeTag (Range 2 5) ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 3) (Just $ Roll 1 D6)
+      [ Step Nothing $ AttackStep
+          [ Text "3 damage" ]
+          [ Text "+", Dice 1 D6 ]
       , Step Nothing $ AreaEff [ Text "3 damage." ]
       , Step (Just D3) $ Eff
           [ Text

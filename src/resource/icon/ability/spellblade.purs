@@ -15,7 +15,6 @@ import Data.Tuple.Nested ((/\))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -83,7 +82,9 @@ gungnir = Ability
   , cost: One
   , tags: [ Attack, Close, AreaTag (Line 6) ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 3) (Just $ Roll 1 D3)
+      [ Step Nothing $ AttackStep
+          [ Text "3 damage" ]
+          [ Text "+", Dice 1 D3 ]
       , Step Nothing $ AreaEff [ Text "3 damage." ]
       , Step Nothing $ KeywordStep (Name "Isolate")
           [ Text
@@ -187,7 +188,9 @@ nothung = Ability
   , tags: [ Attack, KeywordTag (Name "Mark"), RangeTag Melee ]
   , steps:
       [ Step Nothing $ Eff [ Text "Teleport 2." ]
-      , Step Nothing $ AttackStep (Just $ Flat 2) (Just $ Roll 1 D3)
+      , Step Nothing $ AttackStep
+          [ Text "2 damage" ]
+          [ Text "+", Dice 1 D3 ]
       , SubStep Nothing (Name "Ten Thousand Cuts") $ OnHit
           [ Bold [ Ref (Name "Mark") [ Text "Mark" ] ]
           , Text

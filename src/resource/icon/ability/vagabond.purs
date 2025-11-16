@@ -15,7 +15,6 @@ import Data.Maybe (Maybe(..))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -36,7 +35,9 @@ windsKiss = Ability
   , tags: [ Attack, RangeTag (Range 1 2) ]
   , steps:
       [ Step Nothing $ Eff [ Text "Dash 1." ]
-      , Step Nothing $ AttackStep (Just $ Flat 2) (Just $ Roll 1 D6)
+      , Step Nothing $ AttackStep
+          [ Text "2 damage" ]
+          [ Text "+", Dice 1 D6 ]
       , Step Nothing $ OnHit
           [ Text "Gain "
           , Italic [ Ref (Name "Haste") [ Text "haste" ] ]
@@ -121,7 +122,9 @@ gouge = Ability
   , tags: [ Attack, RangeTag Melee ]
   , steps:
       [ Step Nothing $ Eff [ Text "Dash 1." ]
-      , Step Nothing $ AttackStep (Just $ Flat 3) (Just $ Roll 3 D3)
+      , Step Nothing $ AttackStep
+          [ Text "3 damage" ]
+          [ Text "+", Dice 3 D3 ]
       , Step Nothing $ OnHit
           [ Text "If your foe is "
           , Italic [ Ref (Name "Bloodied") [ Text "bloodied" ] ]

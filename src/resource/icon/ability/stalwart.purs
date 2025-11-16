@@ -15,7 +15,6 @@ import Data.Maybe (Maybe(..))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -35,7 +34,9 @@ furor = Ability
   , cost: One
   , tags: [ Attack, RangeTag Melee ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 2) (Just $ Roll 1 D6)
+      [ Step Nothing $ AttackStep
+          [ Text "2 damage" ]
+          [ Text "+", Dice 1 D6 ]
       , Step Nothing $ OnHit
           [ Text "Gain 2 vigor. If you or your target is in "
           , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
@@ -115,7 +116,9 @@ mightyHew = Ability
   , cost: Two
   , tags: [ Attack, RangeTag Melee ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 3) (Just $ Roll 2 D6)
+      [ Step Nothing $ AttackStep
+          [ Text "3 damage" ]
+          [ Text "+", Dice 2 D6 ]
       , Step (Just D6) $ OnHit
           [ Text "Deal a follow up blow against "
           , Italic [ Ref (Name "Afflicted") [ Text "afflicted" ] ]

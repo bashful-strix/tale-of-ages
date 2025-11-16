@@ -17,7 +17,6 @@ import Data.Maybe (Maybe(..))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  , Damage(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -41,7 +40,9 @@ magi = Ability
   , cost: One
   , tags: [ Attack, RangeTag (Range 2 8), AreaTag (Cross 1) ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 2) (Just $ Roll 1 D6)
+      [ Step Nothing $ AttackStep
+          [ Text "2 damage" ]
+          [ Text "+", Dice 1 D6 ]
       , Step Nothing $ AreaEff [ Text "2 damage" ]
       , Step (Just D6) $ Eff
           [ Text
@@ -185,7 +186,9 @@ ruin = Ability
   , cost: Two
   , tags: [ Attack, RangeTag (Range 2 6), AreaTag (Blast 2) ]
   , steps:
-      [ Step Nothing $ AttackStep (Just $ Flat 1) (Just $ Roll 2 D6)
+      [ Step Nothing $ AttackStep
+          [ Text "1 damage" ]
+          [ Text "+", Dice 2 D6 ]
       , Step Nothing $ AreaEff [ Text "1 damage." ]
       , Step Nothing $ Eff
           [ Text
