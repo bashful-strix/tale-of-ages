@@ -1,5 +1,6 @@
 module ToA.Component.Ability
   ( renderAbility
+  , renderStep
   ) where
 
 import Prelude
@@ -41,7 +42,7 @@ import ToA.Util.Optic ((^::), (#~))
 import ToA.Util.Html (css_)
 
 renderAbility :: Icon -> Ability -> Nut
-renderAbility icon@{ abilities, colours, summons } a =
+renderAbility icon@{ colours } a =
   D.div
     [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
     [ D.h3
@@ -90,46 +91,49 @@ renderAbility icon@{ abilities, colours, summons } a =
                           Space -> "Space"
                           Object -> "Object"
                         KeywordTag k -> k ^. simple _Newtype
-                        LimitTag n c -> show n <> "/" <> c
+                        LimitTag n l -> show n <> "/" <> l
                     )
             ]
         ]
 
-    , D.div [ css_ [ "italic" ] ] [ markup $ a ^. _desc ]
+    , D.div [ css_ [ "italic" ] ] [ markup icon $ a ^. _desc ]
 
     , D.div []
         [ D.ol
             [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-            $ a ^:: _steps <<< traversed <<< to case _ of
-                Step d s ->
-                  D.li [] [ renderStepName d s, renderStepDesc s ]
-                SubStep d n s ->
-                  D.li []
-                    [ renderStepName d s
-                    , renderStepDesc s
-                    , D.div
-                        [ css_ [ "pl-8" ] ]
-                        [ abilities
-                            # traversed
-                                <<< filtered (view _name >>> eq n)
-                                  #~ renderAbility icon
-                        ]
-                    ]
-                SummonStep d n s ->
-                  D.li []
-                    [ renderStepName d s
-                    , renderStepDesc s
-                    , summons
-                        # traversed
-                            <<< filtered (eq n)
-                            <<< _Newtype
-                              #~ D.text_
-                    ]
+            $ a ^:: _steps <<< traversed <<< to (renderStep icon)
         ]
     ]
 
-renderStepName :: Maybe Die -> StepType -> Nut
-renderStepName d s =
+renderStep :: Icon -> Step -> Nut
+renderStep icon@{ abilities, summons } = case _ of
+  Step d s ->
+    D.li [] [ renderStepName icon d s, renderStepDesc icon s ]
+  SubStep d n s ->
+    D.li []
+      [ renderStepName icon d s
+      , renderStepDesc icon s
+      , D.div
+          [ css_ [ "pl-8" ] ]
+          [ abilities
+              # traversed
+                  <<< filtered (view _name >>> eq n)
+                    #~ renderAbility icon
+          ]
+      ]
+  SummonStep d n s ->
+    D.li []
+      [ renderStepName icon d s
+      , renderStepDesc icon s
+      , summons
+          # traversed
+              <<< filtered (eq n)
+              <<< _Newtype
+                #~ D.text_
+      ]
+
+renderStepName :: Icon -> Maybe Die -> StepType -> Nut
+renderStepName icon d s =
   D.span
     [ css_ [ "font-bold" ] ]
     [ case s of
@@ -139,29 +143,29 @@ renderStepName d s =
         AreaEff _ -> D.text_ "Area effect"
         KeywordStep k _ -> D.text_ $ k ^. simple _Newtype
         TriggerStep _ -> D.text_ "Trigger"
-        OtherStep k _ -> markup k
+        OtherStep k _ -> markup icon k
     , D.text_ $ foldMap (const " [X]") d
     , D.text_ ": "
     ]
 
-renderStepDesc :: StepType -> Nut
-renderStepDesc s =
+renderStepDesc :: Icon -> StepType -> Nut
+renderStepDesc icon s =
   D.span []
     [ case s of
-        Eff t -> markup t
+        Eff t -> markup icon t
         AttackStep m h ->
           D.span []
-            [ markup m
+            [ markup icon m
             , D.span [] [ D.text_ "." ]
             , guard (length h > 0) $
                 D.span []
                   [ D.span [ css_ [ "italic" ] ] [ D.text_ " Hit: " ]
-                  , markup h
+                  , markup icon h
                   ]
             ]
-        OnHit t -> markup t
-        AreaEff t -> markup t
-        KeywordStep _ t -> markup t
-        TriggerStep t -> markup t
-        OtherStep _ t -> markup t
+        OnHit t -> markup icon t
+        AreaEff t -> markup icon t
+        KeywordStep _ t -> markup icon t
+        TriggerStep t -> markup icon t
+        OtherStep _ t -> markup icon t
     ]

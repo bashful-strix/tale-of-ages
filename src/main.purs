@@ -75,6 +75,7 @@ main = do
     { effects
     , icon: pure icon
     , characters: pure characters
+    , encounters: pure []
     , route: pure Nothing <|> sham route
     , systemTheme
     , theme: pure storageTheme <|> sham theme

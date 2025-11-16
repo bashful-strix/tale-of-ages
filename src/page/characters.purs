@@ -259,7 +259,7 @@ charactersPage env@{ characters, icon, route } pathChar =
                                   [ D.div
                                       [ css_ [ "font-bold" ] ]
                                       [ D.text_ $ t ^. _name <<< _Newtype ]
-                                  , t # _desc #~ markup
+                                  , t # _desc #~ markup icon_
                                   ]
 
                         , D.div
@@ -281,7 +281,7 @@ charactersPage env@{ characters, icon, route } pathChar =
                                                   <<< _value
                                       ]
                                       [ D.text_ $ t ^. _name <<< _Newtype ]
-                                  , t # _desc #~ markup
+                                  , t # _desc #~ markup icon_
                                   ]
 
                         , D.div

@@ -27,6 +27,7 @@ import Web.PointerEvent.PointerEvent (PointerEvent)
 
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Character (Character)
+import ToA.Data.Icon.Encounter (Encounter)
 import ToA.Data.Route (Route)
 import ToA.Data.Theme (Theme)
 import ToA.Util.Optic (key)
@@ -34,6 +35,7 @@ import ToA.Util.Optic (key)
 type Env =
   { icon :: Poll Icon
   , characters :: Poll (Array Character)
+  , encounters :: Poll (Array Encounter)
   , route :: Poll (Maybe Route)
   , systemTheme :: Theme
   , theme :: Poll (Maybe Theme)

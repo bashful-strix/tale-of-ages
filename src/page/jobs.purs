@@ -223,7 +223,7 @@ viewName = view (_name <<< _Newtype)
 
 renderClassStats :: Poll Icon -> Name -> Nut
 renderClassStats icon name = icon <#~>
-  \{ classes, colours, keywords, traits } ->
+  \icon_@{ classes, colours, keywords, traits } ->
     classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
       D.div
         [ css_ [ "w-full", "flex", "flex-col" ] ]
@@ -238,7 +238,7 @@ renderClassStats icon name = icon <#~>
                         <<< _value
                 ]
                 [ D.text_ $ viewName c ]
-            , D.h4 [ css_ [ "italic" ] ] [ c # _tagline #~ markup ]
+            , D.h4 [ css_ [ "italic" ] ] [ c # _tagline #~ markup icon_ ]
             ]
 
         , D.div
@@ -275,7 +275,7 @@ renderClassStats icon name = icon <#~>
                         [ D.span
                             [ css_ [ "font-bold" ] ]
                             [ D.text_ "Complexity: " ]
-                        , c # _complexity #~ markup
+                        , c # _complexity #~ markup icon_
                         ]
                     ]
                 ]
@@ -291,7 +291,7 @@ renderClassStats icon name = icon <#~>
                         ( traversed
                             <<< filtered (_name `elemOf` (c ^. _trait))
                             <<< _desc
-                        ) #~ markup
+                        ) #~ markup icon_
                     ]
                 ]
 
@@ -314,24 +314,24 @@ renderClassStats icon name = icon <#~>
         ]
 
 renderClassDesc :: Poll Icon -> Name -> Nut
-renderClassDesc icon name = icon <#~> \{ classes } ->
+renderClassDesc icon name = icon <#~> \icon_@{ classes } ->
   classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
     D.div
       [ css_ [ "w-full", "flex", "gap-2" ] ]
       [ D.div
           [ css_ [ "flex", "basis-1/3", "overflow-scroll", "gap-2" ] ]
-          [ D.p [ css_ [ "italic" ] ] [ c # _desc #~ markup ] ]
+          [ D.p [ css_ [ "italic" ] ] [ c # _desc #~ markup icon_ ] ]
 
       , D.div
           [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
           [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Strengths" ]
-          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _strengths #~ markup ]
+          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _strengths #~ markup icon_ ]
           ]
 
       , D.div
           [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
           [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Weaknesses" ]
-          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _weaknesses #~ markup ]
+          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _weaknesses #~ markup icon_ ]
           ]
       ]
 
@@ -422,7 +422,7 @@ renderClassAbilities env@{ icon } path name ability = icon <#~>
         ]
 
 renderSoul :: Poll Icon -> Name -> Nut
-renderSoul icon name = icon <#~> \{ colours, jobs, souls } ->
+renderSoul icon name = icon <#~> \icon_@{ colours, jobs, souls } ->
   souls # traversed <<< filtered (has (_name <<< only name)) #~ \s ->
     D.div
       [ css_ [ "w-full", "flex", "flex-col", "gap-2" ] ]
@@ -439,7 +439,7 @@ renderSoul icon name = icon <#~> \{ colours, jobs, souls } ->
                   ]
                   [ D.text_ $ viewName s ]
               ]
-          , D.h4 [ css_ [ "italic" ] ] [ s # _desc #~ markup ]
+          , D.h4 [ css_ [ "italic" ] ] [ s # _desc #~ markup icon_ ]
           ]
 
       , D.ul []
@@ -451,7 +451,7 @@ renderSoul icon name = icon <#~> \{ colours, jobs, souls } ->
       ]
 
 renderJobDesc :: Poll Icon -> Name -> Nut
-renderJobDesc icon name = icon <#~> \{ colours, jobs, talents, traits } ->
+renderJobDesc icon name = icon <#~> \icon_@{ colours, jobs, talents, traits } ->
   jobs # traversed <<< filtered (has (_name <<< only name)) #~ \j ->
     D.div
       [ css_ [ "w-full", "flex", "flex-col" ] ]
@@ -477,7 +477,7 @@ renderJobDesc icon name = icon <#~> \{ colours, jobs, talents, traits } ->
               [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
               [ D.div
                   [ css_ [ "overflow-scroll", "italic" ] ]
-                  [ j # _desc #~ markup ]
+                  [ j # _desc #~ markup icon_ ]
               ]
 
           , D.div
@@ -491,7 +491,7 @@ renderJobDesc icon name = icon <#~> \{ colours, jobs, talents, traits } ->
                       ( traversed
                           <<< filtered (_name `elemOf` (j ^. _trait))
                           <<< _desc
-                      ) #~ markup
+                      ) #~ markup icon_
                   ]
               ]
 
@@ -522,7 +522,7 @@ renderJobDesc icon name = icon <#~> \{ colours, jobs, talents, traits } ->
                                           <<< _value
                                 ]
                                 [ D.text_ $ viewName t ]
-                            , D.div [] [ t # _desc #~ markup ]
+                            , D.div [] [ t # _desc #~ markup icon_ ]
                             ]
                   ]
               ]
