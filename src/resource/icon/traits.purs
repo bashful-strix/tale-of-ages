@@ -11,6 +11,7 @@ traits :: Array Trait
 traits =
   [ rampart
   , skirmisher
+  , bless
   , masterOfAether
 
   , pressTheFight
@@ -60,12 +61,42 @@ skirmisher = Trait
       , List Unordered
           [ [ Text "You can move diagonally" ]
           , [ Text
-                """Once a round, when you make a single move, dash, fly, or
-                teleport, you may extend it by +3"""
+                """Once a round, when you make a single move, dash, fly,
+                or teleport, you may extend it by +3"""
             ]
           , [ Text
-                """You reduce all damage from missed attacks and successful
-                saves to 1"""
+                """You reduce all damage from missed attacks and
+                successful saves to 1"""
+            ]
+          ]
+      ]
+  }
+
+bless :: Trait
+bless = Trait
+  { name: Name "Bless"
+  , description:
+      [ Text
+          """You are a pillar of strength and stability on the
+          battlefield, granting the following benefits:"""
+      , Newline
+      , List Unordered
+          [ [ Text
+                """Once a round, before an ally in range 1-4 makes any
+                effect roll or save, you can cause them to roll it
+                with """
+            , Power
+            , Text
+                """. A roll can only benefit from this effect once at a
+                time."""
+            ]
+          , [ Text
+                """You may use Rescue to bring up allies in range 1-4
+                instead of adjacent."""
+            ]
+          , [ Text "The first time you use Rescue in a combat, it's a "
+            , Italic [ Ref (Name "Quick") [ Text "quick" ] ]
+            , Text " ability."
             ]
           ]
       ]
@@ -77,7 +108,7 @@ masterOfAether = Trait
   , description:
       [ Text
           """You are the master of manipulating ethereal currents,
-          granting the following benefits."""
+          granting the following benefits:"""
       , Newline
       , List Unordered
           [ [ Bold [ Text "Aether Surge:" ]

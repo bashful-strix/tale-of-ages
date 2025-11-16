@@ -39,6 +39,16 @@ import ToA.Resource.Icon.Ability.Vagabond
   , deathTrap
   )
 
+import ToA.Resource.Icon.Ability.Mendicant
+  ( glia
+  , gliaga
+  , dios
+  , megi
+  , viga
+  , aegi
+  , diaga
+  )
+
 import ToA.Resource.Icon.Ability.Wright
   ( magi
   , ember
@@ -77,6 +87,14 @@ abilities =
   , gouge
   , smokeBomb
   , deathTrap
+
+  , glia
+  , gliaga
+  , dios
+  , megi
+  , viga
+  , aegi
+  , diaga
 
   , magi
   , ember
