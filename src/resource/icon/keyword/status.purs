@@ -9,8 +9,12 @@ module ToA.Resource.Icon.Keyword.Status
   , brand
   , slow
   , stun
+
+  , evasion
+  , stealth
   ) where
 
+import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..), StatusType(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -77,4 +81,30 @@ stun = Keyword
   , category: Status Negative
   , description:
       [ Text "When taking a turn, deal half damage this turn" ]
+  }
+
+evasion :: Keyword
+evasion = Keyword
+  { name: Name "Evasion"
+  , category: Status Positive
+  , description:
+      [ Text "Status. Roll "
+      , Dice 1 D6
+      , Text
+          """ before being attacked. On a 5+, the attack automatically
+          misses."""
+      ]
+  }
+
+stealth :: Keyword
+stealth = Keyword
+  { name: Name "Stealth"
+  , category: Status Positive
+  , description:
+      [ Text
+          """Positive status. As long as you have one stealth token,
+          cannot be directly targeted by foes except from adjacent
+          spaces. After using any ability, or when ending any turn
+          adjacent to a foe, dscard one."""
+      ]
   }

@@ -3,6 +3,47 @@ module ToA.Resource.Icon.Keywords
   ) where
 
 import ToA.Data.Icon.Keyword (Keyword)
+import ToA.Resource.Icon.Keyword.Faction
+  ( horde
+  , enrage
+  , ferocity
+  )
+import ToA.Resource.Icon.Keyword.General
+  ( adverse
+  , afflicted
+  , armor
+  , aura
+  , bloodied
+  , conserve
+  , cover
+  , crisis
+  , dangerous
+  , difficult
+  , dominant
+  , excel
+  , finishingBlow
+  , fly
+  , gambit
+  , heavy
+  , immune
+  , impact
+  , isolate
+  , mark
+  , object
+  , obscured
+  , overdrive
+  , phasing
+  , pierce
+  , powerDie
+  , quick
+  , reckless
+  , status
+  , summon
+  , sacrifice
+  , teleport
+  , vigor
+  , weave
+  )
 import ToA.Resource.Icon.Keyword.Status
   ( strength
   , keen
@@ -14,6 +55,9 @@ import ToA.Resource.Icon.Keyword.Status
   , brand
   , slow
   , stun
+
+  , evasion
+  , stealth
   )
 import ToA.Resource.Icon.Keyword.Tag
   ( immobile
@@ -31,6 +75,45 @@ keywords =
   , unstoppable
   , zone
 
+  , adverse
+  , afflicted
+  , armor
+  , aura
+  , bloodied
+  , conserve
+  , cover
+  , crisis
+  , dangerous
+  , difficult
+  , dominant
+  , excel
+  , finishingBlow
+  , fly
+  , gambit
+  , heavy
+  , immune
+  , impact
+  , isolate
+  , mark
+  , object
+  , obscured
+  , overdrive
+  , phasing
+  , pierce
+  , powerDie
+  , quick
+  , reckless
+  , status
+  , summon
+  , sacrifice
+  , teleport
+  , vigor
+  , weave
+
+  , horde
+  , enrage
+  , ferocity
+
   , strength
   , keen
   , shield
@@ -41,4 +124,7 @@ keywords =
   , brand
   , slow
   , stun
+
+  , evasion
+  , stealth
   ]
