@@ -19,14 +19,14 @@
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "tailwindcss": "4.1.17"
+  },
   "devDependencies": {
-    "@tailwindcss/vite": "4.1.14",
+    "@tailwindcss/vite": "4.1.17",
     "purescript": "0.15.15",
     "purs-tidy": "0.11.1",
     "spago": "0.93.44",
-    "vite": "6.4.0"
-  },
-  "dependencies": {
-    "tailwindcss": "4.1.14"
+    "vite": "7.2.4"
   }
 }
