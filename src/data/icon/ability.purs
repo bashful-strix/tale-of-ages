@@ -113,10 +113,14 @@ data Action
   | Two
   | Interrupt Int
 
+derive instance Eq Action
+
 data Range
   = Range Int Int
   | Melee
   | Adjacent
+
+derive instance Eq Range
 
 data Pattern
   = Line Int
@@ -125,6 +129,8 @@ data Pattern
   | Burst Int Boolean
   | Cross Int
 
+derive instance Eq Pattern
+
 data Target
   = Self
   | Ally
@@ -132,6 +138,8 @@ data Target
   | Summon
   | Space
   | Object
+
+derive instance Eq Target
 
 data Tag
   = Attack
@@ -142,6 +150,8 @@ data Tag
   | TargetTag Target
   | KeywordTag Name
   | LimitTag Int String
+
+derive instance Eq Tag
 
 data StepType
   = Eff Markup

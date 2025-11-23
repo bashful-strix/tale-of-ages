@@ -8,7 +8,7 @@ import Prelude
 import CSS (backgroundColor, render, renderedInline)
 
 import Data.Foldable (foldMap, intercalate, length)
-import Data.Lens ((^.), (^?), filtered, to, traversed, view)
+import Data.Lens ((^.), (^?), filtered, has, only, to, traversed, view)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe, fromMaybe)
@@ -45,15 +45,68 @@ renderAbility :: Icon -> Ability -> Nut
 renderAbility icon@{ colours } a =
   D.div
     [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-    [ D.h3
-        [ css_ [ "text-white", "font-bold" ]
-        , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
-            backgroundColor <$> colours
-              ^? traversed
-              <<< filtered (view _name >>> eq (a ^. _colour))
-              <<< _value
+    [ D.div
+        [ css_
+            [ "flex"
+            , "justify-between"
+            , "bg-stone-500"
+            , "text-stone-800"
+            , "dark:bg-stone-700"
+            , "dark:text-stone-300"
+            ]
         ]
-        [ D.text_ $ a ^. _name <<< _Newtype ]
+        [ D.h3
+            [ css_ [ "text-white", "font-bold" ]
+            , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                backgroundColor <$> colours
+                  ^? traversed
+                    <<< filtered (view _name >>> eq (a ^. _colour))
+                    <<< _value
+            ]
+            [ D.text_ $ a ^. _name <<< _Newtype ]
+        , D.div
+            [ css_ [ "flex", "items-center", "gap-2", "mr-2" ] ]
+            [ a
+                ^. _tags
+                  <<< traversed
+                  <<< filtered (has $ only Attack)
+                  <<< to
+                    ( const $
+                        D.span
+                          [ css_ [ "icon-[game-icons--saber-slash]" ]
+                          , DA.title_ "Attack"
+                          ]
+                          []
+                    )
+            , a ^. _action <<< to case _ of
+                Quick ->
+                  D.span
+                    [ css_ [ "icon-[game-icons--quick-slash]" ]
+                    , DA.title_ "Quick"
+                    ]
+                    []
+                One ->
+                  D.span
+                    [ css_ [ "icon-[game-icons--serrated-slash]" ]
+                    , DA.title_ "1 action"
+                    ]
+                    []
+                Two ->
+                  D.span
+                    [ css_ [ "flex" ]
+                    , DA.title_ "2 actions"
+                    ]
+                    [ D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
+                    , D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
+                    ]
+                Interrupt n ->
+                  D.span
+                    [ css_ [ "icon-[game-icons--divert]" ]
+                    , DA.title_ $ "Interrupt " <> show n
+                    ]
+                    []
+            ]
+        ]
 
     , D.div
         []
