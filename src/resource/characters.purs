@@ -22,6 +22,8 @@ characters =
   , arofell
   , arofell1
   , arofell2
+
+  , varek
   ]
 
 testana :: Character
@@ -236,5 +238,28 @@ arofell2 = Character
           , Name "Odinforce"
           ]
       , talents: [ Name "Vex" ]
+      }
+  }
+
+varek :: Character
+varek = Character
+  { name: Name "Varek"
+  , hp: 32
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: Zero
+      , jobs: empty
+      , primaryJob: Name "Weeping Assassin"
+      , abilities:
+          [ Name "Flash Powder"
+          , Name "Gouge"
+          ]
+      , prepared:
+          [ Name "Flash Powder"
+          , Name "Gouge"
+          ]
+      , talents: []
       }
   }
