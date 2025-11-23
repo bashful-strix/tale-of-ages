@@ -20,6 +20,8 @@ traits =
 
   , bookOfAges
 
+  , mantraOfSealing
+
   , klingenkunst
   ]
 
@@ -191,6 +193,19 @@ bookOfAges = Trait
             ]
           , [ Text "You exit the stance after attacking." ]
           ]
+      ]
+  }
+
+mantraOfSealing :: Trait
+mantraOfSealing = Trait
+  { name: Name "Mantra of Sealing"
+  , description:
+      [ Text
+          """You increase you total attack roll by half the round number,
+          rounded up. If you roll a total of 10 or over on an attack roll,
+          the target of your attack explodes with divine energy with a
+          burst 1 (target) area effect. All foes in the area take 2
+          damage, and allies in the area gain 2 vigor."""
       ]
   }
 

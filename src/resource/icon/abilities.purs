@@ -55,6 +55,13 @@ import ToA.Resource.Icon.Ability.Chanter
   , gentlePrayer
   , esper
   )
+import ToA.Resource.Icon.Ability.Sealer
+  ( passageToTheAfterlife
+  , godHand
+  , matsuri
+  , evilCrushingFist
+  , condemn
+  )
 
 import ToA.Resource.Icon.Ability.Wright
   ( magi
@@ -131,6 +138,12 @@ abilities =
   , magnasancti
   , gentlePrayer
   , esper
+
+  , passageToTheAfterlife
+  , godHand
+  , matsuri
+  , evilCrushingFist
+  , condemn
 
   , granLevincross
   , gungnir
