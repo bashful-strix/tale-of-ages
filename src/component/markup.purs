@@ -1,5 +1,6 @@
 module ToA.Component.Markup
   ( markup
+  , printMarkup
   ) where
 
 import Prelude

@@ -39,7 +39,7 @@ import Deku.Hooks ((<#~>))
 import FRP.Poll (Poll)
 
 import ToA.Component.Ability (renderAbility)
-import ToA.Component.Markup (markup)
+import ToA.Component.Markup (markup, printMarkup)
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability (Step(..), _steps)
@@ -76,9 +76,8 @@ jobsPage env@{ icon } path =
     [ css_ [ "flex", "grow", "gap-2" ] ]
     [ D.div
         [ css_
-            [ "w-1/5"
-            , "min-w-44"
-            , "max-w-64"
+            [ "w-44"
+            , "shrink-0"
             , "overflow-scroll"
             , "border"
             , "border-solid"
@@ -159,63 +158,97 @@ jobsPage env@{ icon } path =
 
     , D.div
         [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
-        [ D.div
-            [ css_
-                [ "flex"
-                , "basis-1/3"
-                , "overflow-hidden"
-                , "p-2"
-                , "border"
-                , "border-solid"
-                , "border-rounded-sm"
-                , "border-sky-800"
-                ]
-            ]
-            [ case path of
-                None -> D.text_ "No class selected"
-                WithClass c _ -> renderClassStats icon c
-                WithSoul c _ _ -> renderClassStats icon c
-                WithJob c _ _ _ -> renderClassStats icon c
-            ]
+        $ case path of
+            None -> [ D.text_ "Nothing selected" ]
+            WithClass c a ->
+              [ D.div
+                  [ css_
+                      [ "flex"
+                      , "basis-1/3"
+                      , "overflow-hidden"
+                      , "p-2"
+                      , "border"
+                      , "border-solid"
+                      , "border-rounded-sm"
+                      , "border-sky-800"
+                      ]
+                  ]
+                  [ renderClassStats icon c ]
 
-        , D.div
-            [ css_
-                [ "flex"
-                , "basis-1/3"
-                , "overflow-hidden"
-                , "p-2"
-                , "border"
-                , "border-solid"
-                , "border-rounded-sm"
-                , "border-sky-800"
-                ]
-            ]
-            [ case path of
-                None -> mempty
-                WithClass c _ -> renderClassDesc icon c
-                WithSoul _ s _ -> renderSoul icon s
-                WithJob _ _ j _ -> renderJobDesc icon j
-            ]
+              , D.div
+                  [ css_
+                      [ "flex"
+                      , "basis-1/3"
+                      , "overflow-hidden"
+                      , "p-2"
+                      , "border"
+                      , "border-solid"
+                      , "border-rounded-sm"
+                      , "border-sky-800"
+                      ]
+                  ]
+                  [ renderClassDesc icon c ]
 
-        , D.div
-            [ css_
-                [ "flex"
-                , "basis-1/3"
-                , "overflow-hidden"
-                , "p-2"
-                , "border"
-                , "border-solid"
-                , "border-rounded-sm"
-                , "border-sky-800"
-                ]
-            ]
-            [ case path of
-                None -> mempty
-                WithClass c a -> renderClassAbilities env path c a
-                WithSoul c _ a -> renderClassAbilities env path c a
-                WithJob _ _ j a -> renderJobAbilities env path j a
-            ]
-        ]
+              , D.div
+                  [ css_
+                      [ "flex"
+                      , "basis-1/3"
+                      , "overflow-hidden"
+                      , "p-2"
+                      , "border"
+                      , "border-solid"
+                      , "border-rounded-sm"
+                      , "border-sky-800"
+                      ]
+                  ]
+                  [ renderClassAbilities env path c a ]
+              ]
+
+            WithSoul _ s _ ->
+              [ D.div
+                  [ css_
+                      [ "flex"
+                      , "grow"
+                      , "overflow-hidden"
+                      , "p-2"
+                      , "border"
+                      , "border-solid"
+                      , "border-rounded-sm"
+                      , "border-sky-800"
+                      ]
+                  ]
+                  [ renderSoul icon s ]
+              ]
+
+            WithJob _ _ j a ->
+              [ D.div
+                  [ css_
+                      [ "flex"
+                      , "basis-1/2"
+                      , "overflow-hidden"
+                      , "p-2"
+                      , "border"
+                      , "border-solid"
+                      , "border-rounded-sm"
+                      , "border-sky-800"
+                      ]
+                  ]
+                  [ renderJobDesc icon j ]
+
+              , D.div
+                  [ css_
+                      [ "flex"
+                      , "basis-1/2"
+                      , "overflow-hidden"
+                      , "p-2"
+                      , "border"
+                      , "border-solid"
+                      , "border-rounded-sm"
+                      , "border-sky-800"
+                      ]
+                  ]
+                  [ renderJobAbilities env path j a ]
+              ]
     ]
 
 viewName :: ∀ a. Named a => a -> String
@@ -223,7 +256,7 @@ viewName = view (_name <<< _Newtype)
 
 renderClassStats :: Poll Icon -> Name -> Nut
 renderClassStats icon name = icon <#~>
-  \icon_@{ classes, colours, keywords, traits } ->
+  \icon_@{ classes, colours, keywords } ->
     classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
       D.div
         [ css_ [ "w-full", "flex", "flex-col" ] ]
@@ -244,7 +277,18 @@ renderClassStats icon name = icon <#~>
         , D.div
             [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
             [ D.div
-                [ css_ [ "basis-1/3" ] ]
+                [ css_ [ "flex", "basis-1/3", "overflow-scroll", "gap-2" ] ]
+                [ D.p [ css_ [ "italic" ] ] [ c # _desc #~ markup icon_ ] ]
+
+            , D.div
+                [ css_
+                    [ "basis-1/3"
+                    , "flex"
+                    , "flex-col"
+                    , "overflow-scroll"
+                    , "gap-2"
+                    ]
+                ]
                 [ D.div []
                     [ D.div []
                         [ D.span
@@ -278,20 +322,19 @@ renderClassStats icon name = icon <#~>
                         , c # _complexity #~ markup icon_
                         ]
                     ]
-                ]
 
-            , D.div
-                [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
-                [ D.h3
-                    [ css_ [ "font-bold" ] ]
-                    [ D.text_ $ c ^. _trait <<< _Newtype ]
-                , D.div
-                    [ css_ [ "overflow-scroll" ] ]
-                    [ traits #
-                        ( traversed
-                            <<< filtered (_name `elemOf` (c ^. _trait))
-                            <<< _desc
-                        ) #~ markup icon_
+                , D.div []
+                    [ D.h3
+                        [ css_ [ "font-bold" ] ]
+                        [ D.text_ "Strengths" ]
+                    , c # _strengths #~ markup icon_
+                    ]
+
+                , D.div []
+                    [ D.h3
+                        [ css_ [ "font-bold" ] ]
+                        [ D.text_ "Weaknesses" ]
+                    , c # _weaknesses #~ markup icon_
                     ]
                 ]
 
@@ -300,39 +343,56 @@ renderClassStats icon name = icon <#~>
                 [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Keywords" ]
                 , D.div
                     [ css_ [ "overflow-scroll" ] ]
-                    [ D.ol []
-                        $ keywords #
-                            traversed
-                              <<< filtered
-                                (view (_name <<< to (elem ~$ (c ^. _keywords))))
-                              <<< _name
-                              <<< _Newtype
-                                #~ \k -> pure $ D.li [] [ D.text_ k ]
+                    [ D.ol [] $
+                        keywords
+                          ^:: traversed
+                          <<< filtered
+                            (view (_name <<< to (elem ~$ (c ^. _keywords))))
+                          <<< to \k ->
+                            D.li
+                              [ DA.title_ $ printMarkup $ k ^. _desc
+                              , css_ [ "italic", "underline" ]
+                              ]
+                              [ D.text_ $ k ^. _name <<< _Newtype ]
                     ]
                 ]
             ]
         ]
 
 renderClassDesc :: Poll Icon -> Name -> Nut
-renderClassDesc icon name = icon <#~> \icon_@{ classes } ->
+renderClassDesc icon name = icon <#~> \icon_@{ abilities, classes, traits } ->
   classes # traversed <<< filtered (has (_name <<< only name)) #~ \c ->
     D.div
       [ css_ [ "w-full", "flex", "gap-2" ] ]
       [ D.div
-          [ css_ [ "flex", "basis-1/3", "overflow-scroll", "gap-2" ] ]
-          [ D.p [ css_ [ "italic" ] ] [ c # _desc #~ markup icon_ ] ]
-
-      , D.div
           [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
-          [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Strengths" ]
-          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _strengths #~ markup icon_ ]
+          [ D.h3
+              [ css_ [ "font-bold" ] ]
+              [ D.text_ $ c ^. _trait <<< _Newtype ]
+          , D.div
+              [ css_ [ "overflow-scroll" ] ]
+              [ traits #
+                  traversed
+                    <<< filtered (_name `elemOf` (c ^. _trait))
+                    <<< _desc
+                      #~ markup icon_
+              ]
           ]
 
       , D.div
           [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
-          [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Weaknesses" ]
-          , D.div [ css_ [ "overflow-scroll" ] ] [ c # _weaknesses #~ markup icon_ ]
+          [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Basic Attack" ]
+          , D.div
+              [ css_ [ "overflow-scroll" ] ]
+              [ abilities
+                  # traversed <<< filtered (view _name >>> eq (c ^. _basic))
+                      #~ renderAbility icon_
+              ]
           ]
+
+      , D.div
+          [ css_ [ "flex", "flex-col", "basis-1/3", "overflow-hidden" ] ]
+          []
       ]
 
 renderClassAbilities :: Env -> JobPath -> Name -> Maybe Name -> Nut
@@ -344,32 +404,6 @@ renderClassAbilities env@{ icon } path name ability = icon <#~>
         [ D.div
             [ css_ [ "basis-1/3", "overflow-scroll" ] ]
             [ D.div []
-                [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Basic Attack" ]
-                , c # _basic #~ \a ->
-                    D.div
-                      [ css_ $
-                          [ "hover:bg-stone-500"
-                          , "focus:bg-stone-500"
-                          , "hover:text-stone-800"
-                          , "dark:hover:text-stone-300"
-                          ] <> guard (pure a == ability)
-                            [ "bg-stone-500"
-                            , "dark:bg-stone-700"
-                            , "text-stone-800"
-                            , "dark:text-stone-300"
-                            ]
-                      ]
-                      [ D.span
-                          [ DL.click_ $
-                              (env ^. _navigate)
-                                (Jobs $ path # _ability .~ Just a)
-                                <<< pure
-                          ]
-                          [ D.text_ $ a ^. simple _Newtype ]
-                      ]
-                ]
-
-            , D.div []
                 [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Abilities" ]
                 , D.ol []
                     $ c # _apprentice <<< traversed #~ \a ->
@@ -425,9 +459,18 @@ renderSoul :: Poll Icon -> Name -> Nut
 renderSoul icon name = icon <#~> \icon_@{ colours, jobs, souls } ->
   souls # traversed <<< filtered (has (_name <<< only name)) #~ \s ->
     D.div
-      [ css_ [ "w-full", "flex", "flex-col", "gap-2" ] ]
+      [ css_
+          [ "w-full"
+          , "flex"
+          , "flex-col"
+          , "overflow-hidden"
+          , "items-center"
+          , "justify-center"
+          , "gap-4"
+          ]
+      ]
       [ D.div
-          [ css_ [ "flex", "gap-2" ] ]
+          [ css_ [ "flex", "flex-col", "items-center", "gap-2" ] ]
           [ D.h3 []
               [ D.span
                   [ css_ [ "text-white", "font-bold" ]
@@ -439,15 +482,27 @@ renderSoul icon name = icon <#~> \icon_@{ colours, jobs, souls } ->
                   ]
                   [ D.text_ $ viewName s ]
               ]
-          , D.h4 [ css_ [ "italic" ] ] [ s # _desc #~ markup icon_ ]
+          , D.h4
+              [ css_ [ "flex", "flex-col", "items-center", "italic" ] ]
+              [ s # _desc #~ markup icon_ ]
           ]
 
-      , D.ul []
-          $ jobs # traversed
+      , D.ul
+          [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
+          $
+            jobs
+              ^:: traversed
               <<< filtered (has (_soul <<< only name))
-              <<< _name
-              <<< _Newtype
-                #~ \jn -> pure $ D.li [ css_ [ "font-bold" ] ] [ D.text_ jn ]
+              <<< to \j ->
+                D.li
+                  [ css_ [ "flex-1", "flex", "flex-col", "overflow-hidden" ] ]
+                  [ D.h5
+                      [ css_ [ "font-bold" ] ]
+                      [ D.text_ $ j ^. _name <<< _Newtype ]
+                  , D.div
+                      [ css_ [ "overflow-scroll", "italic" ] ]
+                      [ j # _desc #~ markup icon_ ]
+                  ]
       ]
 
 renderJobDesc :: Poll Icon -> Name -> Nut
@@ -488,10 +543,10 @@ renderJobDesc icon name = icon <#~> \icon_@{ colours, jobs, talents, traits } ->
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
                   [ traits #
-                      ( traversed
+                      traversed
                           <<< filtered (_name `elemOf` (j ^. _trait))
                           <<< _desc
-                      ) #~ markup icon_
+                      #~ markup icon_
                   ]
               ]
 
