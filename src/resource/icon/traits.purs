@@ -18,6 +18,8 @@ traits =
 
   , ingenuity
 
+  , bookOfAges
+
   , klingenkunst
   ]
 
@@ -159,6 +161,35 @@ ingenuity = Trait
             , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
             ]
           , [ Text "Deal 2 damage to all adjacent foes and push them 1" ]
+          ]
+      ]
+  }
+
+bookOfAges :: Trait
+bookOfAges = Trait
+  { name: Name "Book of Ages"
+  , description:
+      [ Text
+          """You automatically enter the Book of Ages stance at the start
+          of combat. If you aren't in the stance, you enter it again
+          automatically if you end your turn without attacking."""
+      , List Unordered
+          [ [ Text "This stance stacks with other stances." ]
+          , [ Text
+                """While in this stancem once a round, you may choose one
+                of the following effects:"""
+            , List Unordered
+                [ [ Text
+                      """when you grant a positive token, grant an
+                      identical token to the same character."""
+                  ]
+                , [ Text
+                      """when you grant vigor, grant 3 more vigor to the
+                      same character."""
+                  ]
+                ]
+            ]
+          , [ Text "You exit the stance after attacking." ]
           ]
       ]
   }

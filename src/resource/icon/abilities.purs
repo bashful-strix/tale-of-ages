@@ -48,6 +48,13 @@ import ToA.Resource.Icon.Ability.Mendicant
   , aegi
   , diaga
   )
+import ToA.Resource.Icon.Ability.Chanter
+  ( monogatari
+  , holy
+  , magnasancti
+  , gentlePrayer
+  , esper
+  )
 
 import ToA.Resource.Icon.Ability.Wright
   ( magi
@@ -118,6 +125,12 @@ abilities =
   , weaponVault
   , arsenal
   , arsenalFlashBomb
+
+  , monogatari
+  , holy
+  , magnasancti
+  , gentlePrayer
+  , esper
 
   , granLevincross
   , gungnir
