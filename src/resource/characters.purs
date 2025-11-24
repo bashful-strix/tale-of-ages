@@ -24,6 +24,8 @@ characters =
   , arofell2
 
   , varek
+
+  , nelly
   ]
 
 testana :: Character
@@ -259,6 +261,29 @@ varek = Character
       , prepared:
           [ Name "Flash Powder"
           , Name "Gouge"
+          ]
+      , talents: []
+      }
+  }
+
+nelly :: Character
+nelly = Character
+  { name: Name "Nelly"
+  , hp: 48
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: Zero
+      , jobs: empty
+      , primaryJob: Name "Chanter"
+      , abilities:
+          [ Name "Gliaga"
+          , Name "Diaga"
+          ]
+      , prepared:
+          [ Name "Gliaga"
+          , Name "Diaga"
           ]
       , talents: []
       }
