@@ -12,6 +12,7 @@ homePage =
   D.div
     [ css_
         [ "flex"
+        , "flex-col"
         , "grow"
         , "items-center"
         , "justify-center"

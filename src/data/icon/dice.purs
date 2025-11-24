@@ -9,6 +9,8 @@ data Die
   | D6
   | D10
 
+derive instance Eq Die
+
 instance Show Die where
   show D3 = "d3"
   show D6 = "d6"
