@@ -38,6 +38,14 @@ import ToA.Resource.Icon.Ability.Vagabond
   , smokeBomb
   , deathTrap
   )
+import ToA.Resource.Icon.Ability.WeepingAssassin
+  ( hollow
+  , harien
+  , shadowCloak
+  , nightsCaress
+  , suddenStrike
+  , swallowTheStars
+  )
 
 import ToA.Resource.Icon.Ability.Mendicant
   ( glia
@@ -132,6 +140,13 @@ abilities =
   , weaponVault
   , arsenal
   , arsenalFlashBomb
+
+  , hollow
+  , harien
+  , shadowCloak
+  , nightsCaress
+  , suddenStrike
+  , swallowTheStars
 
   , monogatari
   , holy

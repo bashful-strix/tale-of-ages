@@ -18,6 +18,8 @@ traits =
 
   , ingenuity
 
+  , tearsOfTheWeeper
+
   , bookOfAges
 
   , mantraOfSealing
@@ -164,6 +166,23 @@ ingenuity = Trait
             ]
           , [ Text "Deal 2 damage to all adjacent foes and push them 1" ]
           ]
+      ]
+  }
+
+tearsOfTheWeeper :: Trait
+tearsOfTheWeeper = Trait
+  { name: Name "Tears of the Weeper"
+  , description:
+      [ Text
+          """Your common abilities (dash, interact, rescue, etc.) do not
+          remove """
+      , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
+      , Text "."
+      , Newline
+      , Text
+          "If you end your turn with no other characters adjacent, gain "
+      , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
+      , Text "."
       ]
   }
 

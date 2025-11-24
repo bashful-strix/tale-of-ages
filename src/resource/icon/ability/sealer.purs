@@ -14,7 +14,6 @@ import Data.Tuple.Nested ((/\))
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
-  -- , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
