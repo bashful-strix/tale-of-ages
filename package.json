@@ -13,7 +13,7 @@
     "format": "purs-tidy check 'src/**/*.purs'",
     "format:write": "purs-tidy format-in-place 'src/**/*.purs'",
     "run": "vite",
-    "setup": "npm install && spago install",
+    "setup": "npm install && spago install && npm run build",
     "start": "vite --debug html-fallback",
     "test": "spago test"
   },
