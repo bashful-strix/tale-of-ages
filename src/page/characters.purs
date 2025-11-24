@@ -15,6 +15,7 @@ import Data.Lens
   , _Just
   , _Nothing
   , filtered
+  , hasn't
   , preview
   , to
   , traversed
@@ -24,8 +25,9 @@ import Data.Lens
 import Data.Lens.Common (simple)
 import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Lens.Prism (is, isn't)
+import Data.Lens.Prism (is, isn't, only)
 import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Monoid (guard)
 import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
@@ -284,18 +286,23 @@ charactersPage env@{ characters, icon, route } pathChar =
                                   , t # _desc #~ markup icon_
                                   ]
 
-                        , D.div
-                            [ css_ [ "flex", "gap-x-2" ] ] $
-                            abilities
-                              ^:: traversed
-                              <<< filtered
-                                ( preview _name >>>
-                                    eq (job ^? _Just <<< _limitBreak)
-                                )
-                              <<< to \a ->
-                                D.div
-                                  [ css_ [ "flex-1", "overflow-scroll" ] ]
-                                  [ renderAbility icon_ a ]
+                        , guard
+                            ( char # hasn't
+                                (_Just <<< _build <<< _level <<< only Zero)
+                            )
+                            $ D.div
+                                [ css_ [ "flex", "gap-x-2" ] ]
+                            $
+                              abilities
+                                ^:: traversed
+                                <<< filtered
+                                  ( preview _name >>>
+                                      eq (job ^? _Just <<< _limitBreak)
+                                  )
+                                <<< to \a ->
+                                  D.div
+                                    [ css_ [ "flex-1", "overflow-scroll" ] ]
+                                    [ renderAbility icon_ a ]
                         ]
 
                     , D.div
