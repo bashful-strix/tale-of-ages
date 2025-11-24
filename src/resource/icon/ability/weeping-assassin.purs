@@ -52,7 +52,7 @@ hollow = LimitBreak
               you enter any space in range 1-2 of a foe, or when a foe
               enters any space in range 1-2 of you, but re-enter as soon
               as either of these cease to be true. It ends completely at
-              the end of you next turn."""
+              the end of your next turn."""
           ]
       , Step Nothing $ Eff
           [ Text

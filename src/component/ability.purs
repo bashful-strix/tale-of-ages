@@ -70,14 +70,12 @@ renderAbility icon@{ colours } a =
                 ^. _tags
                   <<< traversed
                   <<< filtered (has $ only Attack)
-                  <<< to
-                    ( const $
-                        D.span
-                          [ css_ [ "icon-[game-icons--saber-slash]" ]
-                          , DA.title_ "Attack"
-                          ]
-                          []
-                    )
+                  <<< to \_ ->
+                    D.span
+                      [ css_ [ "icon-[game-icons--crossed-swords]" ]
+                      , DA.title_ "Attack"
+                      ]
+                      []
             , a ^. _action <<< to case _ of
                 Quick ->
                   D.span
