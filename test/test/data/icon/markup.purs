@@ -49,7 +49,7 @@ spec = do
             [/item][/list]
           after."""
 
-      (encode markup <$> decode markup t) `shouldEqual` (pure t)
+      (encode markup <$> decode markup t) `shouldEqual` pure t
 
     it "should igonre whitespace around list items" do
       let

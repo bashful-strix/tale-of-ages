@@ -15,17 +15,35 @@ module ToA.Data.Icon.Character
   , _talents
 
   , Level(..)
+
+  , character
   ) where
 
 import Prelude
+import PointFree ((~$))
 
+import Data.Codec (Codec', codec')
+import Data.Either (Either(..))
+import Data.Filterable (partitionMap)
+import Data.Foldable (intercalate)
+import Data.FoldableWithIndex (foldMapWithIndex)
 import Data.Lens (Lens')
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Map (Map)
-import Data.Newtype (class Newtype)
+import Data.Map (Map, fromFoldable)
+import Data.Maybe (Maybe(..))
+import Data.Newtype (class Newtype, unwrap)
+import Data.Profunctor.Strong (first)
+import Data.Tuple (fst)
+import Data.Tuple.Nested (type (/\), (/\))
 
-import ToA.Data.Icon.Job (JobLevel)
-import ToA.Data.Icon.Name (Name, class Named)
+import Parsing (Parser, ParseError, liftMaybe, runParser)
+import Parsing.Combinators ((<|>), choice, optional, sepBy, try, tryRethrow)
+import Parsing.Combinators.Array (many)
+import Parsing.String (anyTill, char, eof, string)
+import Parsing.String.Basic (intDecimal, skipSpaces)
+
+import ToA.Data.Icon.Job (JobLevel(..))
+import ToA.Data.Icon.Name (Name(..), class Named)
 import ToA.Util.Optic (key)
 
 newtype Character = Character
@@ -87,6 +105,7 @@ _talents :: Lens' Build (Array Name)
 _talents = _Newtype <<< key @"talents"
 
 derive instance Newtype Build _
+derive instance Eq Build
 
 data Level
   = Zero
@@ -119,3 +138,112 @@ instance Show Level where
   show Ten = "10"
   show Eleven = "11"
   show Twelve = "12"
+
+fromInt :: Int -> Maybe Level
+fromInt 0 = Just Zero
+fromInt 1 = Just One
+fromInt 2 = Just Two
+fromInt 3 = Just Three
+fromInt 4 = Just Four
+fromInt 5 = Just Five
+fromInt 6 = Just Six
+fromInt 7 = Just Seven
+fromInt 8 = Just Eight
+fromInt 9 = Just Nine
+fromInt 10 = Just Ten
+fromInt 11 = Just Eleven
+fromInt 12 = Just Twelve
+fromInt _ = Nothing
+
+character :: Codec' (Either ParseError) String Character
+character = codec' parseChar serialise
+  where
+  parseChar = (runParser ~$ (buildParser <* eof)) >>> map \(name /\ build) ->
+    Character { name, hp: 0, vigor: 0, wounded: false, scars: 0, build }
+
+serialise :: Character -> String
+serialise (Character { name, build: Build build }) =
+  intercalate "\n"
+    [ "Name :: " <> unwrap name
+    , "Level :: " <> show build.level
+    , "Primary :: " <> unwrap build.primaryJob
+    , "Jobs :: " <>
+        ( build.jobs
+            # intercalate " | " <<< foldMapWithIndex \jn jl ->
+                [ unwrap jn <> " " <> show jl ]
+        )
+    , "\nTalents"
+    , build.talents # intercalate "\n" <<< map \t -> "- " <> unwrap t
+    , "\nAbilities"
+    , build.prepared # intercalate "\n" <<< map \a -> "+ " <> unwrap a
+    , build.abilities # intercalate "\n" <<< map \a -> "- " <> unwrap a
+    ]
+
+levelP :: Parser String Level
+levelP = tryRethrow do
+  n <- intDecimal
+  liftMaybe (\_ -> "Invalid level " <> show n) $ fromInt n
+
+jobLevel :: Parser String JobLevel
+jobLevel = choice
+  [ IV <$ string "IV"
+  , III <$ string "III"
+  , II <$ string "II"
+  , I <$ string "I"
+  ]
+
+label :: String -> Parser String Unit
+label l =
+  string l *>
+    ( void (string "\n") <|>
+        (skipSpaces *> (string "::" <|> string ":") *> skipSpaces)
+    )
+
+gap :: Parser String Unit
+gap =
+  optional (many (string "\n"))
+
+buildParser :: Parser String (Name /\ Build)
+buildParser = do
+  _ <- skipSpaces
+  name /\ _ <- label "Name" *> anyTill (string "\n")
+  gap
+  level <- label "Level" *> levelP <* string "\n"
+  gap
+  primaryJob /\ _ <- label "Primary" *> anyTill (string "\n")
+  gap
+  jobs <- label "Jobs"
+    *>
+      ( sepBy
+          (anyTill (skipSpaces *> jobLevel))
+          (try (skipSpaces *> (char '|' <|> char '/') <* skipSpaces))
+      )
+    <* string "\n"
+  gap
+  talents <- label "Talents" *>
+    many (char '-' *> skipSpaces *> anyTill (string "\n"))
+  gap
+  abilities <- label "Abilities" *>
+    many
+      ( choice
+          [ map (\_ -> false) <$>
+              (string "-" *> skipSpaces *> anyTill (void (string "\n") <|> eof))
+          , map (\_ -> true) <$>
+              (string "+" *> skipSpaces *> anyTill (void (string "\n") <|> eof))
+          ]
+      )
+  _ <- skipSpaces
+
+  let
+    { left: inactive, right: prepared } = abilities #
+      partitionMap \(a /\ active) ->
+        if active then Right (Name a) else Left (Name a)
+
+  pure $ (Name name) /\ Build
+    { level
+    , jobs: fromFoldable (first Name <$> jobs)
+    , primaryJob: Name primaryJob
+    , abilities: inactive
+    , prepared
+    , talents: Name <<< fst <$> talents
+    }
