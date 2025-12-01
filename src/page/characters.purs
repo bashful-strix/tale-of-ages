@@ -22,6 +22,7 @@ import Data.Lens
   , view
   , ifoldMapOf
   )
+import Data.Lens.At (at)
 import Data.Lens.Common (simple)
 import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
@@ -37,9 +38,11 @@ import Deku.DOM.Attributes as DA
 import Deku.DOM.Listeners as DL
 import Deku.Hooks ((<#~>))
 
+import Routing.Duplex (print)
+
 import ToA.Component.Ability (renderAbility)
 import ToA.Component.Markup (markup)
-import ToA.Data.Env (Env, _navigate)
+import ToA.Data.Env (Env, _deleteChar, _navigate)
 import ToA.Data.Icon.Character
   ( Level(..)
   , _build
@@ -55,7 +58,13 @@ import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Job (_limitBreak)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Trait (_trait)
-import ToA.Data.Route (Route(..), _Characters)
+import ToA.Data.Route
+  ( Route(..)
+  , CharacterPath(..)
+  , _Characters
+  , _View
+  , routeCodec
+  )
 import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((#~), (^::))
 
@@ -65,9 +74,7 @@ charactersPage env@{ characters, icon, route } pathChar =
     <#~>
       \(chars /\ icon_@{ abilities, classes, colours, jobs, talents, traits }) ->
         let
-          char = chars
-            ^? traversed
-              <<< filtered (preview _name >>> eq pathChar)
+          char = pathChar >>= (\c -> chars ^. at c)
 
           job = jobs
             ^? traversed
@@ -105,40 +112,105 @@ charactersPage env@{ characters, icon, route } pathChar =
         in
           D.div
             [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
-            [ D.select
-                [ DL.selectOn_ DL.change $ \c ->
-                    (env ^. _navigate)
-                      ( Characters $
-                          if c == mempty then Nothing else pure (Name c)
-                      )
-                      Nothing
+            [ D.div
+                [ css_ [ "flex", "justify-between", "gap-x-2" ]
                 ]
-                ( [ D.option
-                      [ DA.value_ mempty
-                      , DA.selected $ "selected" <$ filter
-                          (is (_Just <<< _Characters <<< _Nothing))
-                          route
-                      , DA.unset @"selected" $ filter
-                          (isn't (_Just <<< _Characters <<< _Nothing))
-                          route
-                      ]
-                      [ D.text_ "Select charater" ]
-                  ] <>
-                    ( keys chars # foldMap \c ->
-                        let
-                          prs = _Just <<< _Characters <<< _Just <<< filtered
-                            (eq c)
-                        in
-                          [ D.option
-                              [ DA.value_ $ c ^. simple _Newtype
-                              , DA.selected $ "selected" <$ filter (is prs)
-                                  route
-                              , DA.unset @"selected" $ filter (isn't prs) route
-                              ]
-                              [ D.text_ $ c ^. simple _Newtype ]
+                [ D.select
+                    [ DL.selectOn_ DL.change $ \c ->
+                        (env ^. _navigate)
+                          ( Characters $
+                              if c == mempty then View Nothing
+                              else View $ pure $ Name c
+                          )
+                          Nothing
+                    , css_
+                        [ "grow"
+                        , "px-2"
+                        , "py-1"
+                        , "border"
+                        , "border-solid"
+                        , "border-stone-700"
+                        ]
+                    ]
+                    ( [ D.option
+                          [ DA.value_ mempty
+                          , DA.selected $ "selected" <$ filter
+                              ( is
+                                  (_Just <<< _Characters <<< _View <<< _Nothing)
+                              )
+                              route
+                          , DA.unset @"selected" $ filter
+                              ( isn't
+                                  (_Just <<< _Characters <<< _View <<< _Nothing)
+                              )
+                              route
                           ]
+                          [ D.text_ "Select charater" ]
+                      ] <>
+                        ( keys chars # foldMap \c ->
+                            let
+                              prs = _Just <<< _Characters <<< _View <<< _Just
+                                <<< filtered (eq c)
+                            in
+                              [ D.option
+                                  [ DA.value_ $ c ^. simple _Newtype
+                                  , DA.selected $ "selected" <$ filter (is prs)
+                                      route
+                                  , DA.unset @"selected" $ filter (isn't prs)
+                                      route
+                                  ]
+                                  [ D.text_ $ c ^. simple _Newtype ]
+                              ]
+                        )
                     )
-                )
+
+                , char # foldMap \c ->
+                    D.button
+                      [ DL.runOn_ DL.click $ do
+                          c # env ^. _deleteChar
+                          (env ^. _navigate) (Characters $ View Nothing) Nothing
+                      , css_
+                          [ "px-2"
+                          , "py-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-stone-700"
+                          ]
+                      ]
+                      [ D.text_ "Delete" ]
+
+                , char # foldMap \c ->
+                    D.a
+                      [ DA.href_ $ print routeCodec
+                          (Characters $ Edit $ c ^? _name)
+                      , DL.click_ $
+                          (env ^. _navigate)
+                            (Characters $ Edit $ c ^? _name) <<<
+                            pure
+                      , css_
+                          [ "px-2"
+                          , "py-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-stone-700"
+                          ]
+                      ]
+                      [ D.text_ "Edit" ]
+
+                , D.a
+                    [ DA.href_ $ print routeCodec (Characters $ Edit Nothing)
+                    , DL.click_ $ (env ^. _navigate) (Characters $ Edit Nothing)
+                        <<< pure
+                    , css_
+                        [ "px-2"
+                        , "py-1"
+                        , "border"
+                        , "border-solid"
+                        , "border-stone-700"
+                        ]
+                    ]
+                    [ D.text_ "Create" ]
+                ]
 
             , D.div
                 [ css_ [ "flex", "grow", "overflow-hidden", "gap-2" ] ]

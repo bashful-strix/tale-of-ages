@@ -32,7 +32,6 @@ import ToA.Capability.Navigate (NAVIGATE, matchRoutes, navigate, runNavigate)
 import ToA.Capability.Storage (STORAGE, delete, read, runStorage, write)
 import ToA.Capability.Theme (THEME, readStorage, readSystem, save, runTheme)
 import ToA.Data.Log (Level(Debug))
--- import ToA.Resource.Characters (characters) as RC
 import ToA.Resource.Icon (icon)
 
 main :: Effect Unit
