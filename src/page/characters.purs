@@ -8,7 +8,7 @@ import PointFree ((~$))
 import CSS (backgroundColor, color, render, renderedInline)
 
 import Data.Filterable (filter)
-import Data.Foldable (elem)
+import Data.Foldable (elem, foldMap)
 import Data.Lens
   ( (^.)
   , (^?)
@@ -26,6 +26,7 @@ import Data.Lens.Common (simple)
 import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Prism (is, isn't, only)
+import Data.Map (keys)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (guard)
 import Data.Tuple.Nested ((/\))
@@ -123,17 +124,19 @@ charactersPage env@{ characters, icon, route } pathChar =
                       ]
                       [ D.text_ "Select charater" ]
                   ] <>
-                    ( chars <#> \c ->
+                    ( keys chars # foldMap \c ->
                         let
                           prs = _Just <<< _Characters <<< _Just <<< filtered
-                            (eq (c ^. _name))
+                            (eq c)
                         in
-                          D.option
-                            [ DA.value_ $ c ^. _name <<< _Newtype
-                            , DA.selected $ "selected" <$ filter (is prs) route
-                            , DA.unset @"selected" $ filter (isn't prs) route
-                            ]
-                            [ D.text_ $ c ^. _name <<< _Newtype ]
+                          [ D.option
+                              [ DA.value_ $ c ^. simple _Newtype
+                              , DA.selected $ "selected" <$ filter (is prs)
+                                  route
+                              , DA.unset @"selected" $ filter (isn't prs) route
+                              ]
+                              [ D.text_ $ c ^. simple _Newtype ]
+                          ]
                     )
                 )
 

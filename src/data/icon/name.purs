@@ -2,10 +2,12 @@ module ToA.Data.Icon.Name
   ( Name(..)
   , class Named
   , _name
+  , jsonName
   ) where
 
 import Prelude
 
+import Data.Codec.JSON (Codec, coercible, string)
 import Data.Lens (Lens')
 import Data.Newtype (class Newtype)
 
@@ -17,3 +19,6 @@ derive newtype instance Ord Name
 
 class Named a where
   _name :: Lens' a Name
+
+jsonName :: Codec Name
+jsonName = coercible "Name" string

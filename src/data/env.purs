@@ -1,6 +1,10 @@
 module ToA.Data.Env
   ( Env
 
+  , _saveChar
+  , _deleteChar
+  , _storageChars
+
   , _errorLog
   , _warnLog
   , _infoLog
@@ -21,6 +25,7 @@ module ToA.Data.Env
 import Prelude
 import Effect (Effect)
 import Data.Lens (Lens')
+import Data.Map (Map)
 import Data.Maybe (Maybe)
 import FRP.Poll (Poll)
 import Web.PointerEvent.PointerEvent (PointerEvent)
@@ -28,20 +33,26 @@ import Web.PointerEvent.PointerEvent (PointerEvent)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Character (Character)
 import ToA.Data.Icon.Encounter (Encounter)
+import ToA.Data.Icon.Name (Name)
 import ToA.Data.Route (Route)
 import ToA.Data.Theme (Theme)
 import ToA.Util.Optic (key)
 
 type Env =
   { icon :: Poll Icon
-  , characters :: Poll (Array Character)
+  , characters :: Poll (Map Name Character)
   , encounters :: Poll (Array Encounter)
   , route :: Poll (Maybe Route)
   , systemTheme :: Theme
   , theme :: Poll (Maybe Theme)
 
   , effects ::
-      { log ::
+      { character ::
+          { save :: Character -> Effect Unit
+          , delete :: Character -> Effect Unit
+          , readStorage :: Effect (Map Name Character)
+          }
+      , log ::
           { error :: String -> Effect Unit
           , warn :: String -> Effect Unit
           , info :: String -> Effect Unit
@@ -67,6 +78,9 @@ type Env =
 _effects :: ∀ r a. Lens' { effects :: a | r } a
 _effects = key @"effects"
 
+_char :: ∀ r a. Lens' { character :: a | r } a
+_char = key @"character"
+
 _log :: ∀ r a. Lens' { log :: a | r } a
 _log = key @"log"
 
@@ -78,6 +92,15 @@ _storage = key @"storage"
 
 _theme :: ∀ r a. Lens' { theme :: a | r } a
 _theme = key @"theme"
+
+_saveChar :: Lens' Env (Character -> Effect Unit)
+_saveChar = _effects <<< _char <<< key @"save"
+
+_deleteChar :: Lens' Env (Character -> Effect Unit)
+_deleteChar = _effects <<< _char <<< key @"delete"
+
+_storageChars :: Lens' Env (Effect (Map Name Character))
+_storageChars = _effects <<< _char <<< key @"readStorage"
 
 _errorLog :: Lens' Env (String -> Effect Unit)
 _errorLog = _effects <<< _log <<< key @"error"

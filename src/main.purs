@@ -5,16 +5,16 @@ module Main
 import Prelude
 import PointFree ((<..))
 
-import Control.Monad.ST.Class (liftST)
 import Control.Alt ((<|>))
 
-import Data.Maybe (Maybe(..))
+import Data.Map (empty)
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Tuple.Nested ((/\))
 
 import Effect (Effect)
 
+import Deku.Effect (useHot, useState, useState')
 import Deku.Toplevel (runInBody)
-import FRP.Event (create)
-import FRP.Poll (sham)
 
 import Routing.PushState (PushStateInterface, makeInterface)
 
@@ -26,12 +26,13 @@ import Web.HTML.Window (localStorage)
 import Web.Storage.Storage (Storage)
 
 import ToA (toa)
+import ToA.Capability.Character as CC
 import ToA.Capability.Log (LOG, debug, error, info, runLog, warn)
 import ToA.Capability.Navigate (NAVIGATE, matchRoutes, navigate, runNavigate)
 import ToA.Capability.Storage (STORAGE, delete, read, runStorage, write)
 import ToA.Capability.Theme (THEME, readStorage, readSystem, save, runTheme)
 import ToA.Data.Log (Level(Debug))
-import ToA.Resource.Characters (characters)
+-- import ToA.Resource.Characters (characters) as RC
 import ToA.Resource.Icon (icon)
 
 main :: Effect Unit
@@ -40,13 +41,23 @@ main = do
   storage <- localStorage win
   history <- makeInterface
 
-  { event: theme, push: pushTheme } <- liftST create
-  { event: route, push: pushRoute } <- liftST create
+  _ /\ pushChars /\ characters <- useHot empty
+  pushRoute /\ route <- useState Nothing
+  pushTheme /\ theme <- useState'
 
   let
     re = runEffects Debug storage history
     effects =
-      { log:
+      { character:
+          { save: \c -> do
+              cs <- re (CC.save c *> CC.readStorage)
+              pushChars $ fromMaybe empty cs
+          , delete: \c -> do
+              cs <- re (CC.delete c *> CC.readStorage)
+              pushChars $ fromMaybe empty cs
+          , readStorage: (re $ CC.readStorage) <#> fromMaybe empty
+          }
+      , log:
           { error: re <<< error
           , warn: re <<< warn
           , info: re <<< info
@@ -68,17 +79,20 @@ main = do
           }
       }
 
+  storageChars <- effects.character.readStorage
+  pushChars storageChars
+
   systemTheme <- effects.theme.readSystem
   storageTheme <- effects.theme.readStorage
 
   void $ runInBody $ toa
     { effects
     , icon: pure icon
-    , characters: pure characters
+    , characters
     , encounters: pure []
-    , route: pure Nothing <|> sham route
+    , route
     , systemTheme
-    , theme: pure storageTheme <|> sham theme
+    , theme: pure storageTheme <|> theme
     }
 
   effects.route.matchRoutes (pushRoute <<< pure)
@@ -88,10 +102,11 @@ runEffects
   :: Level
   -> Storage
   -> PushStateInterface
-  -> Run (EFFECT + LOG + NAVIGATE + STORAGE + THEME + ()) ~> Effect
+  -> Run (CC.CHAR + EFFECT + LOG + NAVIGATE + STORAGE + THEME + ()) ~> Effect
 runEffects logLevel storage history =
   runBaseEffect
     <<< runLog logLevel
     <<< runStorage storage
     <<< runNavigate history
     <<< runTheme
+    <<< CC.runCharacter

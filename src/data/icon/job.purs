@@ -11,16 +11,25 @@ module ToA.Data.Icon.Job
   , _II
   , _III
   , _IV
+
+  , jobLevelP
+  , jsonJobLevel
   ) where
 
 import Prelude
 
+import Data.Codec.JSON as CJ
 import Data.FastVect.FastVect (Vect)
 import Data.Lens (Lens')
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Prism (Prism', only)
+import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Tuple.Nested (type (/\))
+
+import Parsing (Parser)
+import Parsing.Combinators (choice)
+import Parsing.String (string)
 
 import ToA.Data.Icon.Class (class Classed)
 import ToA.Data.Icon.Colour (class Coloured)
@@ -101,3 +110,20 @@ _III = only III
 
 _IV :: Prism' JobLevel Unit
 _IV = only IV
+
+jobLevelP :: Parser String JobLevel
+jobLevelP = choice
+  [ IV <$ string "IV"
+  , III <$ string "III"
+  , II <$ string "II"
+  , I <$ string "I"
+  ]
+
+jsonJobLevel :: CJ.Codec JobLevel
+jsonJobLevel = CJ.prismaticCodec "JobLevel" dec show CJ.string
+  where
+  dec "I" = Just I
+  dec "II" = Just II
+  dec "III" = Just III
+  dec "IV" = Just IV
+  dec _ = Nothing

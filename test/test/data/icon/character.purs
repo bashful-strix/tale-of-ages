@@ -8,7 +8,12 @@ import Data.Tuple.Nested ((/\))
 
 import ToA.Data.Icon.Name (Name(..))
 
-import ToA.Data.Icon.Character (Character(..), Build(..), Level(..), character)
+import ToA.Data.Icon.Character
+  ( Character(..)
+  , Build(..)
+  , Level(..)
+  , stringCharacter
+  )
 import ToA.Data.Icon.Job (JobLevel(..))
 
 import Test.Spec (Spec, describe, it)
@@ -40,7 +45,7 @@ spec = do
               }
           }
 
-      (AnyShow <$> decode character (encode character c))
+      (AnyShow <$> decode stringCharacter (encode stringCharacter c))
         `shouldEqual` pure (AnyShow c)
 
     it "should roundtrip text" do
@@ -61,7 +66,7 @@ Abilities
 - Inactive 1
 - Inactive 2"""
 
-      (encode character <$> decode character t) `shouldEqual` pure t
+      (encode stringCharacter <$> decode stringCharacter t) `shouldEqual` pure t
 
     it "should decode an unusual text build" do
       let
@@ -83,7 +88,7 @@ Abilities ::
 + Bait and Switch
           """
 
-      (AnyShow <$> (decode character t))
+      (AnyShow <$> (decode stringCharacter t))
         `shouldEqual`
           ( pure $ AnyShow $ Character
               { name: Name "Testina"
