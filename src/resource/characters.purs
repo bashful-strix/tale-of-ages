@@ -11,11 +11,7 @@ import ToA.Data.Icon.Name (Name(..))
 
 characters :: Array Character
 characters =
-  [ testana
-  , testina
-  , testona
-
-  , speckles
+  [ speckles
   , speckles1
   , speckles2
 
@@ -24,74 +20,11 @@ characters =
   , arofell2
 
   , varek
+  , varek1
 
   , nelly
+  , nelly1
   ]
-
-testana :: Character
-testana = Character
-  { name: Name "Testana"
-  , hp: 40
-  , vigor: 0
-  , wounded: false
-  , scars: 0
-  , build: Build
-      { level: Zero
-      , jobs: empty
-      , primaryJob: Name "Tactician"
-      , abilities:
-          [ Name "Hook", Name "Mighty Hew" ]
-      , prepared:
-          [ Name "Hook", Name "Mighty Hew" ]
-      , talents: []
-      }
-  }
-
-testina :: Character
-testina = Character
-  { name: Name "Testina"
-  , hp: 40
-  , vigor: 0
-  , wounded: false
-  , scars: 0
-  , build: Build
-      { level: One
-      , jobs: fromFoldable [ Name "Tactician" /\ I ]
-      , primaryJob: Name "Tactician"
-      , abilities:
-          [ Name "Hook", Name "Mighty Hew", Name "Mighty Command" ]
-      , prepared:
-          [ Name "Hook", Name "Mighty Hew", Name "Mighty Command" ]
-      , talents: []
-      }
-  }
-
-testona :: Character
-testona = Character
-  { name: Name "Testona"
-  , hp: 40
-  , vigor: 0
-  , wounded: false
-  , scars: 0
-  , build: Build
-      { level: Two
-      , jobs: fromFoldable [ Name "Tactician" /\ I, Name "Spellblade" /\ I ]
-      , primaryJob: Name "Tactician"
-      , abilities:
-          [ Name "Hook"
-          , Name "Mighty Hew"
-          , Name "Mighty Command"
-          , Name "Shift"
-          ]
-      , prepared:
-          [ Name "Hook"
-          , Name "Mighty Hew"
-          , Name "Mighty Command"
-          , Name "Shift"
-          ]
-      , talents: [ Name "Spur" ]
-      }
-  }
 
 speckles :: Character
 speckles = Character
@@ -266,6 +199,31 @@ varek = Character
       }
   }
 
+varek1 :: Character
+varek1 = Character
+  { name: Name "Varek 1"
+  , hp: 32
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: One
+      , jobs: empty
+      , primaryJob: Name "Weeping Assassin"
+      , abilities:
+          [ Name "Flash Powder"
+          , Name "Harien"
+          , Name "Shadow Cloak"
+          ]
+      , prepared:
+          [ Name "Flash Powder"
+          , Name "Harien"
+          , Name "Shadow Cloak"
+          ]
+      , talents: []
+      }
+  }
+
 nelly :: Character
 nelly = Character
   { name: Name "Nelly"
@@ -284,6 +242,31 @@ nelly = Character
       , prepared:
           [ Name "Gliaga"
           , Name "Diaga"
+          ]
+      , talents: []
+      }
+  }
+
+nelly1 :: Character
+nelly1 = Character
+  { name: Name "Nelly 1"
+  , hp: 48
+  , vigor: 0
+  , wounded: false
+  , scars: 0
+  , build: Build
+      { level: One
+      , jobs: empty
+      , primaryJob: Name "Chanter"
+      , abilities:
+          [ Name "Diaga"
+          , Name "Viga"
+          , Name "Holy"
+          ]
+      , prepared:
+          [ Name "Diaga"
+          , Name "Viga"
+          , Name "Holy"
           ]
       , talents: []
       }
