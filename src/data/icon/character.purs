@@ -203,7 +203,7 @@ gap =
 
 buildParser :: Parser String (Name /\ Build)
 buildParser = do
-  _ <- skipSpaces
+  skipSpaces
   name /\ _ <- label "Name" *> anyTill (string "\n")
   gap
   level <- label "Level" *> levelP <* string "\n"
@@ -230,7 +230,7 @@ buildParser = do
               (string "+" *> skipSpaces *> anyTill (void (string "\n") <|> eof))
           ]
       )
-  _ <- skipSpaces
+  skipSpaces
 
   let
     { left: inactive, right: active } = abilities #

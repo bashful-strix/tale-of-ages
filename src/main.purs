@@ -28,10 +28,10 @@ import Web.Storage.Storage (Storage)
 import ToA (toa)
 import ToA.Capability.Character as CC
 import ToA.Capability.Encounter as CE
-import ToA.Capability.Log (LOG, debug, error, info, runLog, warn)
-import ToA.Capability.Navigate (NAVIGATE, matchRoutes, navigate, runNavigate)
-import ToA.Capability.Storage (STORAGE, delete, read, runStorage, write)
-import ToA.Capability.Theme (THEME, readStorage, readSystem, save, runTheme)
+import ToA.Capability.Log as CL
+import ToA.Capability.Navigate as CN
+import ToA.Capability.Storage as CS
+import ToA.Capability.Theme as CT
 import ToA.Data.Log (Level(Debug))
 import ToA.Resource.Icon (icon)
 
@@ -68,24 +68,24 @@ main = do
           , readStorage: (re $ CE.readStorage) <#> fromMaybe empty
           }
       , log:
-          { error: re <<< error
-          , warn: re <<< warn
-          , info: re <<< info
-          , debug: re <<< debug
+          { error: re <<< CL.error
+          , warn: re <<< CL.warn
+          , info: re <<< CL.info
+          , debug: re <<< CL.debug
           }
       , route:
-          { navigate: re <.. navigate
-          , matchRoutes: re <<< matchRoutes
+          { navigate: re <.. CN.navigate
+          , matchRoutes: re <<< CN.matchRoutes
           }
       , storage:
-          { read: re <<< read
-          , write: re <.. write
-          , delete: re <<< delete
+          { read: re <<< CS.read
+          , write: re <.. CS.write
+          , delete: re <<< CS.delete
           }
       , theme:
-          { save: \t -> (pushTheme t) *> (re $ save t)
-          , readStorage: re readStorage
-          , readSystem: re readSystem
+          { save: \t -> (pushTheme t) *> (re $ CT.save t)
+          , readStorage: re CT.readStorage
+          , readSystem: re CT.readSystem
           }
       }
 
@@ -114,12 +114,22 @@ runEffects
   :: Level
   -> Storage
   -> PushStateInterface
-  -> Run (CC.CHAR + EFFECT + CE.ENCOUNTER + LOG + NAVIGATE + STORAGE + THEME + ()) ~> Effect
+  -> Run
+       ( EFFECT
+           + CC.CHAR
+           + CE.ENCOUNTER
+           + CL.LOG
+           + CN.NAVIGATE
+           + CS.STORAGE
+           + CT.THEME
+           + ()
+       )
+       ~> Effect
 runEffects logLevel storage history =
   runBaseEffect
-    <<< runLog logLevel
-    <<< runStorage storage
-    <<< runNavigate history
-    <<< runTheme
+    <<< CL.runLog logLevel
+    <<< CS.runStorage storage
+    <<< CN.runNavigate history
+    <<< CT.runTheme
     <<< CC.runCharacter
     <<< CE.runEncounter
