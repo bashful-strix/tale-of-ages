@@ -5,6 +5,10 @@ module ToA.Data.Env
   , _deleteChar
   , _storageChars
 
+  , _saveEnc
+  , _deleteEnc
+  , _storageEncs
+
   , _errorLog
   , _warnLog
   , _infoLog
@@ -41,7 +45,7 @@ import ToA.Util.Optic (key)
 type Env =
   { icon :: Poll Icon
   , characters :: Poll (Map Name Character)
-  , encounters :: Poll (Array Encounter)
+  , encounters :: Poll (Map Name Encounter)
   , route :: Poll (Maybe Route)
   , systemTheme :: Theme
   , theme :: Poll (Maybe Theme)
@@ -51,6 +55,11 @@ type Env =
           { save :: Character -> Effect Unit
           , delete :: Character -> Effect Unit
           , readStorage :: Effect (Map Name Character)
+          }
+      , encounter ::
+          { save :: Encounter -> Effect Unit
+          , delete :: Encounter -> Effect Unit
+          , readStorage :: Effect (Map Name Encounter)
           }
       , log ::
           { error :: String -> Effect Unit
@@ -81,6 +90,9 @@ _effects = key @"effects"
 _char :: ∀ r a. Lens' { character :: a | r } a
 _char = key @"character"
 
+_enc :: ∀ r a. Lens' { encounter :: a | r } a
+_enc = key @"encounter"
+
 _log :: ∀ r a. Lens' { log :: a | r } a
 _log = key @"log"
 
@@ -101,6 +113,15 @@ _deleteChar = _effects <<< _char <<< key @"delete"
 
 _storageChars :: Lens' Env (Effect (Map Name Character))
 _storageChars = _effects <<< _char <<< key @"readStorage"
+
+_saveEnc :: Lens' Env (Encounter -> Effect Unit)
+_saveEnc = _effects <<< _enc <<< key @"save"
+
+_deleteEnc :: Lens' Env (Encounter -> Effect Unit)
+_deleteEnc = _effects <<< _enc <<< key @"delete"
+
+_storageEncs :: Lens' Env (Effect (Map Name Encounter))
+_storageEncs = _effects <<< _enc <<< key @"readStorage"
 
 _errorLog :: Lens' Env (String -> Effect Unit)
 _errorLog = _effects <<< _log <<< key @"error"

@@ -21,9 +21,11 @@ import Data.Lens
   , traversed
   , view
   )
+import Data.Lens.At (at)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Prism (is, isn't)
+import Data.Map (keys)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (guard)
 import Data.Newtype (unwrap, wrap)
@@ -66,45 +68,57 @@ encountersPage env@{ encounters, icon, route } pathEnc =
     <#~>
       \(encs /\ icon_) ->
         let
-          enc = encs
-            ^? traversed
-              <<< filtered (preview _name >>> eq pathEnc)
+          enc = pathEnc >>= \e -> encs ^. at e
 
         in
           D.div
             [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
-            [ D.select
-                [ DL.selectOn_ DL.change $ \e ->
-                    (env ^. _navigate)
-                      ( Encounters $
-                          if e == mempty then Nothing else pure (Name e)
-                      )
-                      Nothing
-                ]
-                ( [ D.option
-                      [ DA.value_ mempty
-                      , DA.selected $ "selected" <$ filter
-                          (is (_Just <<< _Encounters <<< _Nothing))
-                          route
-                      , DA.unset @"selected" $ filter
-                          (isn't (_Just <<< _Encounters <<< _Nothing))
-                          route
-                      ]
-                      [ D.text_ "Select encounter" ]
-                  ] <>
-                    ( encs <#> \e ->
-                        let
-                          prs = _Just <<< _Encounters <<< _Just <<< filtered
-                            (eq (e ^. _name))
-                        in
-                          D.option
-                            [ DA.value_ $ e ^. _name <<< _Newtype
-                            , DA.selected $ "selected" <$ filter (is prs) route
-                            , DA.unset @"selected" $ filter (isn't prs) route
-                            ]
-                            [ D.text_ $ e ^. _name <<< _Newtype ]
+            [ D.div
+                [ css_ [ "flex", "justify-between", "gap-x-2" ] ]
+                [ D.select
+                    [ DL.selectOn_ DL.change $ \e ->
+                        (env ^. _navigate)
+                          ( Encounters $
+                              if e == mempty then Nothing else pure (Name e)
+                          )
+                          Nothing
+                    , css_
+                        [ "grow"
+                        , "px-2"
+                        , "py-1"
+                        , "border"
+                        , "border-solid"
+                        , "border-stone-700"
+                        ]
+                    ]
+                    ( [ D.option
+                          [ DA.value_ mempty
+                          , DA.selected $ "selected" <$ filter
+                              (is (_Just <<< _Encounters <<< _Nothing))
+                              route
+                          , DA.unset @"selected" $ filter
+                              (isn't (_Just <<< _Encounters <<< _Nothing))
+                              route
+                          ]
+                          [ D.text_ "Select encounter" ]
+                      ] <>
+                        ( keys encs # foldMap \e ->
+                            let
+                              prs = _Just <<< _Encounters <<< _Just <<< filtered
+                                (eq e)
+                            in
+                              [ D.option
+                                  [ DA.value_ $ e ^. simple _Newtype
+                                  , DA.selected $ "selected" <$ filter (is prs)
+                                      route
+                                  , DA.unset @"selected" $ filter (isn't prs)
+                                      route
+                                  ]
+                                  [ D.text_ $ e ^. simple _Newtype ]
+                              ]
+                        )
                     )
-                )
+                ]
 
             , D.div
                 [ css_ [ "flex", "grow", "overflow-hidden", "gap-2" ] ]
@@ -133,8 +147,12 @@ encountersPage env@{ encounters, icon, route } pathEnc =
                           ]
                           [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Notes:" ]
                           , D.div []
-                              [ enc ^. _Just <<< simple _Newtype <<< to
-                                  (markup icon_ <<< _.notes)
+                              [ enc
+                                  ^. _Just
+                                    <<< simple _Newtype
+                                    <<< to _.notes
+                                    <<< _Just
+                                    <<< to D.text_
                               ]
                           ]
 
@@ -324,7 +342,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                 <<< filtered (view _name >>> eq f.class)
             trs =
               foldMap (unwrap >>> _.traits) fet
-              <> foldMap (unwrap >>> _.traits) cls
+                <> foldMap (unwrap >>> _.traits) cls
                 <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) fef
                 <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) ff
                 <> f.traits
@@ -423,7 +441,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
               ^? traversed
                 <<< filtered (view _name >>> eq (Name "Elite"))
             trs =
-                foldMap (unwrap >>> _.traits) el
+              foldMap (unwrap >>> _.traits) el
                 <> foldMap (unwrap >>> _.traits) fet
                 <> foldMap (unwrap >>> _.traits) cls
                 <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) fef

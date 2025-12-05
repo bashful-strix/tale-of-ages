@@ -75,7 +75,7 @@ charactersPage env@{ characters, icon, route } pathChar =
     <#~>
       \(chars /\ icon_@{ abilities, classes, colours, jobs, talents, traits }) ->
         let
-          char = pathChar >>= (\c -> chars ^. at c)
+          char = pathChar >>= \c -> chars ^. at c
 
           job = jobs
             ^? traversed
@@ -114,8 +114,7 @@ charactersPage env@{ characters, icon, route } pathChar =
           D.div
             [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
             [ D.div
-                [ css_ [ "flex", "justify-between", "gap-x-2" ]
-                ]
+                [ css_ [ "flex", "justify-between", "gap-x-2" ] ]
                 [ D.select
                     [ DL.selectOn_ DL.change $ \c ->
                         (env ^. _navigate)
