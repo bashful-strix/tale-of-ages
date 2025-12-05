@@ -48,8 +48,9 @@ import ToA.Data.Icon.Character
   , _build
   , _jobs
   , _level
-  , _prepared
-  , _primaryJob
+  , _abilities
+  , _active
+  , _primary
   , _talents
   )
 import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
@@ -80,7 +81,7 @@ charactersPage env@{ characters, icon, route } pathChar =
             ^? traversed
               <<< filtered
                 ( preview _name >>> eq
-                    (char ^? _Just <<< _build <<< _primaryJob)
+                    (char ^? _Just <<< _build <<< _primary)
                 )
 
           cls = classes
@@ -406,7 +407,9 @@ charactersPage env@{ characters, icon, route } pathChar =
                                 ^:: traversed
                                 <<< filtered
                                   ( view _name >>> elem ~$
-                                      (char ^. _Just <<< _build <<< _prepared)
+                                      ( char ^. _Just <<< _build <<< _abilities
+                                          <<< _active
+                                      )
                                   )
                                 <<< to \a ->
                                   D.div

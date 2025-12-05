@@ -1,20 +1,20 @@
 module ToA.Data.Icon.Character
   ( Character(..)
   , CharacterData
-  , _hp
-  , _vigor
-  , _wounded
-  , _scars
   , _build
+
+  , State(..)
+  , StateData
 
   , Build(..)
   , BuildData
   , _level
+  , _primary
   , _jobs
-  , _primaryJob
-  , _abilities
-  , _prepared
   , _talents
+  , _abilities
+  , _active
+  , _inactive
 
   , Level(..)
 
@@ -54,12 +54,10 @@ import ToA.Util.Optic (key)
 
 type CharacterData =
   { name :: Name
-  , hp :: Int
-  , vigor :: Int
-  , wounded :: Boolean
-  , scars :: Int
+  , state :: State
   , build :: Build
   }
+
 newtype Character = Character CharacterData
 
 derive instance Newtype Character _
@@ -69,48 +67,45 @@ instance Eq Character where
 instance Named Character where
   _name = _Newtype <<< key @"name"
 
-_hp :: Lens' Character Int
-_hp = _Newtype <<< key @"hp"
-
-_vigor :: Lens' Character Int
-_vigor = _Newtype <<< key @"vigor"
-
-_wounded :: Lens' Character Boolean
-_wounded = _Newtype <<< key @"wounded"
-
-_scars :: Lens' Character Int
-_scars = _Newtype <<< key @"scars"
-
 _build :: Lens' Character Build
 _build = _Newtype <<< key @"build"
 
+type StateData = {}
+newtype State = State StateData
+
 type BuildData =
   { level :: Level
+  , primary :: Name
   , jobs :: Map Name JobLevel
-  , primaryJob :: Name
-  , abilities :: Array Name
-  , prepared :: Array Name
   , talents :: Array Name
+  , abilities ::
+      { active :: Array Name
+      , inactive :: Array Name
+      }
   }
+
 newtype Build = Build BuildData
 
 _level :: Lens' Build Level
 _level = _Newtype <<< key @"level"
 
+_primary :: Lens' Build Name
+_primary = _Newtype <<< key @"primary"
+
 _jobs :: Lens' Build (Map Name JobLevel)
 _jobs = _Newtype <<< key @"jobs"
 
-_primaryJob :: Lens' Build Name
-_primaryJob = _Newtype <<< key @"primaryJob"
-
-_abilities :: Lens' Build (Array Name)
-_abilities = _Newtype <<< key @"abilities"
-
-_prepared :: Lens' Build (Array Name)
-_prepared = _Newtype <<< key @"prepared"
-
 _talents :: Lens' Build (Array Name)
 _talents = _Newtype <<< key @"talents"
+
+_abilities :: Lens' Build { active :: Array Name, inactive :: Array Name }
+_abilities = _Newtype <<< key @"abilities"
+
+_active :: Lens' { active :: Array Name, inactive :: Array Name } (Array Name)
+_active = key @"active"
+
+_inactive :: Lens' { active :: Array Name, inactive :: Array Name } (Array Name)
+_inactive = key @"inactive"
 
 derive instance Newtype Build _
 derive instance Eq Build
@@ -170,14 +165,14 @@ stringCharacter :: Codec' (Either ParseError) String Character
 stringCharacter = codec' parseChar serialise
   where
   parseChar = (runParser ~$ (buildParser <* eof)) >>> map \(name /\ build) ->
-    Character { name, hp: 0, vigor: 0, wounded: false, scars: 0, build }
+    Character { name, state: State {}, build }
 
 serialise :: Character -> String
 serialise (Character { name, build: Build build }) =
   intercalate "\n"
     [ "Name :: " <> unwrap name
     , "Level :: " <> show build.level
-    , "Primary :: " <> unwrap build.primaryJob
+    , "Primary :: " <> unwrap build.primary
     , "Jobs :: " <>
         ( build.jobs
             # intercalate " | " <<< foldMapWithIndex \jn jl ->
@@ -186,8 +181,8 @@ serialise (Character { name, build: Build build }) =
     , "\nTalents"
     , build.talents # intercalate "\n" <<< map \t -> "- " <> unwrap t
     , "\nAbilities"
-    , build.prepared # intercalate "\n" <<< map \a -> "+ " <> unwrap a
-    , build.abilities # intercalate "\n" <<< map \a -> "- " <> unwrap a
+    , build.abilities.active # intercalate "\n" <<< map \a -> "+ " <> unwrap a
+    , build.abilities.inactive # intercalate "\n" <<< map \a -> "- " <> unwrap a
     ]
 
 levelP :: Parser String Level
@@ -213,7 +208,7 @@ buildParser = do
   gap
   level <- label "Level" *> levelP <* string "\n"
   gap
-  primaryJob /\ _ <- label "Primary" *> anyTill (string "\n")
+  primary /\ _ <- label "Primary" *> anyTill (string "\n")
   gap
   jobs <- label "Jobs"
     *>
@@ -238,17 +233,16 @@ buildParser = do
   _ <- skipSpaces
 
   let
-    { left: inactive, right: prepared } = abilities #
-      partitionMap \(a /\ active) ->
-        if active then Right (Name a) else Left (Name a)
+    { left: inactive, right: active } = abilities #
+      partitionMap \(a /\ isActive) ->
+        if isActive then Right (Name a) else Left (Name a)
 
   pure $ (Name name) /\ Build
     { level
+    , primary: Name primary
     , jobs: fromFoldable (first Name <$> jobs)
-    , primaryJob: Name primaryJob
-    , abilities: inactive
-    , prepared
     , talents: Name <<< fst <$> talents
+    , abilities: { active, inactive }
     }
 
 jsonLevel :: CJ.Codec Level
@@ -257,23 +251,28 @@ jsonLevel = CJ.prismaticCodec "Level" fromInt toInt CJ.int
 jsonCharacter :: CJ.Codec Character
 jsonCharacter = CJ.coercible "Character" char_
   where
-  char_ = CJR.objectStrict
+  char_ = CJR.object
     { name: jsonName
-    , hp: CJ.int
-    , vigor: CJ.int
-    , wounded: CJ.boolean
-    , scars: CJ.int
+    , state: jsonState
     , build: jsonBuild
     }
+
+jsonState :: CJ.Codec State
+jsonState = CJ.coercible "State" state_
+  where
+  state_ :: CJ.Codec StateData
+  state_ = CJR.object {}
 
 jsonBuild :: CJ.Codec Build
 jsonBuild = CJ.coercible "Build" build_
   where
-  build_ = CJR.objectStrict
+  build_ = CJR.object
     { level: jsonLevel
+    , primary: jsonName
     , jobs: CJC.map jsonName jsonJobLevel
-    , primaryJob: jsonName
-    , abilities: CJ.array jsonName
-    , prepared: CJ.array jsonName
     , talents: CJ.array jsonName
+    , abilities: CJR.object $
+        { active: CJ.array jsonName
+        , inactive: CJ.array jsonName
+        }
     }

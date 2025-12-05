@@ -10,6 +10,7 @@ import ToA.Data.Icon.Name (Name(..))
 
 import ToA.Data.Icon.Character
   ( Character(..)
+  , State(..)
   , Build(..)
   , Level(..)
   , stringCharacter
@@ -26,22 +27,21 @@ spec = do
       let
         c = Character
           { name: Name "Test Name"
-          , hp: 0
-          , vigor: 0
-          , wounded: false
-          , scars: 0
+          , state: State {}
           , build: Build
               { level: One
+              , primary: Name "Primary"
               , jobs: fromFoldable
                   [ Name "Job 1" /\ I
                   , Name "Job 2" /\ II
                   , Name "Job 3" /\ III
                   , Name "Job 4" /\ IV
                   ]
-              , primaryJob: Name "Primary"
-              , abilities: [ Name "Inactive 1", Name "Inactive 2" ]
-              , prepared: [ Name "Active 1", Name "Active 2" ]
               , talents: [ Name "Talent 1", Name "Talent 2" ]
+              , abilities:
+                  { active: [ Name "Active 1", Name "Active 2" ]
+                  , inactive: [ Name "Inactive 1", Name "Inactive 2" ]
+                  }
               }
           }
 
@@ -92,21 +92,20 @@ Abilities ::
         `shouldEqual`
           ( pure $ AnyShow $ Character
               { name: Name "Testina"
-              , hp: 0
-              , vigor: 0
-              , wounded: false
-              , scars: 0
+              , state: State {}
               , build: Build
                   { level: One
+                  , primary: Name "Tactician"
                   , jobs: fromFoldable
                       [ Name "Tactician" /\ I
                       , Name "Spellblade" /\ II
                       , Name "Weeping Assassin" /\ I
                       ]
-                  , primaryJob: Name "Tactician"
-                  , abilities: [ Name "Pincer Attack" ]
-                  , prepared: [ Name "Bait and Switch" ]
                   , talents: [ Name "Vantage" ]
+                  , abilities:
+                      { active: [ Name "Bait and Switch" ]
+                      , inactive: [ Name "Pincer Attack" ]
+                      }
                   }
               }
           )

@@ -27,6 +27,7 @@ import Web.HTML.HTMLTextAreaElement (fromEventTarget, value)
 import ToA.Data.Env (Env, _navigate, _saveChar)
 import ToA.Data.Icon.Character
   ( Character(..)
+  , State(..)
   , Build(..)
   , Level(..)
   , stringCharacter
@@ -112,16 +113,15 @@ editCharacterPage env@{ characters, icon } pathChar =
 emptyChar :: Character
 emptyChar = Character
   { name: Name "<Character name>"
-  , hp: 0
-  , vigor: 0
-  , wounded: false
-  , scars: 0
+  , state: State {}
   , build: Build
       { level: Zero
-      , primaryJob: Name "<Primary job>"
+      , primary: Name "<Primary job>"
       , jobs: fromFoldable [ Name "<Job 1>" /\ I, Name "<Job 2>" /\ IV ]
       , talents: [ Name "<Talent>" ]
-      , abilities: [ Name "<Inactive ability>" ]
-      , prepared: [ Name "<Active ability>" ]
+      , abilities:
+          { active: [ Name "<Active ability>" ]
+          , inactive: [ Name "<Inactive ability>" ]
+          }
       }
   }
