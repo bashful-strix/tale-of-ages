@@ -1,5 +1,6 @@
 module ToA
-  ( toa
+  ( toaDeku
+  , toa
   ) where
 
 import Prelude
@@ -11,9 +12,29 @@ import Deku.Core (Nut)
 import Deku.DOM as D
 import Deku.Hooks ((<#~>))
 
+import Halogen (Component, defaultEval, mkComponent, mkEval, put)
+import Halogen.HTML as H
+import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (updateStore)
+import Halogen.Store.Select (selectAll)
+
+import Routing.Duplex (print)
+
+import Type.Row (type (+))
+
+import ToA.ToAM (ToAM, Store, liftRun)
+import ToA.Capability.Log (LOG, debug)
+import ToA.Capability.Navigate (NAVIGATE, matchRoutes)
+import ToA.Capability.Theme (THEME, readSystem)
 import ToA.Component.TitleBar (titleBar)
 import ToA.Data.Env (Env)
-import ToA.Data.Route (Route(..), CharacterPath(..), EncounterPath(..))
+import ToA.Data.Route
+  ( Route(..)
+  , CharacterPath(..)
+  , EncounterPath(..)
+  , routeCodec
+  )
 import ToA.Data.Theme (themeCodec)
 import ToA.Page.Character.Combat (combatCharacterPage)
 import ToA.Page.Character.Edit (editCharacterPage)
@@ -27,8 +48,52 @@ import ToA.Page.Jobs (jobsPage)
 import ToA.Page.Unknown (unknownPage)
 import ToA.Util.Html (css, css_)
 
-toa :: Env -> Nut
-toa env@{ route, systemTheme, theme } =
+data Action = Init | Receive (Connected Store Unit)
+
+toa :: ∀ r q o. Component q Unit o (ToAM (LOG + NAVIGATE + THEME + r))
+toa =
+  connect selectAll
+    $ mkComponent
+        { initialState: _.context
+        , render
+        , eval: mkEval $ defaultEval
+            { initialize = pure Init
+            , receive = pure <<< Receive
+            , handleAction = act
+            }
+        }
+  where
+
+  act = case _ of
+    Init -> do
+      systemTheme <- liftRun readSystem
+      updateStore _ { systemTheme = systemTheme }
+      liftRun $ matchRoutes (\route -> updateStore _ { route = pure route })
+      liftRun $ debug "test"
+    Receive { context } -> put context
+
+  render { route, systemTheme, theme } =
+    H.div
+      [ HP.classes $ H.ClassName <$>
+          [ "w-dvw"
+          , "h-dvh"
+          , "flex"
+          , "flex-col"
+          , "overflow-hidden"
+          , "text-sm"
+          , "bg-stone-300"
+          , "text-stone-700"
+          , "dark:bg-stone-900"
+          , "dark:text-stone-400"
+          , encode themeCodec (fromMaybe systemTheme theme)
+          ]
+      ]
+      [ H.div [] [ H.text "Halogen" ]
+      , H.div [] [ H.text $ show $ print routeCodec <$> route ]
+      ]
+
+toaDeku :: Env -> Nut
+toaDeku env@{ route, systemTheme, theme } =
   D.div
     [ css $ theme <#> \t ->
         [ "w-dvw"

@@ -18,6 +18,8 @@ package:
     - filterable
     - foldable-traversable
     - foreign
+    - halogen
+    - halogen-store
     - hyrule
     - integers
     - js-promise-aff
