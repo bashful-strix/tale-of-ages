@@ -55,6 +55,7 @@ import ToA.Data.Icon.Encounter (FoeEntry(..))
 import ToA.Data.Icon.Foe
   ( Foe(..)
   , FoeAbility(..)
+  , FoeClass(..)
   , FoeInsert(..)
   , FoeTrait(..)
   , Faction(..)
@@ -330,7 +331,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                       ]
                   ]
                   [ D.div
-                      [ css_ [ "flex", "gap-x-1" ] ]
+                      [ css_ [ "flex", "items-center", "gap-x-1" ] ]
                       [ fe.template # foldMap \(Name tn) ->
                           D.span
                             [ css_ [ "text-white", "font-bold" ]
@@ -366,14 +367,40 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype
                           ]
+                      , cls # foldMap \(FoeClass c) ->
+                          D.span
+                            [ css_ [ "flex", "items-center", "gap-x-2", "ml-1" ]
+                            ]
+                            [ D.span
+                                [ css_ [ "flex", "items-center" ] ]
+                                [ D.span
+                                    [ css_
+                                        [ "icon-[game-icons--checked-shield]" ]
+                                    , DA.title_ "Defense"
+                                    ]
+                                    []
+                                , D.span [] [ D.text_ $ show c.defense ]
+                                ]
+                            , D.span
+                                [ css_ [ "flex", "items-center" ] ]
+                                [ D.span
+                                    [ css_ [ "icon-[game-icons--wingfoot]" ]
+                                    , DA.title_ "Free move"
+                                    ]
+                                    []
+                                , D.span [] [ D.text_ $ show c.move ]
+                                ]
+                            ]
+                      ]
+                  , D.span []
+                      [ fe.alias # foldMap \fa ->
+                          D.span
+                            [ css_ [ "ml-2", "italic" ] ]
+                            [ D.text_ fa ]
                       , D.span
-                          [ css_ [ "font-bold" ] ]
+                          [ css_ [ "mx-2", "font-bold" ] ]
                           [ D.text_ $ "x" <> show fe.count ]
                       ]
-                  , fe.alias # foldMap \fa ->
-                      D.span
-                        [ css_ [ "mx-2", "italic" ] ]
-                        [ D.text_ fa ]
                   ]
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
@@ -466,6 +493,30 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                                     <<< _value
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype ]
+                      , cls # foldMap \(FoeClass c) ->
+                          D.span
+                            [ css_ [ "flex", "items-center", "gap-x-2", "ml-2" ]
+                            ]
+                            [ D.span
+                                [ css_ [ "flex", "items-center" ] ]
+                                [ D.span
+                                    [ css_
+                                        [ "icon-[game-icons--checked-shield]" ]
+                                    , DA.title_ "Defense"
+                                    ]
+                                    []
+                                , D.span [] [ D.text_ $ show c.defense ]
+                                ]
+                            , D.span
+                                [ css_ [ "flex", "items-center" ] ]
+                                [ D.span
+                                    [ css_ [ "icon-[game-icons--wingfoot]" ]
+                                    , DA.title_ "Free move"
+                                    ]
+                                    []
+                                , D.span [] [ D.text_ $ show c.move ]
+                                ]
+                            ]
                       ]
                   , fe.alias # foldMap \fa ->
                       D.span
@@ -567,13 +618,37 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype ]
                       , D.span
-                          [ css_ [ "font-bold" ] ]
+                          [ css_ [ "flex", "items-center", "gap-x-2", "ml-2" ] ]
+                          [ D.span
+                              [ css_ [ "flex", "items-center" ] ]
+                              [ D.span
+                                  [ css_
+                                      [ "icon-[game-icons--checked-shield]" ]
+                                  , DA.title_ "Defense"
+                                  ]
+                                  []
+                              , D.span [] [ D.text_ $ show f.defense ]
+                              ]
+                          , D.span
+                              [ css_ [ "flex", "items-center" ] ]
+                              [ D.span
+                                  [ css_ [ "icon-[game-icons--wingfoot]" ]
+                                  , DA.title_ "Free move"
+                                  ]
+                                  []
+                              , D.span [] [ D.text_ $ show f.move ]
+                              ]
+                          ]
+                      ]
+                  , D.span []
+                      [ fe.alias # foldMap \fa ->
+                          D.span
+                            [ css_ [ "ml-2", "italic" ] ]
+                            [ D.text_ fa ]
+                      , D.span
+                          [ css_ [ "mx-2", "font-bold" ] ]
                           [ D.text_ $ "x" <> show fe.count ]
                       ]
-                  , fe.alias # foldMap \fa ->
-                      D.span
-                        [ css_ [ "mx-2", "italic" ] ]
-                        [ D.text_ fa ]
                   ]
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
@@ -667,14 +742,40 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype
                           ]
+                      , cls # foldMap \(FoeClass c) ->
+                          D.span
+                            [ css_ [ "flex", "items-center", "gap-x-2", "ml-2" ]
+                            ]
+                            [ D.span
+                                [ css_ [ "flex", "items-center" ] ]
+                                [ D.span
+                                    [ css_
+                                        [ "icon-[game-icons--checked-shield]" ]
+                                    , DA.title_ "Defense"
+                                    ]
+                                    []
+                                , D.span [] [ D.text_ $ show c.defense ]
+                                ]
+                            , D.span
+                                [ css_ [ "flex", "items-center" ] ]
+                                [ D.span
+                                    [ css_ [ "icon-[game-icons--wingfoot]" ]
+                                    , DA.title_ "Free move"
+                                    ]
+                                    []
+                                , D.span [] [ D.text_ $ show c.move ]
+                                ]
+                            ]
+                      ]
+                  , D.span []
+                      [ fe.alias # foldMap \fa ->
+                          D.span
+                            [ css_ [ "ml-2", "italic" ] ]
+                            [ D.text_ fa ]
                       , D.span
-                          [ css_ [ "font-bold" ] ]
+                          [ css_ [ "mx-2", "font-bold" ] ]
                           [ D.text_ $ "x" <> show fe.count ]
                       ]
-                  , fe.alias # foldMap \fa ->
-                      D.span
-                        [ css_ [ "mx-2", "italic" ] ]
-                        [ D.text_ fa ]
                   ]
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
