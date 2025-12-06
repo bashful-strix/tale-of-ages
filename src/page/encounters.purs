@@ -37,9 +37,11 @@ import Deku.DOM.Attributes as DA
 import Deku.DOM.Listeners as DL
 import Deku.Hooks ((<#~>))
 
+import Routing.Duplex (print)
+
 import ToA.Component.Ability (renderStep)
 import ToA.Component.Markup (markup)
-import ToA.Data.Env (Env, _navigate)
+import ToA.Data.Env (Env, _deleteEnc, _navigate)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Action(..)
@@ -58,7 +60,13 @@ import ToA.Data.Icon.Foe
   , Faction(..)
   )
 import ToA.Data.Icon.Name (Name(..), _name)
-import ToA.Data.Route (Route(..), _Encounters)
+import ToA.Data.Route
+  ( Route(..)
+  , EncounterPath(..)
+  , routeCodec
+  , _Encounters
+  , _ViewEnc
+  )
 import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((^::))
 
@@ -79,7 +87,8 @@ encountersPage env@{ encounters, icon, route } pathEnc =
                     [ DL.selectOn_ DL.change $ \e ->
                         (env ^. _navigate)
                           ( Encounters $
-                              if e == mempty then Nothing else pure (Name e)
+                              if e == mempty then ViewEnc Nothing
+                              else ViewEnc $ pure (Name e)
                           )
                           Nothing
                     , css_
@@ -94,18 +103,26 @@ encountersPage env@{ encounters, icon, route } pathEnc =
                     ( [ D.option
                           [ DA.value_ mempty
                           , DA.selected $ "selected" <$ filter
-                              (is (_Just <<< _Encounters <<< _Nothing))
+                              ( is
+                                  ( _Just <<< _Encounters <<< _ViewEnc <<<
+                                      _Nothing
+                                  )
+                              )
                               route
                           , DA.unset @"selected" $ filter
-                              (isn't (_Just <<< _Encounters <<< _Nothing))
+                              ( isn't
+                                  ( _Just <<< _Encounters <<< _ViewEnc <<<
+                                      _Nothing
+                                  )
+                              )
                               route
                           ]
                           [ D.text_ "Select encounter" ]
                       ] <>
                         ( keys encs # foldMap \e ->
                             let
-                              prs = _Just <<< _Encounters <<< _Just <<< filtered
-                                (eq e)
+                              prs = _Just <<< _Encounters <<< _ViewEnc <<< _Just
+                                <<< filtered (eq e)
                             in
                               [ D.option
                                   [ DA.value_ $ e ^. simple _Newtype
@@ -118,6 +135,56 @@ encountersPage env@{ encounters, icon, route } pathEnc =
                               ]
                         )
                     )
+
+                , enc # foldMap \e ->
+                    D.button
+                      [ DL.runOn_ DL.click $ do
+                          e # env ^. _deleteEnc
+                          (env ^. _navigate) (Encounters $ ViewEnc Nothing)
+                            Nothing
+                      , css_
+                          [ "px-2"
+                          , "py-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-stone-700"
+                          ]
+                      ]
+                      [ D.text_ "Delete" ]
+
+                , enc # foldMap \e ->
+                    D.a
+                      [ DA.href_ $ print routeCodec
+                          (Encounters $ EditEnc $ e ^? _name)
+                      , DL.click_ $
+                          (env ^. _navigate)
+                            (Encounters $ EditEnc $ e ^? _name) <<<
+                            pure
+                      , css_
+                          [ "px-2"
+                          , "py-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-stone-700"
+                          ]
+                      ]
+                      [ D.text_ "Edit" ]
+
+                , D.a
+                    [ DA.href_ $ print routeCodec
+                        (Encounters $ EditEnc Nothing)
+                    , DL.click_ $
+                        (env ^. _navigate) (Encounters $ EditEnc Nothing)
+                          <<< pure
+                    , css_
+                        [ "px-2"
+                        , "py-1"
+                        , "border"
+                        , "border-solid"
+                        , "border-stone-700"
+                        ]
+                    ]
+                    [ D.text_ "Create" ]
                 ]
 
             , D.div

@@ -1,5 +1,5 @@
-module ToA.Page.EditCharacter
-  ( editCharacterPage
+module ToA.Page.EditEncounter
+  ( editEncounterPage
   ) where
 
 import Prelude
@@ -8,7 +8,6 @@ import Data.Codec (decode, encode)
 import Data.Either (Either(..), isLeft)
 import Data.Foldable (intercalate)
 import Data.Lens ((^.), (^?), preview, filtered, traversed)
-import Data.Map (fromFoldable)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple.Nested ((/\))
 
@@ -24,26 +23,23 @@ import Parsing.String (parseErrorHuman)
 
 import Web.HTML.HTMLTextAreaElement (fromEventTarget, value)
 
-import ToA.Data.Env (Env, _navigate, _saveChar)
-import ToA.Data.Icon.Character
-  ( Character(..)
-  , State(..)
-  , Build(..)
-  , Level(..)
-  , stringCharacter
+import ToA.Data.Env (Env, _navigate, _saveEnc)
+import ToA.Data.Icon.Encounter
+  ( Encounter(..)
+  , FoeEntry(..)
+  , stringEncounter
   )
-import ToA.Data.Icon.Job (JobLevel(..))
 import ToA.Data.Icon.Name (Name(..), _name)
-import ToA.Data.Route (Route(..), CharacterPath(..))
+import ToA.Data.Route (Route(..), EncounterPath(..))
 import ToA.Util.Html (css_)
 
-editCharacterPage :: Env -> Maybe Name -> Nut
-editCharacterPage env@{ characters, icon } pathChar =
-  (/\) <$> characters <*> icon <#~> \(chars /\ _) -> Deku.do
-    setChar /\ char <- useState $ encode stringCharacter $ fromMaybe emptyChar $
-      chars ^? traversed <<< filtered (preview _name >>> eq pathChar)
+editEncounterPage :: Env -> Maybe Name -> Nut
+editEncounterPage env@{ encounters, icon } pathEnc =
+  (/\) <$> encounters <*> icon <#~> \(encs /\ _) -> Deku.do
+    setEnc /\ enc <- useState $ encode stringEncounter $ fromMaybe emptyEnc $
+      encs ^? traversed <<< filtered (preview _name >>> eq pathEnc)
 
-    let parsed = decode stringCharacter <$> char
+    let parsed = decode stringEncounter <$> enc
 
     D.div
       [ css_ [ "flex", "flex-col", "gap-2" ] ]
@@ -51,13 +47,13 @@ editCharacterPage env@{ characters, icon } pathChar =
           [ css_ [ "flex", "flex-col", "gap-2" ] ]
           [ D.label
               [ DA.for_ "edit", css_ [ "font-bold" ] ]
-              [ D.text_ "Edit character" ]
+              [ D.text_ "Edit encounter" ]
 
           , D.div
               [ css_ [ "flex" ] ]
               [ D.textarea
                   [ DC.transformOn { fromEventTarget, value } DL.input
-                      (pure setChar)
+                      (pure setEnc)
                   , DA.rows_ "15"
                   , DA.cols_ "40"
                   , DA.id_ "edit"
@@ -68,9 +64,9 @@ editCharacterPage env@{ characters, icon } pathChar =
                       , "dark:bg-stone-800"
                       ]
                   ]
-                  [ D.text char ]
+                  [ D.text enc ]
 
-              , (/\) <$> char <*> parsed <#~> \(c /\ p) -> case p of
+              , (/\) <$> enc <*> parsed <#~> \(c /\ p) -> case p of
                   Right _ -> mempty
                   Left e ->
                     D.pre
@@ -83,10 +79,10 @@ editCharacterPage env@{ characters, icon } pathChar =
               [ D.button
                   [ DL.runOn DL.click $ parsed <#> case _ of
                       Left _ -> pure unit
-                      Right c -> do
-                        c # env ^. _saveChar
+                      Right e -> do
+                        e # env ^. _saveEnc
                         (env ^. _navigate)
-                          (Characters $ ViewChar $ Just $ c ^. _name)
+                          (Encounters $ ViewEnc $ Just $ e ^. _name)
                           Nothing
                   , DA.disabled $ show <<< isLeft <$> parsed
                   , css_
@@ -102,7 +98,7 @@ editCharacterPage env@{ characters, icon } pathChar =
 
               , D.button
                   [ DL.runOn_ DL.click $
-                      (env ^. _navigate) (Characters $ ViewChar pathChar)
+                      (env ^. _navigate) (Encounters $ ViewEnc pathEnc)
                         Nothing
                   , css_ [ "px-2", "py-1", "border", "border-solid" ]
                   ]
@@ -111,18 +107,26 @@ editCharacterPage env@{ characters, icon } pathChar =
           ]
       ]
 
-emptyChar :: Character
-emptyChar = Character
-  { name: Name "<Character name>"
-  , state: State {}
-  , build: Build
-      { level: Zero
-      , primary: Name "<Primary job>"
-      , jobs: fromFoldable [ Name "<Job 1>" /\ I, Name "<Job 2>" /\ IV ]
-      , talents: [ Name "<Talent>" ]
-      , abilities:
-          { active: [ Name "<Active ability>" ]
-          , inactive: [ Name "<Inactive ability>" ]
+emptyEnc :: Encounter
+emptyEnc = Encounter
+  { name: Name "<Encounter name>"
+  , notes: Just "<Notes>"
+  , foes:
+      [ FoeEntry
+          { name: Name "Foe name"
+          , alias: Just "Foe alias"
+          , count: 1
+          , faction: Just $ Name "Faction"
+          , template: Just $ Name "Template"
           }
-      }
+      ]
+  , reserves:
+      [ FoeEntry
+          { name: Name "Reserve foe name"
+          , alias: Nothing
+          , count: 2
+          , faction: Nothing
+          , template: Nothing
+          }
+      ]
   }

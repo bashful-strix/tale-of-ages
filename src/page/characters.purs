@@ -63,7 +63,7 @@ import ToA.Data.Route
   ( Route(..)
   , CharacterPath(..)
   , _Characters
-  , _View
+  , _ViewChar
   , routeCodec
   )
 import ToA.Util.Html (css_, hr)
@@ -119,8 +119,8 @@ charactersPage env@{ characters, icon, route } pathChar =
                     [ DL.selectOn_ DL.change $ \c ->
                         (env ^. _navigate)
                           ( Characters $
-                              if c == mempty then View Nothing
-                              else View $ pure $ Name c
+                              if c == mempty then ViewChar Nothing
+                              else ViewChar $ pure $ Name c
                           )
                           Nothing
                     , css_
@@ -136,12 +136,16 @@ charactersPage env@{ characters, icon, route } pathChar =
                           [ DA.value_ mempty
                           , DA.selected $ "selected" <$ filter
                               ( is
-                                  (_Just <<< _Characters <<< _View <<< _Nothing)
+                                  ( _Just <<< _Characters <<< _ViewChar <<<
+                                      _Nothing
+                                  )
                               )
                               route
                           , DA.unset @"selected" $ filter
                               ( isn't
-                                  (_Just <<< _Characters <<< _View <<< _Nothing)
+                                  ( _Just <<< _Characters <<< _ViewChar <<<
+                                      _Nothing
+                                  )
                               )
                               route
                           ]
@@ -149,7 +153,8 @@ charactersPage env@{ characters, icon, route } pathChar =
                       ] <>
                         ( keys chars # foldMap \c ->
                             let
-                              prs = _Just <<< _Characters <<< _View <<< _Just
+                              prs = _Just <<< _Characters <<< _ViewChar
+                                <<< _Just
                                 <<< filtered (eq c)
                             in
                               [ D.option
@@ -168,7 +173,8 @@ charactersPage env@{ characters, icon, route } pathChar =
                     D.button
                       [ DL.runOn_ DL.click $ do
                           c # env ^. _deleteChar
-                          (env ^. _navigate) (Characters $ View Nothing) Nothing
+                          (env ^. _navigate) (Characters $ ViewChar Nothing)
+                            Nothing
                       , css_
                           [ "px-2"
                           , "py-1"
@@ -182,10 +188,10 @@ charactersPage env@{ characters, icon, route } pathChar =
                 , char # foldMap \c ->
                     D.a
                       [ DA.href_ $ print routeCodec
-                          (Characters $ Edit $ c ^? _name)
+                          (Characters $ EditChar $ c ^? _name)
                       , DL.click_ $
                           (env ^. _navigate)
-                            (Characters $ Edit $ c ^? _name) <<<
+                            (Characters $ EditChar $ c ^? _name) <<<
                             pure
                       , css_
                           [ "px-2"
@@ -198,9 +204,11 @@ charactersPage env@{ characters, icon, route } pathChar =
                       [ D.text_ "Edit" ]
 
                 , D.a
-                    [ DA.href_ $ print routeCodec (Characters $ Edit Nothing)
-                    , DL.click_ $ (env ^. _navigate) (Characters $ Edit Nothing)
-                        <<< pure
+                    [ DA.href_ $ print routeCodec
+                        (Characters $ EditChar Nothing)
+                    , DL.click_ $
+                        (env ^. _navigate) (Characters $ EditChar Nothing)
+                          <<< pure
                     , css_
                         [ "px-2"
                         , "py-1"

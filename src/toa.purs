@@ -13,11 +13,12 @@ import Deku.Hooks ((<#~>))
 
 import ToA.Component.TitleBar (titleBar)
 import ToA.Data.Env (Env)
-import ToA.Data.Route (Route(..), CharacterPath(..))
+import ToA.Data.Route (Route(..), CharacterPath(..), EncounterPath(..))
 import ToA.Data.Theme (themeCodec)
 import ToA.Page.Characters (charactersPage)
 import ToA.Page.EditCharacter (editCharacterPage)
 import ToA.Page.Encounters (encountersPage)
+import ToA.Page.EditEncounter (editEncounterPage)
 import ToA.Page.Home (homePage)
 import ToA.Page.Jobs (jobsPage)
 import ToA.Page.Unknown (unknownPage)
@@ -47,9 +48,11 @@ toa env@{ route, systemTheme, theme } =
             Just Home -> homePage
             Just (Jobs path) -> jobsPage env path
             Just (Characters path) -> case path of
-              Edit char -> editCharacterPage env char
-              View char -> charactersPage env char
-            Just (Encounters enc) -> encountersPage env enc
+              EditChar char -> editCharacterPage env char
+              ViewChar char -> charactersPage env char
+            Just (Encounters path) -> case path of
+              EditEnc enc -> editEncounterPage env enc
+              ViewEnc enc -> encountersPage env enc
             Nothing -> unknownPage
         ]
     ]
