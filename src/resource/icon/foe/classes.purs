@@ -4,7 +4,7 @@ module ToA.Resource.Icon.Foe.Classes
 
 import Data.Maybe (Maybe(..))
 
-import ToA.Data.Icon.Ability (Action(..))
+import ToA.Data.Icon.Ability (Action(..), Range(..), Tag(..))
 import ToA.Data.Icon.Foe (FoeAbility(..), FoeClass(..), FoeTrait(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -92,7 +92,7 @@ leader = FoeClass
       [ FoeAbility
           { name: Name "Cure"
           , cost: One
-          , tags: []
+          , tags: [ RangeTag (Range 1 4) ]
           , description:
               [ Text
                   """A bloodied ally in range gains 3 vigor. Increase
