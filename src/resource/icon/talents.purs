@@ -14,6 +14,8 @@ import ToA.Resource.Icon.Talent.WeepingAssassin
   , shimmer
   )
 
+import ToA.Resource.Icon.Talent.Stormscale (wave, swiftness, thresh)
+
 import ToA.Resource.Icon.Talent.Chanter (poise, elegance, peace)
 
 import ToA.Resource.Icon.Talent.Sealer (surge, flash, ascension)
@@ -33,6 +35,10 @@ talents =
   , commiserate
   , infiltrate
   , shimmer
+
+  , wave
+  , swiftness
+  , thresh
 
   , poise
   , elegance

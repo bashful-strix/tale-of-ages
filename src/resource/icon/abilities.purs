@@ -46,6 +46,13 @@ import ToA.Resource.Icon.Ability.WeepingAssassin
   , suddenStrike
   , swallowTheStars
   )
+import ToA.Resource.Icon.Ability.Stormscale
+  ( furyOfTheDeeps
+  , lightningClaw
+  , rideTheWave
+  , spiritSea
+  , sparkingStorm
+  )
 
 import ToA.Resource.Icon.Ability.Mendicant
   ( glia
@@ -147,6 +154,12 @@ abilities =
   , nightsCaress
   , suddenStrike
   , swallowTheStars
+
+  , furyOfTheDeeps
+  , lightningClaw
+  , rideTheWave
+  , spiritSea
+  , sparkingStorm
 
   , monogatari
   , holy

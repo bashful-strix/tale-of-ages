@@ -20,6 +20,8 @@ traits =
 
   , tearsOfTheWeeper
 
+  , soulOfTheSea
+
   , bookOfAges
 
   , mantraOfSealing
@@ -183,6 +185,42 @@ tearsOfTheWeeper = Trait
           "If you end your turn with no other characters adjacent, gain "
       , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
       , Text "."
+      ]
+  }
+
+soulOfTheSea :: Trait
+soulOfTheSea = Trait
+  { name: Name "Soul of the Sea"
+  , description:
+      [ Text
+          """Once a round, after you move 3 or more spaces with an
+          ability, after that ability resolves, you may summon a surge of
+          supernatural water. You gain """
+      , Italic [ Ref (Name "Phasing") [ Text "phasing" ] ]
+      , Text
+          """ during the remainder of the movement, and shape shift
+          briefly after it resolves. Increase these effects (in
+          parentheses) if you moved 6 or more spaces.
+          """
+      , List Unordered
+          [ [ Italic [ Text "Storm Eel" ]
+            , Text ": Fly 2, (then "
+            , Italic [ Ref (Name "Blind") [ Text "blind" ] ]
+            , Text " an adjacent foe)"
+            ]
+          , [ Italic [ Text "Thresher Shark" ]
+            , Text ": Gain "
+            , Italic [ Ref (Name "Haste") [ Text "haste" ] ]
+            , Text " (and gain "
+            , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
+            , Text ")"
+            ]
+          , [ Italic [ Text "Titan Seal" ]
+            , Text
+                """: Push an adjacent foe 2 spaces (then deal 2 damage to
+                that foe)"""
+            ]
+          ]
       ]
   }
 
