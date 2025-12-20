@@ -197,7 +197,7 @@ bookOfAges = Trait
       , List Unordered
           [ [ Text "This stance stacks with other stances." ]
           , [ Text
-                """While in this stancem once a round, you may choose one
+                """While in this stance, once a round, you may choose one
                 of the following effects:"""
             , List Unordered
                 [ [ Text

@@ -161,7 +161,7 @@ soldier = Foe
       , FoeAbility
           { name: Name "Bash"
           , cost: One
-          , tags: [ Attack, KeywordTag (Name "Repeatable") ]
+          , tags: [ KeywordTag (Name "Repeatable") ]
           , description:
               [ Text "An adjacent foe takes 2 damage and is pushed 1." ]
           , chain: Nothing
@@ -427,7 +427,8 @@ gunner = Foe
       , FoeAbility
           { name: Name "Flash Bomb"
           , cost: One
-          , tags: [ RangeTag (Range 2 3), AreaTag (Cross 2) ]
+          , tags:
+              [ RangeTag (Range 2 3), AreaTag (Cross 2), LimitTag 1 "combat" ]
           , description:
               [ Italic [ Text "Area effect" ]
               , Text ": All foes take "
@@ -733,7 +734,7 @@ justicar = Foe
       , FoeAbility
           { name: Name "Mighty Summoning"
           , cost: One
-          , tags: [ Attack, RangeTag (Range 4 6) ]
+          , tags: [ RangeTag (Range 4 6) ]
           , description:
               [ Text "An ally in range is pulled "
               , Italic [ Dice 1 D6 ]
@@ -752,7 +753,7 @@ justicar = Foe
       , FoeAbility
           { name: Name "Punishment of Cowards"
           , cost: One
-          , tags: [ Attack, RangeTag (Range 3 6) ]
+          , tags: [ RangeTag (Range 3 6) ]
           , description:
               [ Text
                   """The Justicar prepares for action and gains the
@@ -866,8 +867,7 @@ pyromancer = Foe
           { name: Name "Emberflash"
           , cost: One
           , tags:
-              [ Attack
-              , KeywordTag (Name "Cross 1d3")
+              [ KeywordTag (Name "Cross 1d3")
               , RangeTag (Range 1 6)
               ]
           , description:
@@ -886,7 +886,7 @@ pyromancer = Foe
       , FoeAbility
           { name: Name "Flash Fire"
           , cost: One
-          , tags: [ Attack, RangeTag (Range 1 6) ]
+          , tags: [ RangeTag (Range 1 6) ]
           , description:
               [ Text
                   """A character in range takes 2 damage, then must save
@@ -957,7 +957,7 @@ scourer = Foe
           { name: Name "Steam Vent"
           , cost: One
           , tags:
-              [ Attack, RangeTag (Range 1 6), AreaTag (Burst 1 false) ]
+              [ RangeTag (Range 1 6), AreaTag (Burst 1 false) ]
           , description:
               [ Text "2 piercing damage, and create an "
               , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
@@ -1359,7 +1359,7 @@ nocturnal = Legend
                 , FoeAbility
                     { name: Name "Serrated Blade"
                     , cost: One
-                    , tags: [ Attack, RangeTag (Range 1 3) ]
+                    , tags: [ RangeTag (Range 1 3) ]
                     , description:
                         [ Text
                             """A foe in range takes 2 damage, increased
@@ -1373,12 +1373,7 @@ nocturnal = Legend
                 , FoeAbility
                     { name: Name "Bloody Slash"
                     , cost: One
-                    , tags:
-                        [ Attack
-                        , Close
-                        , AreaTag (Line 3)
-                        , LimitTag 1 "round"
-                        ]
+                    , tags: [ Close, AreaTag (Line 3), LimitTag 1 "round" ]
                     , description:
                         [ Italic [ Text "Area effect" ]
                         , Text
@@ -1393,8 +1388,7 @@ nocturnal = Legend
                     { name: Name "Crimson Rain"
                     , cost: One
                     , tags:
-                        [ Attack
-                        , KeywordTag (Name "Zone")
+                        [ KeywordTag (Name "Zone")
                         , RangeTag (Range 1 4)
                         , LimitTag 2 "round"
                         ]
@@ -1433,11 +1427,7 @@ nocturnal = Legend
                 [ FoeAbility
                     { name: Name "Amygdala"
                     , cost: One
-                    , tags:
-                        [ Attack
-                        , RangeTag (Range 1 2)
-                        , LimitTag 1 "round"
-                        ]
+                    , tags: [ RangeTag (Range 1 2), LimitTag 1 "round" ]
                     , description:
                         [ Text
                             """All foes in range are inflicted with
@@ -1457,11 +1447,7 @@ nocturnal = Legend
                 , FoeAbility
                     { name: Name "Slash Vein"
                     , cost: One
-                    , tags:
-                        [ Attack
-                        , KeywordTag (Name "Mark")
-                        , LimitTag 1 "round"
-                        ]
+                    , tags: [ KeywordTag (Name "Mark"), LimitTag 1 "round" ]
                     , description:
                         [ Text
                             """The Nocturnal mark a foe in range. While

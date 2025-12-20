@@ -65,7 +65,7 @@ track = Ability
                     you."""
                 ]
               , [ Text
-                    """If you are bloodied, these bonuses apply to all
+                    """If they are bloodied, these bonuses apply to all
                     your allies as well."""
                 ]
               ]
