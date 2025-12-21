@@ -7,7 +7,6 @@ module ToA.Data.Icon
   , _traits
   , _talents
   , _abilities
-  , _summons
   , _keywords
   ) where
 
@@ -19,7 +18,6 @@ import ToA.Data.Icon.Colour (Colour)
 import ToA.Data.Icon.Foe (Faction, Foe, FoeClass)
 import ToA.Data.Icon.Job (Job)
 import ToA.Data.Icon.Keyword (Keyword)
-import ToA.Data.Icon.Name (Name)
 import ToA.Data.Icon.Soul (Soul)
 import ToA.Data.Icon.Talent (Talent)
 import ToA.Data.Icon.Trait (Trait)
@@ -34,7 +32,6 @@ type Icon =
   , traits :: Array Trait
   , talents :: Array Talent
   , abilities :: Array Ability
-  , summons :: Array Name
   , keywords :: Array Keyword
   , foes :: Array Foe
   , foeClasses :: Array FoeClass
@@ -61,9 +58,6 @@ _talents = key @"talents"
 
 _abilities :: Lens' Icon (Array Ability)
 _abilities = key @"abilities"
-
-_summons :: Lens' Icon (Array Name)
-_summons = key @"summons"
 
 _keywords :: Lens' Icon (Array Keyword)
 _keywords = key @"keywords"
