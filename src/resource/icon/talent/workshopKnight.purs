@@ -4,6 +4,8 @@ module ToA.Resource.Icon.Talent.WorkshopKnight
   , bolster
   ) where
 
+import Data.Maybe (Maybe(..))
+
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -19,6 +21,7 @@ alloy = Talent
       , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
       , Text " when you are first bloodied in a combat."
       ]
+  , subItem: Nothing
   }
 
 endure :: Talent
@@ -32,6 +35,7 @@ endure = Talent
       , Italic [ Ref (Name "Vigor") [ Text "vigor" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }
 
 bolster :: Talent
@@ -46,4 +50,5 @@ bolster = Talent
       , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }

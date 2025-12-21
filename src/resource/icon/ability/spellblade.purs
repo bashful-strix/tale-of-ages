@@ -4,7 +4,6 @@ module ToA.Resource.Icon.Ability.Spellblade
   , atherwand
   , odinforce
   , nothung
-  , tenThousandCuts
   ) where
 
 import Prelude
@@ -19,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Range(..)
   , Step(..)
   , StepType(..)
+  , SubItem(..)
   , Tag(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
@@ -191,39 +191,41 @@ nothung = Ability
       , Step Nothing $ AttackStep
           [ Text "2 damage" ]
           [ Text "+", Dice 1 D3 ]
-      , SubStep Nothing (Name "Ten Thousand Cuts") $ OnHit
-          [ Bold [ Ref (Name "Mark") [ Text "Mark" ] ]
-          , Text
-              """ your foe. then gain the following interrupt at the end
-              of your turns while your foe is marked. You can choose not
-              to trigger it."""
-          ]
-      ]
-  }
-
-tenThousandCuts :: Ability
-tenThousandCuts = Ability
-  { name: Name "Ten Thousand Cuts"
-  , colour: Name "Blue"
-  , description: []
-  , cost: Interrupt 1
-  , tags: []
-  , steps:
-      [ Step Nothing $ TriggerStep [ Text "The end of your foe's turn." ]
-      , Step (Just D6) $ Eff
-          [ Text
-              """Call a number between 1 and 6, then roll the effect die.
-              If you roll equal to or over your number, deal 2 damage a
-              number of times to your target equal to the number chosen.
-              If you roll under your number, deal just 1 """
-          , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
-          , Text " damage to them. Then end this mark."
-          ]
-      , Step Nothing $ KeywordStep (Name "Isolate")
-          [ Text
-              """Increase each instance of damage to 3 damage. If there
-              are no other characters in range 1-2, destroy all vigor on
-              your foe before dealing damage."""
-          ]
+      , SubStep Nothing
+          ( AbilityItem
+              { name: Name "Ten Thousand Cuts"
+              , colour: Name "Blue"
+              , cost: Interrupt 1
+              , tags: []
+              , steps:
+                  [ Step Nothing $ TriggerStep
+                      [ Text "The end of your foe's turn." ]
+                  , Step (Just D6) $ Eff
+                      [ Text
+                          """Call a number between 1 and 6, then roll the
+                          effect die. If you roll equal to or over your
+                          number, deal 2 damage a number of times to your
+                          target equal to the number chosen. If you roll
+                          under your number, deal just 1 """
+                      , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
+                      , Text " damage to them. Then end this mark."
+                      ]
+                  , Step Nothing $ KeywordStep (Name "Isolate")
+                      [ Text
+                          """Increase each instance of damage to 3
+                          damage. If there are no other characters in
+                          range 1-2, destroy all vigor on your foe before
+                          dealing damage."""
+                      ]
+                  ]
+              }
+          )
+          $ OnHit
+              [ Bold [ Ref (Name "Mark") [ Text "Mark" ] ]
+              , Text
+                  """ your foe. then gain the following interrupt at the
+                  end of your turns while your foe is marked. You can
+                  choose not to trigger it."""
+              ]
       ]
   }

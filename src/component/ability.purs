@@ -1,11 +1,13 @@
 module ToA.Component.Ability
   ( renderAbility
+  , renderCost
   , renderStep
+  , renderTags
   ) where
 
 import Prelude
 
-import CSS (backgroundColor, render, renderedInline)
+import CSS (backgroundColor, lighten, render, renderedInline)
 
 import Data.Foldable (foldMap, intercalate, length)
 import Data.Lens ((^.), (^?), filtered, has, only, to, traversed, view)
@@ -27,6 +29,7 @@ import ToA.Data.Icon.Ability
   , Range(..)
   , Step(..)
   , StepType(..)
+  , SubItem(..)
   , Tag(..)
   , Target(..)
   , _action
@@ -156,31 +159,172 @@ renderAbility icon@{ colours } a =
         ]
     ]
 
+renderCost :: Action -> String
+renderCost = case _ of
+  Quick -> "Quick"
+  One -> "1 action"
+  Two -> "2 actions"
+  Interrupt n -> "Interrupt " <> show n
+
+renderTags :: Array Tag -> Array String
+renderTags = map case _ of
+  Attack -> "Attack"
+  End -> "End"
+  Close -> "Close"
+  RangeTag r -> case r of
+    Range i j -> "Range " <> show i <> "-" <> show j
+    Melee -> "Melee"
+    Adjacent -> "Adjacent"
+  AreaTag p -> case p of
+    Line n -> "Line " <> show n
+    Arc n -> "Arc " <> show n
+    Blast n -> "Blast " <> show n
+    Burst n x -> "Burst " <> show n
+      <> " ("
+      <> (if x then "self" else "target")
+      <> ")"
+    Cross n -> "Cross " <> show n
+  TargetTag t -> case t of
+    Self -> "Self"
+    Ally -> "Ally"
+    Foe -> "Foe"
+    Summon -> "Summon"
+    Space -> "Space"
+    Object -> "Object"
+  KeywordTag k -> k ^. simple _Newtype
+  LimitTag n l -> show n <> "/" <> l
+
 renderStep :: Icon -> Step -> Nut
-renderStep icon@{ abilities, summons } = case _ of
+renderStep icon = case _ of
   Step d s ->
     D.li [] [ renderStepName icon d s, renderStepDesc icon s ]
-  SubStep d n s ->
+  SubStep d sub s ->
     D.li []
       [ renderStepName icon d s
       , renderStepDesc icon s
       , D.div
           [ css_ [ "pl-8" ] ]
-          [ abilities
-              # traversed
-                  <<< filtered (view _name >>> eq n)
-                    #~ renderAbility icon
+          [ renderSubItem icon sub ]
+      ]
+
+renderSubItem :: Icon -> SubItem -> Nut
+renderSubItem icon@{ colours } = case _ of
+  SummonItem si ->
+    D.div
+      [ css_ [ "ml-8" ] ]
+      [ D.div
+          [ css_
+              [ "flex"
+              , "gap-x-1"
+              , "bg-stone-500"
+              , "text-stone-800"
+              , "dark:bg-stone-700"
+              , "dark:text-stone-300"
+              ]
+          ]
+          [ D.span
+              [ css_ [ "text-white", "font-bold" ]
+              , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                  (backgroundColor <<< lighten 0.2) <$> colours
+                    ^? traversed
+                      <<< filtered (view _name >>> eq si.colour)
+                      <<< _value
+              ]
+              [ D.text_ $ si.name ^. simple _Newtype ]
+          ]
+      , D.div
+          [ css_ [ "italic" ] ]
+          [ D.text_ $ "Summon (" <> show si.max <> ")" ]
+      , D.div []
+          [ D.ol
+              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+              $ si.actions <#> \act ->
+                  D.li []
+                    [ D.span
+                        [ css_ [ "font-bold" ] ]
+                        [ D.text_ "Summon action: " ]
+                    , markup icon act
+                    ]
+          ]
+      , D.div []
+          [ D.ol
+              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+              $ si.effects <#> \eff ->
+                  D.li []
+                    [ D.span
+                        [ css_ [ "font-bold" ] ]
+                        [ D.text_ "Summon effect: " ]
+                    , markup icon eff
+                    ]
           ]
       ]
-  SummonStep d n s ->
-    D.li []
-      [ renderStepName icon d s
-      , renderStepDesc icon s
-      , summons
-          # traversed
-              <<< filtered (eq n)
-              <<< _Newtype
-                #~ D.text_
+
+  AbilityItem ai ->
+    D.div
+      [ css_ [ "ml-8" ] ]
+      [ D.div
+          [ css_
+              [ "flex"
+              , "gap-x-1"
+              , "bg-stone-500"
+              , "text-stone-800"
+              , "dark:bg-stone-700"
+              , "dark:text-stone-300"
+              ]
+          ]
+          [ D.span
+              [ css_ [ "text-white", "font-bold" ]
+              , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                  (backgroundColor <<< lighten 0.2) <$> colours
+                    ^? traversed
+                      <<< filtered (view _name >>> eq ai.colour)
+                      <<< _value
+              ]
+              [ D.text_ $ ai.name ^. simple _Newtype ]
+          ]
+      , D.div
+          [ css_ [ "italic" ] ]
+          [ D.text_ $ intercalate ", " $
+              [ renderCost ai.cost ] <> renderTags ai.tags
+          ]
+      , D.div []
+          [ D.ol
+              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+              $ ai.steps <#> renderStep icon
+          ]
+      ]
+
+  KeywordItem ki ->
+    D.div
+      [ css_ [ "ml-8" ] ]
+      [ D.div
+          [ css_
+              [ "flex"
+              , "gap-x-1"
+              , "bg-stone-500"
+              , "text-stone-800"
+              , "dark:bg-stone-700"
+              , "dark:text-stone-300"
+              ]
+          ]
+          [ D.span
+              [ css_ [ "text-white", "font-bold" ]
+              , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+                  (backgroundColor <<< lighten 0.2) <$> colours
+                    ^? traversed
+                      <<< filtered (view _name >>> eq ki.colour)
+                      <<< _value
+              ]
+              [ D.text_ $ ki.name ^. simple _Newtype ]
+          ]
+      , D.div
+          [ css_ [ "italic" ] ]
+          [ D.text_ $ ki.keyword ^. simple _Newtype ]
+      , D.div []
+          [ D.ol
+              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+              $ ki.steps <#> renderStep icon
+          ]
       ]
 
 renderStepName :: Icon -> Maybe Die -> StepType -> Nut

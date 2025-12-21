@@ -4,7 +4,6 @@ module ToA.Resource.Icon.Ability.WorkshopKnight
   , ripperClaw
   , weaponVault
   , arsenal
-  , arsenalFlashBomb
   ) where
 
 import Prelude
@@ -19,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Range(..)
   , Step(..)
   , StepType(..)
+  , SubItem(..)
   , Tag(..)
   , Target(..)
   )
@@ -167,35 +167,35 @@ arsenal = Ability
           [ Text "+", Dice 1 D6 ]
       , Step Nothing $ OnHit
           [ Text "Push or pull target 1 space." ]
-      , SubStep Nothing (Name "Arsenal Flash Bomb") $ KeywordStep
-          (Name "Conserve")
-          [ Text
-              """You may use the following version of this ability
-              instead."""
-          ]
+      , SubStep Nothing
+          ( AbilityItem
+              { name: Name "Arsenal Flash Bomb"
+              , colour: Name "Red"
+              , cost: One
+              , tags: [ RangeTag (Range 1 2), KeywordTag (Name "Zone") ]
+              , steps:
+                  [ Step Nothing $ KeywordStep (Name "Zone")
+                      [ Text
+                          """Create a cross 1 space zone in range. Foes
+                          caught inside take 2 """
+                      , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
+                      , Text
+                          " damage. The center space of the zone is an "
+                      , Italic
+                          [ Ref (Name "Obscured") [ Text "obscured" ] ]
+                      , Text " space."
+                      ]
+                  ]
+              }
+          )
+          $ KeywordStep (Name "Conserve")
+              [ Text
+                  """You may use the following version of this ability
+                  instead."""
+              ]
       , Step Nothing $ KeywordStep (Name "Excel")
           [ Text
               "You may also trigger the flash bomb effect."
-          ]
-      ]
-  }
-
-arsenalFlashBomb :: Ability
-arsenalFlashBomb = Ability
-  { name: Name "Arsenal Flash Bomb"
-  , colour: Name "Red"
-  , description: []
-  , cost: One
-  , tags: [ RangeTag (Range 1 2), KeywordTag (Name "Zone") ]
-  , steps:
-      [ Step Nothing $ KeywordStep (Name "Zone")
-          [ Text
-              """Create a cross 1 space zone in range. Foes caught inside
-              take 2 """
-          , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
-          , Text " damage. The center space of the zone is an "
-          , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
-          , Text " space."
           ]
       ]
   }

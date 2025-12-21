@@ -4,6 +4,8 @@ module ToA.Resource.Icon.Talent.Tactician
   , fieldwork
   ) where
 
+import Data.Maybe (Maybe(..))
+
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -19,6 +21,7 @@ mastermind = Talent
       , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }
 
 spur :: Talent
@@ -32,6 +35,7 @@ spur = Talent
       , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }
 
 fieldwork :: Talent
@@ -46,4 +50,5 @@ fieldwork = Talent
       , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }

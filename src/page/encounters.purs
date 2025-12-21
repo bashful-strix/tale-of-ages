@@ -39,17 +39,10 @@ import Deku.Hooks ((<#~>))
 
 import Routing.Duplex (print)
 
-import ToA.Component.Ability (renderStep)
+import ToA.Component.Ability (renderCost, renderStep, renderTags)
 import ToA.Component.Markup (markup)
 import ToA.Data.Env (Env, _deleteEnc, _navigate)
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Ability
-  ( Action(..)
-  , Pattern(..)
-  , Range(..)
-  , Tag(..)
-  )
-import ToA.Data.Icon.Ability (Target(..)) as AT
 import ToA.Data.Icon.Colour (_value)
 import ToA.Data.Icon.Encounter (FoeEntry(..))
 import ToA.Data.Icon.Foe
@@ -843,40 +836,6 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                       ]
                   ]
               ]
-
-renderCost :: Action -> String
-renderCost = case _ of
-  Quick -> "Quick"
-  One -> "1 action"
-  Two -> "2 actions"
-  Interrupt n -> "Interrupt " <> show n
-
-renderTags :: Array Tag -> Array String
-renderTags = map case _ of
-  Attack -> "Attack"
-  End -> "End"
-  Close -> "Close"
-  RangeTag r -> case r of
-    Range i j -> "Range " <> show i <> "-" <> show j
-    Melee -> "Melee"
-    Adjacent -> "Adjacent"
-  AreaTag p -> case p of
-    Line n -> "Line " <> show n
-    Arc n -> "Arc " <> show n
-    Blast n -> "Blast " <> show n
-    Burst n x -> "Burst " <> show n <> " ("
-      <> (if x then "self" else "target")
-      <> ")"
-    Cross n -> "Cross " <> show n
-  TargetTag t -> case t of
-    AT.Self -> "Self"
-    AT.Ally -> "Ally"
-    AT.Foe -> "Foe"
-    AT.Summon -> "Summon"
-    AT.Space -> "Space"
-    AT.Object -> "Object"
-  KeywordTag k -> k ^. simple _Newtype
-  LimitTag n l -> show n <> "/" <> l
 
 renderAbility :: Icon -> FoeAbility -> Nut
 renderAbility icon@{ colours } (FoeAbility fa) =

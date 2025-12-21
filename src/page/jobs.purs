@@ -22,7 +22,6 @@ import Data.Lens
   , only
   , to
   , traversed
-  , _Just
   )
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
@@ -42,7 +41,6 @@ import ToA.Component.Ability (renderAbility)
 import ToA.Component.Markup (markup, printMarkup)
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Ability (Step(..), _steps)
 import ToA.Data.Icon.Class
   ( _apprentice
   , _basic
@@ -439,20 +437,7 @@ renderClassAbilities env@{ icon } path name ability = icon <#~>
 
         , D.div
             [ css_ [ "basis-1/3", "overflow-scroll" ] ]
-            [ D.text_ $ abilities
-                # traversed
-                    <<< filtered (eq ability <<< preview _name)
-                    <<< _steps
-                    <<< traversed
-                    <<< to
-                      ( case _ of
-                          SummonStep _ n _ -> Just n
-                          _ -> Nothing
-                      )
-                    <<< _Just
-                    <<< simple _Newtype
-                      #~ identity
-            ]
+            []
         ]
 
 renderSoul :: Poll Icon -> Name -> Nut
@@ -657,18 +642,5 @@ renderJobAbilities env@{ icon } path name ability = icon <#~>
 
         , D.div
             [ css_ [ "basis-1/3", "overflow-scroll" ] ]
-            [ D.text_ $ abilities
-                # traversed
-                    <<< filtered (eq ability <<< preview _name)
-                    <<< _steps
-                    <<< traversed
-                    <<< to
-                      ( case _ of
-                          SummonStep _ n _ -> Just n
-                          _ -> Nothing
-                      )
-                    <<< _Just
-                    <<< simple _Newtype
-                      #~ identity
-            ]
+            []
         ]

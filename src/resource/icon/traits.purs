@@ -2,6 +2,8 @@ module ToA.Resource.Icon.Traits
   ( traits
   ) where
 
+import Data.Maybe (Maybe(..))
+
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup (ListKind(..), MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -55,6 +57,7 @@ rampart = Trait
             ]
           ]
       ]
+  , subItem: Nothing
   }
 
 skirmisher :: Trait
@@ -78,6 +81,7 @@ skirmisher = Trait
             ]
           ]
       ]
+  , subItem: Nothing
   }
 
 bless :: Trait
@@ -108,6 +112,7 @@ bless = Trait
             ]
           ]
       ]
+  , subItem: Nothing
   }
 
 masterOfAether :: Trait
@@ -134,6 +139,7 @@ masterOfAether = Trait
             ]
           ]
       ]
+  , subItem: Nothing
   }
 
 pressTheFight :: Trait
@@ -149,6 +155,7 @@ pressTheFight = Trait
       , Italic [ Ref (Name "Vigor") [ Text "vigor" ] ]
       , Text " equal to the distance dashed."
       ]
+  , subItem: Nothing
   }
 
 ingenuity :: Trait
@@ -169,6 +176,7 @@ ingenuity = Trait
           , [ Text "Deal 2 damage to all adjacent foes and push them 1" ]
           ]
       ]
+  , subItem: Nothing
   }
 
 tearsOfTheWeeper :: Trait
@@ -186,6 +194,7 @@ tearsOfTheWeeper = Trait
       , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }
 
 soulOfTheSea :: Trait
@@ -222,6 +231,7 @@ soulOfTheSea = Trait
             ]
           ]
       ]
+  , subItem: Nothing
   }
 
 bookOfAges :: Trait
@@ -251,6 +261,7 @@ bookOfAges = Trait
           , [ Text "You exit the stance after attacking." ]
           ]
       ]
+  , subItem: Nothing
   }
 
 mantraOfSealing :: Trait
@@ -264,6 +275,7 @@ mantraOfSealing = Trait
           burst 1 (target) area effect. All foes in the area take 2
           damage, and allies in the area gain 2 vigor."""
       ]
+  , subItem: Nothing
   }
 
 klingenkunst :: Trait
@@ -278,4 +290,5 @@ klingenkunst = Trait
           """, you may teleport 4 instead. If there are no other
           characters in range 1-2, you may teleport 6."""
       ]
+  , subItem: Nothing
   }

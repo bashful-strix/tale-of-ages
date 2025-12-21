@@ -4,6 +4,8 @@ module ToA.Resource.Icon.Talent.Stormscale
   , thresh
   ) where
 
+import Data.Maybe (Maybe(..))
+
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -17,6 +19,7 @@ wave = Talent
           """Once a round, when you pass through an ally's space, you may
           push them 2 or allow them to dash 2."""
       ]
+  , subItem: Nothing
   }
 
 swiftness :: Talent
@@ -28,6 +31,7 @@ swiftness = Talent
       , Italic [ Ref (Name "Phasing") [ Text "phasing" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }
 
 thresh :: Talent
@@ -41,4 +45,5 @@ thresh = Talent
       , Italic [ Ref (Name "Evasion") [ Text "evasion" ] ]
       , Text " after it is spent this way."
       ]
+  , subItem: Nothing
   }

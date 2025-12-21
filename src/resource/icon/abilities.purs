@@ -26,7 +26,6 @@ import ToA.Resource.Icon.Ability.WorkshopKnight
   , ripperClaw
   , weaponVault
   , arsenal
-  , arsenalFlashBomb
   )
 
 import ToA.Resource.Icon.Ability.Vagabond
@@ -43,7 +42,6 @@ import ToA.Resource.Icon.Ability.WeepingAssassin
   , harien
   , shadowCloak
   , nightsCaress
-  , suddenStrike
   , swallowTheStars
   )
 import ToA.Resource.Icon.Ability.Stormscale
@@ -81,7 +79,6 @@ import ToA.Resource.Icon.Ability.Sealer
 import ToA.Resource.Icon.Ability.Wright
   ( magi
   , ember
-  , emberZone
   , aero
   , geo
   , cryo
@@ -96,7 +93,6 @@ import ToA.Resource.Icon.Ability.Spellblade
   , atherwand
   , odinforce
   , nothung
-  , tenThousandCuts
   )
 
 abilities :: Array Ability
@@ -127,7 +123,6 @@ abilities =
 
   , magi
   , ember
-  , emberZone
   , aero
   , geo
   , cryo
@@ -146,13 +141,11 @@ abilities =
   , ripperClaw
   , weaponVault
   , arsenal
-  , arsenalFlashBomb
 
   , hollow
   , harien
   , shadowCloak
   , nightsCaress
-  , suddenStrike
   , swallowTheStars
 
   , furyOfTheDeeps
@@ -178,5 +171,4 @@ abilities =
   , atherwand
   , odinforce
   , nothung
-  , tenThousandCuts
   ]

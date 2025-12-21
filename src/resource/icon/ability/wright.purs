@@ -1,7 +1,6 @@
 module ToA.Resource.Icon.Ability.Wright
   ( magi
   , ember
-  , emberZone
   , aero
   , geo
   , cryo
@@ -21,6 +20,7 @@ import ToA.Data.Icon.Ability
   , Range(..)
   , Step(..)
   , StepType(..)
+  , SubItem(..)
   , Tag(..)
   , Target(..)
   )
@@ -64,34 +64,33 @@ ember = Ability
   , cost: Two
   , tags: [ KeywordTag (Name "Zone"), RangeTag (Range 2 6) ]
   , steps:
-      [ SubStep Nothing (Name "Ember Zone") $ KeywordStep (Name "Zone")
-          [ Text "Create "
-          , Dice 1 D3
-          , Text
-              """+1 ember zones in free spaces in range. You can place
-              any number of these zones without replacing them. Embers
-              prime at the end of your turn. An ember cannot be placed
-              adjacent to another ember."""
-          ]
-      ]
-  }
-
-emberZone :: Ability
-emberZone = Ability
-  { name: Name "Ember Zone"
-  , colour: Name "Blue"
-  , description: []
-  , cost: Quick
-  , tags: [ KeywordTag (Name "Zone") ]
-  , steps:
-      [ Step Nothing $ Eff
-          [ Text
-              """If a character voluntarily enters a primed ember's
-              space or starts their turn there, it explodes for a burst 1
-              area effect, centered on it. Characters inside take """
-          , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
-          , Text " damage equal to 2 + the round number."
-          ]
+      [ SubStep Nothing
+          ( KeywordItem
+              { name: Name "Ember"
+              , colour: Name "Blue"
+              , keyword: Name "Zone"
+              , steps:
+                  [ Step Nothing $ Eff
+                      [ Text
+                          """If a character voluntarily enters a primed
+                          ember's space or starts their turn there, it
+                          explodes for a burst 1 area effect, centered on
+                          it. Characters inside take """
+                      , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
+                      , Text " damage equal to 2 + the round number."
+                      ]
+                  ]
+              }
+          )
+          $ KeywordStep (Name "Zone")
+              [ Text "Create "
+              , Dice 1 D3
+              , Text
+                  """+1 ember zones in free spaces in range. You can
+                  place any number of these zones without replacing them.
+                  Embers prime at the end of your turn. An ember cannot
+                  be placed adjacent to another ember."""
+              ]
       ]
   }
 

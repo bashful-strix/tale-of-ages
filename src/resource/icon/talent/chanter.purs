@@ -4,6 +4,8 @@ module ToA.Resource.Icon.Talent.Chanter
   , peace
   ) where
 
+import Data.Maybe (Maybe(..))
+
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -19,6 +21,7 @@ poise = Talent
           that costs 2 actions this turn to 1 action. If you do, you
           cannot attack that turn."""
       ]
+  , subItem: Nothing
   }
 
 elegance :: Talent
@@ -30,6 +33,7 @@ elegance = Talent
           """When you enter a stance for the first time in a round, you
           may fly 3."""
       ]
+  , subItem: Nothing
   }
 
 peace :: Talent
@@ -41,4 +45,5 @@ peace = Talent
           """You take half damage in the first round of combat. This
           effect breaks if you attack."""
       ]
+  , subItem: Nothing
   }

@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , Range(..)
   , Step(..)
   , StepType(..)
+  , SubItem(..)
   , Tag(..)
   , Target(..)
   )
@@ -168,11 +169,29 @@ deathTrap = Ability
   , cost: One
   , tags: [ RangeTag (Range 1 2), KeywordTag (Name "Summon") ]
   , steps:
-      [ SummonStep (Just D6) (Name "Death Trap") $ KeywordStep
-          (Name "Summon")
-          [ Text
-              """Summon one or (5+) two death traps in a free space in
-              range. Traps arm at the end of your turn."""
-          ]
+      [ SubStep (Just D6)
+          ( SummonItem
+              { name: Name "Death Trap"
+              , colour: Name "Yellow"
+              , max: 1
+              , actions: []
+              , effects:
+                  [ [ Text
+                        """Mark out a cross 1 area centered on the trap
+                        when it arms. When a foe starts their turn in the
+                        area, or voluntarily enters the area, it explodes
+                        for an area effect, dismissing it. Characters
+                        inside must save or take 4 damage, twice, or just
+                        once on a successful save."""
+                    ]
+                  ]
+              }
+          )
+          $ KeywordStep
+              (Name "Summon")
+              [ Text
+                  """Summon one or (5+) two death traps in a free space
+                  in range. Traps arm at the end of your turn."""
+              ]
       ]
   }

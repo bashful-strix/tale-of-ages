@@ -3,7 +3,6 @@ module ToA.Resource.Icon.Ability.WeepingAssassin
   , harien
   , shadowCloak
   , nightsCaress
-  , suddenStrike
   , swallowTheStars
   ) where
 
@@ -19,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Range(..)
   , Step(..)
   , StepType(..)
+  , SubItem(..)
   , Tag(..)
   , Target(..)
   )
@@ -141,38 +141,39 @@ nightsCaress = Ability
   , cost: One
   , tags: [ RangeTag (Range 1 3) ]
   , steps:
-      [ SubStep Nothing (Name "Sudden Strike") $ KeywordStep (Name "Mark")
-          [ Text
-              """Mark a foe then gain the following interrupt at the
-              start of each round while they are marked."""
-          ]
-      ]
-  }
-
-suddenStrike :: Ability
-suddenStrike = Ability
-  { name: Name "Sudden Strike"
-  , colour: Name "Yellow"
-  , description: []
-  , cost: Interrupt 1
-  , tags: []
-  , steps:
-      [ Step Nothing $ TriggerStep 
-          [ Text "Your marked foe end their turn." ]
-      , Step Nothing $ Eff
-          [ Text
-              """If your foe is in range 1-3, teleport to a free space
-              adjacent to them. They must save or take """
-          , Dice 3 D3
-          , Text
-              """ or just 3 damage on a successful save. Then end your
-              mark. Otherwise, teleport 1 and keep the mark."""
-          ]
-      , Step Nothing $ KeywordStep (Name "Isolate")
-          [ Text
-              """Deal +2 damage, or +4 if there are no characters other
-              than you in range 1-2."""
-          ]
+      [ SubStep Nothing
+          ( AbilityItem
+              { name: Name "Sudden Strike"
+              , colour: Name "Yellow"
+              , cost: Interrupt 1
+              , tags: []
+              , steps:
+                  [ Step Nothing $ TriggerStep
+                      [ Text "Your marked foe end their turn." ]
+                  , Step Nothing $ Eff
+                      [ Text
+                          """If your foe is in range 1-3, teleport to a
+                          free space adjacent to them. They must save or
+                          take """
+                      , Dice 3 D3
+                      , Text
+                          """ or just 3 damage on a successful save. Then
+                          end your mark. Otherwise, teleport 1 and keep
+                          the mark."""
+                      ]
+                  , Step Nothing $ KeywordStep (Name "Isolate")
+                      [ Text
+                          """Deal +2 damage, or +4 if there are no
+                          characters other than you in range 1-2."""
+                      ]
+                  ]
+              }
+          )
+          $ KeywordStep (Name "Mark")
+              [ Text
+                  """Mark a foe then gain the following interrupt at the
+                  start of each round while they are marked."""
+              ]
       ]
   }
 

@@ -4,6 +4,8 @@ module ToA.Resource.Icon.Talent.WeepingAssassin
   , shimmer
   ) where
 
+import Data.Maybe (Maybe(..))
+
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -19,6 +21,7 @@ commiserate = Talent
       , Italic [ Ref (Name "Isolate") [ Text "isolate" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }
 
 infiltrate :: Talent
@@ -37,6 +40,7 @@ infiltrate = Talent
       , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }
 
 shimmer :: Talent
@@ -48,4 +52,5 @@ shimmer = Talent
       , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
       , Text "."
       ]
+  , subItem: Nothing
   }

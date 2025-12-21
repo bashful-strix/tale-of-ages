@@ -5,6 +5,7 @@ module ToA.Data.Icon.Ability
   , Range(..)
   , Step(..)
   , StepType(..)
+  , SubItem(..)
   , Tag(..)
   , Target(..)
 
@@ -153,6 +154,28 @@ data Tag
 
 derive instance Eq Tag
 
+data SubItem
+  = SummonItem
+      { name :: Name
+      , colour :: Name
+      , max :: Int
+      , actions :: Array Markup
+      , effects :: Array Markup
+      }
+  | AbilityItem
+      { name :: Name
+      , colour :: Name
+      , cost :: Action
+      , tags :: Array Tag
+      , steps :: Array Step
+      }
+  | KeywordItem
+      { name :: Name
+      , colour :: Name
+      , keyword :: Name
+      , steps :: Array Step
+      }
+
 data StepType
   = Eff Markup
   | AttackStep Markup Markup
@@ -164,5 +187,4 @@ data StepType
 
 data Step
   = Step (Maybe Die) StepType
-  | SubStep (Maybe Die) Name StepType
-  | SummonStep (Maybe Die) Name StepType
+  | SubStep (Maybe Die) SubItem StepType
