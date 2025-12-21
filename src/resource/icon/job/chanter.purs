@@ -30,6 +30,11 @@ chanter =
   { classes: []
   , colours: []
   , souls: []
+  , keywords: []
+  , foes: []
+  , foeClasses: []
+  , factions: []
+
   , jobs:
       [ Job
           { name: Name "Chanter"
@@ -79,6 +84,7 @@ chanter =
                 : empty
           }
       ]
+
   , traits:
       [ Trait
           { name: Name "Book of Ages"
@@ -109,6 +115,7 @@ chanter =
           , subItem: Nothing
           }
       ]
+
   , talents:
       [ Talent
           { name: Name "Poise"
@@ -143,6 +150,7 @@ chanter =
           , subItem: Nothing
           }
       ]
+
   , abilities:
       [ LimitBreak
           { name: Name "Monogatari"
@@ -350,8 +358,4 @@ chanter =
               ]
           }
       ]
-  , keywords: []
-  , foes: []
-  , foeClasses: []
-  , factions: []
   }
