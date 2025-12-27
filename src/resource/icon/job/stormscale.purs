@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -230,7 +231,11 @@ stormscale =
                   shifting yourself or an ally into an animal and back again."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 2), TargetTag Self, TargetTag Ally ]
+          , tags:
+              [ RangeTag (Range (NumVar 1) (NumVar 2))
+              , TargetTag Self
+              , TargetTag Ally
+              ]
           , steps:
               [ Step (Just D6) $ Eff
                   [ Text
@@ -256,7 +261,10 @@ stormscale =
                   black sea."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 2), AreaTag (Cross 1) ]
+          , tags:
+              [ RangeTag (Range (NumVar 1) (NumVar 2))
+              , AreaTag (Cross (NumVar 1))
+              ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Zone")
                   [ Text
@@ -290,7 +298,10 @@ stormscale =
                   bringing forth deep sea spirits in the shape of lightning."""
               ]
           , cost: One
-          , tags: [ KeywordTag (Name "Mark"), RangeTag (Range 1 2) ]
+          , tags:
+              [ KeywordTag (Name "Mark")
+              , RangeTag (Range (NumVar 1) (NumVar 2))
+              ]
           , steps:
               [ SubStep (Just D6)
                   ( SummonItem

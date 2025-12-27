@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , StepType(..)
   , SubItem(..)
   , Tag(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -174,7 +175,7 @@ spellblade =
               [ Text "A thousand spears of light, each striking a perfect blow."
               ]
           , cost: One
-          , tags: [ Attack, Close, AreaTag (Line 6) ]
+          , tags: [ Attack, RangeTag Close, AreaTag (Line (NumVar 6)) ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "3 damage" ]
@@ -284,7 +285,7 @@ spellblade =
                   ( AbilityItem
                       { name: Name "Ten Thousand Cuts"
                       , colour: Name "Blue"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep

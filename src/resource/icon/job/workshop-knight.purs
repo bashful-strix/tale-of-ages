@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -185,7 +186,7 @@ workshopKnight =
                   effective."""
               ]
           , cost: One
-          , tags: [ AreaTag (Burst 1 true) ]
+          , tags: [ AreaTag (Burst (NumVar 1) true) ]
           , steps:
               [ Step (Just D6) $ AreaEff
                   [ Text
@@ -211,7 +212,7 @@ workshopKnight =
                   force."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 3 4) ]
+          , tags: [ RangeTag (Range (NumVar 3) (NumVar 4)) ]
           , steps:
               [ Step Nothing $ Eff
                   [ Text "Pull a character in range 3 spaces. Foes are "
@@ -257,7 +258,7 @@ workshopKnight =
           , description:
               [ Text "Your bandoliers contain more than just weaponry." ]
           , cost: One
-          , tags: [ Attack, RangeTag (Range 1 3) ]
+          , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "2 damage" ]
@@ -268,7 +269,10 @@ workshopKnight =
                       { name: Name "Arsenal Flash Bomb"
                       , colour: Name "Red"
                       , cost: One
-                      , tags: [ RangeTag (Range 1 2), KeywordTag (Name "Zone") ]
+                      , tags:
+                          [ RangeTag (Range (NumVar 1) (NumVar 2))
+                          , KeywordTag (Name "Zone")
+                          ]
                       , steps:
                           [ Step Nothing $ KeywordStep (Name "Zone")
                               [ Text

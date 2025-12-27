@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , StepType(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -190,7 +191,7 @@ tactician =
                   themselves."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 2), TargetTag Ally ]
+          , tags: [ RangeTag (Range (NumVar 1) (NumVar 2)), TargetTag Ally ]
           , steps:
               [ Step Nothing $ Eff [ Text "Swap places with an ally in range." ]
               , Step Nothing $ Eff
@@ -211,7 +212,7 @@ tactician =
                   """You brace with a shield or armor, strengthening your
                   formation against incoming blows."""
               ]
-          , cost: Interrupt 1
+          , cost: Interrupt (NumVar 1)
           , tags: [ TargetTag Ally, RangeTag Adjacent ]
           , steps:
               [ Step Nothing $ TriggerStep
@@ -238,7 +239,11 @@ tactician =
                   your foes."""
               ]
           , cost: One
-          , tags: [ KeywordTag (Name "Zone"), RangeTag (Range 1 3), End ]
+          , tags:
+              [ KeywordTag (Name "Zone")
+              , RangeTag (Range (NumVar 1) (NumVar 3))
+              , End
+              ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Zone")
                   [ Bold [ Text "End your turn" ]

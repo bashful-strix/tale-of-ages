@@ -124,9 +124,9 @@ renderAbility icon@{ colours } a =
                     ( a # _tags <<< traversed #~ pure <<< case _ of
                         Attack -> "Attack"
                         End -> "End"
-                        Close -> "Close"
                         RangeTag r -> case r of
                           Range i j -> "Range " <> show i <> "-" <> show j
+                          Close -> "Close"
                           Melee -> "Melee"
                           Adjacent -> "Adjacent"
                         AreaTag p -> case p of
@@ -170,9 +170,9 @@ renderTags :: Array Tag -> Array String
 renderTags = map case _ of
   Attack -> "Attack"
   End -> "End"
-  Close -> "Close"
   RangeTag r -> case r of
     Range i j -> "Range " <> show i <> "-" <> show j
+    Close -> "Close"
     Melee -> "Melee"
     Adjacent -> "Adjacent"
   AreaTag p -> case p of
@@ -336,8 +336,10 @@ renderStepName icon d s =
         AttackStep _ _ -> D.text_ "Attack"
         OnHit _ -> D.text_ "On hit"
         AreaEff _ -> D.text_ "Area effect"
-        KeywordStep k _ -> D.text_ $ k ^. simple _Newtype
         TriggerStep _ -> D.text_ "Trigger"
+        KeywordStep k _ -> D.text_ $ k ^. simple _Newtype
+        VariableKeywordStep k n _ ->
+          D.text_ $ k ^. simple _Newtype <> " " <> show n
         OtherStep k _ -> markup icon k
     , D.text_ $ foldMap (const " [X]") d
     , D.text_ ": "
@@ -360,7 +362,8 @@ renderStepDesc icon s =
             ]
         OnHit t -> markup icon t
         AreaEff t -> markup icon t
-        KeywordStep _ t -> markup icon t
         TriggerStep t -> markup icon t
+        KeywordStep _ t -> markup icon t
+        VariableKeywordStep _ _ t -> markup icon t
         OtherStep _ t -> markup icon t
     ]

@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -181,7 +182,7 @@ weepingAssassin =
                   have faded into the night."""
               ]
           , cost: One
-          , tags: [ Attack, Close, AreaTag (Arc 3) ]
+          , tags: [ Attack, RangeTag Close, AreaTag (Arc (NumVar 3)) ]
           , steps:
               [ Step Nothing $ Eff [ Text "Dash 2." ]
               , Step Nothing $ AttackStep
@@ -204,7 +205,7 @@ weepingAssassin =
           , cost: Two
           , tags:
               [ KeywordTag (Name "Mark")
-              , RangeTag (Range 1 2)
+              , RangeTag (Range (NumVar 1) (NumVar 2))
               , KeywordTag (Name "Power Die")
               ]
           , steps:
@@ -241,13 +242,13 @@ weepingAssassin =
                   shadowy rift even if they flee."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 3) ]
+          , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
               [ SubStep Nothing
                   ( AbilityItem
                       { name: Name "Sudden Strike"
                       , colour: Name "Yellow"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep

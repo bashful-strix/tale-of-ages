@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , StepType(..)
   , SubItem(..)
   , Tag(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -137,7 +138,12 @@ hawkKnight =
                   air, invigorating you for the final strike."""
               ]
           , cost: One /\ 4
-          , tags: [ Attack, Close, AreaTag (Line 4), RangeTag Melee ]
+          , tags:
+              [ Attack
+              , RangeTag Close
+              , AreaTag (Line (NumVar 4))
+              , RangeTag Melee
+              ]
           , steps:
               [ Step Nothing $ Eff
                   [ Text "Gains attack "
@@ -170,7 +176,7 @@ hawkKnight =
                   ]
               , Step Nothing $ Eff
                   [ Text
-                        """If you miss this attack, refund 2 resolve. You can
+                      """If you miss this attack, refund 2 resolve. You can
                         limit break again this combat."""
                   ]
               ]
@@ -184,7 +190,11 @@ hawkKnight =
                   multiple times in a blink, sending our cutting shockwaves."""
               ]
           , cost: Two
-          , tags: [ Attack, RangeTag (Range 1 3), AreaTag (Cross 1) ]
+          , tags:
+              [ Attack
+              , RangeTag (Range (NumVar 1) (NumVar 3))
+              , AreaTag (Cross (NumVar 1))
+              ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "4 damage" ]
@@ -192,7 +202,7 @@ hawkKnight =
               , Step Nothing $ AreaEff [ Text "2 damage." ]
               , Step (Just D6) $ Eff
                   [ Text
-                        """You may target one, (4+) two, (6+) or three
+                      """You may target one, (4+) two, (6+) or three
                         additional cross 1 in range, extending the area effect.
                         The areas cannont overlap."""
                   ]
@@ -220,7 +230,7 @@ hawkKnight =
                   ( AbilityItem
                       { name: Name "Turn Blades/Cut Bullets"
                       , colour: Name "Red"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep
@@ -294,7 +304,7 @@ hawkKnight =
                   """Nothing less than perfect will do for those that soar
                   above. Tear your foes with your talons and shriek victory."""
               ]
-          , cost: Interrupt 1
+          , cost: Interrupt (NumVar 1)
           , tags: []
           , steps:
               [ Step Nothing $ TriggerStep

@@ -14,6 +14,7 @@ import ToA.Data.Icon.Ability
   , Step(..)
   , StepType(..)
   , Tag(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Chapter (Chapter(..))
 import ToA.Data.Icon.Dice (Die(..))
@@ -155,7 +156,7 @@ beast =
               [ FoeAbility
                   { name: Name "Buffeting Burp"
                   , cost: Two
-                  , tags: [ Attack, Close, AreaTag (Blast 2) ]
+                  , tags: [ Attack, RangeTag Close, AreaTag (Blast (NumVar 2)) ]
                   , description:
                       [ Text "3 damage. "
                       , Italic [ Text "Hit" ]
@@ -173,7 +174,7 @@ beast =
               , FoeAbility
                   { name: Name "Gob Spit"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 3) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
                   , description:
                       [ Text
                           """A character in range has a difficult terrain space
@@ -192,7 +193,9 @@ beast =
                   { name: Name "Tongue Flick"
                   , cost: One
                   , tags:
-                      [ RangeTag (Range 2 3), KeywordTag (Name "Repeatable") ]
+                      [ RangeTag (Range (NumVar 2) (NumVar 3))
+                      , KeywordTag (Name "Repeatable")
+                      ]
                   , description:
                       [ Text "The Halitoad pulls a character in range 1." ]
                   , chain: Nothing
@@ -215,7 +218,7 @@ beast =
                   , insert: Just $ AbilityInsert
                       { name: Name "Block"
                       , colour: Name "Red"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep

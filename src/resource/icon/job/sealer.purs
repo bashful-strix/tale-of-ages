@@ -16,6 +16,7 @@ import ToA.Data.Icon.Ability
   , Step(..)
   , StepType(..)
   , Tag(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -190,7 +191,7 @@ sealer =
                   bright fire, lighting up the sky."""
               ]
           , cost: Two
-          , tags: [ RangeTag (Range 2 5) ]
+          , tags: [ RangeTag (Range (NumVar 2) (NumVar 5)) ]
           , steps:
               [ Step Nothing $ Eff
                   [ Text
@@ -252,7 +253,7 @@ sealer =
           , cost: One
           , tags:
               [ KeywordTag (Name "Mark")
-              , RangeTag (Range 2 5)
+              , RangeTag (Range (NumVar 2) (NumVar 5))
               , KeywordTag (Name "Power Die")
               ]
           , steps:

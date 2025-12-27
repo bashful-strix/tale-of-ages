@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , StepType(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Colour (Colour(..))
@@ -184,7 +185,7 @@ stalwart =
                   combat."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 3), TargetTag Ally ]
+          , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)), TargetTag Ally ]
           , steps:
               [ Step Nothing $ TriggerStep
                   [ Text "An ally ends their turn in range." ]
@@ -219,7 +220,7 @@ stalwart =
                   "You grab an ally and pull them from the teeth of the enemy."
               ]
           , cost: Quick
-          , tags: [ RangeTag (Range 2 3), TargetTag Ally ]
+          , tags: [ RangeTag (Range (NumVar 2) (NumVar 3)), TargetTag Ally ]
           , steps:
               [ Step Nothing $ Eff
                   [ Text "Pull target 1. They are "
@@ -283,7 +284,7 @@ stalwart =
                   "Slam your weapon into the ground, sending up shockwaves."
               ]
           , cost: Two
-          , tags: [ Close, AreaTag (Blast 3) ]
+          , tags: [ RangeTag Close, AreaTag (Blast (NumVar 3)) ]
           , steps:
               [ Step Nothing $ AreaEff [ Dice 1 D6, Text "+2 damage, push 1." ]
               , Step Nothing $ Eff

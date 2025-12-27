@@ -15,6 +15,7 @@ import ToA.Data.Icon.Ability
   , StepType(..)
   , Tag(..)
   , Target(Self)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Foe
@@ -64,7 +65,7 @@ basic =
               [ FoeAbility
                   { name: Name "Yank"
                   , cost: One
-                  , tags: [ RangeTag (Range 3 4) ]
+                  , tags: [ RangeTag (Range (NumVar 3) (NumVar 4)) ]
                   , description:
                       [ Text "A character in range is pulled "
                       , Dice 1 D3
@@ -90,7 +91,7 @@ basic =
                   , insert: Just $ AbilityInsert
                       { name: Name "Shield Block"
                       , colour: Name "Red"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep
@@ -186,7 +187,7 @@ basic =
                   , insert: Just $ AbilityInsert
                       { name: Name "Shield Block"
                       , colour: Name "Red"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep
@@ -220,8 +221,8 @@ basic =
                   , cost: One
                   , tags:
                       [ Attack
-                      , Close
-                      , AreaTag (Line 3)
+                      , RangeTag Close
+                      , AreaTag (Line (NumVar 3))
                       , KeywordTag (Name "Chain")
                       ]
                   , description:
@@ -268,7 +269,8 @@ basic =
               , FoeAbility
                   { name: Name "Battle Cry"
                   , cost: One
-                  , tags: [ AreaTag (Burst 1 true), LimitTag 1 "combat" ]
+                  , tags:
+                      [ AreaTag (Burst (NumVar 1) true), LimitTag 1 "combat" ]
                   , description:
                       [ Text
                           """Grant self and each ally in the area 3 vigor. Those
@@ -310,7 +312,7 @@ basic =
               , FoeAbility
                   { name: Name "Western Wind"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 2) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 2)) ]
                   , description:
                       [ Text "The Dervish or an ally in range may fly "
                       , Italic [ Dice 1 D3 ]
@@ -324,7 +326,7 @@ basic =
               , FoeAbility
                   { name: Name "Fan of Knives"
                   , cost: Two
-                  , tags: [ Close, AreaTag (Blast 3) ]
+                  , tags: [ RangeTag Close, AreaTag (Blast (NumVar 3)) ]
                   , description:
                       [ Italic [ Text "Area effect" ]
                       , Text ": "
@@ -339,7 +341,10 @@ basic =
               , FoeAbility
                   { name: Name "Blinding Wind"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 3), LimitTag 2 "combat" ]
+                  , tags:
+                      [ RangeTag (Range (NumVar 1) (NumVar 3))
+                      , LimitTag 2 "combat"
+                      ]
                   , description:
                       [ Text
                           """A foe in range must save. On a successful save,
@@ -371,7 +376,7 @@ basic =
               [ FoeAbility
                   { name: Name "Riddle"
                   , cost: One
-                  , tags: [ Attack, RangeTag (Range 3 5) ]
+                  , tags: [ Attack, RangeTag (Range (NumVar 3) (NumVar 5)) ]
                   , description:
                       [ Text "2 damage. "
                       , Italic [ Text "Hit" ]
@@ -383,7 +388,7 @@ basic =
               , FoeAbility
                   { name: Name "Strafe"
                   , cost: One
-                  , tags: [ RangeTag (Range 2 3) ]
+                  , tags: [ RangeTag (Range (NumVar 2) (NumVar 3)) ]
                   , description:
                       [ Text
                           """The Gunner dashes 2, then deals 2 damage to a foe
@@ -398,7 +403,7 @@ basic =
               , FoeAbility
                   { name: Name "Overwatch"
                   , cost: One
-                  , tags: [ RangeTag (Range 3 5), End ]
+                  , tags: [ RangeTag (Range (NumVar 3) (NumVar 5)), End ]
                   , description:
                       [ Text
                           """Target a blast 3 area in range, which could be
@@ -410,7 +415,7 @@ basic =
                   , insert: Just $ AbilityInsert
                       { name: Name "Overwatch"
                       , colour: Name "Yellow"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep
@@ -428,8 +433,8 @@ basic =
                   { name: Name "Flash Bomb"
                   , cost: One
                   , tags:
-                      [ RangeTag (Range 2 3)
-                      , AreaTag (Cross 2)
+                      [ RangeTag (Range (NumVar 2) (NumVar 3))
+                      , AreaTag (Cross (NumVar 2))
                       , LimitTag 1 "combat"
                       ]
                   , description:
@@ -487,7 +492,7 @@ basic =
               , FoeAbility
                   { name: Name "Throwing Blade"
                   , cost: One
-                  , tags: [ RangeTag (Range 2 3) ]
+                  , tags: [ RangeTag (Range (NumVar 2) (NumVar 3)) ]
                   , description:
                       [ Text
                           """A foe in range takes 2 damage, ignoring cover,
@@ -546,7 +551,11 @@ basic =
               [ FoeAbility
                   { name: Name "Griholy"
                   , cost: One
-                  , tags: [ Attack, AreaTag (Cross 1), RangeTag (Range 2 4) ]
+                  , tags:
+                      [ Attack
+                      , AreaTag (Cross (NumVar 1))
+                      , RangeTag (Range (NumVar 2) (NumVar 4))
+                      ]
                   , description:
                       [ Text "2 damage. "
                       , Italic [ Text "Hit" ]
@@ -566,7 +575,7 @@ basic =
               , FoeAbility
                   { name: Name "Purge"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 4) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
                   , description:
                       [ Text "A foe in range chooses: either take "
                       , Dice 1 D3
@@ -581,7 +590,7 @@ basic =
               , FoeAbility
                   { name: Name "Diaga"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 4) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
                   , description:
                       [ Text
                           """An ally in range may immediately save to end all
@@ -596,7 +605,7 @@ basic =
                   { name: Name "Aegi"
                   , cost: One
                   , tags:
-                      [ RangeTag (Range 1 2)
+                      [ RangeTag (Range (NumVar 1) (NumVar 2))
                       , KeywordTag (Name "Mark")
                       , LimitTag 2 "combat"
                       ]
@@ -640,7 +649,7 @@ basic =
               [ FoeAbility
                   { name: Name "Leader's Strike"
                   , cost: One
-                  , tags: [ Attack, RangeTag (Range 1 3) ]
+                  , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 3)) ]
                   , description:
                       [ Text "3 damage. "
                       , Italic [ Text "Hit" ]
@@ -659,7 +668,7 @@ basic =
               , FoeAbility
                   { name: Name "Marching Orders"
                   , cost: Two
-                  , tags: [ RangeTag (Range 1 3) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
                   , description:
                       [ Text "The Sergeant and all allies in range dash "
                       , Dice 2 D3
@@ -678,7 +687,7 @@ basic =
               , FoeAbility
                   { name: Name "Takedown"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 4) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
                   , description:
                       [ Text
                           """A foe in range must save. They take 1 damage once
@@ -709,7 +718,7 @@ basic =
               [ FoeAbility
                   { name: Name "Judgement Bolt"
                   , cost: One
-                  , tags: [ Attack, RangeTag (Range 2 8) ]
+                  , tags: [ Attack, RangeTag (Range (NumVar 2) (NumVar 8)) ]
                   , description:
                       [ Text "2 damage. "
                       , Italic [ Text "Hit" ]
@@ -731,7 +740,7 @@ basic =
               , FoeAbility
                   { name: Name "Mighty Summoning"
                   , cost: One
-                  , tags: [ RangeTag (Range 4 6) ]
+                  , tags: [ RangeTag (Range (NumVar 4) (NumVar 6)) ]
                   , description:
                       [ Text "An ally in range is pulled "
                       , Italic [ Dice 1 D6 ]
@@ -750,7 +759,7 @@ basic =
               , FoeAbility
                   { name: Name "Punishment of Cowards"
                   , cost: One
-                  , tags: [ RangeTag (Range 3 6) ]
+                  , tags: [ RangeTag (Range (NumVar 3) (NumVar 6)) ]
                   , description:
                       [ Text
                           """The Justicar prepares for action and gains the
@@ -761,7 +770,7 @@ basic =
                   , insert: Just $ AbilityInsert
                       { name: Name "Punish Cowards"
                       , colour: Name "Blue"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep
@@ -784,7 +793,10 @@ basic =
                   { name: Name "Riven"
                   , cost: One
                   , tags:
-                      [ RangeTag (Range 2 6), End, KeywordTag (Name "Mark") ]
+                      [ RangeTag (Range (NumVar 2) (NumVar 6))
+                      , End
+                      , KeywordTag (Name "Mark")
+                      ]
                   , description:
                       [ Text
                           """Choose a foe in range. At the end of that
@@ -818,8 +830,8 @@ basic =
                   , cost: One
                   , tags:
                       [ Attack
-                      , RangeTag (Range 3 6)
-                      , AreaTag (Blast 2)
+                      , RangeTag (Range (NumVar 3) (NumVar 6))
+                      , AreaTag (Blast (NumVar 2))
                       , KeywordTag (Name "Chain")
                       ]
                   , description:
@@ -837,8 +849,8 @@ basic =
                       , cost: Two
                       , tags:
                           [ Attack
-                          , RangeTag (Range 3 8)
-                          , AreaTag (Blast 3)
+                          , RangeTag (Range (NumVar 3) (NumVar 8))
+                          , AreaTag (Blast (NumVar 3))
                           , KeywordTag (Name "Chain")
                           ]
                       , description:
@@ -863,8 +875,8 @@ basic =
                   { name: Name "Emberflash"
                   , cost: One
                   , tags:
-                      [ KeywordTag (Name "Cross 1d3")
-                      , RangeTag (Range 1 6)
+                      [ AreaTag (Cross (RollVar 1 D3))
+                      , RangeTag (Range (NumVar 1) (NumVar 6))
                       ]
                   , description:
                       [ Italic [ Text "Area effect" ]
@@ -882,7 +894,7 @@ basic =
               , FoeAbility
                   { name: Name "Flash Fire"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 6) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 6)) ]
                   , description:
                       [ Text
                           """A character in range takes 2 damage, then must save
@@ -923,8 +935,8 @@ basic =
                   , cost: One
                   , tags:
                       [ Attack
-                      , Close
-                      , AreaTag (Line 6)
+                      , RangeTag Close
+                      , AreaTag (Line (NumVar 6))
                       , KeywordTag (Name "Mark")
                       ]
                   , description:
@@ -952,7 +964,9 @@ basic =
                   { name: Name "Steam Vent"
                   , cost: One
                   , tags:
-                      [ RangeTag (Range 1 6), AreaTag (Burst 1 false) ]
+                      [ RangeTag (Range (NumVar 1) (NumVar 6))
+                      , AreaTag (Burst (NumVar 1) false)
+                      ]
                   , description:
                       [ Text "2 piercing damage, and create an "
                       , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
@@ -978,8 +992,8 @@ basic =
                   , cost: One
                   , tags:
                       [ KeywordTag (Name "Zone")
-                      , RangeTag (Range 2 6)
-                      , AreaTag (Cross 1)
+                      , RangeTag (Range (NumVar 2) (NumVar 6))
+                      , AreaTag (Cross (NumVar 1))
                       , LimitTag 1 "combat"
                       ]
                   , description:
@@ -1053,8 +1067,8 @@ basic =
                       , cost: Two
                       , tags:
                           [ Attack
-                          , Close
-                          , AreaTag (Blast 2)
+                          , RangeTag Close
+                          , AreaTag (Blast (NumVar 2))
                           , KeywordTag (Name "Chain")
                           ]
                       , description:
@@ -1158,7 +1172,7 @@ basic =
           , abilities:
               [ FoeAbility
                   { name: Name "Disappearing Act"
-                  , cost: Interrupt 1
+                  , cost: Interrupt (NumVar 1)
                   , tags: []
                   , description:
                       [ Italic [ Text "Trigger" ]
@@ -1203,7 +1217,10 @@ basic =
               , FoeAbility
                   { name: Name "Dirty Fighting"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 2), KeywordTag (Name "Chain") ]
+                  , tags:
+                      [ RangeTag (Range (NumVar 1) (NumVar 2))
+                      , KeywordTag (Name "Chain")
+                      ]
                   , description:
                       [ Text
                           """Swap two characters in range (including self), then
@@ -1215,7 +1232,9 @@ basic =
                       { name: Name "Foul Play"
                       , cost: One
                       , tags:
-                          [ RangeTag (Range 1 3), KeywordTag (Name "Chain") ]
+                          [ RangeTag (Range (NumVar 1) (NumVar 3))
+                          , KeywordTag (Name "Chain")
+                          ]
                       , description:
                           [ Italic [ Text "Effect" ]
                           , Text
@@ -1296,7 +1315,7 @@ basic =
                             , cost: One
                             , tags:
                                 [ Attack
-                                , RangeTag (Range 1 2)
+                                , RangeTag (Range (NumVar 1) (NumVar 2))
                                 , KeywordTag (Name "Chain")
                                 ]
                             , description:
@@ -1316,8 +1335,8 @@ basic =
                                 , cost: One
                                 , tags:
                                     [ Attack
-                                    , RangeTag (Range 2 5)
-                                    , AreaTag (Cross 1)
+                                    , RangeTag (Range (NumVar 2) (NumVar 5))
+                                    , AreaTag (Cross (NumVar 1))
                                     , KeywordTag (Name "Chain")
                                     ]
                                 , description:
@@ -1357,7 +1376,7 @@ basic =
                         , FoeAbility
                             { name: Name "Serrated Blade"
                             , cost: One
-                            , tags: [ RangeTag (Range 1 3) ]
+                            , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
                             , description:
                                 [ Text
                                     """A foe in range takes 2 damage, increased
@@ -1372,7 +1391,10 @@ basic =
                             { name: Name "Bloody Slash"
                             , cost: One
                             , tags:
-                                [ Close, AreaTag (Line 3), LimitTag 1 "round" ]
+                                [ RangeTag Close
+                                , AreaTag (Line (NumVar 3))
+                                , LimitTag 1 "round"
+                                ]
                             , description:
                                 [ Italic [ Text "Area effect" ]
                                 , Text
@@ -1388,7 +1410,7 @@ basic =
                             , cost: One
                             , tags:
                                 [ KeywordTag (Name "Zone")
-                                , RangeTag (Range 1 4)
+                                , RangeTag (Range (NumVar 1) (NumVar 4))
                                 , LimitTag 2 "round"
                                 ]
                             , description:
@@ -1426,7 +1448,10 @@ basic =
                         [ FoeAbility
                             { name: Name "Amygdala"
                             , cost: One
-                            , tags: [ RangeTag (Range 1 2), LimitTag 1 "round" ]
+                            , tags:
+                                [ RangeTag (Range (NumVar 1) (NumVar 2))
+                                , LimitTag 1 "round"
+                                ]
                             , description:
                                 [ Text
                                     """All foes in range are inflicted with
@@ -1467,7 +1492,10 @@ basic =
                         , FoeAbility
                             { name: Name "Assassinate"
                             , cost: One
-                            , tags: [ RangeTag (Range 1 3), LimitTag 1 "round" ]
+                            , tags:
+                                [ RangeTag (Range (NumVar 1) (NumVar 3))
+                                , LimitTag 1 "round"
+                                ]
                             , description:
                                 [ Text
                                     """The Nocturnal chooses a foe in range that

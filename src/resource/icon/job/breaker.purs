@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Step(..)
   , StepType(..)
   , Tag(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -134,7 +135,7 @@ breaker =
                   forces."""
               ]
           , cost: Two /\ 3
-          , tags: [ Close, AreaTag (Line 5) ]
+          , tags: [ RangeTag Close, AreaTag (Line (NumVar 5)) ]
           , steps:
               [ Step Nothing $ Eff
                   [ Text "Move along the line with "
@@ -197,7 +198,7 @@ breaker =
                   shockwaves."""
               ]
           , cost: Two
-          , tags: [ Close, AreaTag (Blast 3) ]
+          , tags: [ RangeTag Close, AreaTag (Blast (NumVar 3)) ]
           , steps:
               [ Step (Just D6) $ AreaEff
                   [ Dice 1 D6

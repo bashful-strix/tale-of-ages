@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Colour (Colour(..))
@@ -162,7 +163,7 @@ vagabond =
           , colour: Name "Yellow"
           , description: [ Text "A flash of blades." ]
           , cost: One
-          , tags: [ Attack, RangeTag (Range 1 2) ]
+          , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 2)) ]
           , steps:
               [ Step Nothing $ Eff [ Text "Dash 1." ]
               , Step Nothing $ AttackStep
@@ -181,7 +182,10 @@ vagabond =
           , colour: Name "Yellow"
           , description: [ Text "Pick your quarry carefully." ]
           , cost: One
-          , tags: [ RangeTag (Range 1 4), KeywordTag (Name "Mark") ]
+          , tags:
+              [ RangeTag (Range (NumVar 1) (NumVar 4))
+              , KeywordTag (Name "Mark")
+              ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Mark")
                   [ Text "Mark your foe."
@@ -221,7 +225,7 @@ vagabond =
           , description:
               [ Text "Throw sparking powder that confounds the eyes." ]
           , cost: One
-          , tags: [ RangeTag Melee, AreaTag (Burst 1 true) ]
+          , tags: [ RangeTag Melee, AreaTag (Burst (NumVar 1) true) ]
           , steps:
               [ Step (Just D6) $ AreaEff
                   [ Text "One, (4+) two or (6+) all foes in the area are "
@@ -283,7 +287,10 @@ vagabond =
                   net, razor wire - the possibilities are endless."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 2), KeywordTag (Name "Summon") ]
+          , tags:
+              [ RangeTag (Range (NumVar 1) (NumVar 2))
+              , KeywordTag (Name "Summon")
+              ]
           , steps:
               [ SubStep (Just D6)
                   ( SummonItem

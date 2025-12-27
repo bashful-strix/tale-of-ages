@@ -7,7 +7,13 @@ import Prelude
 import Data.Maybe (Maybe(..))
 
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Ability (Action(..), Pattern(..), Range(..), Tag(..))
+import ToA.Data.Icon.Ability
+  ( Action(..)
+  , Pattern(..)
+  , Range(..)
+  , Tag(..)
+  , Variable(..)
+  )
 import ToA.Data.Icon.Chapter (Chapter(..))
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Foe
@@ -246,7 +252,11 @@ relict =
               [ FoeAbility
                   { name: Name "Unholy"
                   , cost: One
-                  , tags: [ Attack, RangeTag (Range 2 5), AreaTag (Cross 2) ]
+                  , tags:
+                      [ Attack
+                      , RangeTag (Range (NumVar 2) (NumVar 5))
+                      , AreaTag (Cross (NumVar 2))
+                      ]
                   , description:
                       [ Text "1 piercing damage. "
                       , Italic [ Text "Hit" ]
@@ -266,7 +276,7 @@ relict =
               , FoeAbility
                   { name: Name "Rahaal"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 4) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
                   , description:
                       [ Text
                           "Chose a character in range. That character chooses:"
@@ -284,7 +294,10 @@ relict =
               , FoeAbility
                   { name: Name "Terrorize"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 3), LimitTag 1 "combat" ]
+                  , tags:
+                      [ RangeTag (Range (NumVar 1) (NumVar 3))
+                      , LimitTag 1 "combat"
+                      ]
                   , description:
                       [ Italic [ Text "Effect" ]
                       , Text
@@ -301,8 +314,8 @@ relict =
                   { name: Name "Call the Dead"
                   , cost: One
                   , tags:
-                      [ Close
-                      , AreaTag (Line 4)
+                      [ RangeTag Close
+                      , AreaTag (Line (NumVar 4))
                       , KeywordTag (Name "Zone")
                       , End
                       , LimitTag 1 "combat"
@@ -351,7 +364,7 @@ relict =
                   , cost: One
                   , tags:
                       [ Attack
-                      , RangeTag (Range 1 5)
+                      , RangeTag (Range (NumVar 1) (NumVar 5))
                       , KeywordTag (Name "Chain")
                       ]
                   , description:
@@ -376,8 +389,8 @@ relict =
                       , cost: Two
                       , tags:
                           [ Attack
-                          , RangeTag (Range 2 6)
-                          , AreaTag (Cross 3)
+                          , RangeTag (Range (NumVar 2) (NumVar 6))
+                          , AreaTag (Cross (NumVar 3))
                           , KeywordTag (Name "Chain")
                           ]
                       , description:
@@ -403,7 +416,7 @@ relict =
               , FoeAbility
                   { name: Name "Rift Tear"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 3) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
                   , description:
                       [ Text
                           """Teleport 3. Alternatively, teleport a character in
@@ -417,7 +430,10 @@ relict =
               , FoeAbility
                   { name: Name "Soul Spark"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 6), KeywordTag (Name "Summon") ]
+                  , tags:
+                      [ RangeTag (Range (NumVar 1) (NumVar 6))
+                      , KeywordTag (Name "Summon")
+                      ]
                   , description:
                       [ Text "Create a "
                       , Italic [ Text "Soul Spark" ]

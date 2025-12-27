@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Colour (Colour(..))
@@ -166,7 +167,11 @@ wright =
                   potent."""
               ]
           , cost: One
-          , tags: [ Attack, RangeTag (Range 2 8), AreaTag (Cross 1) ]
+          , tags:
+              [ Attack
+              , RangeTag (Range (NumVar 2) (NumVar 8))
+              , AreaTag (Cross (NumVar 1))
+              ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "2 damage" ]
@@ -188,7 +193,10 @@ wright =
                   energy when agitated."""
               ]
           , cost: Two
-          , tags: [ KeywordTag (Name "Zone"), RangeTag (Range 2 6) ]
+          , tags:
+              [ KeywordTag (Name "Zone")
+              , RangeTag (Range (NumVar 2) (NumVar 6))
+              ]
           , steps:
               [ SubStep Nothing
                   ( KeywordItem
@@ -229,7 +237,10 @@ wright =
                   other's presence."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 6), KeywordTag (Name "Mark") ]
+          , tags:
+              [ RangeTag (Range (NumVar 1) (NumVar 6))
+              , KeywordTag (Name "Mark")
+              ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Mark")
                   [ Text
@@ -257,7 +268,10 @@ wright =
                   battlefield to reshape itself."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 1 4), KeywordTag (Name "Bject") ]
+          , tags:
+              [ RangeTag (Range (NumVar 1) (NumVar 4))
+              , KeywordTag (Name "Bject")
+              ]
           , steps:
               [ Step (Just D6) $ KeywordStep (Name "Object")
                   [ Text "Create one or (5+) two height 1 boulder "
@@ -277,7 +291,10 @@ wright =
                   they stand."""
               ]
           , cost: One
-          , tags: [ RangeTag (Range 3 5), AreaTag (Line 5) ]
+          , tags:
+              [ RangeTag (Range (NumVar 3) (NumVar 5))
+              , AreaTag (Line (NumVar 5))
+              ]
           , steps:
               [ Step Nothing $ AreaEff
                   [ Text "2 "
@@ -302,7 +319,11 @@ wright =
                   becoming more powerful as the battle continues."""
               ]
           , cost: Two
-          , tags: [ Attack, RangeTag (Range 2 6), AreaTag (Blast 2) ]
+          , tags:
+              [ Attack
+              , RangeTag (Range (NumVar 2) (NumVar 6))
+              , AreaTag (Blast (NumVar 2))
+              ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "1 damage" ]
@@ -339,7 +360,10 @@ wright =
           , description:
               [ Text "Bend light into a shape that confounds the senses." ]
           , cost: Quick
-          , tags: [ RangeTag (Range 2 4), KeywordTag (Name "Object") ]
+          , tags:
+              [ RangeTag (Range (NumVar 2) (NumVar 4))
+              , KeywordTag (Name "Object")
+              ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Object")
                   [ Text

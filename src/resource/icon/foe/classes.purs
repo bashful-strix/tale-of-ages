@@ -7,7 +7,7 @@ import Color (fromInt)
 import Data.Maybe (Maybe(..))
 
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Ability (Action(..), Range(..), Tag(..))
+import ToA.Data.Icon.Ability (Action(..), Range(..), Tag(..), Variable(..))
 import ToA.Data.Icon.Colour (Colour(..))
 import ToA.Data.Icon.Foe (FoeAbility(..), FoeClass(..), FoeTrait(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
@@ -96,7 +96,7 @@ foeClasses =
               [ FoeAbility
                   { name: Name "Cure"
                   , cost: One
-                  , tags: [ RangeTag (Range 1 4) ]
+                  , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
                   , description:
                       [ Text
                           """A bloodied ally in range gains 3 vigor. Increase

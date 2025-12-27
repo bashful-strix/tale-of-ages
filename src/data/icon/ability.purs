@@ -8,6 +8,7 @@ module ToA.Data.Icon.Ability
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
 
   , AbilityData
 
@@ -108,27 +109,40 @@ _steps = lens' case _ of
   where
   k = key @"steps"
 
+data Variable
+  = NumVar Int
+  | RollVar Int Die
+  | OtherVar String
+
+derive instance Eq Variable
+
+instance Show Variable where
+  show (NumVar n) = show n
+  show (RollVar n d) = show n <> show d
+  show (OtherVar t) = t
+
 data Action
   = Quick
   | One
   | Two
-  | Interrupt Int
+  | Interrupt Variable
 
 derive instance Eq Action
 
 data Range
-  = Range Int Int
+  = Range Variable Variable
+  | Close
   | Melee
   | Adjacent
 
 derive instance Eq Range
 
 data Pattern
-  = Line Int
-  | Arc Int
-  | Blast Int
-  | Burst Int Boolean
-  | Cross Int
+  = Line Variable
+  | Arc Variable
+  | Blast Variable
+  | Burst Variable Boolean
+  | Cross Variable
 
 derive instance Eq Pattern
 
@@ -145,7 +159,6 @@ derive instance Eq Target
 data Tag
   = Attack
   | End
-  | Close
   | RangeTag Range
   | AreaTag Pattern
   | TargetTag Target
@@ -181,8 +194,9 @@ data StepType
   | AttackStep Markup Markup
   | OnHit Markup
   | AreaEff Markup
-  | KeywordStep Name Markup
   | TriggerStep Markup
+  | KeywordStep Name Markup
+  | VariableKeywordStep Name Variable Markup
   | OtherStep Markup Markup
 
 data Step

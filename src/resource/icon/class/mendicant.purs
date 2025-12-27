@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Step(..)
   , StepType(..)
   , Tag(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Colour (Colour(..))
@@ -174,7 +175,11 @@ mendicant =
           , colour: Name "Green"
           , description: [ Text "A spark of light" ]
           , cost: One
-          , tags: [ Attack, RangeTag (Range 1 5), KeywordTag (Name "Pierce") ]
+          , tags:
+              [ Attack
+              , RangeTag (Range (NumVar 1) (NumVar 5))
+              , KeywordTag (Name "Pierce")
+              ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "1 piercing damage" ]
@@ -197,7 +202,11 @@ mendicant =
                   and scours your enemies."""
               ]
           , cost: Two
-          , tags: [ Attack, AreaTag (Blast 3), RangeTag (Range 2 5) ]
+          , tags:
+              [ Attack
+              , AreaTag (Blast (NumVar 3))
+              , RangeTag (Range (NumVar 2) (NumVar 5))
+              ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "3 damage" ]
@@ -219,8 +228,8 @@ mendicant =
           , cost: Two
           , tags:
               [ KeywordTag (Name "Zone")
-              , RangeTag (Range 1 4)
-              , AreaTag (Cross 1)
+              , RangeTag (Range (NumVar 1) (NumVar 4))
+              , AreaTag (Cross (NumVar 1))
               ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Zone")
@@ -259,7 +268,10 @@ mendicant =
           , colour: Name "Green"
           , description: [ Text "Sear a mark of your divinity into your foe." ]
           , cost: One
-          , tags: [ KeywordTag (Name "Mark"), RangeTag (Range 1 4) ]
+          , tags:
+              [ KeywordTag (Name "Mark")
+              , RangeTag (Range (NumVar 1) (NumVar 4))
+              ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Mark")
                   [ Text
@@ -281,7 +293,7 @@ mendicant =
           , colour: Name "Green"
           , description: [ Text "Spur your allies to action." ]
           , cost: One
-          , tags: [ RangeTag (Range 1 4) ]
+          , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
           , steps:
               [ Step (Just D6) $ Eff
                   [ Text "An ally in range gains one (6+) two "
@@ -295,7 +307,10 @@ mendicant =
           , colour: Name "Green"
           , description: [ Text "You coalesce a divine shield over your ally." ]
           , cost: Two
-          , tags: [ KeywordTag (Name "Mark"), RangeTag (Range 1 4) ]
+          , tags:
+              [ KeywordTag (Name "Mark")
+              , RangeTag (Range (NumVar 1) (NumVar 4))
+              ]
           , steps:
               [ Step (Just D6) $ KeywordStep (Name "Mark")
                   [ Text "Marked character gains "
@@ -314,7 +329,7 @@ mendicant =
           , description:
               [ Text "Purge toxins, curses, and brands from your ally." ]
           , cost: One
-          , tags: [ RangeTag (Range 1 4) ]
+          , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
           , steps:
               [ Step Nothing $ Eff
                   [ Text

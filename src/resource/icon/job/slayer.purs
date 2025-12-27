@@ -13,11 +13,13 @@ import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
   , Pattern(..)
+  , Range(..)
   , Step(..)
   , StepType(..)
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -148,7 +150,7 @@ slayer =
                   Pour all your rage into one blow and topple the Gods."""
               ]
           , cost: Two /\ 4
-          , tags: [ Attack, Close, AreaTag (Line 6) ]
+          , tags: [ Attack, RangeTag Close, AreaTag (Line (NumVar 6)) ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "[Vigor] damage" ]
@@ -181,7 +183,7 @@ slayer =
                   tenebrous of foes."""
               ]
           , cost: Two
-          , tags: [ Attack, Close, AreaTag (Line 3) ]
+          , tags: [ Attack, RangeTag Close, AreaTag (Line (NumVar 3)) ]
           , steps:
               [ Step Nothing $ Eff [ Text "Dash 1." ]
               , Step Nothing $ AttackStep
@@ -209,7 +211,7 @@ slayer =
                   ( AbilityItem
                       { name: Name "Shoulder Check"
                       , colour: Name "Red"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep
@@ -288,13 +290,13 @@ slayer =
                   Normal opponents stand no chance."""
               ]
           , cost: Two
-          , tags: [ Close, AreaTag (Blast 2), End ]
+          , tags: [ RangeTag Close, AreaTag (Blast (NumVar 2)), End ]
           , steps:
               [ SubStep Nothing
                   ( AbilityItem
                       { name: Name "Crusher Release"
                       , colour: Name "Red"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep

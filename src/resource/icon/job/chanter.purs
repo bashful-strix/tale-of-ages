@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Step(..)
   , StepType(..)
   , Tag(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -217,7 +218,10 @@ chanter =
                   holy light."""
               ]
           , cost: Two
-          , tags: [ RangeTag (Range 3 5), AreaTag (Cross 3) ]
+          , tags:
+              [ RangeTag (Range (NumVar 3) (NumVar 5))
+              , AreaTag (Cross (NumVar 3))
+              ]
           , steps:
               [ Step Nothing $ AreaEff
                   [ Text "Foes take 2 "
@@ -262,7 +266,7 @@ chanter =
                   inscriptions over the doors of the Highest House."""
               ]
           , cost: Two
-          , tags: [ RangeTag (Range 2 5) ]
+          , tags: [ RangeTag (Range (NumVar 2) (NumVar 5)) ]
           , steps:
               [ Step Nothing $ KeywordStep (Name "Zone")
                   [ Text

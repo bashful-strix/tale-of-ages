@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , SubItem(..)
   , Tag(..)
   , Target(..)
+  , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
@@ -136,7 +137,7 @@ bastion =
                   """Even the strongest of blows glances off a bastion in their
                   full glory."""
               ]
-          , cost: Interrupt 1 /\ 3
+          , cost: Interrupt (NumVar 1) /\ 3
           , tags: [ TargetTag Self, TargetTag Ally ]
           , steps:
               [ Step Nothing $ TriggerStep
@@ -185,7 +186,7 @@ bastion =
                   force."""
               ]
           , cost: One
-          , tags: [ Attack, RangeTag (Range 1 3) ]
+          , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
               [ Step Nothing $ AttackStep
                   [ Text "2 damage" ]
@@ -208,7 +209,7 @@ bastion =
           , description:
               [ Text "Use your body as a springboard to set up ally maneuvers."
               ]
-          , cost: Interrupt 1
+          , cost: Interrupt (NumVar 1)
           , tags: [ KeywordTag (Name "Push"), TargetTag Ally ]
           , steps:
               [ Step Nothing $ TriggerStep
@@ -239,7 +240,7 @@ bastion =
                   ( AbilityItem
                       { name: Name "Shield Block"
                       , colour: Name "Red"
-                      , cost: Interrupt 1
+                      , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
                           [ Step Nothing $ TriggerStep
