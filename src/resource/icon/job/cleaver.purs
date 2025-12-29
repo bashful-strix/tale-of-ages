@@ -2,8 +2,6 @@ module ToA.Resource.Icon.Job.Cleaver
   ( cleaver
   ) where
 
-import Prelude
-
 import Data.FastVect.FastVect ((:), empty)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
@@ -143,14 +141,14 @@ cleaver =
           , cost: One /\ 2
           , tags: [ TargetTag Self, KeywordTag (Name "Aura") ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text
                       """Until the start of your next turn, gain aura 1.
                       Yourself and allies in the aura take 1/2 damage while the
                       aura is active. However, at the start of your next turn,
                       end this aura and reduce yourself to 1 hp."""
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """Increase aura size by +1 if you're bloodied, or a
                       further +1 if you're in crisis."""
@@ -168,15 +166,13 @@ cleaver =
           , cost: One
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step (Just D6) $ KeywordStep (Name "Reckless")
+              [ AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step (KeywordStep (Name "Reckless")) (Just D6)
                   [ Text "Deal 1 or (4+) 4 damage again "
                   , Italic [ Text "on hit" ]
                   , Text "."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """You may trigger the reckless effect again if you're
                       bloodied, or twice if you're in crisis. Gain """
@@ -196,14 +192,14 @@ cleaver =
           , cost: One
           , tags: [ TargetTag Foe, RangeTag Melee ]
           , steps:
-              [ Step (Just D6) $ Eff
+              [ Step Eff (Just D6)
                   [ Text "You smash an adjacent foe, "
                   , Italic [ Ref (Name "Daze") [ Text "dazing" ] ]
                   , Text
                       """ them and lowering terrain by 1 or (5+) two levels
                       under them."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Reckless")
+              , Step (KeywordStep (Name "Reckless")) Nothing
                   [ Text "Your foe also takes "
                   , Dice 2 D3
                   , Text " damage."
@@ -221,14 +217,14 @@ cleaver =
           , cost: Two
           , tags: [ RangeTag Close, AreaTag (Line (NumVar 3)) ]
           , steps:
-              [ Step Nothing $ AreaEff [ Dice 1 D6, Text " damage." ]
-              , Step (Just D6) $ Eff
+              [ Step AreaEff Nothing [ Dice 1 D6, Text " damage." ]
+              , Step Eff (Just D6)
                   [ Text
                       """Every 3rd space in the line, create a height 1 boulder
                       object (odd) or lower terrain by 1 (even). This effect
                       could be created under characters."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Reckless")
+              , Step (KeywordStep (Name "Reckless")) Nothing
                   [ Text
                       """Line +3, +2 damage. You may repeat this effect up to
                       three times, gaining """
@@ -245,11 +241,11 @@ cleaver =
           , cost: One
           , tags: [ RangeTag Melee ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Reckless")
+              [ Step (KeywordStep (Name "Reckless")) Nothing
                   [ Text "Gains effect ", Power, Text "." ]
-              , Step Nothing $ VariableKeywordStep (Name "Sacrifice") (NumVar 4)
+              , Step (VariableKeywordStep (Name "Sacrifice") (NumVar 4)) Nothing
                   [ Text "Gains effect ", Power, Text "." ]
-              , Step (Just D6) $ Eff
+              , Step Eff (Just D6)
                   [ Text "Deal 1 damage or (6+) "
                   , Dice 2 D6
                   , Text " to an adjacent foe, (6+) "

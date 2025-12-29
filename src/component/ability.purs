@@ -196,16 +196,57 @@ renderTags = map case _ of
 
 renderStep :: Icon -> Step -> Nut
 renderStep icon = case _ of
-  Step d s ->
-    D.li [] [ renderStepName icon d s, renderStepDesc icon s ]
-  SubStep d sub s ->
+  Step s d t ->
+    D.li [] [ renderStepName icon s d, D.span [] [ markup icon t ] ]
+  AttackStep m h ->
+    D.li []
+      [ D.span []
+          [ D.span
+              [ css_ [ "font-bold" ] ]
+              [ D.text_ "Attack" ]
+          , D.text_ ": "
+          ]
+      , D.span []
+          [ markup icon m
+          , D.span [] [ D.text_ "." ]
+          , guard (length h > 0) $
+              D.span []
+                [ D.span [ css_ [ "italic" ] ] [ D.text_ " Hit: " ]
+                , markup icon h
+                ]
+          ]
+      ]
+  SubStep d s t sub ->
     D.li []
       [ renderStepName icon d s
-      , renderStepDesc icon s
+      , D.span [] [ markup icon t]
       , D.div
           [ css_ [ "pl-8" ] ]
           [ renderSubItem icon sub ]
       ]
+
+renderStepName :: Icon -> StepType -> Maybe Die -> Nut
+renderStepName icon s d =
+  D.span
+    [ css_ [ "font-bold" ] ]
+    [ label s
+    , D.text_ $ foldMap (const " [X]") d
+    , D.text_ ": "
+    ]
+  where
+  label = case _ of
+    Eff -> D.text_ "Effect"
+    OnHit -> D.text_ "On hit"
+    AreaEff -> D.text_ "Area effect"
+    TriggerStep -> D.text_ "Trigger"
+    KeywordStep k -> D.text_ $ k ^. simple _Newtype
+    VariableKeywordStep k n ->
+      D.text_ $ k ^. simple _Newtype <> " " <> show n
+    AltStep ss ->
+      intercalate
+        (D.span [ css_ [ "font-normal" ] ] [ D.text_ ", or " ])
+        (label <$> ss)
+    OtherStep k -> markup icon k
 
 renderSubItem :: Icon -> SubItem -> Nut
 renderSubItem icon@{ colours } = case _ of
@@ -326,44 +367,3 @@ renderSubItem icon@{ colours } = case _ of
               $ ki.steps <#> renderStep icon
           ]
       ]
-
-renderStepName :: Icon -> Maybe Die -> StepType -> Nut
-renderStepName icon d s =
-  D.span
-    [ css_ [ "font-bold" ] ]
-    [ case s of
-        Eff _ -> D.text_ "Effect"
-        AttackStep _ _ -> D.text_ "Attack"
-        OnHit _ -> D.text_ "On hit"
-        AreaEff _ -> D.text_ "Area effect"
-        TriggerStep _ -> D.text_ "Trigger"
-        KeywordStep k _ -> D.text_ $ k ^. simple _Newtype
-        VariableKeywordStep k n _ ->
-          D.text_ $ k ^. simple _Newtype <> " " <> show n
-        OtherStep k _ -> markup icon k
-    , D.text_ $ foldMap (const " [X]") d
-    , D.text_ ": "
-    ]
-
-renderStepDesc :: Icon -> StepType -> Nut
-renderStepDesc icon s =
-  D.span []
-    [ case s of
-        Eff t -> markup icon t
-        AttackStep m h ->
-          D.span []
-            [ markup icon m
-            , D.span [] [ D.text_ "." ]
-            , guard (length h > 0) $
-                D.span []
-                  [ D.span [ css_ [ "italic" ] ] [ D.text_ " Hit: " ]
-                  , markup icon h
-                  ]
-            ]
-        OnHit t -> markup icon t
-        AreaEff t -> markup icon t
-        TriggerStep t -> markup icon t
-        KeywordStep _ t -> markup icon t
-        VariableKeywordStep _ _ t -> markup icon t
-        OtherStep _ t -> markup icon t
-    ]

@@ -2,8 +2,6 @@ module ToA.Resource.Icon.Job.Tactician
   ( tactician
   ) where
 
-import Prelude
-
 import Data.FastVect.FastVect ((:), empty)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
@@ -136,16 +134,16 @@ tactician =
           , cost: One /\ 2
           , tags: [ TargetTag Ally, TargetTag Foe ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text
                       """Every other character on the battlefield, regardless of
                       range and line of sight is pushed or pulled 1 space in any
                       direction of your choice. You may move them in any order,
                       and may choose different directions for each character."""
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "Bloodied characters or pushed +2 spaces." ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "Foes in "
                   , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
                   , Text " are additionally "
@@ -165,10 +163,8 @@ tactician =
           , cost: One
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "1 damage" ]
-                  [ Text "+", Dice 1 D3 ]
-              , Step Nothing $ OnHit
+              [ AttackStep [ Text "1 damage" ] [ Text "+", Dice 1 D3 ]
+              , Step OnHit Nothing
                   [ Text
                       """Push 1. If your foe would be pushed into an ally's
                       space, that ally deals 2 """
@@ -193,8 +189,8 @@ tactician =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 2)), TargetTag Ally ]
           , steps:
-              [ Step Nothing $ Eff [ Text "Swap places with an ally in range." ]
-              , Step Nothing $ Eff
+              [ Step Eff Nothing [ Text "Swap places with an ally in range." ]
+              , Step Eff Nothing
                   [ Text
                       """If your ally was adjacent to at least one foe, you may
                       then deal 2 damage to one of those foes after swapping
@@ -215,15 +211,15 @@ tactician =
           , cost: Interrupt (NumVar 1)
           , tags: [ TargetTag Ally, RangeTag Adjacent ]
           , steps:
-              [ Step Nothing $ TriggerStep
+              [ Step TriggerStep Nothing
                   [ Text "An adjacent ally is damaged." ]
-              , Step (Just D6) $ Eff
+              , Step Eff (Just D6)
                   [ Text
                       """Reduce that damage by the number of adjacent allies to
                       you, then push all adjacent foes 1, (4+) two, or (6+) four
                       spaces."""
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "If that ally was in "
                   , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
                   , Text " double damage reduction and push."
@@ -245,7 +241,7 @@ tactician =
               , End
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Zone")
+              [ Step (KeywordStep (Name "Zone")) Nothing
                   [ Bold [ Text "End your turn" ]
                   , Text " and designate a blast 3 "
                   , Italic [ Ref (Name "Zone") [ Text "zone" ] ]
@@ -259,7 +255,7 @@ tactician =
                   , Text
                       ", they also gain +1 armor while inside the zone."
                   ]
-              , Step (Just D3) $ Eff
+              , Step Eff (Just D3)
                   [ Text
                       "While inside the zone, you can pick up the banner as a "
                   , Bold [ Text "quick" ]

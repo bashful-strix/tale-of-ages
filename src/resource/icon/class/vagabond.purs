@@ -165,16 +165,14 @@ vagabond =
           , cost: One
           , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 2)) ]
           , steps:
-              [ Step Nothing $ Eff [ Text "Dash 1." ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step Nothing $ OnHit
+              [ Step Eff Nothing [ Text "Dash 1." ]
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step OnHit Nothing
                   [ Text "Gain "
                   , Italic [ Ref (Name "Haste") [ Text "haste" ] ]
                   , Text "."
                   ]
-              , Step Nothing $ Eff [ Text "Dash 1." ]
+              , Step Eff Nothing [ Text "Dash 1." ]
               ]
           }
       , Ability
@@ -187,7 +185,7 @@ vagabond =
               , KeywordTag (Name "Mark")
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Mark")
+              [ Step (KeywordStep (Name "Mark")) Nothing
                   [ Text "Mark your foe."
                   , List Unordered
                       [ [ Text "While marked, your attacks gain attack "
@@ -210,7 +208,7 @@ vagabond =
           , cost: Quick
           , tags: []
           , steps:
-              [ Step (Just D3) $ Eff
+              [ Step Eff (Just D3)
                   [ Text "Dash "
                   , Italic [ Dice 1 D3 ]
                   , Text " spaces. You can "
@@ -227,12 +225,12 @@ vagabond =
           , cost: One
           , tags: [ RangeTag Melee, AreaTag (Burst (NumVar 1) true) ]
           , steps:
-              [ Step (Just D6) $ AreaEff
+              [ Step AreaEff (Just D6)
                   [ Text "One, (4+) two or (6+) all foes in the area are "
                   , Italic [ Ref (Name "Blind") [ Text "blinded" ] ]
                   , Text "."
                   ]
-              , Step Nothing $ Eff [ Text "Then teleport 3." ]
+              , Step Eff Nothing [ Text "Then teleport 3." ]
               ]
           }
       , Ability
@@ -246,11 +244,9 @@ vagabond =
           , cost: Two
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ Eff [ Text "Dash 1." ]
-              , Step Nothing $ AttackStep
-                  [ Text "3 damage" ]
-                  [ Text "+", Dice 3 D3 ]
-              , Step Nothing $ OnHit
+              [ Step Eff Nothing [ Text "Dash 1." ]
+              , AttackStep [ Text "3 damage" ] [ Text "+", Dice 3 D3 ]
+              , Step OnHit Nothing
                   [ Text "If your foe is "
                   , Italic [ Ref (Name "Bloodied") [ Text "bloodied" ] ]
                   , Text
@@ -268,7 +264,7 @@ vagabond =
           , cost: One
           , tags: [ TargetTag Self, End ]
           , steps:
-              [ Step (Just D6) $ Eff
+              [ Step Eff (Just D6)
                   [ Bold [ Text "End your turn." ]
                   , Text " Create an "
                   , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
@@ -292,8 +288,12 @@ vagabond =
               , KeywordTag (Name "Summon")
               ]
           , steps:
-              [ SubStep (Just D6)
-                  ( SummonItem
+              [ SubStep (KeywordStep (Name "Summon")) (Just D6)
+                  [ Text
+                      """Summon one or (5+) two death traps in a free space in
+                      range. Traps arm at the end of your turn."""
+                  ]
+                  $ SummonItem
                       { name: Name "Death Trap"
                       , colour: Name "Yellow"
                       , max: 1
@@ -309,13 +309,6 @@ vagabond =
                             ]
                           ]
                       }
-                  )
-                  $ KeywordStep
-                      (Name "Summon")
-                      [ Text
-                          """Summon one or (5+) two death traps in a free space
-                          in range. Traps arm at the end of your turn."""
-                      ]
               ]
           }
       ]

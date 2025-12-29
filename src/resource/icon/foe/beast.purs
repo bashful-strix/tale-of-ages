@@ -221,12 +221,12 @@ beast =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text
                                   """This character or an adjacent ally is
                                   attacked."""
                               ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text "The attack deals 1/2 damage." ]
                           ]
                       }

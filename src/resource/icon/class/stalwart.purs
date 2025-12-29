@@ -2,8 +2,6 @@ module ToA.Resource.Icon.Class.Stalwart
   ( stalwart
   ) where
 
-import Prelude
-
 import Color (fromInt)
 import Data.Maybe (Maybe(..))
 
@@ -164,10 +162,8 @@ stalwart =
           , cost: One
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step Nothing $ OnHit
+              [ AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step OnHit Nothing
                   [ Text "Gain 2 vigor. If you or your target is in "
                   , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
                   , Text ", deals damage"
@@ -187,9 +183,9 @@ stalwart =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)), TargetTag Ally ]
           , steps:
-              [ Step Nothing $ TriggerStep
+              [ Step TriggerStep Nothing
                   [ Text "An ally ends their turn in range." ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """Dash 2. If you end this move adjacent to that ally,
                       they gain """
@@ -205,7 +201,7 @@ stalwart =
           , cost: One
           , tags: [ RangeTag Melee, TargetTag Foe ]
           , steps:
-              [ Step (Just D6) $ Eff
+              [ Step Eff (Just D6)
                   [ Text "Dash 1, then an adjacent foe is "
                   , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                   , Text " and pushed 1 (4+) two or (6+) four spaces."
@@ -222,7 +218,7 @@ stalwart =
           , cost: Quick
           , tags: [ RangeTag (Range (NumVar 2) (NumVar 3)), TargetTag Ally ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "Pull target 1. They are "
                   , Italic [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
                   , Text " and "
@@ -238,10 +234,8 @@ stalwart =
           , cost: Two
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "3 damage" ]
-                  [ Text "+", Dice 2 D6 ]
-              , Step (Just D6) $ OnHit
+              [ AttackStep [ Text "3 damage" ] [ Text "+", Dice 2 D6 ]
+              , Step OnHit (Just D6)
                   [ Text "Deal a follow up blow against "
                   , Italic [ Ref (Name "Afflicted") [ Text "afflicted" ] ]
                   , Text " foes, dealing 2 damage again (5+) and "
@@ -258,7 +252,7 @@ stalwart =
           , cost: One
           , tags: [ End, TargetTag Self ]
           , steps:
-              [ Step (Just D6) $ Eff
+              [ Step Eff (Just D6)
                   [ Text
                       """Gain 2 vigor and end a negative status token. If
                       you're in """
@@ -267,7 +261,7 @@ stalwart =
                   , Dice 1 D6
                   , Text "."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "Gain "
                   , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
                   , Text " or grant it to an adjacent ally. Then "
@@ -286,13 +280,13 @@ stalwart =
           , cost: Two
           , tags: [ RangeTag Close, AreaTag (Blast (NumVar 3)) ]
           , steps:
-              [ Step Nothing $ AreaEff [ Dice 1 D6, Text "+2 damage, push 1." ]
-              , Step Nothing $ Eff
+              [ Step AreaEff Nothing [ Dice 1 D6, Text "+2 damage, push 1." ]
+              , Step Eff Nothing
                   [ Text
                       """If you catch three or more characters in the area,
                       increase area damage by +2."""
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "One character in the area is "
                   , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                   , Text "."

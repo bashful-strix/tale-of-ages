@@ -22,6 +22,7 @@ module ToA.Data.Icon.Ability
 
 import Prelude
 
+import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Lens (Lens', _1, _2)
 import Data.Lens.AffineTraversal (AffineTraversal')
 import Data.Lens.Lens (lens', lensStore)
@@ -190,15 +191,16 @@ data SubItem
       }
 
 data StepType
-  = Eff Markup
-  | AttackStep Markup Markup
-  | OnHit Markup
-  | AreaEff Markup
-  | TriggerStep Markup
-  | KeywordStep Name Markup
-  | VariableKeywordStep Name Variable Markup
-  | OtherStep Markup Markup
+  = Eff
+  | OnHit
+  | AreaEff
+  | TriggerStep
+  | KeywordStep Name
+  | VariableKeywordStep Name Variable
+  | AltStep (NonEmptyArray StepType)
+  | OtherStep Markup
 
 data Step
-  = Step (Maybe Die) StepType
-  | SubStep (Maybe Die) SubItem StepType
+  = Step StepType (Maybe Die) Markup
+  | AttackStep Markup Markup
+  | SubStep StepType (Maybe Die) Markup SubItem

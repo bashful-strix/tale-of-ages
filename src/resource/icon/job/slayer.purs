@@ -152,21 +152,19 @@ slayer =
           , cost: Two /\ 4
           , tags: [ Attack, RangeTag Close, AreaTag (Line (NumVar 6)) ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "[Vigor] damage" ]
-                  [ Text "+", Dice 2 D6 ]
-              , Step Nothing $ AreaEff [ Text "[Vigor] damage." ]
-              , Step Nothing $ KeywordStep (Name "Heavy")
+              [ AttackStep [ Text "[Vigor] damage" ] [ Text "+", Dice 2 D6 ]
+              , Step AreaEff Nothing [ Text "[Vigor] damage." ]
+              , Step (KeywordStep (Name "Heavy")) Nothing
                   [ Text "Gain "
                   , Dice 4 D3
                   , Text " vigor before the attack and pushes 4 on hit."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """Then burn out and lose all your vigor. You cannot gain
                       vigor for the rest of combat."""
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """If you miss htis attack, ignore the last effect and
                       refund 2 resolve. You can limit break again this
@@ -185,12 +183,10 @@ slayer =
           , cost: Two
           , tags: [ Attack, RangeTag Close, AreaTag (Line (NumVar 3)) ]
           , steps:
-              [ Step Nothing $ Eff [ Text "Dash 1." ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 2 D6 ]
-              , Step Nothing $ AreaEff [ Text "2 damage." ]
-              , Step Nothing $ KeywordStep (Name "Heavy")
+              [ Step Eff Nothing [ Text "Dash 1." ]
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 2 D6 ]
+              , Step AreaEff Nothing [ Text "2 damage." ]
+              , Step (KeywordStep (Name "Heavy")) Nothing
                   [ Weakness
                   , Text " on attack, Line +3, +3 base damage and area damage."
                   ]
@@ -207,17 +203,23 @@ slayer =
           , cost: One
           , tags: [ TargetTag Self ]
           , steps:
-              [ SubStep Nothing
-                  ( AbilityItem
+              [ SubStep Eff Nothing
+                  [ Text "Gain "
+                  , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
+                  , Text
+                      """ and the following interrupt until the start of your
+                      next turn."""
+                  ]
+                  $ AbilityItem
                       { name: Name "Shoulder Check"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text "A foe in range 1-2 damage you or an ally."
                               ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text "The foe must save. They are "
                               , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                               , Text
@@ -225,7 +227,7 @@ slayer =
                                   resolves. On a failed save the triggering
                                   damage is also reduced by 1/2."""
                               ]
-                          , Step Nothing $ KeywordStep (Name "Heavy")
+                          , Step (KeywordStep (Name "Heavy")) Nothing
                               [ Text "You may dash up to 3 spaces with "
                               , Italic
                                   [ Ref
@@ -240,14 +242,6 @@ slayer =
                               ]
                           ]
                       }
-                  )
-                  $ Eff
-                      [ Text "Gain "
-                      , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
-                      , Text
-                          """ and the following interrupt until the start of
-                          your next turn."""
-                      ]
               ]
           }
       , Ability
@@ -261,12 +255,12 @@ slayer =
           , cost: One
           , tags: [ TargetTag Self ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "Gain "
                   , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
                   , Text "."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "At the start of your next turn, you gain "
                   , Dice 4 D3
                   , Text
@@ -274,7 +268,7 @@ slayer =
                       with an ability before then, you must save or lose this
                       effect and immediately gain 2 vigor instead."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Heavy")
+              , Step (KeywordStep (Name "Heavy")) Nothing
                   [ Text "You are "
                   , Italic [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
                   , Text " until this effect expires."
@@ -292,18 +286,26 @@ slayer =
           , cost: Two
           , tags: [ RangeTag Close, AreaTag (Blast (NumVar 2)), End ]
           , steps:
-              [ SubStep Nothing
-                  ( AbilityItem
+              [ SubStep Eff Nothing
+                  [ Bold [ Text "End your turn" ]
+                  , Text ", target a close blast 2 area, gain, "
+                  , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
+                  , Text
+                      """, and gain the following interrupt until the start of
+                      your next turn. If you move, the targeted area moves with
+                      you, mirroring your movement."""
+                  ]
+                  $ AbilityItem
                       { name: Name "Crusher Release"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text
                                   "A foe starts or ends their turn in the area."
                               ]
-                          , Step Nothing $ AreaEff
+                          , Step AreaEff Nothing
                               [ Text
                                   """At the end of the triggering turn, you
                                   release your blow. Move the area six spaces in
@@ -319,17 +321,7 @@ slayer =
                               ]
                           ]
                       }
-                  )
-                  $ Eff
-                      [ Bold [ Text "End your turn" ]
-                      , Text ", target a close blast 2 area, gain, "
-                      , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
-                      , Text
-                          """, and gain the following interrupt until the start
-                          of your next turn. If you move, the targeted area
-                          moves with you, mirroring your movement."""
-                      ]
-              , Step Nothing $ KeywordStep (Name "Heavy")
+              , Step (KeywordStep (Name "Heavy")) Nothing
                   [ Text "Interrup deals +4 more damage." ]
               ]
           }

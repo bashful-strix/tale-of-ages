@@ -145,36 +145,34 @@ hawkKnight =
               , RangeTag Melee
               ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "Gains attack "
                   , Power
                   , Text " for each bloodied ally anywhere, and "
                   , Power
                   , Text " if you are also bloodied."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "Grazes if you don't "
                   , Italic [ Ref (Name "Excel") [ Text "excel" ] ]
                   , Text " or greater."
                   ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 3 D6 ]
-              , Step Nothing $ AreaEff
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 3 D6 ]
+              , Step AreaEff Nothing
                   [ Text "2 damage. "
                   , Italic [ Text "Excel" ]
                   , Text ": 2 damage again. "
                   , Italic [ Text "Critical hit" ]
                   , Text ": 2 damage again."
                   ]
-              , Step Nothing $ KeywordStep (Name "Critical Hit")
+              , Step (KeywordStep (Name "Critical Hit")) Nothing
                   [ Text "Your target gains "
                   , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
                   , Text ", "
                   , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                   , Text ", and is pushed 6."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """If you miss this attack, refund 2 resolve. You can
                         limit break again this combat."""
@@ -196,22 +194,20 @@ hawkKnight =
               , AreaTag (Cross (NumVar 1))
               ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "4 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step Nothing $ AreaEff [ Text "2 damage." ]
-              , Step (Just D6) $ Eff
+              [ AttackStep [ Text "4 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step AreaEff Nothing [ Text "2 damage." ]
+              , Step Eff (Just D6)
                   [ Text
                       """You may target one, (4+) two, (6+) or three
                         additional cross 1 in range, extending the area effect.
                         The areas cannont overlap."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Excel")
+              , Step (KeywordStep (Name "Excel")) Nothing
                   [ Text
                       """All targets in the area are slashed with an aftershock,
                       taking 2 damage again."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Critical Hit")
+              , Step (KeywordStep (Name "Critical Hit")) Nothing
                   [ Text "Repeat the excel effect." ]
               ]
           }
@@ -226,19 +222,25 @@ hawkKnight =
           , cost: One
           , tags: []
           , steps:
-              [ SubStep Nothing
-                  ( AbilityItem
+              [ SubStep Eff Nothing
+                  [ Text "Gain "
+                  , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
+                  , Text
+                      """, and gain the following interrupt until the start of
+                      your next turn."""
+                  ]
+                  $ AbilityItem
                       { name: Name "Turn Blades/Cut Bullets"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text
                                   """A foe's ability would deal damage to an
                                   adjacent ally."""
                               ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text
                                   """Your ally halves incoming damage. Tou also
                                   take half the incoming damage. This damage is
@@ -246,15 +248,7 @@ hawkKnight =
                               ]
                           ]
                       }
-                  )
-                  $ Eff
-                      [ Text "Gain "
-                      , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
-                      , Text
-                          """, and gain the following interrupt until the start
-                          of your next turn."""
-                      ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """If you scored a critical hit or excelled this turn,
                       this ability becomes """
@@ -274,7 +268,7 @@ hawkKnight =
           , cost: One
           , tags: [ End ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Bold [ Text "End your turn" ]
                   , Text ". Your next attack gains:"
                   , List Unordered
@@ -307,12 +301,12 @@ hawkKnight =
           , cost: Interrupt (NumVar 1)
           , tags: []
           , steps:
-              [ Step Nothing $ TriggerStep
+              [ Step TriggerStep Nothing
                   [ Text "You "
                   , Italic [ Ref (Name "Excel") [ Text "excel" ] ]
                   , Text " or score a critical hit."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """You may re-roll the same attack roll, including all
                       modifiers, then check the below. This counts as an effect
@@ -343,7 +337,7 @@ hawkKnight =
                         ]
                       ]
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "Double vigor and damage if you're in crisis." ]
               ]
           }

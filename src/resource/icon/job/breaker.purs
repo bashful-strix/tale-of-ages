@@ -2,8 +2,6 @@ module ToA.Resource.Icon.Job.Breaker
   ( breaker
   ) where
 
-import Prelude
-
 import Data.FastVect.FastVect ((:), empty)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
@@ -137,7 +135,7 @@ breaker =
           , cost: Two /\ 3
           , tags: [ RangeTag Close, AreaTag (Line (NumVar 5)) ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "Move along the line with "
                   , Italic [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
                   , Text
@@ -160,7 +158,7 @@ breaker =
                         ]
                       ]
                   ]
-              , Step Nothing $ KeywordStep (Name "Impact")
+              , Step (KeywordStep (Name "Impact")) Nothing
                   [ Text
                       """Character takes damage equal to twice the spaces you
                       moved and is """
@@ -176,13 +174,11 @@ breaker =
           , cost: One
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "1 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step (Just D6) $ OnHit
+              [ AttackStep [ Text "1 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step OnHit (Just D6)
                   [ Text "Push your target one, (4+) two, or (6+) four spaces."
                   ]
-              , Step Nothing $ KeywordStep (Name "Impact")
+              , Step (KeywordStep (Name "Impact")) Nothing
                   [ Text
                       """Deal damage to your foe equal to the number of spaces
                       they were pushed before impact (max +6)."""
@@ -200,17 +196,17 @@ breaker =
           , cost: Two
           , tags: [ RangeTag Close, AreaTag (Blast (NumVar 3)) ]
           , steps:
-              [ Step (Just D6) $ AreaEff
+              [ Step AreaEff (Just D6)
                   [ Dice 1 D6
                   , Text "+2 damage, then push 1 or (4+) 2 spaces."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Italic [ Ref (Name "Afflicted") [ Text "Afflicted" ] ]
                   , Text
                       """ characters take +2 damage and are pushed +2 more
                       spaces."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Impact")
+              , Step (KeywordStep (Name "Impact")) Nothing
                   [ Text "Foes are "
                   , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                   , Text "."
@@ -224,13 +220,13 @@ breaker =
           , cost: One
           , tags: []
           , steps:
-              [ Step (Just D6) $ Eff
+              [ Step Eff (Just D6)
                   [ Text
                       "Dash 1, then dash 1, (4+), then dash 1 (6+) then dash 1."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "Before each dash, push all adjacent characters 1." ]
-              , Step Nothing $ KeywordStep (Name "Impact")
+              , Step (KeywordStep (Name "Impact")) Nothing
                   [ Text "Refund the action cost of this ability." ]
               ]
           }
@@ -245,7 +241,7 @@ breaker =
           , cost: One
           , tags: [ KeywordTag (Name "Stance") ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Stance")
+              [ Step (KeywordStep (Name "Stance")) Nothing
                   [ Text
                       """Once a round, after you push a character, you may dash
                       the same number of spaces as you pushed them as long as
@@ -259,7 +255,7 @@ breaker =
                       character, you can push them 1. When you phase through an
                       object, you can destroy that object, removing it."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Impact")
+              , Step (KeywordStep (Name "Impact")) Nothing
                   [ Text "May trigger twice a round." ]
               ]
           }

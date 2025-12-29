@@ -140,12 +140,12 @@ bastion =
           , cost: Interrupt (NumVar 1) /\ 3
           , tags: [ TargetTag Self, TargetTag Ally ]
           , steps:
-              [ Step Nothing $ TriggerStep
+              [ Step TriggerStep Nothing
                   [ Text
                       """You or an adjacent ally takes damage from a foe's
                       ability."""
                   ]
-              , Step (Just D6) $ Eff
+              , Step Eff (Just D6)
                   [ Text "Roll "
                   , Italic [ Dice 1 D6 ]
                   , Text "."
@@ -170,7 +170,7 @@ bastion =
                         ]
                       ]
                   ]
-              , Step Nothing $ KeywordStep (Name "Overdrive")
+              , Step (KeywordStep (Name "Overdrive")) Nothing
                   [ Text
                       """If you roll exactly the round number, deal the full
                       damage."""
@@ -188,15 +188,13 @@ bastion =
           , cost: One
           , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step (Just D6) $ OnHit
+              [ AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step OnHit (Just D6)
                   [ Text
                       """Your attack target and one other (4+) two other, (6+)
                       all foes in range are pushed 1."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Overdrive")
+              , Step (KeywordStep (Name "Overdrive")) Nothing
                   [ Text "Increase max range and push by +2 and gains damage "
                   , Power
                   , Text "."
@@ -212,16 +210,16 @@ bastion =
           , cost: Interrupt (NumVar 1)
           , tags: [ KeywordTag (Name "Push"), TargetTag Ally ]
           , steps:
-              [ Step Nothing $ TriggerStep
+              [ Step TriggerStep Nothing
                   [ Text "An ally ends their movement in an adjacent space." ]
-              , Step (Just D6) $ Eff
+              , Step Eff (Just D6)
                   [ Text
                       """Push that ally 2 or (5+) 3 spaces. If they would end
                       this push adjacent to a foe, that foe is """
                   , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                   , Text "."
                   ]
-              , Step Nothing $ KeywordStep (Name "Overdrive")
+              , Step (KeywordStep (Name "Overdrive")) Nothing
                   [ Text "Gains interrupt 2." ]
               ]
           }
@@ -236,19 +234,25 @@ bastion =
           , cost: One
           , tags: [ End, KeywordTag (Name "Aura"), TargetTag Self ]
           , steps:
-              [ SubStep Nothing
-                  ( AbilityItem
+              [ SubStep Eff Nothing
+                  [ Text "Gain "
+                  , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
+                  , Text
+                      """, aura 1, and the following interrupt until the
+                      start of your next turn:"""
+                  ]
+                  $ AbilityItem
                       { name: Name "Shield Block"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text
                                   """An ally in the aura is targeted by a foe's
                                   ability that deals damage."""
                               ]
-                          , Step (Just D6) $ Eff
+                          , Step Eff (Just D6)
                               [ Text
                                   """You take the damage and effects your ally
                                   would have took in your ally's place. You take
@@ -259,15 +263,7 @@ bastion =
                               ]
                           ]
                       }
-                  )
-                  $ Eff
-                      [ Text "Gain "
-                      , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
-                      , Text
-                          """, aura 1, and the following interrupt until the
-                          start of your next turn:"""
-                      ]
-              , Step Nothing $ KeywordStep (Name "Overdrive")
+              , Step (KeywordStep (Name "Overdrive")) Nothing
                   [ Text "Effect chance becomes 3+." ]
               ]
           }
@@ -286,7 +282,7 @@ bastion =
               , TargetTag Self
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Stance")
+              [ Step (KeywordStep (Name "Stance")) Nothing
                   [ Text "While in this stance:"
                   , List Unordered
                       [ [ Text "During your turn, you are "
@@ -309,7 +305,7 @@ bastion =
                         ]
                       ]
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "If you are in "
                   , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
                   , Text

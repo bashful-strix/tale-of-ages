@@ -146,7 +146,7 @@ weepingAssassin =
           , cost: Quick /\ 3
           , tags: [ TargetTag Self ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "You gain 3 "
                   , Italic [ Ref (Name "Haste") [ Text "haste" ] ]
                   , Text
@@ -162,7 +162,7 @@ weepingAssassin =
                       as either of these cease to be true. It ends completely at
                       the end of your next turn."""
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """You can transfer this effect to an ally instead. If you
                       do, """
@@ -184,12 +184,10 @@ weepingAssassin =
           , cost: One
           , tags: [ Attack, RangeTag Close, AreaTag (Arc (NumVar 3)) ]
           , steps:
-              [ Step Nothing $ Eff [ Text "Dash 2." ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D3 ]
-              , Step Nothing $ AreaEff [ Text "2 damage." ]
-              , Step Nothing $ KeywordStep (Name "Isolate")
+              [ Step Eff Nothing [ Text "Dash 2." ]
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D3 ]
+              , Step AreaEff Nothing [ Text "2 damage." ]
+              , Step (KeywordStep (Name "Isolate")) Nothing
                   [ Text "Dash 2, then gain "
                   , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
                   , Text
@@ -209,7 +207,7 @@ weepingAssassin =
               , KeywordTag (Name "Power Die")
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Mark")
+              [ Step (KeywordStep (Name "Mark")) Nothing
                   [ Text
                       """Mark self or an ally in range and set out a d6 power
                       die, starting at 6. The marked character has """
@@ -224,7 +222,7 @@ weepingAssassin =
                   , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
                   , Text "."
                   ]
-              , Step Nothing $ KeywordStep (Name "Isolate")
+              , Step (KeywordStep (Name "Isolate")) Nothing
                   [ Text
                       """If the marked character ends their turn with no other
                       characters adjacent, they may tick the die up by 2, or by
@@ -244,16 +242,20 @@ weepingAssassin =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
-              [ SubStep Nothing
-                  ( AbilityItem
+              [ SubStep (KeywordStep (Name "Mark")) Nothing
+                  [ Text
+                      """Mark a foe then gain the following interrupt at the
+                      start of each round while they are marked."""
+                  ]
+                  $ AbilityItem
                       { name: Name "Sudden Strike"
                       , colour: Name "Yellow"
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text "Your marked foe end their turn." ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text
                                   """If your foe is in range 1-3, teleport to a
                                   free space adjacent to them. They must save or
@@ -264,19 +266,13 @@ weepingAssassin =
                                   Then end your mark. Otherwise, teleport 1 and
                                   keep the mark."""
                               ]
-                          , Step Nothing $ KeywordStep (Name "Isolate")
+                          , Step (KeywordStep (Name "Isolate")) Nothing
                               [ Text
                                   """Deal +2 damage, or +4 if there are no
                                   characters other than you in range 1-2."""
                               ]
                           ]
                       }
-                  )
-                  $ KeywordStep (Name "Mark")
-                      [ Text
-                          """Mark a foe then gain the following interrupt at the
-                          start of each round while they are marked."""
-                      ]
               ]
           }
       , Ability
@@ -290,7 +286,7 @@ weepingAssassin =
           , cost: One
           , tags: [ End ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Bold [ Text "End you turn" ]
                   , Text " and gain "
                   , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
@@ -319,7 +315,7 @@ weepingAssassin =
                         ]
                       ]
                   ]
-              , Step Nothing $ KeywordStep (Name "Afflicted")
+              , Step (KeywordStep (Name "Afflicted")) Nothing
                   [ Text "Foe gains ", Weakness, Text " on the save." ]
               ]
           }

@@ -94,12 +94,12 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text
                                   """This character or an adjacent ally is
                                   attacked."""
                               ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text "The attack deals 1/2 damage." ]
                           ]
                       }
@@ -190,12 +190,12 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text
                                   """This character or an adjacent ally is
                                   attacked."""
                               ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text "The attack deals 1/2 damage." ]
                           ]
                       }
@@ -418,9 +418,9 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text "A foe voluntarily moves in the ares." ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text
                                   """All foes in the area must save. Foes take 2
                                   damage. On a failed save, they take 2 damage
@@ -773,11 +773,11 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text
                                   "A foe ends movement 4 or more spaces away."
                               ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text
                                   """The foe is pulled 1, then must save or be
                                   pulled an additional +"""

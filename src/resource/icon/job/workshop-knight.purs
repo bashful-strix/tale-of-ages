@@ -145,14 +145,14 @@ workshopKnight =
           , cost: One /\ 4
           , tags: [ TargetTag Ally, KeywordTag (Name "Power die") ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text
                       """At the end of any of your turns you don't attack while
                       you have this limit break, gain a d6 """
                   , Italic [ Ref (Name "Power die") [ Text "power die" ] ]
                   , Text ", or tick the die up by 1 (max 6)."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """Fly 1, then swap places with an adjacent ally. That
                       ally gains 2 vigor, and an adjacent foe must save or
@@ -164,7 +164,7 @@ workshopKnight =
                   , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                   , Text " on a successful save."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """Increase fly by +1, vigor gain by +2, and damage dealt
                       by +"""
@@ -188,13 +188,13 @@ workshopKnight =
           , cost: One
           , tags: [ AreaTag (Burst (NumVar 1) true) ]
           , steps:
-              [ Step (Just D6) $ AreaEff
+              [ Step AreaEff (Just D6)
                   [ Text
                       """Push all adjacent foes 1 or (5+) two spaces, then deal
                       2 damage to one of those foes. if you are adjacent to 3 or
                       more foes, increase damage and push by +2."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Conserve")
+              , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text "Damaged foes must save or be "
                   , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
                   , Text ". Foe is "
@@ -214,14 +214,14 @@ workshopKnight =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 3) (NumVar 4)) ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "Pull a character in range 3 spaces. Foes are "
                   , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
                   , Text ". Allies gain "
                   , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
                   , Text "."
                   ]
-              , Step Nothing $ KeywordStep (Name "Conserve")
+              , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text "Increase max range and pull by +2." ]
               ]
           }
@@ -233,19 +233,19 @@ workshopKnight =
           , cost: One
           , tags: [ RangeTag Melee ]
           , steps:
-              [ Step (Just D3) $ Eff
+              [ Step Eff (Just D3)
                   [ Text
                       """Fly 1, then swap places with an adjacent character.
                       Then you may push your swapped target """
                   , Italic [ Dice 1 D3 ]
                   , Text " spaces."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "If you use this after attacking, it becomes "
                   , Italic [ Ref (Name "Quick") [ Text "quick" ] ]
                   , Text "."
                   ]
-              , Step Nothing $ KeywordStep (Name "Conserve")
+              , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text "Increase fly and push by +2, and swapped foes take 2 "
                   , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
                   , Text " damage."
@@ -260,12 +260,14 @@ workshopKnight =
           , cost: One
           , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step Nothing $ OnHit [ Text "Push or pull target 1 space." ]
-              , SubStep Nothing
-                  ( AbilityItem
+              [ AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step OnHit Nothing [ Text "Push or pull target 1 space." ]
+              , SubStep (KeywordStep (Name "Conserve")) Nothing
+                  [ Text
+                      """You may use the following version of this ability
+                      instead."""
+                  ]
+                  $ AbilityItem
                       { name: Name "Arsenal Flash Bomb"
                       , colour: Name "Red"
                       , cost: One
@@ -274,7 +276,7 @@ workshopKnight =
                           , KeywordTag (Name "Zone")
                           ]
                       , steps:
-                          [ Step Nothing $ KeywordStep (Name "Zone")
+                          [ Step (KeywordStep (Name "Zone")) Nothing
                               [ Text
                                   """Create a cross 1 space zone in range. Foes
                                   caught inside take 2 """
@@ -288,13 +290,7 @@ workshopKnight =
                               ]
                           ]
                       }
-                  )
-                  $ KeywordStep (Name "Conserve")
-                      [ Text
-                          """You may use the following version of this ability
-                          instead."""
-                      ]
-              , Step Nothing $ KeywordStep (Name "Excel")
+              , Step (KeywordStep (Name "Excel")) Nothing
                   [ Text "You may also trigger the flash bomb effect." ]
               ]
           }

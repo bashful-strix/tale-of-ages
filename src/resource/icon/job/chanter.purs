@@ -2,8 +2,6 @@ module ToA.Resource.Icon.Job.Chanter
   ( chanter
   ) where
 
-import Prelude
-
 import Data.FastVect.FastVect ((:), empty)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
@@ -165,7 +163,7 @@ chanter =
           , cost: One /\ 2
           , tags: []
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text
                       "You sing a short passage from the book of ages. Roll "
                   , Italic [ Dice 1 D6 ]
@@ -223,7 +221,7 @@ chanter =
               , AreaTag (Cross (NumVar 3))
               ]
           , steps:
-              [ Step Nothing $ AreaEff
+              [ Step AreaEff Nothing
                   [ Text "Foes take 2 "
                   , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
                   , Text " damage, or "
@@ -248,7 +246,7 @@ chanter =
                         ]
                       ]
                   ]
-              , Step Nothing $ KeywordStep (Name "Conserve")
+              , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text "Any foe in the center space is "
                   , Italic [ Ref (Name "Brand") [ Text "branded" ] ]
                   , Text " and must save or be "
@@ -268,7 +266,7 @@ chanter =
           , cost: Two
           , tags: [ RangeTag (Range (NumVar 2) (NumVar 5)) ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Zone")
+              [ Step (KeywordStep (Name "Zone")) Nothing
                   [ Text
                       """Create a shimmering cross 1 zone of light, which can be
                       created over characters. While inside the zone, you and
@@ -278,7 +276,7 @@ chanter =
                   , Italic [ Ref (Name "Strength") [ Text "strength" ] ]
                   , Text " if you end their turn there."
                   ]
-              , Step Nothing $ KeywordStep (Name "Conserve")
+              , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text "Reduce action cost to 1." ]
               ]
           }
@@ -294,7 +292,7 @@ chanter =
           , cost: One
           , tags: [ KeywordTag (Name "Stance"), KeywordTag (Name "Aura") ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Stance")
+              [ Step (KeywordStep (Name "Stance")) Nothing
                   [ Text "While in this stance, gain aura 1:"
                   , List Unordered
                       [ [ Text "Attacks from and against "
@@ -313,7 +311,7 @@ chanter =
                         ]
                       ]
                   ]
-              , Step Nothing $ KeywordStep (Name "Conserve")
+              , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text
                       """Increase the base size of the aura by +1 (max base aura
                       3). This effect stacks, by ends and resets if you exit the
@@ -333,7 +331,7 @@ chanter =
           , cost: One
           , tags: [ KeywordTag (Name "Stance") ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Stance")
+              [ Step (KeywordStep (Name "Stance")) Nothing
                   [ Text "While in this stance, gain aura 2:"
                   , List Unordered
                       [ [ Text

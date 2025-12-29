@@ -160,7 +160,7 @@ stormscale =
           , cost: Quick /\ 2
           , tags: [ TargetTag Self ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text
                       """For the rest of combat, you mantle the old gods of the
                       deeps, transforming into a titanic ocean creature
@@ -198,7 +198,7 @@ stormscale =
           , cost: One
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "Dash 4 with "
                   , Italic [ Ref (Name "Phasing") [ Text "phasing" ] ]
                   , Text
@@ -206,10 +206,8 @@ stormscale =
                       regardless of range. Damage from this ability ignores
                       cover and line of sight."""
                   ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D3 ]
-              , Step Nothing $ OnHit
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D3 ]
+              , Step OnHit Nothing
                   [ Text
                       """Then deal 2 damage again if your target is 3 or more
                       spaces away, or """
@@ -237,7 +235,7 @@ stormscale =
               , TargetTag Ally
               ]
           , steps:
-              [ Step (Just D6) $ Eff
+              [ Step Eff (Just D6)
                   [ Text
                       """Self or an ally in range shape shifts into an animal
                       and dashes 3 or (5+) 6 spaces in a straight line with """
@@ -266,7 +264,7 @@ stormscale =
               , AreaTag (Cross (NumVar 1))
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Zone")
+              [ Step (KeywordStep (Name "Zone")) Nothing
                   [ Text
                       """Create a cross 1 roiling bubble of black water in free
                       space in range, with the following effects:"""
@@ -303,8 +301,12 @@ stormscale =
               , RangeTag (Range (NumVar 1) (NumVar 2))
               ]
           , steps:
-              [ SubStep (Just D6)
-                  ( SummonItem
+              [ SubStep (KeywordStep (Name "Summon")) (Just D6)
+                  [ Text
+                      """You summon one or (5+) two spirit sparks in range. The
+                      sparks prime after your turn passes."""
+                  ]
+                  $ SummonItem
                       { name: Name "Spirit Spark"
                       , colour: Name "Yellow"
                       , max: 4
@@ -328,13 +330,7 @@ stormscale =
                             ]
                           ]
                       }
-                  )
-                  $ KeywordStep (Name "Summon")
-                      [ Text
-                          """You summon one or (5+) two spirit sparks in range.
-                          The sparks prime after your turn passes."""
-                      ]
-              , Step Nothing $ KeywordStep (Name "Heavy")
+              , Step (KeywordStep (Name "Heavy")) Nothing
                   [ Text "Summon +2 more sparks." ]
               ]
           }

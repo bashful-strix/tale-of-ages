@@ -2,8 +2,6 @@ module ToA.Resource.Icon.Class.Mendicant
   ( mendicant
   ) where
 
-import Prelude
-
 import Color (fromInt)
 
 import Data.Maybe (Maybe(..))
@@ -181,10 +179,10 @@ mendicant =
               , KeywordTag (Name "Pierce")
               ]
           , steps:
-              [ Step Nothing $ AttackStep
+              [ AttackStep
                   [ Text "1 piercing damage" ]
                   [ Text "+1 piercing damage" ]
-              , Step (Just D3) $ OnHit
+              , Step OnHit (Just D3)
                   [ Text "Gain "
                   , Italic [ Dice 1 D3 ]
                   , Text " "
@@ -208,11 +206,9 @@ mendicant =
               , RangeTag (Range (NumVar 2) (NumVar 5))
               ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "3 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step Nothing $ AreaEff [ Text "3 damage." ]
-              , Step (Just D3) $ Eff
+              [ AttackStep [ Text "3 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step AreaEff Nothing [ Text "3 damage." ]
+              , Step Eff (Just D3)
                   [ Text
                       """Allies in the area don't take samage but instead gain 2
                       vigor. Bloodied allies gain """
@@ -232,7 +228,7 @@ mendicant =
               , AreaTag (Cross (NumVar 1))
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Zone")
+              [ Step (KeywordStep (Name "Zone")) Nothing
                   [ Text
                       """Place a zone of scintillating dark or light energy down
                       in free space in range. It can be placed over
@@ -273,7 +269,7 @@ mendicant =
               , RangeTag (Range (NumVar 1) (NumVar 4))
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Mark")
+              [ Step (KeywordStep (Name "Mark")) Nothing
                   [ Text
                       """Mark a foe in range. While marked, abilities that
                       target the foe gain effect """
@@ -295,7 +291,7 @@ mendicant =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
           , steps:
-              [ Step (Just D6) $ Eff
+              [ Step Eff (Just D6)
                   [ Text "An ally in range gains one (6+) two "
                   , Italic [ Ref (Name "Strength") [ Text "strength" ] ]
                   , Text " and may immediately make a free move."
@@ -312,7 +308,7 @@ mendicant =
               , RangeTag (Range (NumVar 1) (NumVar 4))
               ]
           , steps:
-              [ Step (Just D6) $ KeywordStep (Name "Mark")
+              [ Step (KeywordStep (Name "Mark")) (Just D6)
                   [ Text "Marked character gains "
                   , Dice 2 D3
                   , Text
@@ -331,13 +327,13 @@ mendicant =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text
                       """A character in range can immediately save. They get rid
                       of one negative status token of their choice, and may get
                       rid of one more on a successful save."""
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text "If they are bloodied, they gain "
                   , Power
                   , Text " on the save. If they are in "

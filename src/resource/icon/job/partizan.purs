@@ -149,16 +149,20 @@ partizan =
           , cost: One /\ 3
           , tags: [ RangeTag (Range (NumVar 2) (NumVar 5)), End ]
           , steps:
-              [ SubStep Nothing
-                  ( AbilityItem
+              [ SubStep Eff Nothing
+                  [ Bold [ Text "End your turn" ]
+                  , Text
+                      """ and choose a foe in range, then gain the following
+                      interrupt: """
+                  ]
+                  $ AbilityItem
                       { name: Name "Drill Descent"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
-                              [ Text "Foe turn start." ]
-                          , Step (Just D6) $ Eff
+                          [ Step TriggerStep Nothing [ Text "Foe turn start." ]
+                          , Step Eff (Just D6)
                               [ Text
                                   """You soar into the air. Remove yourself from
                                   the battlefield. At the end of that foe's
@@ -171,7 +175,7 @@ partizan =
                                   """ your foe. Then lower elevation under your
                                   target by 1 space."""
                               ]
-                          , Step Nothing $ Eff
+                          , Step Eff Nothing
                               [ Text "If you're bloodied, lower elevation by "
                               , Dice 1 D3
                               , Text
@@ -180,13 +184,6 @@ partizan =
                               ]
                           ]
                       }
-                  )
-                  $ Eff
-                      [ Bold [ Text "End your turn" ]
-                      , Text
-                          """ and choose a foe in range, then gain the following
-                          interrupt: """
-                      ]
               ]
           }
       , Ability
@@ -200,14 +197,12 @@ partizan =
           , cost: One
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Italic [ Ref (Name "Fly") [ Text "Fly" ] ]
                   , Text " 1."
                   ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step Nothing $ KeywordStep (Name "Dominant")
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step (KeywordStep (Name "Dominant")) Nothing
                   [ Text
                       """If you were 1 or more spaces higher than your target,
                       push all characters adjacent to your target 1. If you were
@@ -227,12 +222,12 @@ partizan =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Dominant")
+              [ Step (KeywordStep (Name "Dominant")) Nothing
                   [ Text
                       """Increase max range by +3 against targets on lower
                       elevation."""
                   ]
-              , Step (Just D6) $ Eff
+              , Step Eff (Just D6)
                   [ Text "You deal 2 "
                   , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
                   , Text " damage to a foe in range. That foe must save or be "
@@ -258,11 +253,11 @@ partizan =
           , cost: Two
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Italic [ Ref (Name "Fly") [ Text "Fly" ] ]
                   , Text " 2."
                   ]
-              , Step Nothing $ KeywordStep (Name "Dominant")
+              , Step (KeywordStep (Name "Dominant")) Nothing
                   [ Text
                       """For every level of elevation you descend during this
                       flight, your foe takes +2 damage """
@@ -275,10 +270,8 @@ partizan =
                   , Italic [ Ref (Name "Vigor") [ Text "vigor" ] ]
                   , Text " on your target."
                   ]
-              , Step Nothing $ AttackStep
-                  [ Text "4 damage" ]
-                  [ Text "+", Dice 1 D6 ]
-              , Step Nothing $ OnHit
+              , AttackStep [ Text "4 damage" ] [ Text "+", Dice 1 D6 ]
+              , Step OnHit Nothing
                   [ Text "Lower elevation under your target by 1." ]
               ]
           }
@@ -296,7 +289,7 @@ partizan =
               , RangeTag (Range (NumVar 1) (NumVar 3))
               ]
           , steps:
-              [ Step (Just D6) $ KeywordStep (Name "Zone")
+              [ Step (KeywordStep (Name "Zone")) (Just D6)
                   [ Text
                       """Create one or (5+) two javelin zones in a free space in
                       range. You can have any number of these zones without

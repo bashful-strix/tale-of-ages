@@ -2,8 +2,6 @@ module ToA.Resource.Icon.Job.Sealer
   ( sealer
   ) where
 
-import Prelude
-
 import Data.FastVect.FastVect ((:), empty)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
@@ -137,20 +135,18 @@ sealer =
           , cost: Two /\ 4
           , tags: [ Attack ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text "You cannot unleash this ability before round 4." ]
-              , Step Nothing $ Eff [ Text "Teleport 4." ]
-              , Step Nothing $ AttackStep
-                  [ Text "4 damage" ]
-                  [ Text "+", Dice 2 D6, Text " damage." ]
-              , Step Nothing $ KeywordStep (Name "Excel")
+              , Step Eff Nothing [ Text "Teleport 4." ]
+              , AttackStep [ Text "4 damage" ] [ Text "+", Dice 2 D6 ]
+              , Step (KeywordStep (Name "Excel")) Nothing
                   [ Text
                       """All allies in range 1-2 of your foe may teleport into
                       free adjacent space to your foe. Then your foe takes """
                   , Dice 2 D6
                   , Text " damage from each ally that teleported this way."
                   ]
-              , Step Nothing $ KeywordStep (Name "Critical Hit")
+              , Step (KeywordStep (Name "Critical Hit")) Nothing
                   [ Text "Excel effect has no maximum range." ]
               ]
           }
@@ -165,17 +161,15 @@ sealer =
           , cost: One
           , tags: [ RangeTag Melee ]
           , steps:
-              [ Step Nothing $ Eff [ Text "Teleport 1." ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D3 ]
-              , Step Nothing $ KeywordStep (Name "Excel")
+              [ Step Eff Nothing [ Text "Teleport 1." ]
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D3 ]
+              , Step (KeywordStep (Name "Excel")) Nothing
                   [ Text
                       """The target of your attack explodes with divine energy
                       with a burst 1 (target) area effect. All foes in the area
                       take 2 damage, and allies in the area gain 2 vigor."""
                   ]
-              , Step Nothing $ KeywordStep (Name "Critical Hit")
+              , Step (KeywordStep (Name "Critical Hit")) Nothing
                   [ Text
                       """Increase burst area by help the round number, rounded
                       up."""
@@ -193,7 +187,7 @@ sealer =
           , cost: Two
           , tags: [ RangeTag (Range (NumVar 2) (NumVar 5)) ]
           , steps:
-              [ Step Nothing $ Eff
+              [ Step Eff Nothing
                   [ Text
                       """Choose a blast 3 area in range. You an all adjacent
                       allies may teleport into free space in the area, in any
@@ -203,7 +197,7 @@ sealer =
                   , Italic [ Ref (Name "Brand") [ Text "branded" ] ]
                   , Text " and pushed 1 away from the center."
                   ]
-              , Step Nothing $ Eff
+              , Step Eff Nothing
                   [ Text
                       """If you excelled this turn, reduce the action cost of
                       this ability to 1 action. If you critical hit, it
@@ -223,7 +217,7 @@ sealer =
           , cost: One
           , tags: [ KeywordTag (Name "Stance"), End ]
           , steps:
-              [ Step (Just D6) $ KeywordStep (Name "Stance")
+              [ Step (KeywordStep (Name "Stance")) (Just D6)
                   [ Bold [ Text "End your turn" ]
                   , Text
                       """ and enter this stance. While in this stance, you can
@@ -257,7 +251,7 @@ sealer =
               , KeywordTag (Name "Power Die")
               ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Mark")
+              [ Step (KeywordStep (Name "Mark")) Nothing
                   [ Text
                       """Mark a foe in range, then set out a power die at 1.
                       When you or an ally attacks your foe, they gain """

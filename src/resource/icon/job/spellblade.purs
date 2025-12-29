@@ -140,7 +140,7 @@ spellblade =
           , cost: Two /\ 4
           , tags: [ KeywordTag (Name "Zone") ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Zone")
+              [ Step (KeywordStep (Name "Zone")) Nothing
                   [ Text
                       """Your blade extends and you make two massive cuts across
                       the map, splitting the walls between worlds. Draw a cross
@@ -177,11 +177,9 @@ spellblade =
           , cost: One
           , tags: [ Attack, RangeTag Close, AreaTag (Line (NumVar 6)) ]
           , steps:
-              [ Step Nothing $ AttackStep
-                  [ Text "3 damage" ]
-                  [ Text "+", Dice 1 D3 ]
-              , Step Nothing $ AreaEff [ Text "3 damage." ]
-              , Step Nothing $ KeywordStep (Name "Isolate")
+              [ AttackStep [ Text "3 damage" ] [ Text "+", Dice 1 D3 ]
+              , Step AreaEff Nothing [ Text "3 damage." ]
+              , Step (KeywordStep (Name "Isolate")) Nothing
                   [ Text
                       """Isolated foes in the area are struck by a lightning
                       bolt, taking 2 damage again. You may then teleport
@@ -200,7 +198,7 @@ spellblade =
           , cost: One
           , tags: [ End ]
           , steps:
-              [ Step (Just D3) $ Eff
+              [ Step Eff (Just D3)
                   [ Text "End your turn. Your next attack gains:"
                   , List Unordered
                       [ [ Text "+2 damage on hit" ]
@@ -214,7 +212,7 @@ spellblade =
                         ]
                       ]
                   ]
-              , Step Nothing $ KeywordStep (Name "Isolate")
+              , Step (KeywordStep (Name "Isolate")) Nothing
                   [ Text "Teleport your foe +2 on hit." ]
               ]
           }
@@ -229,7 +227,7 @@ spellblade =
           , cost: One
           , tags: [ KeywordTag (Name "Stance"), KeywordTag (Name "Power die") ]
           , steps:
-              [ Step Nothing $ KeywordStep (Name "Stance")
+              [ Step (KeywordStep (Name "Stance")) Nothing
                   [ Text "Gain "
                   , Italic [ Ref (Name "Keen") [ Text "keen" ] ]
                   , Text
@@ -253,12 +251,12 @@ spellblade =
                       , [ Text "If the die ticks to 0, exit this stance." ]
                       ]
                   ]
-              , Step Nothing $ KeywordStep (Name "Isolate")
+              , Step (KeywordStep (Name "Isolate")) Nothing
                   [ Text
                       """If you end your turn with no other characters adjacent,
                       regain two swords."""
                   ]
-              , Step (Just D3) $ KeywordStep (Name "Isolate")
+              , Step (KeywordStep (Name "Isolate")) (Just D3)
                   [ Text "You may fire "
                   , Italic [ Dice 1 D3 ]
                   , Text " swords at a foe instead if they are isolated."
@@ -277,20 +275,24 @@ spellblade =
           , cost: Two
           , tags: [ Attack, KeywordTag (Name "Mark"), RangeTag Melee ]
           , steps:
-              [ Step Nothing $ Eff [ Text "Teleport 2." ]
-              , Step Nothing $ AttackStep
-                  [ Text "2 damage" ]
-                  [ Text "+", Dice 1 D3 ]
-              , SubStep Nothing
-                  ( AbilityItem
+              [ Step Eff Nothing [ Text "Teleport 2." ]
+              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D3 ]
+              , SubStep OnHit Nothing
+                  [ Bold [ Ref (Name "Mark") [ Text "Mark" ] ]
+                  , Text
+                      """ your foe. then gain the following interrupt at the end
+                      of your turns while your foe is marked. You can choose not
+                      to trigger it."""
+                  ]
+                  $ AbilityItem
                       { name: Name "Ten Thousand Cuts"
                       , colour: Name "Blue"
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step Nothing $ TriggerStep
+                          [ Step TriggerStep Nothing
                               [ Text "The end of your foe's turn." ]
-                          , Step (Just D6) $ Eff
+                          , Step Eff (Just D6)
                               [ Text
                                   """Call a number between 1 and 6, then roll
                                   the effect die. If you roll equal to or over
@@ -301,7 +303,7 @@ spellblade =
                                   [ Ref (Name "Pierce") [ Text "piercing" ] ]
                               , Text " damage to them. Then end this mark."
                               ]
-                          , Step Nothing $ KeywordStep (Name "Isolate")
+                          , Step (KeywordStep (Name "Isolate")) Nothing
                               [ Text
                                   """Increase each instance of damage to 3
                                   damage. If there are no other characters in
@@ -310,14 +312,6 @@ spellblade =
                               ]
                           ]
                       }
-                  )
-                  $ OnHit
-                      [ Bold [ Ref (Name "Mark") [ Text "Mark" ] ]
-                      , Text
-                          """ your foe. then gain the following interrupt at the
-                          end of your turns while your foe is marked. You can
-                          choose not to trigger it."""
-                      ]
               ]
           }
       ]
