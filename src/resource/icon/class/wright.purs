@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
@@ -153,7 +153,6 @@ wright =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
   , talents: []
@@ -196,7 +195,7 @@ wright =
               , RangeTag (Range (NumVar 2) (NumVar 6))
               ]
           , steps:
-              [ SubStep (KeywordStep (Name "Zone")) Nothing
+              [ InsetStep (KeywordStep (Name "Zone")) Nothing
                   [ Text "Create "
                   , Dice 1 D3
                   , Text
@@ -205,7 +204,7 @@ wright =
                       prime at the end of your turn. An ember cannot be placed
                       adjacent to another ember."""
                   ]
-                  $ KeywordItem
+                  $ KeywordInset
                       { name: Name "Ember"
                       , colour: Name "Blue"
                       , keyword: Name "Zone"

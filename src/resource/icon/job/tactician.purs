@@ -80,7 +80,6 @@ tactician =
               , Italic [ Ref (Name "Vigor") [ Text "vigor" ] ]
               , Text " equal to the distance dashed."
               ]
-          , subItem: Nothing
           }
       ]
   , talents:
@@ -94,7 +93,6 @@ tactician =
               , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Spur"
@@ -106,7 +104,6 @@ tactician =
               , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Fieldwork"
@@ -119,7 +116,6 @@ tactician =
               , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
   , abilities:

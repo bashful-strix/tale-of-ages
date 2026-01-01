@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Variable(..)
   )
@@ -91,7 +91,6 @@ hawkKnight =
                   """. You may keep this effect even if you miss or are
                   defeated."""
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -104,7 +103,6 @@ hawkKnight =
                   """If you're bloodied, lower your threshold to critical hit by
                   1. If you're in crisis, lower it by 2."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Sinew"
@@ -114,7 +112,6 @@ hawkKnight =
                   """If you don't attack during your turn, you may increase all
                   lines and crosses you create by +2 on your next turn."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Dissect"
@@ -124,7 +121,6 @@ hawkKnight =
                   """You may add damage to critical hits equal to half the round
                   number, rounded up."""
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -222,14 +218,14 @@ hawkKnight =
           , cost: One
           , tags: []
           , steps:
-              [ SubStep Eff Nothing
+              [ InsetStep Eff Nothing
                   [ Text "Gain "
                   , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
                   , Text
                       """, and gain the following interrupt until the start of
                       your next turn."""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Turn Blades/Cut Bullets"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)

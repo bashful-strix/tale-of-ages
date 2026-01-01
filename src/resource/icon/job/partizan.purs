@@ -12,10 +12,10 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Variable(..)
   )
@@ -93,7 +93,6 @@ partizan =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -106,7 +105,6 @@ partizan =
                   """While bloodied, increase all flight gained or granted by
                   +1, or +2 if you're in crisis."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Soar"
@@ -120,7 +118,6 @@ partizan =
               , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Vantage"
@@ -132,7 +129,6 @@ partizan =
               , Bold [ Ref (Name "Dominant") [ Text "Dominant" ] ]
               , Text ": Increase all push and pull by +1."
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -149,13 +145,13 @@ partizan =
           , cost: One /\ 3
           , tags: [ RangeTag (Range (NumVar 2) (NumVar 5)), End ]
           , steps:
-              [ SubStep Eff Nothing
+              [ InsetStep Eff Nothing
                   [ Bold [ Text "End your turn" ]
                   , Text
                       """ and choose a foe in range, then gain the following
                       interrupt: """
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Drill Descent"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)

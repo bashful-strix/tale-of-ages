@@ -91,7 +91,6 @@ colossus =
                   this effect. At the start of your turn when you lack this
                   effect, roll the effect die. On a 4+, regain this effect."""
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -104,14 +103,12 @@ colossus =
               , Ref (Name "Sacrifice") [ Text "sacrifice" ]
               , Text ", gain 2 vigor. Increase this to 4 if you're in crisis."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Adrenaline"
           , colour: Name "Red"
           , description:
               [ Text "At 1 hp, all your attacks deal +3 base and area damage." ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Surge (Colossus)"
@@ -122,7 +119,6 @@ colossus =
                   negative status tokens. If you are at 1 hp, you may clear all
                   statuses instead."""
               ]
-          , subItem: Nothing
           }
       ]
 

@@ -83,7 +83,6 @@ sealer =
                   energy with a burst 1 (target) area effect. All foes in the
                   area take 2 damage, and allies in the area gain 2 vigor."""
               ]
-          , subItem: Nothing
           }
       ]
   , talents:
@@ -95,7 +94,6 @@ sealer =
                   """At round 3+, increase all your burst effects by +1, and +1
                   again at round 5+."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Flash"
@@ -107,7 +105,6 @@ sealer =
               , Dice 1 D3
               , Text "+1 spaces instead."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Ascension"
@@ -118,7 +115,6 @@ sealer =
                   increase that range by +1 and you may teleport them +1 spaces
                   further."""
               ]
-          , subItem: Nothing
           }
       ]
   , abilities:

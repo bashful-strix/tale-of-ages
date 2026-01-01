@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
@@ -90,7 +90,6 @@ weepingAssassin =
               , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
   , talents:
@@ -104,7 +103,6 @@ weepingAssassin =
               , Italic [ Ref (Name "Isolate") [ Text "isolate" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Infiltrate"
@@ -121,7 +119,6 @@ weepingAssassin =
               , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Shimmer"
@@ -131,7 +128,6 @@ weepingAssassin =
               , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
   , abilities:
@@ -242,12 +238,12 @@ weepingAssassin =
           , cost: One
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:
-              [ SubStep (KeywordStep (Name "Mark")) Nothing
+              [ InsetStep (KeywordStep (Name "Mark")) Nothing
                   [ Text
                       """Mark a foe then gain the following interrupt at the
                       start of each round while they are marked."""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Sudden Strike"
                       , colour: Name "Yellow"
                       , cost: Interrupt (NumVar 1)

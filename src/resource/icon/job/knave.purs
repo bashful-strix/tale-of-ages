@@ -115,7 +115,6 @@ knave =
                   characters removed one hatred after using any ability that
                   damages you."""
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -132,7 +131,6 @@ knave =
               , Italic [ Text "dazed" ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Suffer"
@@ -143,7 +141,6 @@ knave =
                   transfer all stacks of one of its negatice statuses to any
                   other foe in range 1-3."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Oppress"
@@ -154,7 +151,6 @@ knave =
                   of its statuses by +1 after the attack resolves, or +2 if that
                   foe was in crisis."""
               ]
-          , subItem: Nothing
           }
       ]
 

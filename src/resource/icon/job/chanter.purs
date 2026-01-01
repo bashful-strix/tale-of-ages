@@ -111,7 +111,6 @@ chanter =
                   , [ Text "You exit the stance after attacking." ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -126,7 +125,6 @@ chanter =
                   stance that costs 2 actions this turn to 1 action. If you do,
                   you cannot attack that turn."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Elegance"
@@ -136,7 +134,6 @@ chanter =
                   """When you enter a stance for the first time in a round, you
                   may fly 3."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Peace"
@@ -146,7 +143,6 @@ chanter =
                   """You take half damage in the first round of combat. This
                   effect breaks if you attack."""
               ]
-          , subItem: Nothing
           }
       ]
 

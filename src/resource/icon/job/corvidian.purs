@@ -12,10 +12,10 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Variable(..)
   )
@@ -90,7 +90,6 @@ corvidian =
               , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -105,7 +104,6 @@ corvidian =
               , Power
               , Text " against characters in crisis."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Mortality"
@@ -115,7 +113,6 @@ corvidian =
                   """Foes in crisis treat you and all allies adjacent to you as
                   having +1 armor."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Camraderie"
@@ -131,7 +128,6 @@ corvidian =
               , Italic [ Ref (Name "Vigor") [ Text "vigor" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -260,7 +256,7 @@ corvidian =
           , cost: One
           , tags: [ End ]
           , steps:
-              [ SubStep Eff Nothing
+              [ InsetStep Eff Nothing
                   [ Bold [ Text "End your turn" ]
                   , Text " and gain "
                   , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
@@ -268,7 +264,7 @@ corvidian =
                       """. Gain the following interrupt until the end your next
                       turn."""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Cut Down"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)

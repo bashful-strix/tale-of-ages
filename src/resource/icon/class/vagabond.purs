@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
@@ -153,7 +153,6 @@ vagabond =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
   , talents: []
@@ -288,12 +287,12 @@ vagabond =
               , KeywordTag (Name "Summon")
               ]
           , steps:
-              [ SubStep (KeywordStep (Name "Summon")) (Just D6)
+              [ InsetStep (KeywordStep (Name "Summon")) (Just D6)
                   [ Text
                       """Summon one or (5+) two death traps in a free space in
                       range. Traps arm at the end of your turn."""
                   ]
-                  $ SummonItem
+                  $ SummonInset
                       { name: Name "Death Trap"
                       , colour: Name "Yellow"
                       , max: 1

@@ -163,7 +163,6 @@ mendicant =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
   , talents: []

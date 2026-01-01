@@ -1,16 +1,19 @@
 module ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
 
   , AbilityData
+
+  , class Inseted
+  , _inset
 
   , _Ability
   , _LimitBreak
@@ -168,27 +171,30 @@ data Tag
 
 derive instance Eq Tag
 
-data SubItem
-  = SummonItem
+data Inset
+  = SummonInset
       { name :: Name
       , colour :: Name
       , max :: Int
       , actions :: Array Markup
       , effects :: Array Markup
       }
-  | AbilityItem
+  | AbilityInset
       { name :: Name
       , colour :: Name
       , cost :: Action
       , tags :: Array Tag
       , steps :: Array Step
       }
-  | KeywordItem
+  | KeywordInset
       { name :: Name
       , colour :: Name
       , keyword :: Name
       , steps :: Array Step
       }
+
+class Inseted a where
+  _inset :: AffineTraversal' a Inset
 
 data StepType
   = Eff
@@ -203,4 +209,4 @@ data StepType
 data Step
   = Step StepType (Maybe Die) Markup
   | AttackStep Markup Markup
-  | SubStep StepType (Maybe Die) Markup SubItem
+  | InsetStep StepType (Maybe Die) Markup Inset

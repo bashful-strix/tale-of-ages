@@ -150,7 +150,6 @@ stalwart =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
   , talents: []

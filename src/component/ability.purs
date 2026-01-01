@@ -1,6 +1,7 @@
 module ToA.Component.Ability
   ( renderAbility
   , renderCost
+  , renderInset
   , renderStep
   , renderTags
   ) where
@@ -25,11 +26,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , _action
@@ -216,13 +217,13 @@ renderStep icon = case _ of
                 ]
           ]
       ]
-  SubStep d s t sub ->
+  InsetStep d s t ins ->
     D.li []
       [ renderStepName icon d s
       , D.span [] [ markup icon t]
       , D.div
           [ css_ [ "pl-8" ] ]
-          [ renderSubItem icon sub ]
+          [ renderInset icon ins ]
       ]
 
 renderStepName :: Icon -> StepType -> Maybe Die -> Nut
@@ -248,9 +249,9 @@ renderStepName icon s d =
         (label <$> ss)
     OtherStep k -> markup icon k
 
-renderSubItem :: Icon -> SubItem -> Nut
-renderSubItem icon@{ colours } = case _ of
-  SummonItem si ->
+renderInset :: Icon -> Inset -> Nut
+renderInset icon@{ colours } = case _ of
+  SummonInset si ->
     D.div
       [ css_ [ "ml-8" ] ]
       [ D.div
@@ -300,7 +301,7 @@ renderSubItem icon@{ colours } = case _ of
           ]
       ]
 
-  AbilityItem ai ->
+  AbilityInset ai ->
     D.div
       [ css_ [ "ml-8" ] ]
       [ D.div
@@ -335,7 +336,7 @@ renderSubItem icon@{ colours } = case _ of
           ]
       ]
 
-  KeywordItem ki ->
+  KeywordInset ki ->
     D.div
       [ css_ [ "ml-8" ] ]
       [ D.div

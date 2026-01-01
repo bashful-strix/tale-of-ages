@@ -91,7 +91,6 @@ cleaver =
               , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -101,7 +100,6 @@ cleaver =
           , colour: Name "Red"
           , description:
               [ Text "Your attacks with a range of melee gain range 1-2." ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Shred"
@@ -113,7 +111,6 @@ cleaver =
               , Italic [ Ref (Name "Pierce") [ Text "pierce" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Rage"
@@ -129,7 +126,6 @@ cleaver =
               , Italic [ Text "reckless" ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
 

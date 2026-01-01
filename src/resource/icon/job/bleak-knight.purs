@@ -97,7 +97,6 @@ bleakKnight =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -113,7 +112,6 @@ bleakKnight =
               , Dice 1 D6
               , Text " if you're in crisis."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Torment"
@@ -123,7 +121,6 @@ bleakKnight =
                   """Adjacent foes do not clear negative statuses. Foes in
                   crisis additionally cannot gain vigor."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Sanguine"
@@ -135,7 +132,6 @@ bleakKnight =
                   """ on saves if you are afflicted. If you have 3 or more
                   negative statuses, you automatically pass saves."""
               ]
-          , subItem: Nothing
           }
       ]
 

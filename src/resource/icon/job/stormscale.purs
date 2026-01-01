@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
@@ -110,7 +110,6 @@ stormscale =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
   , talents:
@@ -122,7 +121,6 @@ stormscale =
                   """Once a round, when you pass through an ally's space, you
                   may push them 2 or allow them to dash 2."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Swiftness"
@@ -132,7 +130,6 @@ stormscale =
               , Italic [ Ref (Name "Phasing") [ Text "phasing" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Thresh"
@@ -144,7 +141,6 @@ stormscale =
               , Italic [ Ref (Name "Evasion") [ Text "evasion" ] ]
               , Text " after it is spent this way."
               ]
-          , subItem: Nothing
           }
       ]
   , abilities:
@@ -301,12 +297,12 @@ stormscale =
               , RangeTag (Range (NumVar 1) (NumVar 2))
               ]
           , steps:
-              [ SubStep (KeywordStep (Name "Summon")) (Just D6)
+              [ InsetStep (KeywordStep (Name "Summon")) (Just D6)
                   [ Text
                       """You summon one or (5+) two spirit sparks in range. The
                       sparks prime after your turn passes."""
                   ]
-                  $ SummonItem
+                  $ SummonInset
                       { name: Name "Spirit Spark"
                       , colour: Name "Yellow"
                       , max: 4

@@ -1,6 +1,8 @@
 module ToA.Data.Icon.Trait
   ( Trait(..)
-  , _subItem
+  , TraitData
+  , _Trait
+  , _InsetTrait
   , class Traited
   , _trait
   ) where
@@ -8,34 +10,59 @@ module ToA.Data.Icon.Trait
 import Prelude
 
 import Data.Lens (Lens')
-import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (Maybe)
-import Data.Newtype (class Newtype)
+import Data.Lens.Lens (lens', lensStore)
+import Data.Lens.Prism (Prism', prism')
+import Data.Maybe (Maybe(..))
 
-import ToA.Data.Icon.Ability (SubItem)
+import Type.Row (type (+))
+
+import ToA.Data.Icon.Ability (class Inseted, Inset)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 import ToA.Util.Optic (key)
 
-newtype Trait = Trait
-  { name :: Name
+type TraitData r =
+  ( name :: Name
   , description :: Markup
-  , subItem :: Maybe SubItem
-  }
+  | r
+  )
 
-derive instance Newtype Trait _
+data Trait
+  = Trait { | TraitData + () }
+  | InsetTrait { inset :: Inset | TraitData + () }
+
 instance Eq Trait where
   eq (Trait { name: n }) (Trait { name: m }) = n == m
+  eq (InsetTrait { name: n }) (InsetTrait { name: m }) = n == m
+  eq _ _ = false
 
 instance Named Trait where
-  _name = _Newtype <<< key @"name"
+  _name = lens' case _ of
+    Trait a -> map Trait <$> lensStore k a
+    InsetTrait a -> map InsetTrait <$> lensStore k a
+    where
+    k = key @"name"
 
 instance Described Trait where
-  _desc = _Newtype <<< key @"description"
+  _desc = lens' case _ of
+    Trait a -> map Trait <$> lensStore k a
+    InsetTrait a -> map InsetTrait <$> lensStore k a
+    where
+    k = key @"description"
 
-_subItem :: Lens' Trait (Maybe SubItem)
-_subItem = _Newtype <<< key @"subItem"
+instance Inseted Trait where
+  _inset = _InsetTrait <<< key @"inset"
+
+_Trait :: Prism' Trait ({ | TraitData + () })
+_Trait = prism' Trait case _ of
+  Trait a -> Just a
+  _ -> Nothing
+
+_InsetTrait :: Prism' Trait ({ inset :: Inset | TraitData + () })
+_InsetTrait = prism' InsetTrait case _ of
+  InsetTrait a -> Just a
+  _ -> Nothing
 
 class Traited a where
   _trait :: Lens' a Name

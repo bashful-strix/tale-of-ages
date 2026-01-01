@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
@@ -90,7 +90,6 @@ workshopKnight =
                     ]
                   ]
               ]
-          , subItem: Nothing
           }
       ]
   , talents:
@@ -105,7 +104,6 @@ workshopKnight =
               , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
               , Text " when you are first bloodied in a combat."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Endure"
@@ -117,7 +115,6 @@ workshopKnight =
               , Italic [ Ref (Name "Vigor") [ Text "vigor" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Bolster"
@@ -130,7 +127,6 @@ workshopKnight =
               , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       ]
   , abilities:
@@ -262,12 +258,12 @@ workshopKnight =
           , steps:
               [ AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
               , Step OnHit Nothing [ Text "Push or pull target 1 space." ]
-              , SubStep (KeywordStep (Name "Conserve")) Nothing
+              , InsetStep (KeywordStep (Name "Conserve")) Nothing
                   [ Text
                       """You may use the following version of this ability
                       instead."""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Arsenal Flash Bomb"
                       , colour: Name "Red"
                       , cost: One

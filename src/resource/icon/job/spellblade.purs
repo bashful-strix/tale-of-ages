@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Variable(..)
   )
@@ -85,7 +85,6 @@ spellblade =
                   """, you may teleport 4 instead. If there are no other
                   characters in range 1-2, you may teleport 6."""
               ]
-          , subItem: Nothing
           }
       ]
   , talents:
@@ -98,7 +97,6 @@ spellblade =
               , Text
                   " character, you may teleport 2 after the ability resolves."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Fence"
@@ -109,7 +107,6 @@ spellblade =
                   line or arc effects, they take 2 damage again after the
                   ability resolves."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Bladework"
@@ -119,7 +116,6 @@ spellblade =
                   """The first time in a round you take damage, after the
                   triggering ability resolves, you may teleport 2."""
               ]
-          , subItem: Nothing
           }
       ]
   , abilities:
@@ -277,14 +273,14 @@ spellblade =
           , steps:
               [ Step Eff Nothing [ Text "Teleport 2." ]
               , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D3 ]
-              , SubStep OnHit Nothing
+              , InsetStep OnHit Nothing
                   [ Bold [ Ref (Name "Mark") [ Text "Mark" ] ]
                   , Text
                       """ your foe. then gain the following interrupt at the end
                       of your turns while your foe is marked. You can choose not
                       to trigger it."""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Ten Thousand Cuts"
                       , colour: Name "Blue"
                       , cost: Interrupt (NumVar 1)

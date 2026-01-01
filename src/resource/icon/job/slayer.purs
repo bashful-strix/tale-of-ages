@@ -12,11 +12,11 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
@@ -88,7 +88,6 @@ slayer =
               , Italic [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
               , Text ", and effects cannot prevent you from attacking."
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -101,7 +100,6 @@ slayer =
                   """While at maximum vigor, you are immune to involuntary
                   movement."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Hale"
@@ -115,7 +113,6 @@ slayer =
               , Italic [ Text "vigor" ]
               , Text "."
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Deflect"
@@ -136,7 +133,6 @@ slayer =
                   benefit from any of these effects until the start of your next
                   turn."""
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -203,14 +199,14 @@ slayer =
           , cost: One
           , tags: [ TargetTag Self ]
           , steps:
-              [ SubStep Eff Nothing
+              [ InsetStep Eff Nothing
                   [ Text "Gain "
                   , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
                   , Text
                       """ and the following interrupt until the start of your
                       next turn."""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Shoulder Check"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)
@@ -286,7 +282,7 @@ slayer =
           , cost: Two
           , tags: [ RangeTag Close, AreaTag (Blast (NumVar 2)), End ]
           , steps:
-              [ SubStep Eff Nothing
+              [ InsetStep Eff Nothing
                   [ Bold [ Text "End your turn" ]
                   , Text ", target a close blast 2 area, gain, "
                   , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
@@ -295,7 +291,7 @@ slayer =
                       your next turn. If you move, the targeted area moves with
                       you, mirroring your movement."""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Crusher Release"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)

@@ -1,41 +1,71 @@
 module ToA.Data.Icon.Talent
   ( Talent(..)
-  , _subItem
+  , TalentData
+  , _Talent
+  , _InsetTalent
   ) where
 
 import Prelude
 
-import Data.Lens (Lens')
-import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (Maybe)
-import Data.Newtype (class Newtype)
+import Data.Lens.Lens (lens', lensStore)
+import Data.Lens.Prism (Prism', prism')
+import Data.Maybe (Maybe(..))
 
-import ToA.Data.Icon.Ability (SubItem)
+import Type.Row (type (+))
+
+import ToA.Data.Icon.Ability (class Inseted, Inset)
 import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 import ToA.Util.Optic (key)
 
-newtype Talent = Talent
-  { name :: Name
+type TalentData r =
+  ( name :: Name
   , colour :: Name
   , description :: Markup
-  , subItem :: Maybe SubItem
-  }
+  | r
+  )
 
-derive instance Newtype Talent _
+data Talent
+  = Talent { | TalentData + ()}
+  | InsetTalent { inset :: Inset | TalentData + () }
+
 instance Eq Talent where
   eq (Talent { name: n }) (Talent { name: m }) = n == m
+  eq (InsetTalent { name: n }) (InsetTalent { name: m }) = n == m
+  eq _ _ = false
 
 instance Named Talent where
-  _name = _Newtype <<< key @"name"
+  _name = lens' case _ of
+    Talent a -> map Talent <$> lensStore k a
+    InsetTalent a -> map InsetTalent <$> lensStore k a
+    where
+    k = key @"name"
 
 instance Coloured Talent where
-  _colour = _Newtype <<< key @"colour"
-
-_subItem :: Lens' Talent (Maybe SubItem)
-_subItem = _Newtype <<< key @"subItem"
+  _colour = lens' case _ of
+    Talent a -> map Talent <$> lensStore k a
+    InsetTalent a -> map InsetTalent <$> lensStore k a
+    where
+    k = key @"colour"
 
 instance Described Talent where
-  _desc = _Newtype <<< key @"description"
+  _desc = lens' case _ of
+    Talent a -> map Talent <$> lensStore k a
+    InsetTalent a -> map InsetTalent <$> lensStore k a
+    where
+    k = key @"description"
+
+instance Inseted Talent where
+  _inset = _InsetTalent <<< key @"inset"
+
+_Talent :: Prism' Talent ({ | TalentData + () })
+_Talent = prism' Talent case _ of
+  Talent a -> Just a
+  _ -> Nothing
+
+_InsetTalent :: Prism' Talent ({ inset :: Inset | TalentData + () })
+_InsetTalent = prism' InsetTalent case _ of
+  InsetTalent a -> Just a
+  _ -> Nothing

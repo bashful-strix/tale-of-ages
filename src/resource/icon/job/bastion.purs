@@ -12,10 +12,10 @@ import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Ability(..)
   , Action(..)
+  , Inset(..)
   , Range(..)
   , Step(..)
   , StepType(..)
-  , SubItem(..)
   , Tag(..)
   , Target(..)
   , Variable(..)
@@ -90,7 +90,6 @@ bastion =
               , Bold [ Text "Overdrive" ]
               , Text ": Twice a round."
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -104,7 +103,6 @@ bastion =
                   area effects that include you as a target deal +1 area
                   damage."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Supernova"
@@ -114,7 +112,6 @@ bastion =
                   """Count the current round number as 1 higher for the rest of
                   combat after any ally is defeated."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Presence"
@@ -124,7 +121,6 @@ bastion =
               , Bold [ Text "Overdrive" ]
               , Text ": increase aura size by +1."
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -234,14 +230,14 @@ bastion =
           , cost: One
           , tags: [ End, KeywordTag (Name "Aura"), TargetTag Self ]
           , steps:
-              [ SubStep Eff Nothing
+              [ InsetStep Eff Nothing
                   [ Text "Gain "
                   , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
                   , Text
                       """, aura 1, and the following interrupt until the
                       start of your next turn:"""
                   ]
-                  $ AbilityItem
+                  $ AbilityInset
                       { name: Name "Shield Block"
                       , colour: Name "Red"
                       , cost: Interrupt (NumVar 1)

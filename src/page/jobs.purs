@@ -37,10 +37,11 @@ import Deku.Hooks ((<#~>))
 
 import FRP.Poll (Poll)
 
-import ToA.Component.Ability (renderAbility)
+import ToA.Component.Ability (renderAbility, renderInset)
 import ToA.Component.Markup (markup, printMarkup)
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon (Icon)
+import ToA.Data.Icon.Ability (_inset)
 import ToA.Data.Icon.Class
   ( _apprentice
   , _basic
@@ -527,12 +528,12 @@ renderJobDesc icon name = icon <#~> \icon_@{ colours, jobs, talents, traits } ->
                   [ D.text_ $ j ^. _trait <<< _Newtype ]
               , D.div
                   [ css_ [ "overflow-scroll" ] ]
-                  [ traits #
-                      traversed
-                          <<< filtered (_name `elemOf` (j ^. _trait))
-                          <<< _desc
-                      #~ markup icon_
-                  ]
+                  $ traits #
+                      traversed <<< filtered (_name `elemOf` (j ^. _trait))
+                      #~ \t ->
+                        [ markup icon_ $ t ^. _desc
+                        , t # _inset #~ renderInset icon_
+                        ]
               ]
 
           , D.div
@@ -562,7 +563,10 @@ renderJobDesc icon name = icon <#~> \icon_@{ colours, jobs, talents, traits } ->
                                           <<< _value
                                 ]
                                 [ D.text_ $ viewName t ]
-                            , D.div [] [ t # _desc #~ markup icon_ ]
+                            , D.div []
+                                [ t # _desc #~ markup icon_
+                                , t # _inset #~ renderInset icon_
+                                ]
                             ]
                   ]
               ]

@@ -80,7 +80,6 @@ breaker =
                   obstruction, you may deal damage to them equal to the round
                   number +1."""
               ]
-          , subItem: Nothing
           }
       ]
 
@@ -97,7 +96,6 @@ breaker =
                   """ during that movement. This also applies to any dash you
                   grant to an ally."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Seeker"
@@ -108,7 +106,6 @@ breaker =
                   3, as long as each space of the dash takes you closer to a
                   foe."""
               ]
-          , subItem: Nothing
           }
       , Talent
           { name: Name "Topple"
@@ -119,7 +116,6 @@ breaker =
                   impact with another character, you can push the second
                   character 2 spaces and deal 2 damage to them."""
               ]
-          , subItem: Nothing
           }
       ]
 
