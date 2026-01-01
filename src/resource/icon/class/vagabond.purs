@@ -296,16 +296,17 @@ vagabond =
                       { name: Name "Death Trap"
                       , colour: Name "Yellow"
                       , max: 1
-                      , actions: []
-                      , effects:
-                          [ [ Text
-                                """Mark out a cross 1 area centered on the trap
-                                when it arms. When a foe starts their turn in
-                                the area, or voluntarily enters the area, it
-                                explodes for an area effect, dismissing it.
-                                Characters inside must save or take 4 damage,
-                                twice, or just once on a successful save."""
-                            ]
+                      , abilities:
+                          [ Step SummonEff Nothing
+                              [ Text
+                                  """Mark out a cross 1 area centered on the
+                                  trap when it arms. When a foe starts their
+                                  turn in the area, or voluntarily enters the
+                                  area, it explodes for an area effect,
+                                  dismissing it. Characters inside must save or
+                                  take 4 damage, twice, or just once on a
+                                  successful save."""
+                              ]
                           ]
                       }
               ]

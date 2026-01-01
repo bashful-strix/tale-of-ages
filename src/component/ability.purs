@@ -42,7 +42,7 @@ import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Name (_name)
-import ToA.Util.Optic ((^::), (#~))
+import ToA.Util.Optic ((#~))
 import ToA.Util.Html (css_)
 
 renderAbility :: Icon -> Ability -> Nut
@@ -153,11 +153,7 @@ renderAbility icon@{ colours } a =
 
     , D.div [ css_ [ "italic" ] ] [ markup icon $ a ^. _desc ]
 
-    , D.div []
-        [ D.ol
-            [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-            $ a ^:: _steps <<< traversed <<< to (renderStep icon)
-        ]
+    , renderSteps icon $ a ^. _steps
     ]
 
 renderCost :: Action -> String
@@ -194,6 +190,14 @@ renderTags = map case _ of
     Object -> "Object"
   KeywordTag k -> k ^. simple _Newtype
   LimitTag n l -> show n <> "/" <> l
+
+renderSteps :: Icon -> Array Step -> Nut
+renderSteps icon steps =
+  D.div []
+    [ D.ol
+        [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+        $ renderStep icon <$> steps
+    ]
 
 renderStep :: Icon -> Step -> Nut
 renderStep icon = case _ of
@@ -247,6 +251,8 @@ renderStepName icon s d =
       intercalate
         (D.span [ css_ [ "font-normal" ] ] [ D.text_ ", or " ])
         (label <$> ss)
+    SummonEff -> D.text_ "Summon effect"
+    SummonAction -> D.text_ "Summon action"
     OtherStep k -> markup icon k
 
 renderInset :: Icon -> Inset -> Nut
@@ -277,28 +283,7 @@ renderInset icon@{ colours } = case _ of
       , D.div
           [ css_ [ "italic" ] ]
           [ D.text_ $ "Summon (" <> show si.max <> ")" ]
-      , D.div []
-          [ D.ol
-              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-              $ si.actions <#> \act ->
-                  D.li []
-                    [ D.span
-                        [ css_ [ "font-bold" ] ]
-                        [ D.text_ "Summon action: " ]
-                    , markup icon act
-                    ]
-          ]
-      , D.div []
-          [ D.ol
-              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-              $ si.effects <#> \eff ->
-                  D.li []
-                    [ D.span
-                        [ css_ [ "font-bold" ] ]
-                        [ D.text_ "Summon effect: " ]
-                    , markup icon eff
-                    ]
-          ]
+      , renderSteps icon si.abilities
       ]
 
   AbilityInset ai ->

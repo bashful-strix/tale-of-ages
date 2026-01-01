@@ -176,8 +176,7 @@ data Inset
       { name :: Name
       , colour :: Name
       , max :: Int
-      , actions :: Array Markup
-      , effects :: Array Markup
+      , abilities :: Array Step
       }
   | AbilityInset
       { name :: Name
@@ -204,6 +203,8 @@ data StepType
   | KeywordStep Name
   | VariableKeywordStep Name Variable
   | AltStep (NonEmptyArray StepType)
+  | SummonEff
+  | SummonAction
   | OtherStep Markup
 
 data Step

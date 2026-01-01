@@ -306,24 +306,27 @@ stormscale =
                       { name: Name "Spirit Spark"
                       , colour: Name "Yellow"
                       , max: 4
-                      , actions: []
-                      , effects:
-                          [ [ Text
-                                """When you or an ally enter a primed spark's
-                                space, it is struck by a massive lightning bolt,
-                                dealing 2 damage to all adjacent foes, then
-                                pushing them 1. If you or your ally moved 3 or
-                                more spaces in a straight line without stopping
-                                before entering the spark, increased this damage
-                                by +2 and push by +1, or by +"""
-                            , Dice 2 D3
-                            , Text
-                                """ and push by +2 if they moved 6 or more
-                                spaces. Then dismiss the spark. Foes can only
-                                take this damage once a turn."""
-                            ]
-                          , [ Text "Double this damage against foes in crisis."
-                            ]
+                      , abilities:
+                          [ Step SummonEff Nothing
+                              [ Text
+                                  """When you or an ally enter a primed spark's
+                                  space, it is struck by a massive lightning
+                                  bolt, dealing 2 damage to all adjacent foes,
+                                  then pushing them 1. If you or your ally
+                                  moved 3 or more spaces in a straight line
+                                  without stopping before entering the spark,
+                                  increased this damage by +2 and push by +1, or
+                                  by +"""
+                              , Dice 2 D3
+                              , Text
+                                  """ and push by +2 if they moved 6 or more
+                                  spaces. Then dismiss the spark. Foes can only
+                                  take this damage once a turn."""
+                              ]
+                          , Step SummonEff Nothing
+                              [ Text
+                                  "Double this damage against foes in crisis."
+                              ]
                           ]
                       }
               , Step (KeywordStep (Name "Heavy")) Nothing
