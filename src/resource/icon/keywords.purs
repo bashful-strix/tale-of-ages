@@ -236,6 +236,16 @@ keywords =
               ]
           }
       , Keyword
+          { name: Name "Precision"
+          , category: General
+          , description:
+              [ Text
+                  """Gains increased effects if its target is 4 or more spaces
+                  away, with effects increasing further if they are at 7+ spaces
+                  away."""
+              ]
+          }
+      , Keyword
           { name: Name "Quick"
           , category: General
           , description:
@@ -308,7 +318,7 @@ keywords =
               ]
           }
       , Keyword
-          { name: Name "weave"
+          { name: Name "Weave"
           , category: General
           , description:
               [ Text
