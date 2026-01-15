@@ -153,7 +153,7 @@ stormscale =
                   mantle the form of the most powerful apex predators of the
                   deep ocean."""
               ]
-          , cost: Quick /\ 2
+          , cost: Quick /\ 3
           , tags: [ TargetTag Self ]
           , steps:
               [ Step Eff Nothing
