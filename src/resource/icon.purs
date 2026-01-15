@@ -50,7 +50,7 @@ import ToA.Resource.Icon.Job.Zephyr (zephyr)
 import ToA.Resource.Icon.Job.Raconteur (raconteur)
 
 import ToA.Resource.Icon.Job.Harvester (harvester)
-import ToA.Resource.Icon.Job.FairyWright (fairyWright)
+import ToA.Resource.Icon.Job.FairWright (fairWright)
 import ToA.Resource.Icon.Job.Herbalist (herbalist)
 
 import ToA.Resource.Icon.Job.Sealer (sealer)
@@ -102,7 +102,7 @@ icon =
     -- mendicants
     <> mendicant
     <> (chanter <> zephyr <> raconteur)
-    <> (harvester <> fairyWright <> herbalist)
+    <> (harvester <> fairWright <> herbalist)
     <> (sealer <> shrineGuardian <> yaman)
     <> (seer <> chronomancer <> celestian)
 
