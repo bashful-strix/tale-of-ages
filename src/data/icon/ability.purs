@@ -157,6 +157,7 @@ data Target
   | Summon
   | Space
   | Object
+  | Character
 
 derive instance Eq Target
 

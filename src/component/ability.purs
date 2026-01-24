@@ -145,6 +145,7 @@ renderAbility icon@{ colours } a =
                           Summon -> "Summon"
                           Space -> "Space"
                           Object -> "Object"
+                          Character -> "Character"
                         KeywordTag k -> k ^. simple _Newtype
                         LimitTag n l -> show n <> "/" <> l
                     )
@@ -188,6 +189,7 @@ renderTags = map case _ of
     Summon -> "Summon"
     Space -> "Space"
     Object -> "Object"
+    Character -> "Character"
   KeywordTag k -> k ^. simple _Newtype
   LimitTag n l -> show n <> "/" <> l
 
