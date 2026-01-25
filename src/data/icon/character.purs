@@ -33,12 +33,14 @@ import Data.Either (Either(..))
 import Data.Filterable (partitionMap)
 import Data.Foldable (intercalate)
 import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.Lens (Lens')
+import Data.Lens (Lens', traversed)
+import Data.Lens.Fold (findOf)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Map (Map, fromFoldable)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype, unwrap)
 import Data.Profunctor.Strong (first)
+import Data.Traversable (traverse_)
 import Data.Tuple (fst)
 import Data.Tuple.Nested (type (/\), (/\))
 
@@ -48,8 +50,10 @@ import Parsing.Combinators.Array (many)
 import Parsing.String (anyTill, char, eof, string)
 import Parsing.String.Basic (intDecimal, skipSpaces)
 
+import ToA.Data.Icon (Icon)
+import ToA.Data.Icon (_abilities, _jobs, _talents) as I
 import ToA.Data.Icon.Job (JobLevel, jobLevelP, jsonJobLevel)
-import ToA.Data.Icon.Name (Name(..), class Named, jsonName)
+import ToA.Data.Icon.Name (Name(..), class Named, _name, jsonName)
 import ToA.Util.Optic (key)
 
 type CharacterData =
@@ -161,11 +165,11 @@ fromInt 11 = Just Eleven
 fromInt 12 = Just Twelve
 fromInt _ = Nothing
 
-stringCharacter :: Codec' (Either ParseError) String Character
-stringCharacter = codec' parseChar serialise
+stringCharacter :: Icon -> Codec' (Either ParseError) String Character
+stringCharacter icon = codec' parseChar serialise
   where
-  parseChar = (runParser ~$ (buildParser <* eof)) >>> map \(name /\ build) ->
-    Character { name, state: State {}, build }
+  parseChar = (runParser ~$ (buildParser icon <* eof)) >>>
+    map \(name /\ build) -> Character { name, state: State {}, build }
 
 serialise :: Character -> String
 serialise (Character { name, build: Build build }) =
@@ -201,14 +205,17 @@ gap :: Parser String Unit
 gap =
   optional (many (string "\n"))
 
-buildParser :: Parser String (Name /\ Build)
-buildParser = do
+buildParser :: Icon -> Parser String (Name /\ Build)
+buildParser icon = do
   skipSpaces
   name /\ _ <- label "Name" *> anyTill (string "\n")
   gap
   level <- label "Level" *> levelP <* string "\n"
   gap
   primary /\ _ <- label "Primary" *> anyTill (string "\n")
+  void $ liftMaybe (\_ -> "Invalid primary job name: " <> primary) $
+    icon # findOf (I._jobs <<< traversed <<< _name <<< _Newtype) (_ == primary)
+
   gap
   jobs <- label "Jobs"
     *>
@@ -217,9 +224,19 @@ buildParser = do
           (try (skipSpaces *> (char '|' <|> char '/') <* skipSpaces))
       )
     <* string "\n"
+  jobs # traverse_ \(job /\ _) ->
+    liftMaybe (\_ -> "Invalid job: " <> job) $ icon # findOf
+      (I._jobs <<< traversed <<< _name <<< _Newtype)
+      (_ == job)
+
   gap
   talents <- label "Talents" *>
     many (char '-' *> skipSpaces *> anyTill (string "\n"))
+  talents # traverse_ \(talent /\ _) ->
+    liftMaybe (\_ -> "Invalid talent: " <> talent) $ icon # findOf
+      (I._talents <<< traversed <<< _name <<< _Newtype)
+      (_ == talent)
+
   gap
   abilities <- label "Abilities" *>
     many
@@ -230,6 +247,11 @@ buildParser = do
               (string "+" *> skipSpaces *> anyTill (void (string "\n") <|> eof))
           ]
       )
+  abilities # traverse_ \(ability /\ _) ->
+    liftMaybe (\_ -> "Invalid ability: " <> ability) $ icon # findOf
+      (I._abilities <<< traversed <<< _name <<< _Newtype)
+      (_ == ability)
+
   skipSpaces
 
   let

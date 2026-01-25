@@ -39,11 +39,11 @@ import ToA.Util.Html (css_)
 
 editCharacterPage :: Env -> Maybe Name -> Nut
 editCharacterPage env@{ characters, icon } pathChar =
-  (/\) <$> characters <*> icon <#~> \(chars /\ _) -> Deku.do
-    setChar /\ char <- useState $ encode stringCharacter $ fromMaybe emptyChar $
+  (/\) <$> characters <*> icon <#~> \(chars /\ icon_) -> Deku.do
+    setChar /\ char <- useState $ encode (stringCharacter icon_) $ fromMaybe emptyChar $
       chars ^? traversed <<< filtered (preview _name >>> eq pathChar)
 
-    let parsed = decode stringCharacter <$> char
+    let parsed = decode (stringCharacter icon_) <$> char
 
     D.div
       [ css_ [ "flex", "flex-col", "gap-2" ] ]
