@@ -3,8 +3,9 @@ module Test.ToA.Data.Icon.Character (spec) where
 import Prelude
 
 import Data.Codec (decode, encode)
-import Data.FastVect.FastVect ((:), empty)
-import Data.Lens.Setter ((.~), (<>~))
+import Data.FastVect.FastVect ((:), empty, set)
+import Data.FastVect.Common (term)
+import Data.Lens.Setter ((.~), (%~), (<>~))
 import Data.Map (fromFoldable)
 import Data.Tuple.Nested ((/\))
 
@@ -12,6 +13,7 @@ import ToA.Data.Icon (Icon, _abilities, _jobs, _talents)
 import ToA.Data.Icon.Ability (Ability(..), Action(..)) as A
 import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
+import ToA.Data.Icon.Job (_talents) as J
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Talent (Talent(..))
 
@@ -69,7 +71,9 @@ icon = mempty
   # _jobs <>~
       [ job # _name .~ Name "Primary"
       , job # _name .~ Name "Job 1"
+            # J._talents %~ set (term :: _ 0) (Name "Talent 2")
       , job # _name .~ Name "Job 2"
+            # J._talents %~ set (term :: _ 1) (Name "Talent 2")
       , job # _name .~ Name "Job 3"
       , job # _name .~ Name "Job 4"
       ]
@@ -124,7 +128,7 @@ Jobs :: Job 1 I | Job 2 II | Job 3 III | Job 4 IV
 
 Talents
 - Talent 1
-- Talent 2
+- Talent 2 (Job 1)
 
 Abilities
 + Active 1
