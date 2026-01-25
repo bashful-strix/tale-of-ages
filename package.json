@@ -12,6 +12,7 @@
     "bundle": "vite build",
     "format": "purs-tidy check 'src/**/*.purs'",
     "format:write": "purs-tidy format-in-place 'src/**/*.purs'",
+    "publish": "./publish.sh",
     "run": "vite",
     "setup": "npm install && spago install && npm run build",
     "start": "vite --debug html-fallback",
@@ -29,6 +30,7 @@
     "purescript": "0.15.15",
     "purs-tidy": "0.11.1",
     "spago": "0.93.44",
+    "surge": "0.24.6",
     "vite": "7.3.1"
   }
 }
