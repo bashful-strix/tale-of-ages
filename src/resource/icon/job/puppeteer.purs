@@ -71,9 +71,9 @@ puppeteer =
                 : empty
           , limitBreak: Name "Gran Guignol"
           , talents:
-              Name "Marionette"
-                : Name "Malinger"
-                : Name "Deftness"
+              Id "marionette|talent|puppeteer"
+                : Id "malinger|talent|puppeteer"
+                : Id "deftness|talent|puppeteer"
                 : empty
           }
       ]

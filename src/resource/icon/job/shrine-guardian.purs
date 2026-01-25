@@ -64,9 +64,9 @@ shrineGuardian =
                 : empty
           , limitBreak: Name "Great Spirit Festival"
           , talents:
-              Name "Hearth"
-                : Name "Festivity"
-                : Name "Talisman"
+              Id "hearth|talent|shrine-guardian"
+                : Id "festivity|talent|shrine-guardian"
+                : Id "talisman|talent|shrine-guardian"
                 : empty
           }
       ]

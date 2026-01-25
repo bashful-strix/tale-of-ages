@@ -83,9 +83,9 @@ venomist =
                 : empty
           , limitBreak: Name "Abyssal Ecstasy"
           , talents:
-              Name "Taste"
-                : Name "Slither"
-                : Name "Pressure"
+              Id "taste|talent|venomist"
+                : Id "slither|talent|venomist"
+                : Id "pressure|talent|venomist"
                 : empty
           }
       ]

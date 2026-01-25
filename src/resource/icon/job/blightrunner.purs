@@ -74,9 +74,9 @@ blightrunner =
                 : empty
           , limitBreak: Name "Burning Sands"
           , talents:
-              Name "Twitch"
-                : Name "Pulse"
-                : Name "Turbo"
+              Id "twitch|talent|blightrunner"
+                : Id "pulse|talent|blightrunner"
+                : Id "turbo|talent|blightrunner"
                 : empty
           }
       ]

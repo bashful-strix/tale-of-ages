@@ -25,6 +25,7 @@ module ToA.Data.Icon.Character
 import Prelude
 import PointFree ((~$))
 
+import Data.Array (elem, length, uncons)
 import Data.Codec (Codec', codec')
 import Data.Codec.JSON as CJ
 import Data.Codec.JSON.Common as CJC
@@ -33,8 +34,16 @@ import Data.Either (Either(..))
 import Data.Filterable (partitionMap)
 import Data.Foldable (intercalate)
 import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.Lens (Lens', (^.), traversed)
-import Data.Lens.Fold (findOf, filtered, folded, foldMapOf, has)
+import Data.Lens (Lens', (^.), traversed, view)
+import Data.Lens.Fold
+  ( findOf
+  , filtered
+  , firstOf
+  , folded
+  , foldOf
+  , foldMapOf
+  , has
+  )
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Map (Map, fromFoldable)
@@ -45,7 +54,7 @@ import Data.Traversable (traverse_)
 import Data.Tuple (fst)
 import Data.Tuple.Nested (type (/\), (/\))
 
-import Parsing (Parser, ParseError, liftMaybe, runParser)
+import Parsing (Parser, ParseError, fail, liftMaybe, runParser)
 import Parsing.Combinators
   ( (<|>)
   , choice
@@ -62,10 +71,11 @@ import Parsing.String.Basic (intDecimal, skipSpaces)
 
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon (_abilities, _jobs, _talents) as I
+import ToA.Data.Icon.Id (Id, _id, jsonId)
 import ToA.Data.Icon.Job (JobLevel, jobLevelP, jsonJobLevel)
 import ToA.Data.Icon.Job (_talents) as J
 import ToA.Data.Icon.Name (Name(..), class Named, _name, jsonName)
-import ToA.Util.Optic (key)
+import ToA.Util.Optic ((^::), key)
 
 type CharacterData =
   { name :: Name
@@ -92,7 +102,7 @@ type BuildData =
   { level :: Level
   , primary :: Name
   , jobs :: Map Name JobLevel
-  , talents :: Array Name
+  , talents :: Array Id
   , abilities ::
       { active :: Array Name
       , inactive :: Array Name
@@ -110,7 +120,7 @@ _primary = _Newtype <<< key @"primary"
 _jobs :: Lens' Build (Map Name JobLevel)
 _jobs = _Newtype <<< key @"jobs"
 
-_talents :: Lens' Build (Array Name)
+_talents :: Lens' Build (Array Id)
 _talents = _Newtype <<< key @"talents"
 
 _abilities :: Lens' Build { active :: Array Name, inactive :: Array Name }
@@ -195,17 +205,25 @@ serialise icon (Character { name, build: Build build }) =
         )
     , "\nTalents"
     , build.talents # intercalate "\n" <<< map \t ->
-        "- " <> unwrap t <>
-          ( icon # foldMapOf
-              ( I._jobs
-                  <<< folded
-                  <<< filtered
-                    (has (J._talents <<< folded <<< filtered (eq t)))
-                  <<< _name
-                  <<< _Newtype
-              )
-              (\j -> " (" <> j <> ")")
-          )
+        "- "
+          <>
+            ( icon # foldOf
+                ( I._talents <<< traversed <<< filtered (eq t <<< view _id)
+                    <<< _name
+                    <<< _Newtype
+                )
+            )
+          <>
+            ( icon # foldMapOf
+                ( I._jobs
+                    <<< folded
+                    <<< filtered
+                      (has (J._talents <<< folded <<< filtered (eq t)))
+                    <<< _name
+                    <<< _Newtype
+                )
+                (\j -> " (" <> j <> ")")
+            )
     , "\nAbilities"
     , build.abilities.active # intercalate "\n" <<< map \a -> "+ " <> unwrap a
     , build.abilities.inactive # intercalate "\n" <<< map \a -> "- " <> unwrap a
@@ -227,13 +245,38 @@ gap :: Parser String Unit
 gap =
   optional (many (string "\n"))
 
-talent :: Parser String (Name /\ Maybe Name)
-talent = do
-  name <- Name <<< fst <$> anyTill
+talent :: Icon -> Parser String (Id /\ Maybe Name)
+talent icon = do
+  name <- fst <$> anyTill
     (void (string "\n") <|> skipSpaces *> lookAhead (void (char '(')))
   job <- map (Name <<< fst) <$> optionMaybe
     (char '(' *> anyTill (char ')'))
-  pure $ name /\ job
+
+  let
+    ids = icon ^:: I._talents <<< traversed
+      <<< filtered (eq name <<< view (_name <<< _Newtype))
+      <<< _id
+
+  id <- case uncons ids of
+    Nothing -> fail $ "Invalid talent: " <> name
+    Just { head, tail } -> case length tail of
+      0 -> pure head
+      _ -> case job of
+        Nothing -> fail $ "Several talents called " <> name <>
+          ", try adding a job"
+        Just j ->
+          liftMaybe
+            ( \_ -> "No talent " <> name <> " for job " <> j ^. simple _Newtype
+            ) $ icon # firstOf
+            ( I._jobs
+                <<< traversed
+                <<< filtered (eq j <<< view _name)
+                <<< J._talents
+                <<< traversed
+                <<< filtered (elem ~$ ids)
+            )
+
+  pure $ id /\ job
 
 buildParser :: Icon -> Parser String (Name /\ Build)
 buildParser icon = do
@@ -265,11 +308,7 @@ buildParser icon = do
 
   gap
   talents <- label "Talents" *>
-    many (char '-' *> skipSpaces *> talent)
-  talents # traverse_ \(t /\ _) ->
-    liftMaybe (\_ -> "Invalid talent: " <> t ^. simple _Newtype) $ icon # findOf
-      (I._talents <<< traversed <<< _name)
-      (_ == t)
+    many (char '-' *> skipSpaces *> talent icon)
 
   gap
   abilities <- label "Abilities" *>
@@ -326,7 +365,7 @@ jsonBuild = CJ.coercible "Build" build_
     { level: jsonLevel
     , primary: jsonName
     , jobs: CJC.map jsonName jsonJobLevel
-    , talents: CJ.array jsonName
+    , talents: CJ.array jsonId
     , abilities: CJR.object $
         { active: CJ.array jsonName
         , inactive: CJ.array jsonName

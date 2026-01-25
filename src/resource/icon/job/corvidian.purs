@@ -69,9 +69,9 @@ corvidian =
                 : empty
           , limitBreak: Name "Bloodbath"
           , talents:
-              Name "Cruelty"
-                : Name "Mortality"
-                : Name "Camraderie"
+              Id "cruelty|talent|corvidian"
+                : Id "mortality|talent|corvidian"
+                : Id "camraderie|talent|corvidian"
                 : empty
           }
       ]

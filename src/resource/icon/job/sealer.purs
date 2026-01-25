@@ -67,9 +67,9 @@ sealer =
                 : empty
           , limitBreak: Name "Passage to the Afterlife"
           , talents:
-              Name "Surge"
-                : Name "Flash"
-                : Name "Ascension"
+              Id "surge|talent|sealer"
+                : Id "flash|talent|sealer"
+                : Id "ascension|talent|sealer"
                 : empty
           }
       ]

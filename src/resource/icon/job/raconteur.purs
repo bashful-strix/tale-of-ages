@@ -73,9 +73,9 @@ raconteur =
                 : empty
           , limitBreak: Name "Amp Up"
           , talents:
-              Name "Finale"
-                : Name "Pity"
-                : Name "Echo"
+              Id "finale|talent|raconteur"
+                : Id "pity|talent|raconteur"
+                : Id "echo|talent|raconteur"
                 : empty
           }
       ]

@@ -71,9 +71,9 @@ stormscale =
                 : empty
           , limitBreak: Name "Fury of the Deeps"
           , talents:
-              Name "Wave"
-                : Name "Swiftness"
-                : Name "Thresh"
+              Id "wave|talent|stormscale"
+                : Id "swiftness|talent|stormscale"
+                : Id "thresh|talent|stormscale"
                 : empty
           }
       ]

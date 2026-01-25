@@ -71,9 +71,9 @@ freelancer =
                 : empty
           , limitBreak: Name "Paradiso"
           , talents:
-              Name "Steady"
-                : Name "Flourish"
-                : Name "Kickoff"
+              Id "steady|talent|freelancer"
+                : Id "flourish|talent|freelancer"
+                : Id "kickoff|talent|freelancer"
                 : empty
           }
       ]

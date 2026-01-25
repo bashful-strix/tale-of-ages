@@ -84,9 +84,9 @@ stormbender =
                 : empty
           , limitBreak: Name "Tsunami"
           , talents:
-              Name "Trip"
-                : Name "Swell"
-                : Name "Whirlpool"
+              Id "trip|talent|stormbender"
+                : Id "swell|talent|stormbender"
+                : Id "whirlpool|talent|stormbender"
                 : empty
           }
       ]

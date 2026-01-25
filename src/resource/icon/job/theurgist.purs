@@ -76,9 +76,9 @@ theurgist =
                 : empty
           , limitBreak: Name "Transmigration of Fire"
           , talents:
-              Name "Zeal"
-                : Name "Bloodwell"
-                : Name "Ardor"
+              Id "zeal|talent|theurgist"
+                : Id "bloodwell|talent|theurgist"
+                : Id "ardor|talent|theurgist"
                 : empty
           }
       ]

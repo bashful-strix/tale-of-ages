@@ -75,9 +75,9 @@ warden =
                 : empty
           , limitBreak: Name "Stampede"
           , talents:
-              Name "Boost"
-                : Name "Hunters"
-                : Name "Corner"
+              Id "boost|talent|warden"
+                : Id "hunters|talent|warden"
+                : Id "corner|talent|warden"
                 : empty
           }
       ]

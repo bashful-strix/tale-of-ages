@@ -73,9 +73,9 @@ chronomancer =
                 : empty
           , limitBreak: Name "Rewind"
           , talents:
-              Name "Stutter"
-                : Name "Chronodouble"
-                : Name "Tick"
+              Id "stutter|talent|chronomancer"
+                : Id "chronodouble|talent|chronomancer"
+                : Id "tick|talent|chronomancer"
                 : empty
           }
       ]

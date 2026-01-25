@@ -71,9 +71,9 @@ bastion =
                 : empty
           , limitBreak: Name "Perfect Parry"
           , talents:
-              Name "Perseus"
-                : Name "Supernova"
-                : Name "Presence"
+              Id "perseus|talent|bastion"
+                : Id "supernova|talent|bastion"
+                : Id "presence|talent|bastion"
                 : empty
           }
       ]

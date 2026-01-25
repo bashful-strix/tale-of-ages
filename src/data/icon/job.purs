@@ -34,6 +34,7 @@ import Parsing.String (string)
 import ToA.Data.Icon.Class (class Classed)
 import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
+import ToA.Data.Icon.Id (Id)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 import ToA.Data.Icon.Trait (class Traited)
@@ -49,7 +50,7 @@ newtype Job = Job
   , keyword :: Name
   , abilities :: Vect 4 (JobLevel /\ Name)
   , limitBreak :: Name
-  , talents :: Vect 3 Name
+  , talents :: Vect 3 Id
   }
 
 derive instance Newtype Job _
@@ -83,7 +84,7 @@ _abilities = _Newtype <<< key @"abilities"
 _limitBreak :: Lens' Job Name
 _limitBreak = _Newtype <<< key @"limitBreak"
 
-_talents :: Lens' Job (Vect 3 Name)
+_talents :: Lens' Job (Vect 3 Id)
 _talents = _Newtype <<< key @"talents"
 
 data JobLevel

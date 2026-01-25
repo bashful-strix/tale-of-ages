@@ -71,9 +71,9 @@ celestian =
                 : empty
           , limitBreak: Name "Cosmic Doom"
           , talents:
-              Name "Dissolution"
-                : Name "Hearken"
-                : Name "Crater"
+              Id "dissolution|talent|celestian"
+                : Id "hearken|talent|celestian"
+                : Id "crater|talent|celestian"
                 : empty
           }
       ]

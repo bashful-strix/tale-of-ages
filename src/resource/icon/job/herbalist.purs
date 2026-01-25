@@ -76,9 +76,9 @@ herbalist =
                 : empty
           , limitBreak: Name "Essence Sap"
           , talents:
-              Name "Signature"
-                : Name "Fertilize"
-                : Name "Nutrition"
+              Id "signature|talent|herbalist"
+                : Id "fertilize|talent|herbalist"
+                : Id "nutrition|talent|herbalist"
                 : empty
           }
       ]

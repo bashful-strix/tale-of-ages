@@ -76,9 +76,9 @@ fairWright =
                 : empty
           , limitBreak: Name "Eternal Renewal"
           , talents:
-              Name "Mulch"
-                : Name "Recycle"
-                : Name "Incant"
+              Id "mulch|talent|fair-wright"
+                : Id "recycle|talent|fair-wright"
+                : Id "incant|talent|fair-wright"
                 : empty
           }
       ]

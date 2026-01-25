@@ -76,9 +76,9 @@ seer =
                 : empty
           , limitBreak: Name "High Prophecy"
           , talents:
-              Name "Prophet"
-                : Name "Foresight"
-                : Name "Harbor"
+              Id "prophet|talent|seer"
+                : Id "foresight|talent|seer"
+                : Id "harbor|talent|seer"
                 : empty
           }
       ]

@@ -56,6 +56,7 @@ import ToA.Data.Icon.Character
 import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
+import ToA.Data.Icon.Id (_id)
 import ToA.Data.Icon.Job (_limitBreak)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Trait (_trait)
@@ -106,7 +107,7 @@ charactersPage env@{ characters, icon, route } pathChar =
             talents
               ^:: traversed
               <<< filtered
-                ( view _name >>> elem ~$
+                ( view _id >>> elem ~$
                     (char ^:: _Just <<< _build <<< _talents <<< traversed)
                 )
 

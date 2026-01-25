@@ -91,9 +91,9 @@ entropist =
                 : empty
           , limitBreak: Name "Howling Void"
           , talents:
-              Name "Energize"
-                : Name "Halt"
-                : Name "Align"
+              Id "energize|talent|entropist"
+                : Id "halt|talent|entropist"
+                : Id "align|talent|entropist"
                 : empty
           }
       ]

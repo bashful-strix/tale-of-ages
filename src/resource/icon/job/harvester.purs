@@ -74,9 +74,9 @@ harvester =
                 : empty
           , limitBreak: Name "Death Sentence"
           , talents:
-              Name "Cycle"
-                : Name "Necromancer"
-                : Name "Sanguinity"
+              Id "cycle|talent|harvester"
+                : Id "necromancer|talent|harvester"
+                : Id "sanguinity|talent|harvester"
                 : empty
           }
       ]

@@ -68,9 +68,9 @@ dragoon =
                 : empty
           , limitBreak: Name "Mageza Cannon"
           , talents:
-              Name "Reach"
-                : Name "Breather"
-                : Name "Volatile"
+              Id "reach|talent|dragoon"
+                : Id "breather|talent|dragoon"
+                : Id "volatile|talent|dragoon"
                 : empty
           }
       ]

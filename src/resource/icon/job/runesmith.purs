@@ -74,9 +74,9 @@ runesmith =
                 : empty
           , limitBreak: Name "Kindling of the Great Forge"
           , talents:
-              Name "Jotunnrune"
-                : Name "Hobrune"
-                : Name "Folkrune"
+              Id "jotunnrune|talent|runesmith"
+                : Id "hobrune|talent|runesmith"
+                : Id "folkrune|talent|runesmith"
                 : empty
           }
       ]

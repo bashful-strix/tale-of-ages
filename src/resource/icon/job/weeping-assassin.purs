@@ -69,9 +69,9 @@ weepingAssassin =
                 : empty
           , limitBreak: Name "Hollow"
           , talents:
-              Name "Commiserate"
-                : Name "Infiltrate"
-                : Name "Shimmer"
+              Id "commiserate|talent|weeping-assassin"
+                : Id "infiltrate|talent|weeping-assassin"
+                : Id "shimmer|talent|weeping-assassin"
                 : empty
           }
       ]

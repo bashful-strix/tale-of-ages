@@ -62,9 +62,9 @@ pathfinder =
                 : empty
           , limitBreak: Name "Heavenly Rain"
           , talents:
-              Name "Footholds"
-                : Name "Horizon"
-                : Name "Vantage"
+              Id "footholds|talent|pathfinder"
+                : Id "horizon|talent|pathfinder"
+                : Id "vantage|talent|pathfinder"
                 : empty
           }
       ]

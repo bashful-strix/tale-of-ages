@@ -11,7 +11,7 @@ import Data.Tuple.Nested ((/\))
 
 import ToA.Data.Icon (Icon, _abilities, _jobs, _talents)
 import ToA.Data.Icon.Ability (Ability(..), Action(..)) as A
-import ToA.Data.Icon.Id (Id(..))
+import ToA.Data.Icon.Id (Id(..), _id)
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Job (_talents) as J
 import ToA.Data.Icon.Name (Name(..), _name)
@@ -45,7 +45,7 @@ job = Job
         : empty
   , limitBreak: Name "LB"
   , talents:
-      Name "T1" : Name "T2" : Name "T3" : empty
+      Id "T1" : Id "T2" : Id "T3" : empty
   }
 
 talent :: Talent
@@ -71,15 +71,20 @@ icon = mempty
   # _jobs <>~
       [ job # _name .~ Name "Primary"
       , job # _name .~ Name "Job 1"
-            # J._talents %~ set (term :: _ 0) (Name "Talent 2")
+            # J._talents %~ set (term :: _ 0) (Id "talent-1|talent|job-1")
+            # J._talents %~ set (term :: _ 0) (Id "talent-2|talent|job-1")
       , job # _name .~ Name "Job 2"
-            # J._talents %~ set (term :: _ 1) (Name "Talent 2")
+            # J._talents %~ set (term :: _ 1) (Id "talent-2|talent|job-2")
       , job # _name .~ Name "Job 3"
       , job # _name .~ Name "Job 4"
       ]
   # _talents <>~
-      [ talent # _name .~ Name "Talent 1"
-      , talent # _name .~ Name "Talent 2"
+      [ talent # _id .~ Id "talent-1|talent|job-1"
+               # _name .~ Name "Talent 1"
+      , talent # _id .~ Id "talent-2|talent|job-1"
+               # _name .~ Name "Talent 2"
+      , talent # _id .~ Id "talent-2|talent|job-2"
+               # _name .~ Name "Talent 2"
       ]
   # _abilities <>~
       [ ability # _name .~ Name "Active 1"
@@ -105,7 +110,10 @@ spec = do
                   , Name "Job 3" /\ III
                   , Name "Job 4" /\ IV
                   ]
-              , talents: [ Name "Talent 1", Name "Talent 2" ]
+              , talents:
+                  [ Id "talent-1|talent|job-1"
+                  , Id "talent-2|talent|job-1"
+                  ]
               , abilities:
                   { active: [ Name "Active 1", Name "Active 2" ]
                   , inactive: [ Name "Inactive 1", Name "Inactive 2" ]
@@ -144,11 +152,15 @@ Abilities
         i = mempty
           # _jobs <>~
               [ job # _name .~ Name "Tactician"
+                    # J._talents %~ set (term :: _ 0)
+                        (Id "vantage|talent|tactician")
               , job # _name .~ Name "Spellblade"
               , job # _name .~ Name "Weeping Assassin"
               ]
           # _talents <>~
-              [ talent # _name .~ Name "Vantage" ]
+              [ talent # _id .~ Id "vantage|talent|tactician"
+                       # _name .~ Name "Vantage"
+              ]
           # _abilities <>~
               [ ability # _name .~ Name "Pincer Attack"
               , ability # _name .~ Name "Bait and Switch"
@@ -184,7 +196,7 @@ Abilities ::
                       , Name "Spellblade" /\ II
                       , Name "Weeping Assassin" /\ I
                       ]
-                  , talents: [ Name "Vantage" ]
+                  , talents: [ Id "vantage|talent|tactician" ]
                   , abilities:
                       { active: [ Name "Bait and Switch" ]
                       , inactive: [ Name "Pincer Attack" ]

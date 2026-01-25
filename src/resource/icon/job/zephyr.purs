@@ -77,9 +77,9 @@ zephyr =
                 : empty
           , limitBreak: Name "Grandmother Gale"
           , talents:
-              Name "Stormborn"
-                : Name "Alacrity"
-                : Name "Squall"
+              Id "stormborn|talent|zephyr"
+                : Id "alacrity|talent|zephyr"
+                : Id "squall|talent|zephyr"
                 : empty
           }
       ]

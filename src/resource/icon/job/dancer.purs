@@ -69,9 +69,9 @@ dancer =
                 : empty
           , limitBreak: Name "Dance of the Scarlet Lily"
           , talents:
-              Name "Flow"
-                : Name "Perfection"
-                : Name "Untouchable"
+              Id "flow|talent|dancer"
+                : Id "perfection|talent|dancer"
+                : Id "untouchable|talent|dancer"
                 : empty
           }
       ]

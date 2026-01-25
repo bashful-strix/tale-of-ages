@@ -77,9 +77,9 @@ alchemist =
                 : empty
           , limitBreak: Name "Homunculus"
           , talents:
-              Name "Elixir"
-                : Name "Effuse"
-                : Name "Purity"
+              Id "elixir|talent|alchemist"
+                : Id "effuse|talent|alchemist"
+                : Id "purity|talent|alchemist"
                 : empty
           }
       ]

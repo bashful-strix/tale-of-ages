@@ -65,9 +65,9 @@ workshopKnight =
                 : empty
           , limitBreak: Name "Masterstroke"
           , talents:
-              Name "Alloy"
-                : Name "Endure"
-                : Name "Bolster"
+              Id "alloy|talent|workshop-knight"
+                : Id "endure|talent|workshop-knight"
+                : Id "bolster|talent|workshop-knight"
                 : empty
           }
       ]

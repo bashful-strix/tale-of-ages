@@ -65,9 +65,9 @@ breaker =
                 : empty
           , limitBreak: Name "Gatebreaker"
           , talents:
-              Name "Implacable"
-                : Name "Seeker"
-                : Name "Topple"
+              Id "implacable|talent|breaker"
+                : Id "seeker|talent|breaker"
+                : Id "topple|talent|breaker"
                 : empty
           }
       ]

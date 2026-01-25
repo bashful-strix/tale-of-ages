@@ -74,9 +74,9 @@ rake =
                 : empty
           , limitBreak: Name "Hot Streak"
           , talents:
-              Name "Streak"
-                : Name "Roller"
-                : Name "Whirl"
+              Id "streak|talent|rake"
+                : Id "roller|talent|rake"
+                : Id "whirl|talent|rake"
                 : empty
           }
       ]

@@ -70,9 +70,9 @@ slayer =
                 : empty
           , limitBreak: Name "God Waster"
           , talents:
-              Name "Bulk"
-                : Name "Hale"
-                : Name "Deflect"
+              Id "bulk|talent|slayer"
+                : Id "hale|talent|slayer"
+                : Id "deflect|talent|slayer"
                 : empty
           }
       ]

@@ -68,9 +68,9 @@ spellblade =
                 : empty
           , limitBreak: Name "Gran Levincross"
           , talents:
-              Name "Vex"
-                : Name "Fence"
-                : Name "Bladework"
+              Id "vex|talent|spellblade"
+                : Id "fence|talent|spellblade"
+                : Id "bladework|talent|spellblade"
                 : empty
           }
       ]

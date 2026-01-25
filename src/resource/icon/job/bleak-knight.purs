@@ -71,9 +71,9 @@ bleakKnight =
                 : empty
           , limitBreak: Name "Chain of Misery"
           , talents:
-              Name "Tenacity"
-                : Name "Torment"
-                : Name "Sanguine"
+              Id "tenacity|talent|bleak-knight"
+                : Id "torment|talent|bleak-knight"
+                : Id "sanguine|talent|bleak-knight"
                 : empty
           }
       ]

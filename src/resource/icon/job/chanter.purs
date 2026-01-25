@@ -78,9 +78,9 @@ chanter =
                 : empty
           , limitBreak: Name "Monogatari"
           , talents:
-              Name "Poise"
-                : Name "Elegance"
-                : Name "Peace"
+              Id "poise|talent|chanter"
+                : Id "elegance|talent|chanter"
+                : Id "peace|talent|chanter"
                 : empty
           }
       ]

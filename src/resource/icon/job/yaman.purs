@@ -74,9 +74,9 @@ yaman =
                 : empty
           , limitBreak: Name "Great Temple Bell"
           , talents:
-              Name "Victory"
-                : Name "Shift"
-                : Name "Sway"
+              Id "victory|talent|yaman"
+                : Id "shift|talent|yaman"
+                : Id "sway|talent|yaman"
                 : empty
           }
       ]

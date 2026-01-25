@@ -72,9 +72,9 @@ colossus =
                 : empty
           , limitBreak: Name "Gigantas Crusher"
           , talents:
-              Name "Grit"
-                : Name "Adrenaline"
-                : Name "Surge"
+              Id "grit|talent|colossus"
+                : Id "adrenaline|talent|colossus"
+                : Id "surge|talent|colossus"
                 : empty
           }
       ]

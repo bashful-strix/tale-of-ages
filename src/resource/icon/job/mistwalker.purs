@@ -73,9 +73,9 @@ mistwalker =
                 : empty
           , limitBreak: Name "Vapor Form"
           , talents:
-              Name "Foundations"
-                : Name "Vanish"
-                : Name "Thirst"
+              Id "foundations|talent|mistwalker"
+                : Id "vanish|talent|mistwalker"
+                : Id "thirst|talent|mistwalker"
                 : empty
           }
       ]

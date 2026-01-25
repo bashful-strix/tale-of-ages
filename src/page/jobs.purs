@@ -57,6 +57,7 @@ import ToA.Data.Icon.Class
   )
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
+import ToA.Data.Icon.Id (_id)
 import ToA.Data.Icon.Job
   ( _abilities
   , _limitBreak
@@ -546,7 +547,7 @@ renderJobDesc icon name = icon <#~> \icon_@{ colours, jobs, talents, traits } ->
                         ^:: traversed
                         <<< filtered
                           ( view
-                              ( _name <<< to
+                              ( _id <<< to
                                   (elem ~$ (j ^:: _talents <<< traversed))
                               )
                           )

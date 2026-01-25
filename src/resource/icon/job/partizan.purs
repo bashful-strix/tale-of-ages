@@ -67,9 +67,9 @@ partizan =
                 : empty
           , limitBreak: Name "Drill Dive"
           , talents:
-              Name "Eagle"
-                : Name "Soar"
-                : Name "Vantage"
+              Id "eagle|talent|partizan"
+                : Id "soar|talent|partizan"
+                : Id "vantage|talent|partizan"
                 : empty
           }
       ]

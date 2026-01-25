@@ -75,9 +75,9 @@ enochian =
                 : empty
           , limitBreak: Name "Gigaflare"
           , talents:
-              Name "Megiddo"
-                : Name "Melt"
-                : Name "Phoenix"
+              Id "megiddo|talent|enochian"
+                : Id "melt|talent|enochian"
+                : Id "phoenix|talent|enochian"
                 : empty
           }
       ]

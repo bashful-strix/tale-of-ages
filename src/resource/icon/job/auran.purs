@@ -75,9 +75,9 @@ auran =
                 : empty
           , limitBreak: Name "Wrecking Ball"
           , talents:
-              Name "Effigy"
-                : Name "Weight"
-                : Name "Stomp"
+              Id "effigy|talent|auran"
+                : Id "weight|talent|auran"
+                : Id "stomp|talent|auran"
                 : empty
           }
       ]

@@ -69,9 +69,9 @@ hawkKnight =
                 : empty
           , limitBreak: Name "Bloody Talons"
           , talents:
-              Name "Ferocity"
-                : Name "Sinew"
-                : Name "Dissect"
+              Id "ferocity|talent|hawk-knight"
+                : Id "sinew|talent|hawk-knight"
+                : Id "dissect|talent|hawk-knight"
                 : empty
           }
       ]

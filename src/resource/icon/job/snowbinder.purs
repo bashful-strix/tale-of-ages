@@ -73,9 +73,9 @@ snowbinder =
                 : empty
           , limitBreak: Name "Great Blizzion"
           , talents:
-              Name "Crystalline"
-                : Name "Spin"
-                : Name "Slide"
+              Id "crystalline|talent|snowbinder"
+                : Id "spin|talent|snowbinder"
+                : Id "slide|talent|snowbinder"
                 : empty
           }
       ]

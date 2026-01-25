@@ -78,9 +78,9 @@ wayfarer =
                 : empty
           , limitBreak: Name "Infinite Horizon"
           , talents:
-              Name "Shock"
-                : Name "Pinpoint"
-                : Name "Hyper"
+              Id "shock|talent|wayfarer"
+                : Id "pinpoint|talent|wayfarer"
+                : Id "hyper|talent|wayfarer"
                 : empty
           }
       ]

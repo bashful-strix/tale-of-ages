@@ -91,9 +91,9 @@ knave =
                 : empty
           , limitBreak: Name "Mock"
           , talents:
-              Name "Brawl"
-                : Name "Suffer"
-                : Name "Oppress"
+              Id "brawl|talent|knave"
+                : Id "suffer|talent|knave"
+                : Id "oppress|talent|knave"
                 : empty
           }
       ]

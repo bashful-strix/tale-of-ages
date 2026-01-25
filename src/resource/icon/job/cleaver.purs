@@ -70,9 +70,9 @@ cleaver =
                 : empty
           , limitBreak: Name "Last Stand"
           , talents:
-              Name "Massive"
-                : Name "Shred"
-                : Name "Rage"
+              Id "massive|talent|cleaver"
+                : Id "shred|talent|cleaver"
+                : Id "rage|talent|cleaver"
                 : empty
           }
       ]

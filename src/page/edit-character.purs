@@ -32,6 +32,7 @@ import ToA.Data.Icon.Character
   , Level(..)
   , stringCharacter
   )
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (JobLevel(..))
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Route (Route(..), CharacterPath(..))
@@ -119,7 +120,7 @@ emptyChar = Character
       { level: Zero
       , primary: Name "<Primary job>"
       , jobs: fromFoldable [ Name "<Job 1>" /\ I, Name "<Job 2>" /\ IV ]
-      , talents: [ Name "<Talent>" ]
+      , talents: [ Id "<Talent>" ]
       , abilities:
           { active: [ Name "<Active ability>" ]
           , inactive: [ Name "<Inactive ability>" ]

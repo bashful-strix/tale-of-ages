@@ -76,9 +76,9 @@ geomancer =
                 : empty
           , limitBreak: Name "Cataclysm"
           , talents:
-              Name "Earthmeld"
-                : Name "Boulder"
-                : Name "Surf"
+              Id "earthmeld|talent|geomancer"
+                : Id "boulder|talent|geomancer"
+                : Id "surf|talent|geomancer"
                 : empty
           }
       ]

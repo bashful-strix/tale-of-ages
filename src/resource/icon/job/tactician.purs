@@ -62,9 +62,9 @@ tactician =
                 : empty
           , limitBreak: Name "Mighty Command"
           , talents:
-              Name "Mastermind"
-                : Name "Spur"
-                : Name "Fieldwork"
+              Id "mastermind|talent|tactician"
+                : Id "spur|talent|tactician"
+                : Id "fieldwork|talent|tactician"
                 : empty
           }
       ]

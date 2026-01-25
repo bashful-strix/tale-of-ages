@@ -74,9 +74,9 @@ fool =
                 : empty
           , limitBreak: Name "Curtain Call"
           , talents:
-              Name "Carnage"
-                : Name "Barbs"
-                : Name "Kismet"
+              Id "carnage|talent|fool"
+                : Id "barbs|talent|fool"
+                : Id "kismet|talent|fool"
                 : empty
           }
       ]
