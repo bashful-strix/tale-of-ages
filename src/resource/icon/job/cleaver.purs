@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -96,13 +97,15 @@ cleaver =
 
   , talents:
       [ Talent
-          { name: Name "Massive"
+          { id: Id "massive|talent|cleaver"
+          , name: Name "Massive"
           , colour: Name "Red"
           , description:
               [ Text "Your attacks with a range of melee gain range 1-2." ]
           }
       , Talent
-          { name: Name "Shred"
+          { id: Id "shred|talent|cleaver"
+          , name: Name "Shred"
           , colour: Name "Red"
           , description:
               [ Text
@@ -113,7 +116,8 @@ cleaver =
               ]
           }
       , Talent
-          { name: Name "Rage"
+          { id: Id "rage|talent|cleaver"
+          , name: Name "Rage"
           , colour: Name "Red"
           , description:
               [ Text "Your attacks deal damage "

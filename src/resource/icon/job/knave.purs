@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..), StatusType(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
@@ -120,7 +121,8 @@ knave =
 
   , talents:
       [ Talent
-          { name: Name "Brawl"
+          { id: Id "brawl|talent|knave"
+          , name: Name "Brawl"
           , colour: Name "Red"
           , description:
               [ Text "Improve the effect of "
@@ -133,7 +135,8 @@ knave =
               ]
           }
       , Talent
-          { name: Name "Suffer"
+          { id: Id "suffer|talent|knave"
+          , name: Name "Suffer"
           , colour: Name "Red"
           , description:
               [ Text
@@ -143,7 +146,8 @@ knave =
               ]
           }
       , Talent
-          { name: Name "Oppress"
+          { id: Id "oppress|talent|knave"
+          , name: Name "Oppress"
           , colour: Name "Red"
           , description:
               [ Text

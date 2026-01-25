@@ -20,6 +20,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -94,12 +95,14 @@ yaman =
 
   , talents:
       [ Talent
-          { name: Name "Victory"
+          { id: Id "victory|talent|yaman"
+          , name: Name "Victory"
           , colour: Name "Green"
           , description: [ Text "Round 4 and 5 count as round 6 for you." ]
           }
       , Talent
-          { name: Name "Shift"
+          { id: Id "shift|talent|yaman"
+          , name: Name "Shift"
           , colour: Name "Green"
           , description:
               [ Text
@@ -108,7 +111,8 @@ yaman =
               ]
           }
       , Talent
-          { name: Name "Sway"
+          { id: Id "sway|talent|yaman"
+          , name: Name "Sway"
           , colour: Name "Green"
           , description:
               [ Text "While you are at 75% hp or higher, you gain attack "

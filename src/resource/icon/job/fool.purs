@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -107,7 +108,8 @@ fool =
 
   , talents:
       [ Talent
-          { name: Name "Carnage"
+          { id: Id "carnage|talent|fool"
+          , name: Name "Carnage"
           , colour: Name "Yellow"
           , description:
               [ Text "Once a round, after you score a "
@@ -118,7 +120,8 @@ fool =
               ]
           }
       , Talent
-          { name: Name "Barbs"
+          { id: Id "barbs|talent|fool"
+          , name: Name "Barbs"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -130,7 +133,8 @@ fool =
               ]
           }
       , Talent
-          { name: Name "Kismet"
+          { id: Id "kismet|talent|fool"
+          , name: Name "Kismet"
           , colour: Name "Yellow"
           , description:
               [ Text "Your abilities may gain effect "

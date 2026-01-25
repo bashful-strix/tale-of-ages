@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -109,7 +110,8 @@ stormbender =
 
   , talents:
       [ Talent
-          { name: Name "Trip"
+          { id: Id "trip|talent|stormbender"
+          , name: Name "Trip"
           , colour: Name "Blue"
           , description:
               [ Text "Once a combat, you can activate any "
@@ -120,7 +122,8 @@ stormbender =
               ]
           }
       , Talent
-          { name: Name "Swell"
+          { id: Id "swell|talent|stormbender"
+          , name: Name "Swell"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -129,7 +132,8 @@ stormbender =
               ]
           }
       , Talent
-          { name: Name "Whirlpool"
+          { id: Id "whirlpool|talent|stormbender"
+          , name: Name "Whirlpool"
           , colour: Name "Blue"
           , description:
               [ Text

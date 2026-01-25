@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -92,7 +93,8 @@ dragoon =
 
   , talents:
       [ Talent
-          { name: Name "Reach"
+          { id: Id "reach|talent|dragoon"
+          , name: Name "Reach"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -102,7 +104,8 @@ dragoon =
               ]
           }
       , Talent
-          { name: Name "Breather"
+          { id: Id "breather|talent|dragoon"
+          , name: Name "Breather"
           , colour: Name "Yellow"
           , description:
               [ Text "You can expend "
@@ -115,7 +118,8 @@ dragoon =
               ]
           }
       , Talent
-          { name: Name "Volatile"
+          { id: Id "volatile|talent|dragoon"
+          , name: Name "Volatile"
           , colour: Name "Yellow"
           , description:
               [ Text

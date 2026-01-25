@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -111,7 +112,8 @@ harvester =
 
   , talents:
       [ Talent
-          { name: Name "Cycle"
+          { id: Id "cycle|talent|harvester"
+          , name: Name "Cycle"
           , colour: Name "Green"
           , description:
               [ Text
@@ -121,7 +123,8 @@ harvester =
               ]
           }
       , InsetTalent
-          { name: Name "Necromancer"
+          { id: Id "necromancer|talent|harvester"
+          , name: Name "Necromancer"
           , colour: Name "Green"
           , description:
               [ Text
@@ -147,7 +150,8 @@ harvester =
               }
           }
       , Talent
-          { name: Name "Sanguinity"
+          { id: Id "sanguinity|talent|harvester"
+          , name: Name "Sanguinity"
           , colour: Name "Green"
           , description:
               [ Text

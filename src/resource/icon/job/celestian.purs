@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -108,7 +109,8 @@ celestian =
 
   , talents:
       [ Talent
-          { name: Name "Dissolution"
+          { id: Id "dissolution|talent|celestian"
+          , name: Name "Dissolution"
           , colour: Name "Green"
           , description:
               [ Text
@@ -120,7 +122,8 @@ celestian =
               ]
           }
       , Talent
-          { name: Name "Hearken"
+          { id: Id "hearken|talent|celestian"
+          , name: Name "Hearken"
           , colour: Name "Green"
           , description:
               [ Text
@@ -133,7 +136,8 @@ celestian =
               ]
           }
       , Talent
-          { name: Name "Crater"
+          { id: Id "crater|talent|celestian"
+          , name: Name "Crater"
           , colour: Name "Green"
           , description:
               [ Text

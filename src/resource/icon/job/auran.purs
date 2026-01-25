@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -98,7 +99,8 @@ auran =
 
   , talents:
       [ Talent
-          { name: Name "Effigy"
+          { id: Id "effigy|talent|auran"
+          , name: Name "Effigy"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -109,7 +111,8 @@ auran =
               ]
           }
       , Talent
-          { name: Name "Weight"
+          { id: Id "weight|talent|auran"
+          , name: Name "Weight"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -118,7 +121,8 @@ auran =
               ]
           }
       , Talent
-          { name: Name "Stomp"
+          { id: Id "stomp|talent|auran"
+          , name: Name "Stomp"
           , colour: Name "Blue"
           , description:
               [ Text "As a quick ability, you can push any adjacent object "

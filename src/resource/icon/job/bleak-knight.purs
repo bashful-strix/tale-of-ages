@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -102,7 +103,8 @@ bleakKnight =
 
   , talents:
       [ Talent
-          { name: Name "Tenacity"
+          { id: Id "tenacity|talent|bleak-knight"
+          , name: Name "Tenacity"
           , colour: Name "Red"
           , description:
               [ Text
@@ -114,7 +116,8 @@ bleakKnight =
               ]
           }
       , Talent
-          { name: Name "Torment"
+          { id: Id "torment|talent|bleak-knight"
+          , name: Name "Torment"
           , colour: Name "Red"
           , description:
               [ Text
@@ -123,7 +126,8 @@ bleakKnight =
               ]
           }
       , Talent
-          { name: Name "Sanguine"
+          { id: Id "sanguine|talent|bleak-knight"
+          , name: Name "Sanguine"
           , colour: Name "Red"
           , description:
               [ Text "You gain "

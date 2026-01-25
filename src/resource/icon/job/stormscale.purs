@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -114,7 +115,8 @@ stormscale =
       ]
   , talents:
       [ Talent
-          { name: Name "Wave"
+          { id: Id "wave|talent|stormscale"
+          , name: Name "Wave"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -123,7 +125,8 @@ stormscale =
               ]
           }
       , Talent
-          { name: Name "Swiftness"
+          { id: Id "swiftness|talent|stormscale"
+          , name: Name "Swiftness"
           , colour: Name "Yellow"
           , description:
               [ Text "Your free move is increased by +1 and gains "
@@ -132,7 +135,8 @@ stormscale =
               ]
           }
       , Talent
-          { name: Name "Thresh"
+          { id: Id "thresh|talent|stormscale"
+          , name: Name "Thresh"
           , colour: Name "Yellow"
           , description:
               [ Text "Adjacent allies can spend your "

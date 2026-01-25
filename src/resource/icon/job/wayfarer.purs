@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -102,7 +103,8 @@ wayfarer =
 
   , talents:
       [ Talent
-          { name: Name "Shock"
+          { id: Id "shock|talent|wayfarer"
+          , name: Name "Shock"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -111,7 +113,8 @@ wayfarer =
               ]
           }
       , Talent
-          { name: Name "Pinpoint"
+          { id: Id "pinpoint|talent|wayfarer"
+          , name: Name "Pinpoint"
           , colour: Name "Blue"
           , description:
               [ Text "Gain attack "
@@ -124,7 +127,8 @@ wayfarer =
               ]
           }
       , Talent
-          { name: Name "Hyper"
+          { id: Id "hyper|talent|wayfarer"
+          , name: Name "Hyper"
           , colour: Name "Blue"
           , description:
               [ Text "Once a combat, you can teleport yourself or an ally "

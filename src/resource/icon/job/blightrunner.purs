@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -108,7 +109,8 @@ blightrunner =
 
   , talents:
       [ Talent
-          { name: Name "Twitch"
+          { id: Id "twitch|talent|blightrunner"
+          , name: Name "Twitch"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -117,7 +119,8 @@ blightrunner =
               ]
           }
       , Talent
-          { name: Name "Pulse"
+          { id: Id "pulse|talent|blightrunner"
+          , name: Name "Pulse"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -125,7 +128,8 @@ blightrunner =
               ]
           }
       , Talent
-          { name: Name "Turbo"
+          { id: Id "turbo|talent|blightrunner"
+          , name: Name "Turbo"
           , colour: Name "Yellow"
           , description:
               [ Text "Increase the effect of "

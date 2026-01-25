@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -99,7 +100,8 @@ runesmith =
 
   , talents:
       [ Talent
-          { name: Name "Jotunnrune"
+          { id: Id "jotunnrune|talent|runesmith"
+          , name: Name "Jotunnrune"
           , colour: Name "Blue"
           , description:
               [ Text "As a "
@@ -110,7 +112,8 @@ runesmith =
               ]
           }
       , Talent
-          { name: Name "Hobrune"
+          { id: Id "hobrune|talent|runesmith"
+          , name: Name "Hobrune"
           , colour: Name "Blue"
           , description:
               [ Text "As a "
@@ -121,7 +124,8 @@ runesmith =
               ]
           }
       , Talent
-          { name: Name "Folkrune"
+          { id: Id "folkrune|talent|runesmith"
+          , name: Name "Folkrune"
           , colour: Name "Blue"
           , description:
               [ Text "You gain attack "

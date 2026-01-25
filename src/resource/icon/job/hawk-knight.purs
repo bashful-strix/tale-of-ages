@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -96,7 +97,8 @@ hawkKnight =
 
   , talents:
       [ Talent
-          { name: Name "Ferocity"
+          { id: Id "ferocity|talent|hawk-knight"
+          , name: Name "Ferocity"
           , colour: Name "Red"
           , description:
               [ Text
@@ -105,7 +107,8 @@ hawkKnight =
               ]
           }
       , Talent
-          { name: Name "Sinew"
+          { id: Id "sinew|talent|hawk-knight"
+          , name: Name "Sinew"
           , colour: Name "Red"
           , description:
               [ Text
@@ -114,7 +117,8 @@ hawkKnight =
               ]
           }
       , Talent
-          { name: Name "Dissect"
+          { id: Id "dissect|talent|hawk-knight"
+          , name: Name "Dissect"
           , colour: Name "Red"
           , description:
               [ Text

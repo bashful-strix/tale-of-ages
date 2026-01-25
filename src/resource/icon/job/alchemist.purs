@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -119,7 +120,8 @@ alchemist =
 
   , talents:
       [ Talent
-          { name: Name "Elixir"
+          { id: Id "elixir|talent|alchemist"
+          , name: Name "Elixir"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -130,7 +132,8 @@ alchemist =
               ]
           }
       , Talent
-          { name: Name "Effuse"
+          { id: Id "effuse|talent|alchemist"
+          , name: Name "Effuse"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -147,7 +150,8 @@ alchemist =
               ]
           }
       , Talent
-          { name: Name "Purity"
+          { id: Id "purity|talent|alchemist"
+          , name: Name "Purity"
           , colour: Name "Blue"
           , description:
               [ Text

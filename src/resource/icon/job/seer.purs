@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -141,7 +142,8 @@ seer =
 
   , talents:
       [ Talent
-          { name: Name "Prophet"
+          { id: Id "prophet|talent|seer"
+          , name: Name "Prophet"
           , colour: Name "Green"
           , description:
               [ Text
@@ -151,7 +153,8 @@ seer =
               ]
           }
       , Talent
-          { name: Name "Foresight"
+          { id: Id "foresight|talent|seer"
+          , name: Name "Foresight"
           , colour: Name "Green"
           , description:
               [ Text "You gain effect "
@@ -160,7 +163,8 @@ seer =
               ]
           }
       , Talent
-          { name: Name "Harbor"
+          { id: Id "harbor|talent|seer"
+          , name: Name "Harbor"
           , colour: Name "Green"
           , description:
               [ Text

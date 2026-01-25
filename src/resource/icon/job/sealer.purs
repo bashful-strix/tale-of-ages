@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -87,7 +88,8 @@ sealer =
       ]
   , talents:
       [ Talent
-          { name: Name "Surge"
+          { id: Id "surge|talent|sealer"
+          , name: Name "Surge"
           , colour: Name "Green"
           , description:
               [ Text
@@ -96,7 +98,8 @@ sealer =
               ]
           }
       , Talent
-          { name: Name "Flash"
+          { id: Id "flash|talent|sealer"
+          , name: Name "Flash"
           , colour: Name "Green"
           , description:
               [ Text
@@ -107,7 +110,8 @@ sealer =
               ]
           }
       , Talent
-          { name: Name "Ascension"
+          { id: Id "ascension|talent|sealer"
+          , name: Name "Ascension"
           , colour: Name "Green"
           , description:
               [ Text

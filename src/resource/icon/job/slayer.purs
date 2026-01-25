@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -93,7 +94,8 @@ slayer =
 
   , talents:
       [ Talent
-          { name: Name "Bulk"
+          { id: Id "bulk|talent|slayer"
+          , name: Name "Bulk"
           , colour: Name "Red"
           , description:
               [ Text
@@ -102,7 +104,8 @@ slayer =
               ]
           }
       , Talent
-          { name: Name "Hale"
+          { id: Id "hale|talent|slayer"
+          , name: Name "Hale"
           , colour: Name "Red"
           , description:
               [ Text "The first time in combat you enter "
@@ -115,7 +118,8 @@ slayer =
               ]
           }
       , Talent
-          { name: Name "Deflect"
+          { id: Id "deflect|talent|slayer"
+          , name: Name "Deflect"
           , colour: Name "Red"
           , description:
               [ Text

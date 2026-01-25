@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..), StatusType(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
@@ -108,7 +109,8 @@ venomist =
 
   , talents:
       [ Talent
-          { name: Name "Taste"
+          { id: Id "taste|talent|venomist"
+          , name: Name "Taste"
           , colour: Name "Yellow"
           , description:
               [ Text "Improve the effect of "
@@ -124,7 +126,8 @@ venomist =
               ]
           }
       , Talent
-          { name: Name "Slither"
+          { id: Id "slither|talent|venomist"
+          , name: Name "Slither"
           , colour: Name "Yellow"
           , description:
               [ Text "You can "
@@ -137,7 +140,8 @@ venomist =
               ]
           }
       , Talent
-          { name: Name "Pressure"
+          { id: Id "pressure|talent|venomist"
+          , name: Name "Pressure"
           , colour: Name "Yellow"
           , description:
               [ Text "Your attacks gain "

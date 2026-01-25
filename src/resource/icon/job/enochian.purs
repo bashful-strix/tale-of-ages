@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -108,7 +109,8 @@ enochian =
 
   , talents:
       [ Talent
-          { name: Name "Megiddo"
+          { id: Id "megiddo|talent|enochian"
+          , name: Name "Megiddo"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -117,7 +119,8 @@ enochian =
               ]
           }
       , Talent
-          { name: Name "Melt"
+          { id: Id "melt|talent|enochian"
+          , name: Name "Melt"
           , colour: Name "Blue"
           , description:
               [ Text "You increase the effects of "
@@ -132,7 +135,8 @@ enochian =
               ]
           }
       , Talent
-          { name: Name "Phoenix"
+          { id: Id "phoenix|talent|enochian"
+          , name: Name "Phoenix"
           , colour: Name "Blue"
           , description:
               [ Text "When you are defeated, you deal "

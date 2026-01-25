@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -107,7 +108,8 @@ shrineGuardian =
 
   , talents:
       [ Talent
-          { name: Name "Hearth"
+          { id: Id "hearth|talent|shrine-guardian"
+          , name: Name "Hearth"
           , colour: Name "Green"
           , description:
               [ Text
@@ -117,7 +119,8 @@ shrineGuardian =
               ]
           }
       , Talent
-          { name: Name "Festivity"
+          { id: Id "festivity|talent|shrine-guardian"
+          , name: Name "Festivity"
           , colour: Name "Green"
           , description:
               [ Text
@@ -126,7 +129,8 @@ shrineGuardian =
               ]
           }
       , Talent
-          { name: Name "Talisman"
+          { id: Id "talisman|talent|shrine-guardian"
+          , name: Name "Talisman"
           , colour: Name "Green"
           , description:
               [ Text

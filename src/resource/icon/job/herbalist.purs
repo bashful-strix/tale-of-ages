@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -107,7 +108,8 @@ herbalist =
 
   , talents:
       [ Talent
-          { name: Name "Signature"
+          { id: Id "signature|talent|herbalist"
+          , name: Name "Signature"
           , colour: Name "Green"
           , description:
               [ Text
@@ -117,7 +119,8 @@ herbalist =
               ]
           }
       , Talent
-          { name: Name "Fertilize"
+          { id: Id "fertilize|talent|herbalist"
+          , name: Name "Fertilize"
           , colour: Name "Green"
           , description:
               [ Text
@@ -126,7 +129,8 @@ herbalist =
               ]
           }
       , Talent
-          { name: Name "Nutrition"
+          { id: Id "nutrition|talent|herbalist"
+          , name: Name "Nutrition"
           , colour: Name "Green"
           , description:
               [ Text "Increase the effect of "

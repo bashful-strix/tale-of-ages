@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -85,7 +86,8 @@ breaker =
 
   , talents:
       [ Talent
-          { name: Name "Implacable"
+          { id: Id "implacable|talent|breaker"
+          , name: Name "Implacable"
           , colour: Name "Red"
           , description:
               [ Text "Each time you dash 1 space, you are "
@@ -98,7 +100,8 @@ breaker =
               ]
           }
       , Talent
-          { name: Name "Seeker"
+          { id: Id "seeker|talent|breaker"
+          , name: Name "Seeker"
           , colour: Name "Red"
           , description:
               [ Text
@@ -108,7 +111,8 @@ breaker =
               ]
           }
       , Talent
-          { name: Name "Topple"
+          { id: Id "topple|talent|beaker"
+          , name: Name "Topple"
           , colour: Name "Red"
           , description:
               [ Text

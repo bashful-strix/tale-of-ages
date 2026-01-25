@@ -11,6 +11,9 @@ import Data.Codec.JSON (Codec, coercible, string)
 import Data.Lens (Lens')
 import Data.Newtype (class Newtype)
 
+
+-- convention: name|type|modifier
+
 newtype Id = Id String
 
 derive instance Newtype Id _

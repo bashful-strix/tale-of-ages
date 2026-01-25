@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -94,7 +95,8 @@ snowbinder =
 
   , talents:
       [ Talent
-          { name: Name "Crystalline"
+          { id: Id "crystalline|talent|snowbinder"
+          , name: Name "Crystalline"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -103,7 +105,8 @@ snowbinder =
               ]
           }
       , Talent
-          { name: Name "Spin"
+          { id: Id "spin|talent|snowbinder"
+          , name: Name "Spin"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -113,7 +116,8 @@ snowbinder =
               ]
           }
       , Talent
-          { name: Name "Slide"
+          { id: Id "slide|talent|snowbinder"
+          , name: Name "Slide"
           , colour: Name "Blue"
           , description:
               [ Text

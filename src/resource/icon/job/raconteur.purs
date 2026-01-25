@@ -20,6 +20,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -104,13 +105,15 @@ raconteur =
 
   , talents:
       [ Talent
-          { name: Name "Finale"
+          { id: Id "finale|talent|raconteur"
+          , name: Name "Finale"
           , colour: Name "Green"
           , description:
               [ Text "At round 3+, you can enter one more stance than normal." ]
           }
       , Talent
-          { name: Name "Pity"
+          { id: Id "pity|talent|raconteur"
+          , name: Name "Pity"
           , colour: Name "Green"
           , description:
               [ Text
@@ -131,7 +134,8 @@ raconteur =
               ]
           }
       , Talent
-          { name: Name "Echo"
+          { id: Id "echo|talent|raconteur"
+          , name: Name "Echo"
           , colour: Name "Green"
           , description:
               [ Text

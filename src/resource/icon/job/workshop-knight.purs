@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -94,7 +95,8 @@ workshopKnight =
       ]
   , talents:
       [ Talent
-          { name: Name "Alloy"
+          { id: Id "alloy|talent|workshop-knight"
+          , name: Name "Alloy"
           , colour: Name "Red"
           , description:
               [ Text "You improve the effect of "
@@ -106,7 +108,8 @@ workshopKnight =
               ]
           }
       , Talent
-          { name: Name "Endure"
+          { id: Id "endure|talent|workshop-knight"
+          , name: Name "Endure"
           , colour: Name "Red"
           , description:
               [ Text "If you don't attack during your turn, gain "
@@ -117,7 +120,8 @@ workshopKnight =
               ]
           }
       , Talent
-          { name: Name "Bolster"
+          { id: Id "bolster|talent|workshop-knight"
+          , name: Name "Bolster"
           , colour: Name "Red"
           , description:
               [ Text

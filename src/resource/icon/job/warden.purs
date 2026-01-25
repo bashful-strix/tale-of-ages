@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -122,7 +123,8 @@ warden =
 
   , talents:
       [ Talent
-          { name: Name "Boost"
+          { id: Id "boost|talent|warden"
+          , name: Name "Boost"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -131,13 +133,15 @@ warden =
               ]
           }
       , Talent
-          { name: Name "Hunters"
+          { id: Id "hunters|talent|warden"
+          , name: Name "Hunters"
           , colour: Name "Yellow"
           , description:
               [ Text "Your summons deal +2 damage to foes in crisis." ]
           }
       , Talent
-          { name: Name "Corner"
+          { id: Id "corner|talent|warden"
+          , name: Name "Corner"
           , colour: Name "Yellow"
           , description:
               [ Text "Your attacks deal damage "

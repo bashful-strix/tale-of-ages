@@ -20,6 +20,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -98,7 +99,8 @@ partizan =
 
   , talents:
       [ Talent
-          { name: Name "Eagle"
+          { id: Id "eagle|talent|partizan"
+          , name: Name "Eagle"
           , colour: Name "Red"
           , description:
               [ Text
@@ -107,7 +109,8 @@ partizan =
               ]
           }
       , Talent
-          { name: Name "Soar"
+          { id: Id "soar|talent|partizan"
+          , name: Name "Soar"
           , colour: Name "Red"
           , description:
               [ Text "Your free move can "
@@ -120,7 +123,8 @@ partizan =
               ]
           }
       , Talent
-          { name: Name "Vantage"
+          { id: Id "vantage|talent|partizan"
+          , name: Name "Vantage"
           , colour: Name "Red"
           , description:
               [ Text

@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -114,7 +115,8 @@ zephyr =
 
   , talents:
       [ Talent
-          { name: Name "Stormborn"
+          { id: Id "stormborn|talent|zephyr"
+          , name: Name "Stormborn"
           , colour: Name "Green"
           , description:
               [ Text
@@ -127,7 +129,8 @@ zephyr =
               ]
           }
       , Talent
-          { name: Name "Alacrity"
+          { id: Id "alacrity|talent|zephyr"
+          , name: Name "Alacrity"
           , colour: Name "Green"
           , description:
               [ Text
@@ -136,7 +139,8 @@ zephyr =
               ]
           }
       , Talent
-          { name: Name "Squall"
+          { id: Id "squall|talent|zephyr"
+          , name: Name "Squall"
           , colour: Name "Green"
           , description:
               [ Text

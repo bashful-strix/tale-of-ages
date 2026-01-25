@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -84,7 +85,8 @@ tactician =
       ]
   , talents:
       [ Talent
-          { name: Name "Mastermind"
+          { id: Id "mastermind|talent|tactician"
+          , name: Name "Mastermind"
           , colour: Name "Red"
           , description:
               [ Text
@@ -95,7 +97,8 @@ tactician =
               ]
           }
       , Talent
-          { name: Name "Spur"
+          { id: Id "spur|talent|tactician"
+          , name: Name "Spur"
           , colour: Name "Red"
           , description:
               [ Text
@@ -106,7 +109,8 @@ tactician =
               ]
           }
       , Talent
-          { name: Name "Fieldwork"
+          { id: Id "fieldwork|talent|tactician"
+          , name: Name "Fieldwork"
           , colour: Name "Red"
           , description:
               [ Text

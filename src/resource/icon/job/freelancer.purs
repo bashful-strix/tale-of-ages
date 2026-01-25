@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -92,7 +93,8 @@ freelancer =
 
   , talents:
       [ Talent
-          { name: Name "Steady"
+          { id: Id "steady|talent|freelancer"
+          , name: Name "Steady"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -101,7 +103,8 @@ freelancer =
               ]
           }
       , Talent
-          { name: Name "Flourish"
+          { id: Id "flourish|talent|freelancer"
+          , name: Name "Flourish"
           , colour: Name "Yellow"
           , description:
               [ Text "If you critical hit, you may gain "
@@ -112,7 +115,8 @@ freelancer =
               ]
           }
       , Talent
-          { name: Name "Kickoff"
+          { id: Id "kickoff|talent|freelancer"
+          , name: Name "Kickoff"
           , colour: Name "Yellow"
           , description:
               [ Text

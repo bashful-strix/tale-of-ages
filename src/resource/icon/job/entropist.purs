@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..), StatusType(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
@@ -116,7 +117,8 @@ entropist =
 
   , talents:
       [ Talent
-          { name: Name "Energize"
+          { id: Id "energize|talent|entropist"
+          , name: Name "Energize"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -125,7 +127,8 @@ entropist =
               ]
           }
       , Talent
-          { name: Name "Halt"
+          { id: Id "halt|talent|entropist"
+          , name: Name "Halt"
           , colour: Name "Blue"
           , description:
               [ Italic [ Ref (Name "Afflicted") [ Text "Afflicted" ] ]
@@ -139,7 +142,8 @@ entropist =
               ]
           }
       , Talent
-          { name: Name "Align"
+          { id: Id "align|talent|entropist"
+          , name: Name "Align"
           , colour: Name "Blue"
           , description:
               [ Text "The first time in a round you mark an ally, they gain "

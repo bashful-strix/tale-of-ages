@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -109,7 +110,8 @@ chronomancer =
 
   , talents:
       [ Talent
-          { name: Name "Stutter"
+          { id: Id "stutter|talent|chronomancer"
+          , name: Name "Stutter"
           , colour: Name "Green"
           , description:
               [ Text
@@ -120,7 +122,8 @@ chronomancer =
               ]
           }
       , Talent
-          { name: Name "Chronodouble"
+          { id: Id "chronodouble|talent|chronomancer"
+          , name: Name "Chronodouble"
           , colour: Name "Green"
           , description:
               [ Text
@@ -131,7 +134,8 @@ chronomancer =
               ]
           }
       , Talent
-          { name: Name "Tick"
+          { id: Id "tick|talent|chronomancer"
+          , name: Name "Tick"
           , colour: Name "Green"
           , description:
               [ Text "At round 4+, you gain +1 use of all interrupts." ]

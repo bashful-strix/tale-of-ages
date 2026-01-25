@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -94,7 +95,8 @@ weepingAssassin =
       ]
   , talents:
       [ Talent
-          { name: Name "Commiserate"
+          { id: Id "commiserate|talent|weeping-assassin"
+          , name: Name "Commiserate"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -105,7 +107,8 @@ weepingAssassin =
               ]
           }
       , Talent
-          { name: Name "Infiltrate"
+          { id: Id "infiltrate|talent|weeping-assassin"
+          , name: Name "Infiltrate"
           , colour: Name "Yellow"
           , description:
               [ Text "As a quick ability, you can spend "
@@ -121,7 +124,8 @@ weepingAssassin =
               ]
           }
       , Talent
-          { name: Name "Shimmer"
+          { id: Id "shimmer|talent|weeping-assassin"
+          , name: Name "Shimmer"
           , colour: Name "Yellow"
           , description:
               [ Text "If an ability ends your turn, it grants you "

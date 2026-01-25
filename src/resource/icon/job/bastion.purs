@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -95,7 +96,8 @@ bastion =
 
   , talents:
       [ Talent
-          { name: Name "Perseus"
+          { id: Id "perseus|talent|bastion"
+          , name: Name "Perseus"
           , colour: Name "Red"
           , description:
               [ Text
@@ -105,7 +107,8 @@ bastion =
               ]
           }
       , Talent
-          { name: Name "Supernova"
+          { id: Id "supernova|talent|bastion"
+          , name: Name "Supernova"
           , colour: Name "Red"
           , description:
               [ Text
@@ -114,7 +117,8 @@ bastion =
               ]
           }
       , Talent
-          { name: Name "Presence"
+          { id: Id "presence|talent|bastion"
+          , name: Name "Presence"
           , colour: Name "Red"
           , description:
               [ Text "Your abilities with teh aura tag gain "

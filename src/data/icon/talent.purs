@@ -16,12 +16,14 @@ import Type.Row (type (+))
 import ToA.Data.Icon.Ability (class Inseted, Inset)
 import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
+import ToA.Data.Icon.Id (class Identified, Id)
 import ToA.Data.Icon.Markup (Markup)
-import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Name (class Named, Name)
 import ToA.Util.Optic (key)
 
 type TalentData r =
-  ( name :: Name
+  ( id :: Id
+  , name :: Name
   , colour :: Name
   , description :: Markup
   | r
@@ -32,9 +34,16 @@ data Talent
   | InsetTalent { inset :: Inset | TalentData + () }
 
 instance Eq Talent where
-  eq (Talent { name: n }) (Talent { name: m }) = n == m
-  eq (InsetTalent { name: n }) (InsetTalent { name: m }) = n == m
+  eq (Talent { id: a }) (Talent { id: b }) = a == b
+  eq (InsetTalent { id: a }) (InsetTalent { id: b }) = a == b
   eq _ _ = false
+
+instance Identified Talent where
+  _id = lens' case _ of
+    Talent a -> map Talent <$> lensStore k a
+    InsetTalent a -> map InsetTalent <$> lensStore k a
+    where
+    k = key @"id"
 
 instance Named Talent where
   _name = lens' case _ of

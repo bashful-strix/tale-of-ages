@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -89,7 +90,8 @@ spellblade =
       ]
   , talents:
       [ Talent
-          { name: Name "Vex"
+          { id: Id "vex|talent|spellblade"
+          , name: Name "Vex"
           , colour: Name "Blue"
           , description:
               [ Text "After you attack an "
@@ -99,7 +101,8 @@ spellblade =
               ]
           }
       , Talent
-          { name: Name "Fence"
+          { id: Id "fence|talent|spellblade"
+          , name: Name "Fence"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -109,7 +112,8 @@ spellblade =
               ]
           }
       , Talent
-          { name: Name "Bladework"
+          { id: Id "bladework|talent|spellblade"
+          , name: Name "Bladework"
           , colour: Name "Blue"
           , description:
               [ Text

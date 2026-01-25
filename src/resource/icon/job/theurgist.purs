@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -115,7 +116,8 @@ theurgist =
 
   , talents:
       [ Talent
-          { name: Name "Zeal"
+          { id: Id "zeal|talent|theurgist"
+          , name: Name "Zeal"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -125,7 +127,8 @@ theurgist =
               ]
           }
       , Talent
-          { name: Name "Bloodwell"
+          { id: Id "bloodwell|talent|theurgist"
+          , name: Name "Bloodwell"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -134,7 +137,8 @@ theurgist =
               ]
           }
       , Talent
-          { name: Name "Ardor"
+          { id: Id "ardor|talent|theurgist"
+          , name: Name "Ardor"
           , colour: Name "Blue"
           , description:
               [ Text "Increase the effect of "

@@ -20,6 +20,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -119,7 +120,8 @@ puppeteer =
 
   , talents:
       [ Talent
-          { name: Name "Marionette"
+          { id: Id "marionette|talent|puppeteer"
+          , name: Name "Marionette"
           , colour: Name "Yellow"
           , description:
               [ Text "As a "
@@ -130,7 +132,8 @@ puppeteer =
               ]
           }
       , Talent
-          { name: Name "Malinger"
+          { id: Id "malinger|talent|puppeteer"
+          , name: Name "Malinger"
           , colour: Name "Yellow"
           , description:
               [ Text "Once a round, when you "
@@ -141,7 +144,8 @@ puppeteer =
               ]
           }
       , Talent
-          { name: Name "Deftness"
+          { id: Id "deftness|talent|puppeteer"
+          , name: Name "Deftness"
           , colour: Name "Yellow"
           , description:
               [ Text

@@ -20,6 +20,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -95,7 +96,8 @@ corvidian =
 
   , talents:
       [ Talent
-          { name: Name "Cruelty"
+          { id: Id "cruelty|talent|corvidian"
+          , name: Name "Cruelty"
           , colour: Name "Red"
           , description:
               [ Text "Your attacks gain attack "
@@ -106,7 +108,8 @@ corvidian =
               ]
           }
       , Talent
-          { name: Name "Mortality"
+          { id: Id "mortality|talent|corvidian"
+          , name: Name "Mortality"
           , colour: Name "Red"
           , description:
               [ Text
@@ -115,7 +118,8 @@ corvidian =
               ]
           }
       , Talent
-          { name: Name "Camraderie"
+          { id: Id "camraderie|talent|corvidian"
+          , name: Name "Camraderie"
           , colour: Name "Red"
           , description:
               [ Text "When you "

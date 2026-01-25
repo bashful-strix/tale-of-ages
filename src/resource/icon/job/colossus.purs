@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -73,7 +74,7 @@ colossus =
           , talents:
               Name "Grit"
                 : Name "Adrenaline"
-                : Name "Surge (Colossus)"
+                : Name "Surge"
                 : empty
           }
       ]
@@ -96,7 +97,8 @@ colossus =
 
   , talents:
       [ Talent
-          { name: Name "Grit"
+          { id: Id "grit|talent|colossus"
+          , name: Name "Grit"
           , colour: Name "Red"
           , description:
               [ Text "The first time in a round you "
@@ -105,13 +107,15 @@ colossus =
               ]
           }
       , Talent
-          { name: Name "Adrenaline"
+          { id: Id "adrenaline|talent|colossus"
+          , name: Name "Adrenaline"
           , colour: Name "Red"
           , description:
               [ Text "At 1 hp, all your attacks deal +3 base and area damage." ]
           }
       , Talent
-          { name: Name "Surge (Colossus)"
+          { id: Id "surge|talent|colossus"
+          , name: Name "Surge"
           , colour: Name "Red"
           , description:
               [ Text

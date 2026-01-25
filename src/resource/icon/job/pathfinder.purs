@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -63,7 +64,7 @@ pathfinder =
           , talents:
               Name "Footholds"
                 : Name "Horizon"
-                : Name "Vantage (Pathfinder)"
+                : Name "Vantage"
                 : empty
           }
       ]
@@ -86,7 +87,8 @@ pathfinder =
 
   , talents:
       [ Talent
-          { name: Name "Footholds"
+          { id: Id "footholds|talent|pathfinder"
+          , name: Name "Footholds"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -95,7 +97,8 @@ pathfinder =
               ]
           }
       , Talent
-          { name: Name "Horizon"
+          { id: Id "horizon|talent|pathfinder"
+          , name: Name "Horizon"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -107,7 +110,8 @@ pathfinder =
               ]
           }
       , Talent
-          { name: Name "Vantage (Pathfinder)"
+          { id: Id "vantage|talent|pathfinder"
+          , name: Name "Vantage"
           , colour: Name "Yellow"
           , description:
               [ Text "You gain attack "

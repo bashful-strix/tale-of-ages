@@ -20,6 +20,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -94,7 +95,8 @@ rake =
 
   , talents:
       [ Talent
-          { name: Name "Streak"
+          { id: Id "streak|talent|rake"
+          , name: Name "Streak"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -104,7 +106,8 @@ rake =
               ]
           }
       , Talent
-          { name: Name "Roller"
+          { id: Id "roller|talent|rake"
+          , name: Name "Roller"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -117,7 +120,8 @@ rake =
               ]
           }
       , Talent
-          { name: Name "Whirl"
+          { id: Id "whirl|talent|rake"
+          , name: Name "Whirl"
           , colour: Name "Yellow"
           , description:
               [ Text

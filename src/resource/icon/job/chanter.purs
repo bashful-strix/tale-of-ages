@@ -18,6 +18,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -116,7 +117,8 @@ chanter =
 
   , talents:
       [ Talent
-          { name: Name "Poise"
+          { id: Id "poise|talent|chanter"
+          , name: Name "Poise"
           , colour: Name "Green"
           , description:
               [ Text
@@ -127,7 +129,8 @@ chanter =
               ]
           }
       , Talent
-          { name: Name "Elegance"
+          { id: Id "elegance|talent|chanter"
+          , name: Name "Elegance"
           , colour: Name "Green"
           , description:
               [ Text
@@ -136,7 +139,8 @@ chanter =
               ]
           }
       , Talent
-          { name: Name "Peace"
+          { id: Id "peace|talent|chanter"
+          , name: Name "Peace"
           , colour: Name "Green"
           , description:
               [ Text

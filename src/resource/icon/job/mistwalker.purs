@@ -22,6 +22,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -100,7 +101,8 @@ mistwalker =
 
   , talents:
       [ Talent
-          { name: Name "Foundations"
+          { id: Id "foundations|talent|mistwalker"
+          , name: Name "Foundations"
           , colour: Name "Blue"
           , description:
               [ Text
@@ -111,7 +113,8 @@ mistwalker =
               ]
           }
       , Talent
-          { name: Name "Vanish"
+          { id: Id "vanish|talent|mistwalker"
+          , name: Name "Vanish"
           , colour: Name "Blue"
           , description:
               [ Text "While inside an "
@@ -122,7 +125,8 @@ mistwalker =
               ]
           }
       , Talent
-          { name: Name "Thirst"
+          { id: Id "thirst|talent|mistwalker"
+          , name: Name "Thirst"
           , colour: Name "Blue"
           , description:
               [ Text

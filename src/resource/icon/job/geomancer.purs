@@ -19,6 +19,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -101,7 +102,8 @@ geomancer =
 
   , talents:
       [ Talent
-          { name: Name "Earthmeld"
+          { id: Id "earthmeld|talent|geomancer"
+          , name: Name "Earthmeld"
           , colour: Name "Blue"
           , description:
               [ Text "As a "
@@ -112,7 +114,8 @@ geomancer =
               ]
           }
       , Talent
-          { name: Name "Boulder"
+          { id: Id "boulder|talent|geomancer"
+          , name: Name "Boulder"
           , colour: Name "Blue"
           , description:
               [ Text "Start combat with a height 1 boulder "
@@ -121,7 +124,8 @@ geomancer =
               ]
           }
       , Talent
-          { name: Name "Surf"
+          { id: Id "surf|talent|geomancer"
+          , name: Name "Surf"
           , colour: Name "Blue"
           , description:
               [ Text

@@ -21,6 +21,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -109,7 +110,8 @@ fairWright =
 
   , talents:
       [ Talent
-          { name: Name "Mulch"
+          { id: Id "mulch|talent|fair-wright"
+          , name: Name "Mulch"
           , colour: Name "Green"
           , description:
               [ Text "Once a round, when you "
@@ -122,7 +124,8 @@ fairWright =
               ]
           }
       , Talent
-          { name: Name "Recycle"
+          { id: Id "recycle|talent|fair-wright"
+          , name: Name "Recycle"
           , colour: Name "Green"
           , description:
               [ Text
@@ -133,7 +136,8 @@ fairWright =
               ]
           }
       , Talent
-          { name: Name "Incant"
+          { id: Id "incant|talent|fair-wright"
+          , name: Name "Incant"
           , colour: Name "Green"
           , description:
               [ Text

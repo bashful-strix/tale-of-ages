@@ -17,6 +17,7 @@ import ToA.Data.Icon.Ability
   , Variable(..)
   )
 import ToA.Data.Icon.Dice (Die(..))
+import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
@@ -90,7 +91,8 @@ dancer =
 
   , talents:
       [ Talent
-          { name: Name "Flow"
+          { id: Id "flow|talent|dancer"
+          , name: Name "Flow"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -99,7 +101,8 @@ dancer =
               ]
           }
       , Talent
-          { name: Name "Perfection"
+          { id: Id "perfection|talent|dancer"
+          , name: Name "Perfection"
           , colour: Name "Yellow"
           , description:
               [ Text
@@ -110,7 +113,8 @@ dancer =
               ]
           }
       , Talent
-          { name: Name "Untouchable"
+          { id: Id "untouchable|talent|dancer"
+          , name: Name "Untouchable"
           , colour: Name "Yellow"
           , description:
               [ Text "Add +1 to your "
