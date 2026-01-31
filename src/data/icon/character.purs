@@ -34,7 +34,7 @@ import Data.Either (Either(..))
 import Data.Filterable (partitionMap)
 import Data.Foldable (intercalate)
 import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.Lens (Lens', (^.), traversed, view)
+import Data.Lens (Lens', (^.), _2, traversed, view)
 import Data.Lens.Fold
   ( findOf
   , filtered
@@ -72,8 +72,8 @@ import Parsing.String.Basic (intDecimal, skipSpaces)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon (_abilities, _jobs, _talents) as I
 import ToA.Data.Icon.Id (Id, _id, jsonId)
-import ToA.Data.Icon.Job (JobLevel, jobLevelP, jsonJobLevel)
-import ToA.Data.Icon.Job (_talents) as J
+import ToA.Data.Icon.Job (Job, JobLevel, jobLevelP, jsonJobLevel)
+import ToA.Data.Icon.Job (_abilities, _talents) as J
 import ToA.Data.Icon.Name (Name(..), class Named, _name, jsonName)
 import ToA.Util.Optic ((^::), key)
 
@@ -222,11 +222,33 @@ serialise icon (Character { name, build: Build build }) =
                     <<< _name
                     <<< _Newtype
                 )
-                (\j -> " | " <> j)
+                (" | " <> _)
             )
     , "\nAbilities"
     , build.abilities.active # intercalate "\n" <<< map \a -> "+ " <> unwrap a
+        <>
+          ( icon # foldMapOf
+              ( I._jobs
+                  <<< folded
+                  <<< filtered
+                    (has (J._abilities <<< folded <<< _2 <<< filtered (eq a)))
+                  <<< _name
+                  <<< _Newtype
+              )
+              (" | " <> _)
+          )
     , build.abilities.inactive # intercalate "\n" <<< map \a -> "- " <> unwrap a
+        <>
+          ( icon # foldMapOf
+              ( I._jobs
+                  <<< folded
+                  <<< filtered
+                    (has (J._abilities <<< folded <<< _2 <<< filtered (eq a)))
+                  <<< _name
+                  <<< _Newtype
+              )
+              (" | " <> _)
+          )
     ]
 
 levelP :: Parser String Level
@@ -245,40 +267,80 @@ gap :: Parser String Unit
 gap =
   optional (many (string "\n"))
 
-talent :: Icon -> Parser String (Id /\ Maybe Name)
+optJob :: Icon -> Parser String Unit -> Parser String (Maybe Job)
+optJob icon term = do
+  jobName <- map (Name <<< fst) <$> optionMaybe
+    ( (char '(' *> anyTill (char ')' *> term)) <|>
+        (char '|' *> skipSpaces *> anyTill term)
+    )
+  case jobName of
+    Nothing -> pure Nothing
+    Just jn ->
+      let
+        foundJob = icon # firstOf
+          (I._jobs <<< folded <<< filtered (eq jn <<< view _name))
+      in
+        case foundJob of
+          Nothing -> fail $ "No job " <> jn ^. simple _Newtype
+          Just fj -> pure $ Just fj
+
+talent :: Icon -> Parser String Id
 talent icon = do
   name <- fst <$> anyTill
     ( void (string "\n") <|> skipSpaces *> lookAhead
         (void (char '(' <|> char '|'))
     )
-  jobName <- map (Name <<< fst) <$> optionMaybe
-    ( (char '(' *> anyTill (char ')')) <|>
-        (char '|' *> skipSpaces *> anyTill (char '\n'))
-    )
+  job <- optJob icon (void (char '\n'))
 
   let
     ids = icon ^:: I._talents <<< traversed
       <<< filtered (eq name <<< view (_name <<< _Newtype))
       <<< _id
 
-  id <- case jobName of
+  case job of
     Nothing -> case uncons ids of
       Nothing -> fail $ "Invalid talent: " <> name
       Just { head, tail } -> case length tail of
         0 -> pure head
         _ -> fail $ "Several talents called " <> name <> ", try adding a job"
-    Just jn -> do
-      job <-
-        liftMaybe
-          (\_ -> "No job " <> jn ^. simple _Newtype)
-          $ icon # firstOf
-              (I._jobs <<< folded <<< filtered (eq jn <<< view _name))
+    Just j ->
       liftMaybe
-        (\_ -> "No talent " <> name <> " for job " <> jn ^. simple _Newtype)
-        $ job # firstOf
+        (\_ -> "No talent " <> name <> " for job " <> j ^. _name <<< _Newtype)
+        $ j # firstOf
             (J._talents <<< traversed <<< filtered (elem ~$ ids))
 
-  pure $ id /\ jobName
+ability :: Icon -> Parser String (Name /\ Boolean)
+ability icon = do
+  let
+    term = choice
+      [ void (string "\n")
+      , eof
+      , skipSpaces *> lookAhead (void (char '(' <|> char '|'))
+      ]
+  name /\ isActive <- choice
+    [ map (\_ -> false) <$> (string "-" *> skipSpaces *> anyTill term)
+    , map (\_ -> true) <$> (string "+" *> skipSpaces *> anyTill term)
+    ]
+  job <- optJob icon (void (char '\n') <|> eof)
+
+  let
+    names = icon ^:: I._abilities <<< traversed
+      <<< filtered (eq name <<< view (_name <<< _Newtype))
+      <<< _name
+
+  ab <- case job of
+    Nothing -> case uncons names of
+      Nothing -> fail $ "Invalid ability: " <> name
+      Just { head, tail } -> case length tail of
+        0 -> pure head
+        _ -> fail $ "Several abilities called " <> name <> ", try adding a job"
+    Just j ->
+      liftMaybe
+        (\_ -> "No ability " <> name <> " for job " <> j ^. _name <<< _Newtype)
+        $ j # firstOf
+            (J._abilities <<< traversed <<< _2 <<< filtered (elem ~$ names))
+
+  pure $ ab /\ isActive
 
 buildParser :: Icon -> Parser String (Name /\ Build)
 buildParser icon = do
@@ -314,31 +376,20 @@ buildParser icon = do
 
   gap
   abilities <- label "Abilities" *>
-    many
-      ( choice
-          [ map (\_ -> false) <$>
-              (string "-" *> skipSpaces *> anyTill (void (string "\n") <|> eof))
-          , map (\_ -> true) <$>
-              (string "+" *> skipSpaces *> anyTill (void (string "\n") <|> eof))
-          ]
-      )
-  abilities # traverse_ \(ability /\ _) ->
-    liftMaybe (\_ -> "Invalid ability: " <> ability) $ icon # findOf
-      (I._abilities <<< traversed <<< _name <<< _Newtype)
-      (_ == ability)
+    many (ability icon)
 
   skipSpaces
 
   let
     { left: inactive, right: active } = abilities #
       partitionMap \(a /\ isActive) ->
-        if isActive then Right (Name a) else Left (Name a)
+        if isActive then Right a else Left a
 
   pure $ (Name name) /\ Build
     { level
     , primary: Name primary
     , jobs: fromFoldable (first Name <$> jobs)
-    , talents: fst <$> talents
+    , talents
     , abilities: { active, inactive }
     }
 

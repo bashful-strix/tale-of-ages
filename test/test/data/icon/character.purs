@@ -13,7 +13,7 @@ import ToA.Data.Icon (Icon, _abilities, _jobs, _talents)
 import ToA.Data.Icon.Ability (Ability(..), Action(..)) as A
 import ToA.Data.Icon.Id (Id(..), _id)
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
-import ToA.Data.Icon.Job (_talents) as J
+import ToA.Data.Icon.Job (_abilities, _talents) as J
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Talent (Talent(..))
 
@@ -73,8 +73,10 @@ icon = mempty
       , job # _name .~ Name "Job 1"
             # J._talents %~ set (term :: _ 0) (Id "talent-1|talent|job-1")
             # J._talents %~ set (term :: _ 0) (Id "talent-2|talent|job-1")
+            # J._abilities %~ set (term :: _ 0) (I /\ Name "Active 1")
       , job # _name .~ Name "Job 2"
             # J._talents %~ set (term :: _ 1) (Id "talent-2|talent|job-2")
+            # J._abilities %~ set (term :: _ 0) (I /\ Name "Inactive 2")
       , job # _name .~ Name "Job 3"
       , job # _name .~ Name "Job 4"
       ]
@@ -139,10 +141,10 @@ Talents
 - Talent 2 | Job 1
 
 Abilities
-+ Active 1
++ Active 1 | Job 1
 + Active 2
 - Inactive 1
-- Inactive 2"""
+- Inactive 2 | Job 2"""
 
       (encode (stringCharacter icon) <$> decode (stringCharacter icon) t)
         `shouldEqual` pure t
