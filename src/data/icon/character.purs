@@ -222,7 +222,7 @@ serialise icon (Character { name, build: Build build }) =
                     <<< _name
                     <<< _Newtype
                 )
-                (\j -> " (" <> j <> ")")
+                (\j -> " | " <> j)
             )
     , "\nAbilities"
     , build.abilities.active # intercalate "\n" <<< map \a -> "+ " <> unwrap a
@@ -248,35 +248,37 @@ gap =
 talent :: Icon -> Parser String (Id /\ Maybe Name)
 talent icon = do
   name <- fst <$> anyTill
-    (void (string "\n") <|> skipSpaces *> lookAhead (void (char '(')))
-  job <- map (Name <<< fst) <$> optionMaybe
-    (char '(' *> anyTill (char ')'))
+    ( void (string "\n") <|> skipSpaces *> lookAhead
+        (void (char '(' <|> char '|'))
+    )
+  jobName <- map (Name <<< fst) <$> optionMaybe
+    ( (char '(' *> anyTill (char ')')) <|>
+        (char '|' *> skipSpaces *> anyTill (char '\n'))
+    )
 
   let
     ids = icon ^:: I._talents <<< traversed
       <<< filtered (eq name <<< view (_name <<< _Newtype))
       <<< _id
 
-  id <- case uncons ids of
-    Nothing -> fail $ "Invalid talent: " <> name
-    Just { head, tail } -> case length tail of
-      0 -> pure head
-      _ -> case job of
-        Nothing -> fail $ "Several talents called " <> name <>
-          ", try adding a job"
-        Just j ->
-          liftMaybe
-            ( \_ -> "No talent " <> name <> " for job " <> j ^. simple _Newtype
-            ) $ icon # firstOf
-            ( I._jobs
-                <<< traversed
-                <<< filtered (eq j <<< view _name)
-                <<< J._talents
-                <<< traversed
-                <<< filtered (elem ~$ ids)
-            )
+  id <- case jobName of
+    Nothing -> case uncons ids of
+      Nothing -> fail $ "Invalid talent: " <> name
+      Just { head, tail } -> case length tail of
+        0 -> pure head
+        _ -> fail $ "Several talents called " <> name <> ", try adding a job"
+    Just jn -> do
+      job <-
+        liftMaybe
+          (\_ -> "No job " <> jn ^. simple _Newtype)
+          $ icon # firstOf
+              (I._jobs <<< folded <<< filtered (eq jn <<< view _name))
+      liftMaybe
+        (\_ -> "No talent " <> name <> " for job " <> jn ^. simple _Newtype)
+        $ job # firstOf
+            (J._talents <<< traversed <<< filtered (elem ~$ ids))
 
-  pure $ id /\ job
+  pure $ id /\ jobName
 
 buildParser :: Icon -> Parser String (Name /\ Build)
 buildParser icon = do

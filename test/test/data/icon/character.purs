@@ -136,7 +136,7 @@ Jobs :: Job 1 I | Job 2 II | Job 3 III | Job 4 IV
 
 Talents
 - Talent 1
-- Talent 2 (Job 1)
+- Talent 2 | Job 1
 
 Abilities
 + Active 1
