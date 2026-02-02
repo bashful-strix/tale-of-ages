@@ -24,12 +24,12 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@iconify/json": "2.2.431",
+    "@iconify/json": "2.2.434",
     "@iconify/tailwind4": "1.2.1",
     "@tailwindcss/vite": "4.1.18",
     "purescript": "0.15.15",
     "purs-tidy": "0.11.1",
-    "spago": "0.93.44",
+    "spago": "1.0.3",
     "surge": "0.24.6",
     "vite": "7.3.1"
   }
