@@ -272,7 +272,7 @@ bleakKnight =
                   , Text " "
                   , Dice 2 D3
                   , Text
-                      """+2 hp. Grant half as mush as the sacrifice amount as
+                      """+2 hp. Grant half as much as the sacrifice amount as
                       vigor to self and adjacent allies to your foe."""
                   ]
               , Step Eff Nothing

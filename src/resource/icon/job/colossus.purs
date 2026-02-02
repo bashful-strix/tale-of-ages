@@ -267,13 +267,13 @@ colossus =
                   ]
               , Step
                   ( AltStep $
-                      (VariableKeywordStep (Name "Sacrifice") (RollVar 3 D3))
+                      (VariableKeywordStep (Name "Sacrifice") (NumVar 3))
                         `cons'` [ KeywordStep (Name "Reckless") ]
                   )
                   Nothing
                   [ Text
-                      """Maintain the grab if it would end. Prevent any forced
-                      movement that would end the grab."""
+                      """Burst +1, and deals 2 damage, once, to all characters
+                      in the area. You may repeat this effect up to 3 times."""
                   ]
               ]
           }
