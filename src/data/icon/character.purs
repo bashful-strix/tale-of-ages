@@ -2,9 +2,21 @@ module ToA.Data.Icon.Character
   ( Character(..)
   , CharacterData
   , _build
+  , _state
+  , _currentHp
+  , _currentVigor
+  , _currentPowerDice
+  , _currentStatus
 
   , State(..)
   , StateData
+  , CombatStateData
+  , ExpeditionStateData
+  , _combat
+  , _hp
+  , _vigor
+  , _powerDice
+  , _status
 
   , Build(..)
   , BuildData
@@ -34,7 +46,7 @@ import Data.Either (Either(..))
 import Data.Filterable (partitionMap)
 import Data.Foldable (intercalate)
 import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.Lens (Lens', (^.), _2, traversed, view)
+import Data.Lens (Lens', (^.), _2, traversed, preview, view)
 import Data.Lens.Fold
   ( findOf
   , filtered
@@ -46,8 +58,8 @@ import Data.Lens.Fold
   )
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Map (Map, fromFoldable)
-import Data.Maybe (Maybe(..))
+import Data.Map (Map, empty, fromFoldable)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (class Newtype, unwrap)
 import Data.Profunctor.Strong (first)
 import Data.Traversable (traverse_)
@@ -70,7 +82,8 @@ import Parsing.String (anyTill, char, eof, string)
 import Parsing.String.Basic (intDecimal, skipSpaces)
 
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon (_abilities, _jobs, _talents) as I
+import ToA.Data.Icon (_abilities, _classes, _jobs, _talents) as I
+import ToA.Data.Icon.Class (_hp) as C
 import ToA.Data.Icon.Id (Id, _id, jsonId)
 import ToA.Data.Icon.Job (Job, JobLevel, jobLevelP, jsonJobLevel)
 import ToA.Data.Icon.Job (_abilities, _talents) as J
@@ -95,8 +108,56 @@ instance Named Character where
 _build :: Lens' Character Build
 _build = _Newtype <<< key @"build"
 
-type StateData = {}
+_state :: Lens' Character State
+_state = _Newtype <<< key @"state"
+
+_currentHp :: Lens' Character Int
+_currentHp = _state <<< _combat <<< _hp
+
+_currentVigor :: Lens' Character Int
+_currentVigor = _state <<< _combat <<< _vigor
+
+_currentPowerDice :: Lens' Character (Map String Int)
+_currentPowerDice = _state <<< _combat <<< _powerDice
+
+_currentStatus :: Lens' Character (Map Name Int)
+_currentStatus = _state <<< _combat <<< _status
+
+type CombatStateData =
+  { hp :: Int
+  , vigor :: Int
+  , powerDice :: Map String Int
+  , status :: Map Name Int
+  }
+
+type ExpeditionStateData =
+  { wounded :: Boolean
+  }
+
+type StateData =
+  { combat :: CombatStateData
+  , expedition :: ExpeditionStateData
+  , interlude :: {}
+  }
+
 newtype State = State StateData
+
+derive instance Newtype State _
+
+_combat :: Lens' State CombatStateData
+_combat = _Newtype <<< key @"combat"
+
+_hp :: Lens' CombatStateData Int
+_hp = key @"hp"
+
+_vigor :: Lens' CombatStateData Int
+_vigor = key @"vigor"
+
+_powerDice :: Lens' CombatStateData (Map String Int)
+_powerDice = key @"powerDice"
+
+_status :: Lens' CombatStateData (Map Name Int)
+_status = key @"status"
 
 type BuildData =
   { level :: Level
@@ -110,6 +171,9 @@ type BuildData =
   }
 
 newtype Build = Build BuildData
+
+derive instance Newtype Build _
+derive instance Eq Build
 
 _level :: Lens' Build Level
 _level = _Newtype <<< key @"level"
@@ -131,9 +195,6 @@ _active = key @"active"
 
 _inactive :: Lens' { active :: Array Name, inactive :: Array Name } (Array Name)
 _inactive = key @"inactive"
-
-derive instance Newtype Build _
-derive instance Eq Build
 
 data Level
   = Zero
@@ -190,7 +251,31 @@ stringCharacter :: Icon -> Codec' (Either ParseError) String Character
 stringCharacter icon = codec' parseChar (serialise icon)
   where
   parseChar = (runParser ~$ (buildParser icon <* eof)) >>>
-    map \(name /\ build) -> Character { name, state: State {}, build }
+    map \(name /\ build) ->
+      let
+        job = icon # firstOf
+          (I._jobs <<< folded <<< _name <<< filtered (eq (build ^. _primary)))
+        hp = icon # firstOf
+          ( I._classes
+              <<< folded
+              <<< filtered (eq job <<< preview _name)
+              <<< C._hp
+          )
+      in
+        Character
+          { name
+          , build
+          , state: State
+              { combat:
+                  { hp: fromMaybe 0 hp
+                  , vigor: 0
+                  , powerDice: empty
+                  , status: empty
+                  }
+              , expedition: { wounded: false }
+              , interlude: {}
+              }
+          }
 
 serialise :: Icon -> Character -> String
 serialise icon (Character { name, build: Build build }) =
@@ -409,7 +494,18 @@ jsonState :: CJ.Codec State
 jsonState = CJ.coercible "State" state_
   where
   state_ :: CJ.Codec StateData
-  state_ = CJR.object {}
+  state_ = CJR.object
+    { combat: CJR.object
+        { hp: CJ.int
+        , vigor: CJ.int
+        , powerDice: CJC.map CJ.string CJ.int
+        , status: CJC.map jsonName CJ.int
+        }
+    , expedition: CJR.object
+        { wounded: CJ.boolean
+        }
+    , interlude: CJR.object {}
+    }
 
 jsonBuild :: CJ.Codec Build
 jsonBuild = CJ.coercible "Build" build_

@@ -171,6 +171,24 @@ charactersPage env@{ characters, icon, route } pathChar =
                     )
 
                 , char # foldMap \c ->
+                    D.a
+                      [ DA.href_ $ print routeCodec
+                          (Characters $ CombatChar $ c ^? _name)
+                      , DL.click_ $
+                          (env ^. _navigate)
+                            (Characters $ CombatChar $ c ^? _name) <<<
+                            pure
+                      , css_
+                          [ "px-2"
+                          , "py-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-stone-700"
+                          ]
+                      ]
+                      [ D.text_ "Combat" ]
+
+                , char # foldMap \c ->
                     D.button
                       [ DL.runOn_ DL.click $ do
                           c # env ^. _deleteChar
@@ -254,6 +272,7 @@ charactersPage env@{ characters, icon, route } pathChar =
                                 ]
                                 [ D.text_ $ job ^. _Just <<< _name <<< _Newtype
                                 ]
+
                             , D.div
                                 [ css_ [ "w-max", "font-bold" ] ]
                                 [ D.text_ $ cls ^. _Just <<< _name <<< _Newtype
@@ -261,78 +280,69 @@ charactersPage env@{ characters, icon, route } pathChar =
 
                             , hr
 
-                            , D.div []
-                                [ D.div
-                                    [ css_ [ "w-max" ] ]
-                                    [ D.span
-                                        [ css_ [ "font-bold" ] ]
-                                        [ D.text_ "Level " ]
-                                    , D.span []
-                                        [ D.text_ $ char
-                                            ^. _Just
-                                              <<< _build
-                                              <<< _level
-                                              <<< to show
-                                        ]
-                                    ]
-                                , D.div
-                                    [ css_ [ "w-max" ] ] $ char
-                                    #
-                                      ( _Just
+                            , D.div
+                                [ css_ [ "w-max" ] ]
+                                [ D.span
+                                    [ css_ [ "font-bold" ] ]
+                                    [ D.text_ "Level " ]
+                                , D.span []
+                                    [ D.text_ $ char
+                                        ^. _Just
                                           <<< _build
-                                          <<< _jobs
-                                          <<< itraversed
-                                      )
-                                        `ifoldMapOf` \n l -> pure $
-                                          D.div []
-                                            [ D.span
-                                                [ css_ [ "font-bold" ] ]
-                                                [ D.text_ $
-                                                    (n ^. simple _Newtype)
-                                                      <> " "
-                                                ]
-                                            , D.span [] [ D.text_ $ show l ]
+                                          <<< _level
+                                          <<< to show
+                                    ]
+                                ]
+
+                            , D.div
+                                [ css_ [ "w-max" ] ] $ char
+                                # (_Just <<< _build <<< _jobs <<< itraversed)
+                                    `ifoldMapOf` \n l -> pure $
+                                      D.div []
+                                        [ D.span
+                                            [ css_ [ "font-bold" ] ]
+                                            [ D.text_ $
+                                                (n ^. simple _Newtype) <> " "
                                             ]
-
-                                , hr
-
-                                , D.div
-                                    [ css_ [ "w-max" ] ]
-                                    [ D.span
-                                        [ css_ [ "font-bold" ] ]
-                                        [ D.text_ "HP: " ]
-                                    , D.span []
-                                        [ D.text_ $ cls ^. _Just <<< _hp <<< to
-                                            \hp ->
-                                              show hp
-                                                <> " (25% HP: "
-                                                <> show (hp / 4)
-                                                <> ")"
+                                        , D.span [] [ D.text_ $ show l ]
                                         ]
+
+                            , hr
+
+                            , D.div
+                                [ css_ [ "w-max" ] ]
+                                [ D.span
+                                    [ css_ [ "font-bold" ] ]
+                                    [ D.text_ "HP: " ]
+                                , D.span []
+                                    [ D.text_ $ cls ^. _Just <<< _hp <<< to
+                                        \hp ->
+                                          show hp
+                                            <> " (25% HP: "
+                                            <> show (hp / 4)
+                                            <> ")"
                                     ]
+                                ]
 
-                                , D.div
-                                    [ css_ [ "w-max" ] ]
-                                    [ D.span
-                                        [ css_ [ "font-bold" ] ]
-                                        [ D.text_ "Defense: " ]
-                                    , D.span []
-                                        [ D.text_ $ cls ^. _Just <<< _defense
-                                            <<<
-                                              to show
-                                        ]
+                            , D.div
+                                [ css_ [ "w-max" ] ]
+                                [ D.span
+                                    [ css_ [ "font-bold" ] ]
+                                    [ D.text_ "Defense: " ]
+                                , D.span []
+                                    [ D.text_ $ cls ^. _Just <<< _defense
+                                        <<< to show
                                     ]
+                                ]
 
-                                , D.div
-                                    [ css_ [ "w-max" ] ]
-                                    [ D.span
-                                        [ css_ [ "font-bold" ] ]
-                                        [ D.text_ "Free Move: " ]
-                                    , D.span []
-                                        [ D.text_ $ cls ^. _Just <<< _move <<<
-                                            to
-                                              show
-                                        ]
+                            , D.div
+                                [ css_ [ "w-max" ] ]
+                                [ D.span
+                                    [ css_ [ "font-bold" ] ]
+                                    [ D.text_ "Free Move: " ]
+                                , D.span []
+                                    [ D.text_ $ cls ^. _Just <<< _move <<<
+                                        to show
                                     ]
                                 ]
                             ]

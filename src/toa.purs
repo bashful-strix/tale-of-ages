@@ -16,6 +16,7 @@ import ToA.Data.Env (Env)
 import ToA.Data.Route (Route(..), CharacterPath(..), EncounterPath(..))
 import ToA.Data.Theme (themeCodec)
 import ToA.Page.Characters (charactersPage)
+import ToA.Page.Combat (combatPage)
 import ToA.Page.EditCharacter (editCharacterPage)
 import ToA.Page.Encounters (encountersPage)
 import ToA.Page.EditEncounter (editEncounterPage)
@@ -28,8 +29,8 @@ toa :: Env -> Nut
 toa env@{ route, systemTheme, theme } =
   D.div
     [ css $ theme <#> \t ->
-        [ "w-dvw"
-        , "h-dvh"
+        [ "w-screen"
+        , "h-screen"
         , "flex"
         , "flex-col"
         , "overflow-hidden"
@@ -50,6 +51,7 @@ toa env@{ route, systemTheme, theme } =
             Just (Characters path) -> case path of
               EditChar char -> editCharacterPage env char
               ViewChar char -> charactersPage env char
+              CombatChar char -> combatPage env char
             Just (Encounters path) -> case path of
               EditEnc enc -> editEncounterPage env enc
               ViewEnc enc -> encountersPage env enc

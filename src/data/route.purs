@@ -93,6 +93,7 @@ ability = param "ability"
 data CharacterPath
   = EditChar (Maybe Name)
   | ViewChar (Maybe Name)
+  | CombatChar (Maybe Name)
 
 derive instance Generic CharacterPath _
 derive instance Eq CharacterPath
@@ -101,6 +102,7 @@ characterPath :: RouteDuplex' CharacterPath
 characterPath = sum
   { "EditChar": "edit" / optional (name segment)
   , "ViewChar": optional (name segment)
+  , "CombatChar": "combat" / optional (name segment)
   }
 
 _ViewChar :: Prism' CharacterPath (Maybe Name)

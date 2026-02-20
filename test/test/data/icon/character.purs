@@ -6,7 +6,7 @@ import Data.Codec (decode, encode)
 import Data.FastVect.FastVect ((:), empty, set)
 import Data.FastVect.Common (term)
 import Data.Lens.Setter ((.~), (%~), (<>~))
-import Data.Map (fromFoldable)
+import Data.Map (empty, fromFoldable) as M
 import Data.Tuple.Nested ((/\))
 
 import ToA.Data.Icon (Icon, _abilities, _jobs, _talents)
@@ -102,11 +102,20 @@ spec = do
       let
         c = Character
           { name: Name "Test Name"
-          , state: State {}
+          , state: State
+              { combat:
+                  { hp: 0
+                  , vigor: 0
+                  , powerDice: M.empty
+                  , status: M.empty
+                  }
+              , expedition: { wounded: false }
+              , interlude: {}
+              }
           , build: Build
               { level: One
               , primary: Name "Primary"
-              , jobs: fromFoldable
+              , jobs: M.fromFoldable
                   [ Name "Job 1" /\ I
                   , Name "Job 2" /\ II
                   , Name "Job 3" /\ III
@@ -189,11 +198,20 @@ Abilities ::
         `shouldEqual`
           ( pure $ AnyShow $ Character
               { name: Name "Testina"
-              , state: State {}
+              , state: State
+                  { combat:
+                      { hp: 0
+                      , vigor: 0
+                      , powerDice: M.empty
+                      , status: M.empty
+                      }
+                  , expedition: { wounded: false }
+                  , interlude: {}
+                  }
               , build: Build
                   { level: One
                   , primary: Name "Tactician"
-                  , jobs: fromFoldable
+                  , jobs: M.fromFoldable
                       [ Name "Tactician" /\ I
                       , Name "Spellblade" /\ II
                       , Name "Weeping Assassin" /\ I

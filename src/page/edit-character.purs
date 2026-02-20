@@ -8,7 +8,7 @@ import Data.Codec (decode, encode)
 import Data.Either (Either(..), isLeft)
 import Data.Foldable (intercalate)
 import Data.Lens ((^.), (^?), preview, filtered, traversed)
-import Data.Map (fromFoldable)
+import Data.Map (empty, fromFoldable)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple.Nested ((/\))
 
@@ -41,8 +41,9 @@ import ToA.Util.Html (css_)
 editCharacterPage :: Env -> Maybe Name -> Nut
 editCharacterPage env@{ characters, icon } pathChar =
   (/\) <$> characters <*> icon <#~> \(chars /\ icon_) -> Deku.do
-    setChar /\ char <- useState $ encode (stringCharacter icon_) $ fromMaybe emptyChar $
-      chars ^? traversed <<< filtered (preview _name >>> eq pathChar)
+    setChar /\ char <- useState $ encode (stringCharacter icon_)
+      $ fromMaybe emptyChar
+      $ chars ^? traversed <<< filtered (preview _name >>> eq pathChar)
 
     let parsed = decode (stringCharacter icon_) <$> char
 
@@ -115,7 +116,16 @@ editCharacterPage env@{ characters, icon } pathChar =
 emptyChar :: Character
 emptyChar = Character
   { name: Name "<Character name>"
-  , state: State {}
+  , state: State
+      { combat:
+          { hp: 0
+          , vigor: 0
+          , powerDice: empty
+          , status: empty
+          }
+      , expedition: { wounded: false }
+      , interlude: {}
+      }
   , build: Build
       { level: Zero
       , primary: Name "<Primary job>"
