@@ -125,18 +125,14 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
         D.div
           [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
           [ D.div
-              [ css_ [ "flex", "items-center", "justify-between", "gap-x-2" ] ]
+              [ css_ [ "flex", "items-center", "gap-x-2" ] ]
               [ char # foldMap \c ->
-                  D.h2 [] [ D.text_ $ c ^. _name <<< _Newtype ]
-
-              , char # foldMap \c ->
                   D.a
                     [ DA.href_ $ print routeCodec
                         (Characters $ ViewChar $ c ^? _name)
                     , DL.click_ $
                         (env ^. _navigate)
-                          (Characters $ ViewChar $ c ^? _name) <<<
-                          pure
+                          (Characters $ ViewChar $ c ^? _name) <<< pure
                     , css_
                         [ "px-2"
                         , "py-1"
@@ -146,6 +142,9 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                         ]
                     ]
                     [ D.text_ "View" ]
+
+              , char # foldMap \c ->
+                  D.h2 [] [ D.text_ $ c ^. _name <<< _Newtype ]
               ]
 
           , D.div
@@ -346,7 +345,7 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                                   , "gap-2"
                                   ]
                               ]
-                              $ trs ^:: traversed <<< to \t ->
+                              $ trs <#> \t ->
                                   D.div
                                     []
                                     [ D.div

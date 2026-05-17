@@ -7,6 +7,7 @@ import PointFree ((~$))
 
 import CSS (backgroundColor, color, render, renderedInline)
 
+import Data.Array (sort)
 import Data.Filterable (filter)
 import Data.Foldable (elem, foldMap)
 import Data.Lens
@@ -111,12 +112,37 @@ charactersPage env@{ characters, icon, route } pathChar =
                     (char ^:: _Just <<< _build <<< _talents <<< traversed)
                 )
 
+          abs = sort $
+            abilities
+              ^:: traversed
+              <<< filtered
+                ( view _name >>> elem ~$
+                    (char ^. _Just <<< _build <<< _abilities <<< _active)
+                )
+
         in
           D.div
             [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
             [ D.div
                 [ css_ [ "flex", "justify-between", "gap-x-2" ] ]
-                [ D.select
+                [ char # foldMap \c ->
+                    D.a
+                      [ DA.href_ $ print routeCodec
+                          (Characters $ CombatChar $ c ^? _name)
+                      , DL.click_ $
+                          (env ^. _navigate)
+                            (Characters $ CombatChar $ c ^? _name) <<< pure
+                      , css_
+                          [ "px-2"
+                          , "py-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-stone-700"
+                          ]
+                      ]
+                      [ D.text_ "Combat" ]
+
+                , D.select
                     [ DL.selectOn_ DL.change $ \c ->
                         (env ^. _navigate)
                           ( Characters $
@@ -171,24 +197,6 @@ charactersPage env@{ characters, icon, route } pathChar =
                     )
 
                 , char # foldMap \c ->
-                    D.a
-                      [ DA.href_ $ print routeCodec
-                          (Characters $ CombatChar $ c ^? _name)
-                      , DL.click_ $
-                          (env ^. _navigate)
-                            (Characters $ CombatChar $ c ^? _name) <<<
-                            pure
-                      , css_
-                          [ "px-2"
-                          , "py-1"
-                          , "border"
-                          , "border-solid"
-                          , "border-stone-700"
-                          ]
-                      ]
-                      [ D.text_ "Combat" ]
-
-                , char # foldMap \c ->
                     D.button
                       [ DL.runOn_ DL.click $ do
                           c # env ^. _deleteChar
@@ -210,8 +218,7 @@ charactersPage env@{ characters, icon, route } pathChar =
                           (Characters $ EditChar $ c ^? _name)
                       , DL.click_ $
                           (env ^. _navigate)
-                            (Characters $ EditChar $ c ^? _name) <<<
-                            pure
+                            (Characters $ EditChar $ c ^? _name) <<< pure
                       , css_
                           [ "px-2"
                           , "py-1"
@@ -240,201 +247,238 @@ charactersPage env@{ characters, icon, route } pathChar =
                 ]
 
             , D.div
-                [ css_ [ "flex", "grow", "overflow-hidden", "gap-2" ] ]
+                [ css_
+                    [ "flex"
+                    , "flex-col"
+                    , "sm:flex-row"
+                    , "overflow-hidden"
+                    , "gap-2"
+                    ]
+                ]
                 [ D.div
-                    [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
+                    [ css_
+                        [ "flex"
+                        , "flex-1"
+                        , "sm:min-w-48"
+                        , "sm:max-w-56"
+                        , "overflow-scroll"
+                        , "p-2"
+                        , "gap-2"
+                        , "border"
+                        , "border-solid"
+                        , "border-rounded-sm"
+                        , "border-sky-800"
+                        ]
+                    ]
+                    [ D.div
+                        [ css_ [ "grow" ] ]
+                        [ D.div
+                            [ css_ [ "w-max", "font-bold", "text-white" ]
+                            , DA.style_ $ fromMaybe "" $ renderedInline $
+                                render =<<
+                                  backgroundColor <$> colours
+                                    ^? traversed
+                                      <<< filtered
+                                        ( preview _name >>> eq
+                                            (job ^? _Just <<< _colour)
+                                        )
+                                      <<< _value
+                            ]
+                            [ D.text_ $ job ^. _Just <<< _name <<< _Newtype ]
+
+                        , D.div
+                            [ css_ [ "w-max", "font-bold" ] ]
+                            [ D.text_ $ cls ^. _Just <<< _name <<< _Newtype ]
+
+                        , hr
+
+                        , D.div
+                            [ css_ [ "w-max" ] ]
+                            [ D.span
+                                [ css_ [ "font-bold" ] ]
+                                [ D.text_ "Level " ]
+                            , D.span []
+                                [ D.text_ $ char
+                                    ^. _Just <<< _build <<< _level <<< to show
+                                ]
+                            ]
+
+                        , D.div
+                            [ css_ [ "w-max" ] ] $ char
+                            # (_Just <<< _build <<< _jobs <<< itraversed)
+                                `ifoldMapOf` \n l -> pure $
+                                  D.div []
+                                    [ D.span
+                                        [ css_ [ "font-bold" ] ]
+                                        [ D.text_ $
+                                            (n ^. simple _Newtype) <> " "
+                                        ]
+                                    , D.span [] [ D.text_ $ show l ]
+                                    ]
+
+                        , hr
+
+                        , D.div
+                            [ css_ [ "w-max" ] ]
+                            [ D.span
+                                [ css_ [ "font-bold" ] ]
+                                [ D.text_ "HP: " ]
+                            , D.span []
+                                [ D.text_ $ cls ^. _Just <<< _hp <<< to \hp ->
+                                    show hp
+                                      <> " (25% HP: "
+                                      <> show (hp / 4)
+                                      <> ")"
+                                ]
+                            ]
+
+                        , D.div
+                            [ css_ [ "w-max" ] ]
+                            [ D.span
+                                [ css_ [ "font-bold" ] ]
+                                [ D.text_ "Defense: " ]
+                            , D.span []
+                                [ D.text_ $
+                                    cls ^. _Just <<< _defense <<< to show
+                                ]
+                            ]
+
+                        , D.div
+                            [ css_ [ "w-max" ] ]
+                            [ D.span
+                                [ css_ [ "font-bold" ] ]
+                                [ D.text_ "Free Move: " ]
+                            , D.span []
+                                [ D.text_ $
+                                    cls ^. _Just <<< _move <<< to show
+                                ]
+                            ]
+                        ]
+                    ]
+
+                , D.div
+                    [ css_ [ "flex", "flex-3", "overflow-scroll", "gap-2" ] ]
                     [ D.div
                         [ css_
                             [ "flex"
-                            , "basis-1/2"
-                            , "overflow-hidden"
-                            , "p-2"
+                            , "flex-col"
+                            , "lg:flex-row"
+                            , "grow"
                             , "gap-2"
-                            , "border"
-                            , "border-solid"
-                            , "border-rounded-sm"
-                            , "border-sky-800"
                             ]
                         ]
                         [ D.div
-                            [ css_ [ "w-max" ] ]
+                            [ css_
+                                [ "flex-1"
+                                , "flex"
+                                , "flex-col"
+                                , "lg:overflow-scroll"
+                                , "p-2"
+                                , "gap-x-2"
+                                , "gap-y-4"
+                                , "border"
+                                , "border-solid"
+                                , "border-rounded-sm"
+                                , "border-sky-800"
+                                ]
+                            ]
                             [ D.div
-                                [ css_ [ "w-max", "font-bold", "text-white" ]
-                                , DA.style_ $ fromMaybe "" $ renderedInline $
-                                    render =<<
-                                      backgroundColor <$> colours
-                                        ^? traversed
-                                          <<< filtered
-                                            ( preview _name >>> eq
-                                                (job ^? _Just <<< _colour)
-                                            )
-                                          <<< _value
-                                ]
-                                [ D.text_ $ job ^. _Just <<< _name <<< _Newtype
-                                ]
-
-                            , D.div
-                                [ css_ [ "w-max", "font-bold" ] ]
-                                [ D.text_ $ cls ^. _Just <<< _name <<< _Newtype
-                                ]
-
-                            , hr
-
-                            , D.div
-                                [ css_ [ "w-max" ] ]
-                                [ D.span
-                                    [ css_ [ "font-bold" ] ]
-                                    [ D.text_ "Level " ]
-                                , D.span []
-                                    [ D.text_ $ char
-                                        ^. _Just
-                                          <<< _build
-                                          <<< _level
-                                          <<< to show
+                                [ css_
+                                    [ "grid"
+                                    , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
+                                    , "gap-2"
                                     ]
                                 ]
-
-                            , D.div
-                                [ css_ [ "w-max" ] ] $ char
-                                # (_Just <<< _build <<< _jobs <<< itraversed)
-                                    `ifoldMapOf` \n l -> pure $
-                                      D.div []
-                                        [ D.span
-                                            [ css_ [ "font-bold" ] ]
-                                            [ D.text_ $
-                                                (n ^. simple _Newtype) <> " "
-                                            ]
-                                        , D.span [] [ D.text_ $ show l ]
-                                        ]
-
-                            , hr
-
-                            , D.div
-                                [ css_ [ "w-max" ] ]
-                                [ D.span
-                                    [ css_ [ "font-bold" ] ]
-                                    [ D.text_ "HP: " ]
-                                , D.span []
-                                    [ D.text_ $ cls ^. _Just <<< _hp <<< to
-                                        \hp ->
-                                          show hp
-                                            <> " (25% HP: "
-                                            <> show (hp / 4)
-                                            <> ")"
-                                    ]
-                                ]
-
-                            , D.div
-                                [ css_ [ "w-max" ] ]
-                                [ D.span
-                                    [ css_ [ "font-bold" ] ]
-                                    [ D.text_ "Defense: " ]
-                                , D.span []
-                                    [ D.text_ $ cls ^. _Just <<< _defense
-                                        <<< to show
-                                    ]
-                                ]
-
-                            , D.div
-                                [ css_ [ "w-max" ] ]
-                                [ D.span
-                                    [ css_ [ "font-bold" ] ]
-                                    [ D.text_ "Free Move: " ]
-                                , D.span []
-                                    [ D.text_ $ cls ^. _Just <<< _move <<<
-                                        to show
-                                    ]
-                                ]
-                            ]
-
-                        , D.div
-                            [ css_ [ "flex", "gap-x-2" ] ]
-                            $ trs ^:: traversed <<< to \t ->
-                                D.div
-                                  [ css_ [ "flex-1", "overflow-scroll" ] ]
-                                  [ D.div
-                                      [ css_ [ "font-bold" ] ]
-                                      [ D.text_ $ t ^. _name <<< _Newtype ]
-                                  , t # _desc #~ markup icon_
-                                  ]
-
-                        , D.div
-                            [ css_ [ "flex", "gap-x-2" ] ]
-                            $ tls ^:: traversed <<< to \t ->
-                                D.div
-                                  [ css_ [ "flex-1", "overflow-scroll" ] ]
-                                  [ D.div
-                                      [ css_ [ "font-bold" ]
-                                      , DA.style_ $ fromMaybe ""
-                                          $ renderedInline
-                                          $ render =<<
-                                              color <$> colours
-                                                ^? traversed
-                                                  <<< filtered
-                                                    ( view _name >>> eq
-                                                        (t ^. _colour)
-                                                    )
-                                                  <<< _value
+                                $ trs <#> \t ->
+                                    D.div
+                                      []
+                                      [ D.div
+                                          [ css_ [ "font-bold" ] ]
+                                          [ D.text_ $ t ^. _name <<< _Newtype ]
+                                      , t # _desc #~ markup icon_
                                       ]
-                                      [ D.text_ $ t ^. _name <<< _Newtype ]
-                                  , t # _desc #~ markup icon_
-                                  ]
 
-                        , guard
-                            ( char # hasn't
-                                (_Just <<< _build <<< _level <<< only Zero)
-                            )
-                            $ D.div
-                                [ css_ [ "flex", "gap-x-2" ] ]
-                            $
-                              abilities
-                                ^:: traversed
-                                <<< filtered
-                                  ( preview _name >>>
-                                      eq (job ^? _Just <<< _limitBreak)
-                                  )
-                                <<< to \a ->
-                                  D.div
-                                    [ css_ [ "flex-1", "overflow-scroll" ] ]
-                                    [ renderAbility icon_ a ]
-                        ]
+                            , D.div
+                                [ css_
+                                    [ "grid"
+                                    , "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
+                                    , "gap-2"
+                                    ]
+                                ]
+                                $ tls <#> \t ->
+                                    D.div
+                                      []
+                                      [ D.div
+                                          [ css_ [ "font-bold" ]
+                                          , DA.style_ $ fromMaybe ""
+                                              $ renderedInline
+                                              $ render =<<
+                                                  color <$> colours
+                                                    ^? traversed
+                                                      <<< filtered
+                                                        ( view _name >>> eq
+                                                            (t ^. _colour)
+                                                        )
+                                                      <<< _value
+                                          ]
+                                          [ D.text_ $ t ^. _name <<< _Newtype ]
+                                      , t # _desc #~ markup icon_
+                                      ]
 
-                    , D.div
-                        [ css_
-                            [ "flex"
-                            , "basis-1/2"
-                            , "overflow-hidden"
-                            , "p-2"
-                            , "gap-x-2"
-                            , "border"
-                            , "border-solid"
-                            , "border-rounded-sm"
-                            , "border-sky-800"
+                            , D.div
+                                [ css_
+                                    [ "grid"
+                                    , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
+                                    , "gap-2"
+                                    ]
+                                ]
+                                [ D.div
+                                    [ css_ [ "flex", "gap-x-2" ] ]
+                                    $
+                                      abilities
+                                        ^:: traversed
+                                        <<< filtered
+                                          ( preview _name >>> eq
+                                              (cls ^? _Just <<< _basic)
+                                          )
+                                        <<< to (renderAbility icon_)
+
+                                , guard
+                                    ( char # hasn't
+                                        ( _Just <<< _build <<< _level <<< only
+                                            Zero
+                                        )
+                                    )
+                                    $ D.div
+                                        [ css_ [ "flex", "gap-x-2" ] ]
+                                    $
+                                      abilities
+                                        ^:: traversed
+                                        <<< filtered
+                                          ( preview _name >>>
+                                              eq (job ^? _Just <<< _limitBreak)
+                                          )
+                                        <<< to (renderAbility icon_)
+                                ]
                             ]
+
+                        , D.div
+                            [ css_
+                                [ "flex-2"
+                                , "grid"
+                                , "grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]"
+                                , "lg:overflow-scroll"
+                                , "p-2"
+                                , "gap-x-2"
+                                , "gap-y-6"
+                                , "border"
+                                , "border-solid"
+                                , "border-rounded-sm"
+                                , "border-sky-800"
+                                ]
+                            ]
+                            $ abs <#> renderAbility icon_
                         ]
-                        ( ( abilities
-                              ^:: traversed
-                              <<< filtered
-                                (preview _name >>> eq (cls ^? _Just <<< _basic))
-                              <<< to \a ->
-                                D.div
-                                  [ css_ [ "flex-1", "overflow-scroll" ] ]
-                                  [ renderAbility icon_ a ]
-                          ) <>
-                            ( abilities
-                                ^:: traversed
-                                <<< filtered
-                                  ( view _name >>> elem ~$
-                                      ( char ^. _Just <<< _build <<< _abilities
-                                          <<< _active
-                                      )
-                                  )
-                                <<< to \a ->
-                                  D.div
-                                    [ css_ [ "flex-1", "overflow-scroll" ] ]
-                                    [ renderAbility icon_ a ]
-                            )
-                        )
                     ]
                 ]
             ]
