@@ -26,7 +26,7 @@ module ToA.Data.Icon.Ability
 import Prelude
 
 import Data.Array.NonEmpty (NonEmptyArray)
-import Data.Lens (Lens', _1, _2)
+import Data.Lens (Lens', view, _1, _2)
 import Data.Lens.AffineTraversal (AffineTraversal')
 import Data.Lens.Lens (lens', lensStore)
 import Data.Lens.Prism (Prism', prism')
@@ -37,7 +37,7 @@ import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Markup (Markup)
-import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Name (class Named, Name, _name)
 import ToA.Util.Optic (key)
 
 type AbilityData a =
@@ -57,6 +57,13 @@ instance Eq Ability where
   eq (Ability { name: n }) (Ability { name: m }) = n == m
   eq (LimitBreak { name: n }) (LimitBreak { name: m }) = n == m
   eq _ _ = false
+
+instance Ord Ability where
+  compare a b =
+    let ac = comparing (view _action) a b
+    in
+      if ac == EQ then comparing (view _name) a b
+      else ac
 
 instance Named Ability where
   _name = lens' case _ of
@@ -119,6 +126,7 @@ data Variable
   | OtherVar String
 
 derive instance Eq Variable
+derive instance Ord Variable
 
 instance Show Variable where
   show (NumVar n) = show n
@@ -132,6 +140,7 @@ data Action
   | Interrupt Variable
 
 derive instance Eq Action
+derive instance Ord Action
 
 data Range
   = Range Variable Variable

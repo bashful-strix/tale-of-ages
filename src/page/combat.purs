@@ -7,7 +7,7 @@ import PointFree ((~$), (<..))
 
 import CSS (color, render, renderedInline)
 
-import Data.Array ((..))
+import Data.Array ((..), sort)
 import Data.Foldable (elem, foldMap)
 import Data.Int (floor)
 import Data.Lens
@@ -113,6 +113,15 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
             <<< filtered
               ( view _id >>> elem ~$
                   (char ^:: _Just <<< _build <<< _talents <<< traversed)
+              )
+
+        abs = sort $
+          abilities
+            ^:: traversed
+            <<< filtered
+              ( preview _name >>> eq (cls ^? _Just <<< _basic) ||
+                  view _name >>> elem ~$
+                    (char ^. _Just <<< _build <<< _abilities <<< _active)
               )
 
       in
@@ -315,7 +324,9 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
               , D.div
                   [ css_ [ "flex", "flex-3", "overflow-scroll", "gap-2" ] ]
                   [ D.div
-                      [ css_ [ "flex", "flex-col", "lg:flex-row", "grow", "gap-2" ] ]
+                      [ css_
+                          [ "flex", "flex-col", "lg:flex-row", "grow", "gap-2" ]
+                      ]
                       [ D.div
                           [ css_
                               [ "flex"
@@ -353,9 +364,8 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                                   , "gap-2"
                                   ]
                               ]
-                              $ tls ^:: traversed <<< to \t ->
-                                  D.div
-                                    [ css_ [ "flex-1", "overflow-scroll" ] ]
+                              $ tls <#> \t ->
+                                  D.div []
                                     [ D.div
                                         [ css_ [ "font-bold" ]
                                         , DA.style_ $ fromMaybe ""
@@ -405,26 +415,8 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                               , "border-rounded-sm"
                               , "border-sky-800"
                               ]
-                          ] $
-                          ( abilities
-                              ^:: traversed
-                              <<< filtered
-                                ( preview _name >>> eq
-                                    (cls ^? _Just <<< _basic)
-                                )
-                              <<< to (renderAbility icon_)
-                          ) <>
-                            ( abilities
-                                ^:: traversed
-                                <<< filtered
-                                  ( view _name >>> elem ~$
-                                      ( char ^. _Just <<< _build
-                                          <<< _abilities
-                                          <<< _active
-                                      )
-                                  )
-                                <<< to (renderAbility icon_)
-                            )
+                          ]
+                          $ abs <#> renderAbility icon_
                       ]
                   ]
               ]
