@@ -85,9 +85,7 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
         job = jobs
           ^? traversed
             <<< filtered
-              ( preview _name >>> eq
-                  (char ^? _Just <<< _build <<< _primary)
-              )
+              (preview _name >>> eq (char ^? _Just <<< _build <<< _primary))
 
         cls = classes
           ^? traversed
@@ -119,9 +117,8 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
           abilities
             ^:: traversed
             <<< filtered
-              ( preview _name >>> eq (cls ^? _Just <<< _basic) ||
-                  view _name >>> elem ~$
-                    (char ^. _Just <<< _build <<< _abilities <<< _active)
+              ( view _name >>> elem ~$
+                  (char ^. _Just <<< _build <<< _abilities <<< _active)
               )
 
       in
@@ -329,7 +326,8 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                       ]
                       [ D.div
                           [ css_
-                              [ "flex"
+                              [ "flex-1"
+                              , "flex"
                               , "flex-col"
                               , "lg:overflow-scroll"
                               , "p-2"
@@ -344,7 +342,7 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                           [ D.div
                               [ css_
                                   [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(200px,1fr))]"
+                                  , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
                                   , "gap-2"
                                   ]
                               ]
@@ -360,12 +358,13 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                           , D.div
                               [ css_
                                   [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(150px,1fr))]"
+                                  , "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
                                   , "gap-2"
                                   ]
                               ]
                               $ tls <#> \t ->
-                                  D.div []
+                                  D.div
+                                    []
                                     [ D.div
                                         [ css_ [ "font-bold" ]
                                         , DA.style_ $ fromMaybe ""
@@ -383,29 +382,48 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                                     , t # _desc #~ markup icon_
                                     ]
 
-                          , guard
-                              ( char # hasn't
-                                  (_Just <<< _build <<< _level <<< only Zero)
-                              )
-                              $ D.div
+                          , D.div
+                              [ css_
+                                  [ "grid"
+                                  , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
+                                  , "gap-2"
+                                  ]
+                              ]
+                              [ D.div
                                   [ css_ [ "flex", "gap-x-2" ] ]
-                              $
-                                abilities
-                                  ^:: traversed
-                                  <<< filtered
-                                    ( preview _name >>>
-                                        eq (job ^? _Just <<< _limitBreak)
-                                    )
-                                  <<< to \a ->
-                                    D.div
-                                      [ css_ [ "flex-1", "overflow-scroll" ] ]
-                                      [ renderAbility icon_ a ]
+                                  $
+                                    abilities
+                                      ^:: traversed
+                                      <<< filtered
+                                        ( preview _name >>> eq
+                                            (cls ^? _Just <<< _basic)
+                                        )
+                                      <<< to (renderAbility icon_)
+
+                              , guard
+                                  ( char # hasn't
+                                      ( _Just <<< _build <<< _level <<< only
+                                          Zero
+                                      )
+                                  )
+                                  $ D.div
+                                      [ css_ [ "flex", "gap-x-2" ] ]
+                                  $
+                                    abilities
+                                      ^:: traversed
+                                      <<< filtered
+                                        ( preview _name >>>
+                                            eq (job ^? _Just <<< _limitBreak)
+                                        )
+                                      <<< to (renderAbility icon_)
+                              ]
                           ]
 
                       , D.div
                           [ css_
-                              [ "grid"
-                              , "grid-cols-[repeat(auto-fit,minmax(200px,1fr))]"
+                              [ "flex-2"
+                              , "grid"
+                              , "grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]"
                               , "lg:overflow-scroll"
                               , "p-2"
                               , "gap-x-2"
