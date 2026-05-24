@@ -122,8 +122,14 @@ emptyChar = Character
           , vigor: 0
           , powerDice: empty
           , status: empty
+          , partyResolve: 0
           }
-      , expedition: { wounded: false }
+      , expedition:
+          { wounded: false
+          , camps: 0
+          , personalResolve: 0
+          , combats: 0
+          }
       , interlude: {}
       }
   , build: Build

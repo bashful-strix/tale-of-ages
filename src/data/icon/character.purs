@@ -7,16 +7,24 @@ module ToA.Data.Icon.Character
   , _currentVigor
   , _currentPowerDice
   , _currentStatus
+  , _currentParRes
+  , _currentPerRes
 
   , State(..)
   , StateData
-  , CombatStateData
-  , ExpeditionStateData
   , _combat
+  , _expedition
+  , CombatStateData
   , _hp
   , _vigor
   , _powerDice
   , _status
+  , _partyResolve
+  , ExpeditionStateData
+  , _wounded
+  , _camps
+  , _personalResolve
+  , _combats
 
   , Build(..)
   , BuildData
@@ -123,16 +131,15 @@ _currentPowerDice = _state <<< _combat <<< _powerDice
 _currentStatus :: Lens' Character (Map Name Int)
 _currentStatus = _state <<< _combat <<< _status
 
-type CombatStateData =
-  { hp :: Int
-  , vigor :: Int
-  , powerDice :: Map String Int
-  , status :: Map Name Int
-  }
+_currentParRes :: Lens' Character Int
+_currentParRes = _state <<< _combat <<< _partyResolve
 
-type ExpeditionStateData =
-  { wounded :: Boolean
-  }
+_currentPerRes :: Lens' Character Int
+_currentPerRes = _state <<< _expedition <<< _personalResolve
+
+newtype State = State StateData
+
+derive instance Newtype State _
 
 type StateData =
   { combat :: CombatStateData
@@ -140,12 +147,19 @@ type StateData =
   , interlude :: {}
   }
 
-newtype State = State StateData
-
-derive instance Newtype State _
-
 _combat :: Lens' State CombatStateData
 _combat = _Newtype <<< key @"combat"
+
+_expedition :: Lens' State ExpeditionStateData
+_expedition = _Newtype <<< key @"expedition"
+
+type CombatStateData =
+  { hp :: Int
+  , vigor :: Int
+  , powerDice :: Map String Int
+  , status :: Map Name Int
+  , partyResolve :: Int
+  }
 
 _hp :: Lens' CombatStateData Int
 _hp = key @"hp"
@@ -158,6 +172,28 @@ _powerDice = key @"powerDice"
 
 _status :: Lens' CombatStateData (Map Name Int)
 _status = key @"status"
+
+_partyResolve :: Lens' CombatStateData Int
+_partyResolve = key @"partyResolve"
+
+type ExpeditionStateData =
+  { wounded :: Boolean
+  , camps :: Int
+  , personalResolve :: Int
+  , combats :: Int
+  }
+
+_wounded :: Lens' ExpeditionStateData Boolean
+_wounded = key @"wounded"
+
+_camps :: Lens' ExpeditionStateData Int
+_camps = key @"camps"
+
+_personalResolve :: Lens' ExpeditionStateData Int
+_personalResolve = key @"personalResolve"
+
+_combats :: Lens' ExpeditionStateData Int
+_combats = key @"combats"
 
 type BuildData =
   { level :: Level
@@ -271,8 +307,14 @@ stringCharacter icon = codec' parseChar (serialise icon)
                   , vigor: 0
                   , powerDice: empty
                   , status: empty
+                  , partyResolve: 0
                   }
-              , expedition: { wounded: false }
+              , expedition:
+                  { wounded: false
+                  , camps: 0
+                  , personalResolve: 0
+                  , combats: 0
+                  }
               , interlude: {}
               }
           }
@@ -500,9 +542,13 @@ jsonState = CJ.coercible "State" state_
         , vigor: CJ.int
         , powerDice: CJC.map CJ.string CJ.int
         , status: CJC.map jsonName CJ.int
+        , partyResolve: CJ.int
         }
     , expedition: CJR.object
         { wounded: CJ.boolean
+        , camps: CJ.int
+        , personalResolve: CJ.int
+        , combats: CJ.int
         }
     , interlude: CJR.object {}
     }

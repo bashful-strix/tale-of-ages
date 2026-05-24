@@ -60,6 +60,8 @@ import ToA.Data.Icon.Character
   , _currentVigor
   , _currentPowerDice
   , _currentStatus
+  , _currentPerRes
+  , _currentParRes
   )
 import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
 import ToA.Data.Icon.Colour (_colour, _value)
@@ -157,26 +159,34 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
 
                   , D.div
                       [ css_ [ "flex" ] ] $ char # foldMap \c ->
-                      [ D.input
-                          [ css_
-                              [ "bg-stone-500"
-                              , "text-stone-800"
-                              , "dark:bg-stone-700"
-                              , "dark:text-stone-300"
-                              ]
-                          , DA.xtypeNumber
-                          , DA.min_ "0"
-                          , DA.max_ $
-                              cls ^. _Just <<< _hp <<< to show
-                          , DA.value_ $ c ^. _currentHp <<< to show
-                          , DL.numberOn_ DL.change $ floor >>> \n ->
-                              (env ^. _saveChar) (c # _currentHp .~ n)
-                          ]
-                          []
-                      , D.div
-                          [ css_ [ "min-w-8", "text-right" ] ]
-                          [ D.text_ $ "/ " <> cls ^. _Just <<< _hp <<< to show ]
-                      ]
+                      let
+                        max = cls ^? _Just <<< _hp
+                        hp = c ^. _currentHp
+                      in
+                        [ D.input
+                            [ css_
+                                [ "bg-stone-500"
+                                , "text-stone-800"
+                                , "dark:bg-stone-700"
+                                , "dark:text-stone-300"
+                                ]
+                            , DA.xtypeNumber
+                            , DA.min_ "0"
+                            , DA.max_ $ max ^. _Just <<< to show
+                            , DA.value_ $ show hp
+                            , DL.numberOn_ DL.change $ floor >>> \n ->
+                                (env ^. _saveChar) (c # _currentHp .~ n)
+                            ]
+                            []
+                        , D.div
+                            [ css_ $ [ "min-w-8", "text-right" ]
+                                <> max ^. _Just <<< to \m ->
+                                  if hp <= m / 4 then [ "text-red-500" ]
+                                  else if hp <= m / 2 then [ "text-orange-500" ]
+                                  else []
+                            ]
+                            [ D.text_ $ "/ " <> max ^. _Just <<< to show ]
+                        ]
                   ]
 
               , D.div
@@ -235,13 +245,12 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
 
               , hr
 
+              , char # foldMap (renderResolve env)
+
+              , hr
+
               , D.div
-                  [ css_
-                      [ "flex"
-                      , "flex-col"
-                      , "w-full"
-                      , "overflow-hidden"
-                      ]
+                  [ css_ [ "flex", "flex-col", "w-full" ]
                   ] $ char # foldMap \c ->
                   keywords
                     ^:: traversed
@@ -251,13 +260,7 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
               , hr
 
               , D.div
-                  [ css_
-                      [ "flex"
-                      , "flex-col"
-                      , "w-full"
-                      , "overflow-hidden"
-                      ]
-                  ] $
+                  [ css_ [ "flex", "flex-col", "w-full" ] ] $
                   [ D.div
                       [ css_ [ "font-bold" ] ]
                       [ D.text_ "Power Dice" ]
@@ -365,6 +368,53 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                   $ abs <#> renderAbility icon_
               ]
           ]
+
+renderResolve :: Env -> Character -> Nut
+renderResolve env char =
+  let
+    per = char ^. _currentPerRes
+    par = char ^. _currentParRes
+  in
+    D.div
+      [ css_ [ "flex", "flex-col", "gap-y-2", "w-full" ] ]
+      [ D.div [ css_ [ "font-bold" ] ] [ D.text_ "Resolve" ]
+      , D.div
+          [ css_ [ "flex", "flex-col" ] ]
+          [ D.div [] [ D.text_ "Personal" ]
+          , D.div
+              [ css_ [ "mt-1", "space-x-1" ] ]
+              $ (1 .. 9) <#> \x ->
+                  D.button
+                    [ css_
+                        [ "rounded"
+                        , "size-[1em]"
+                        , if per >= x then "bg-amber-400"
+                          else "bg-stone-500 dark:bg-stone-700"
+                        ]
+                    , DL.runOn_ DL.click $ (env ^. _saveChar)
+                        (char # _currentPerRes .~ if per == x then x - 1 else x)
+                    ]
+                    []
+          ]
+      , D.div
+          [ css_ [ "flex", "flex-col" ] ]
+          [ D.div [] [ D.text_ "Party" ]
+          , D.div
+              [ css_ [ "mt-1", "space-x-1" ] ]
+              $ (1 .. 9) <#> \x ->
+                  D.button
+                    [ css_
+                        [ "rounded"
+                        , "size-[1em]"
+                        , if par >= x then "bg-amber-400"
+                          else "bg-stone-500 dark:bg-stone-700"
+                        ]
+                    , DL.runOn_ DL.click $ (env ^. _saveChar)
+                        (char # _currentParRes .~ if par == x then x - 1 else x)
+                    ]
+                    []
+          ]
+      ]
 
 renderStatus :: Env -> Character -> Name -> Int -> Nut
 renderStatus _ _ _ max | max <= 0 = D.div [] []

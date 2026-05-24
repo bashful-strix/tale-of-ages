@@ -110,8 +110,14 @@ spec = do
                   , vigor: 0
                   , powerDice: M.empty
                   , status: M.empty
+                  , partyResolve: 0
                   }
-              , expedition: { wounded: false }
+              , expedition:
+                  { wounded: false
+                  , camps: 0
+                  , personalResolve: 0
+                  , combats: 0
+                  }
               , interlude: {}
               }
           , build: Build
@@ -206,8 +212,14 @@ Abilities ::
                       , vigor: 0
                       , powerDice: M.empty
                       , status: M.empty
+                      , partyResolve: 0
                       }
-                  , expedition: { wounded: false }
+                  , expedition:
+                      { wounded: false
+                      , camps: 0
+                      , personalResolve: 0
+                      , combats: 0
+                      }
                   , interlude: {}
                   }
               , build: Build
