@@ -26,6 +26,7 @@ import ToA.Data.Icon.Colour (Colour(..))
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Soul (Soul(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -35,6 +36,7 @@ wright =
       [ Class
           { name: Name "Wright"
           , colour: Name "Blue"
+          , sign: Sign "icon-[game-icons--spell-book]"
           , tagline: [ Text "Mage, thaumaturge, and master of the arcane" ]
           , strengths:
               [ Text "High damage and excellent range, strong area of effect" ]
@@ -80,6 +82,7 @@ wright =
       [ Soul
           { name: Name "Flame"
           , colour: Name "Blue"
+          , sign: Sign "icon-[game-icons--small-fire]"
           , class: Name "Wright"
           , description:
               [ Text "The soul of one aflame with ambition."
@@ -92,6 +95,7 @@ wright =
       , Soul
           { name: Name "Earth"
           , colour: Name "Blue"
+          , sign: Sign "icon-[game-icons--peaks]"
           , class: Name "Wright"
           , description:
               [ Text "The soul of one attuned to the land."
@@ -105,6 +109,7 @@ wright =
       , Soul
           { name: Name "Bolt"
           , colour: Name "Blue"
+          , sign: Sign "icon-[game-icons--lightning-helix]"
           , class: Name "Wright"
           , description:
               [ Text "The soul of one riding the flash and the thunderclap."
@@ -118,6 +123,7 @@ wright =
       , Soul
           { name: Name "Water"
           , colour: Name "Blue"
+          , sign: Sign "icon-[game-icons--water-drop]"
           , class: Name "Wright"
           , description:
               [ Text "The soul of one swaying with the wave and current."

@@ -24,6 +24,7 @@ import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -41,6 +42,7 @@ corvidian =
       [ Job
           { name: Name "Corvidian"
           , colour: Name "Red"
+          , sign: Sign "icon-[game-icons--raven]"
           , soul: Name "Mercenary"
           , class: Name "Stalwart"
           , description:

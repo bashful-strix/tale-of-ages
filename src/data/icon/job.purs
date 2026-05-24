@@ -36,13 +36,15 @@ import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Id (Id)
 import ToA.Data.Icon.Markup (Markup)
-import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Name (class Named, Name)
+import ToA.Data.Icon.Sign (Sign, class Signed)
 import ToA.Data.Icon.Trait (class Traited)
 import ToA.Util.Optic (key)
 
 newtype Job = Job
   { name :: Name
   , colour :: Name
+  , sign :: Sign
   , soul :: Name
   , class :: Name
   , description :: Markup
@@ -62,6 +64,9 @@ instance Named Job where
 
 instance Coloured Job where
   _colour = _Newtype <<< key @"colour"
+
+instance Signed Job where
+  _sign = _Newtype <<< key @"sign"
 
 instance Classed Job where
   _class = _Newtype <<< key @"class"

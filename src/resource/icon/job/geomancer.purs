@@ -23,6 +23,7 @@ import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -40,6 +41,7 @@ geomancer =
       [ Job
           { name: Name "Geomancer"
           , colour: Name "Blue"
+          , sign: Sign "icon-[game-icons--earth-crack]"
           , soul: Name "Earth"
           , class: Name "Wright"
           , description:

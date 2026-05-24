@@ -26,6 +26,7 @@ import ToA.Data.Icon.Colour (Colour(..))
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Soul (Soul(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -35,11 +36,12 @@ vagabond =
       [ Class
           { name: Name "Vagabond"
           , colour: Name "Yellow"
+          , sign: Sign "icon-[game-icons--crossed-sabres]"
           , tagline: [ Text "Cunning Wanderer" ]
           , strengths:
               [ Text
                   """High mobility and damage, strong summons and marks, and
-                    strong against isolated foes."""
+                  strong against isolated foes."""
               ]
           , weaknesses:
               [ Text "Relatively low durability, relies on support." ]
@@ -47,13 +49,13 @@ vagabond =
           , description:
               [ Text
                   """Vagabonds are the mercanaries and master scouts of Arden
-                    Eld. They know how to aim a crossbow bolt through the visor
-                    of a knight or the weak spot of a monster, how to move
-                    quietly and quickly, and how to fling a knife with deadly
-                    precision. They are very mobile compared to other jobs and
-                    are able to get where they need to go faster than most,
-                    using their follow up abilities to beat down injured or
-                    isolated foes."""
+                  Eld. They know how to aim a crossbow bolt through the visor
+                  of a knight or the weak spot of a monster, how to move
+                  quietly and quickly, and how to fling a knife with deadly
+                  precision. They are very mobile compared to other jobs and
+                  are able to get where they need to go faster than most,
+                  using their follow up abilities to beat down injured or
+                  isolated foes."""
               ]
           , hp: 32
           , defense: 6
@@ -85,6 +87,7 @@ vagabond =
       [ Soul
           { name: Name "Shadow"
           , colour: Name "Yellow"
+          , sign: Sign "icon-[game-icons--cloak-dagger]"
           , class: Name "Vagabond"
           , description:
               [ Text "The soul of one at home in the darkness."
@@ -97,6 +100,7 @@ vagabond =
       , Soul
           { name: Name "Gunner"
           , colour: Name "Yellow"
+          , sign: Sign "icon-[game-icons--crossed-pistols]"
           , class: Name "Vagabond"
           , description:
               [ Text "The soul of one ignited with flint and spark."
@@ -107,6 +111,7 @@ vagabond =
       , Soul
           { name: Name "Thief"
           , colour: Name "Yellow"
+          , sign: Sign "icon-[game-icons--daggers]"
           , class: Name "Vagabond"
           , description:
               [ Text "The soul of one that fights for the downtrodden."
@@ -119,6 +124,7 @@ vagabond =
       , Soul
           { name: Name "Ranger"
           , colour: Name "Yellow"
+          , sign: Sign "icon-[game-icons--falling-leaf]"
           , class: Name "Vagabond"
           , description:
               [ Text

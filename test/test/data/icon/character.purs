@@ -15,6 +15,7 @@ import ToA.Data.Icon.Id (Id(..), _id)
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Job (_abilities, _talents) as J
 import ToA.Data.Icon.Name (Name(..), _name)
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
 
 import ToA.Data.Icon.Character
@@ -32,6 +33,7 @@ job :: Job
 job = Job
   { name: Name "Job"
   , colour: Name "Col"
+  , sign: Sign "job-sign"
   , soul: Name "Soul"
   , class: Name "Class"
   , description: []

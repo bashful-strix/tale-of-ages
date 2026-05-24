@@ -22,6 +22,7 @@ import ToA.Data.Icon.Colour (Colour(..))
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Soul (Soul(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -31,6 +32,7 @@ mendicant =
       [ Class
           { name: Name "Mendicant"
           , colour: Name "Green"
+          , sign: Sign "icon-[game-icons--caduceus]"
           , tagline: [ Text "Wndering healer and storyteller." ]
           , strengths:
               [ Text
@@ -87,6 +89,7 @@ mendicant =
       [ Soul
           { name: Name "Bard"
           , colour: Name "Green"
+          , sign: Sign "icon-[game-icons--quill-ink]"
           , class: Name "Mendicant"
           , description:
               [ Text "The soul of one abrim with legend and song."
@@ -99,6 +102,7 @@ mendicant =
       , Soul
           { name: Name "Witch"
           , colour: Name "Green"
+          , sign: Sign "icon-[game-icons--apothecary]"
           , class: Name "Mendicant"
           , description:
               [ Text "The soul of one bathed in moonlight."
@@ -111,6 +115,7 @@ mendicant =
       , Soul
           { name: Name "Monk"
           , colour: Name "Green"
+          , sign: Sign "icon-[game-icons--aura]"
           , class: Name "Mendicant"
           , description:
               [ Text "The soul of one bound in iron discipline."
@@ -124,6 +129,7 @@ mendicant =
       , Soul
           { name: Name "Oracle"
           , colour: Name "Green"
+          , sign: Sign "icon-[game-icons--moon]"
           , class: Name "Mendicant"
           , description:
               [ Text "The soul of one who reads the stars as their guide."

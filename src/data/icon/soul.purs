@@ -12,11 +12,13 @@ import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Sign (Sign, class Signed)
 import ToA.Util.Optic (key)
 
 newtype Soul = Soul
   { name :: Name
   , colour :: Name
+  , sign :: Sign
   , class :: Name
   , description :: Markup
   }
@@ -30,6 +32,9 @@ instance Named Soul where
 
 instance Coloured Soul where
   _colour = _Newtype <<< key @"colour"
+
+instance Signed Soul where
+  _sign = _Newtype <<< key @"sign"
 
 instance Classed Soul where
   _class = _Newtype <<< key @"class"

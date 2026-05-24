@@ -22,6 +22,7 @@ import ToA.Data.Icon.Colour (Colour(..))
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Soul (Soul(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -31,6 +32,7 @@ stalwart =
       [ Class
           { name: Name "Stalwart"
           , colour: Name "Red"
+          , sign: Sign "icon-[game-icons--swords-emblem]"
           , tagline: [ Text "Weapon master and unparalleled soldier" ]
           , strengths:
               [ Text
@@ -78,17 +80,22 @@ stalwart =
       [ Soul
           { name: Name "Knight"
           , colour: Name "Red"
+          , sign: Sign "icon-[game-icons--winged-sword]"
           , class: Name "Stalwart"
           , description:
               [ Text
-                  """The soul of one affected by strife and embedded with steel.
-                  An unbending, iron will, and the power to lead from the
+                  """The soul of one affected by strife and embedded with
+                  steel."""
+              , Newline
+              , Text
+                  """An unbending, iron will, and the power to lead from the
                   front."""
               ]
           }
       , Soul
           { name: Name "Warrior"
           , colour: Name "Red"
+          , sign: Sign "icon-[game-icons--axe-sword]"
           , class: Name "Stalwart"
           , description:
               [ Text "The soul of one who seeks power at all ends."
@@ -101,6 +108,7 @@ stalwart =
       , Soul
           { name: Name "Berserker"
           , colour: Name "Red"
+          , sign: Sign "icon-[game-icons--fire-silhouette]"
           , class: Name "Stalwart"
           , description:
               [ Text "The soul of one fueled by a heart of rage."
@@ -113,6 +121,7 @@ stalwart =
       , Soul
           { name: Name "Mercenary"
           , colour: Name "Red"
+          , sign: Sign "icon-[game-icons--coins]"
           , class: Name "Stalwart"
           , description:
               [ Text "The soul of one tempered by suffering and avarice."

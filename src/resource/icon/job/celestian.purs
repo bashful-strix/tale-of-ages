@@ -22,6 +22,7 @@ import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -39,6 +40,7 @@ celestian =
       [ Job
           { name: Name "Celestian"
           , colour: Name "Green"
+          , sign: Sign "icon-[game-icons--eclipse]"
           , soul: Name "Oracle"
           , class: Name "Mendicant"
           , description:

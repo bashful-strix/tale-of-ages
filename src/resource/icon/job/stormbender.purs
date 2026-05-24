@@ -25,6 +25,7 @@ import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -42,6 +43,7 @@ stormbender =
       [ Job
           { name: Name "Stormbender"
           , colour: Name "Blue"
+          , sign: Sign "icon-[game-icons--lightning-storm]"
           , soul: Name "Water"
           , class: Name "Wright"
           , description:

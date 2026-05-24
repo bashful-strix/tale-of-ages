@@ -21,6 +21,7 @@ import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
 import ToA.Data.Icon.Trait (Trait(..))
 
@@ -38,6 +39,7 @@ freelancer =
       [ Job
           { name: Name "Freelancer"
           , colour: Name "Yellow"
+          , sign: Sign "icon-[game-icons--sawed-off-shotgun]"
           , soul: Name "Gunner"
           , class: Name "Vagabond"
           , description:

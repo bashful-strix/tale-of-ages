@@ -23,13 +23,15 @@ import Data.Newtype (class Newtype)
 import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
-import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Name (class Named, Name)
+import ToA.Data.Icon.Sign (class Signed, Sign)
 import ToA.Data.Icon.Trait (class Traited)
 import ToA.Util.Optic (key)
 
 newtype Class = Class
   { name :: Name
   , colour :: Name
+  , sign :: Sign
   , tagline :: Markup
   , strengths :: Markup
   , weaknesses :: Markup
@@ -53,6 +55,9 @@ instance Named Class where
 
 instance Coloured Class where
   _colour = _Newtype <<< key @"colour"
+
+instance Signed Class where
+  _sign = _Newtype <<< key @"sign"
 
 instance Described Class where
   _desc = _Newtype <<< key @"description"
