@@ -7,7 +7,6 @@ module ToA.Data.Route
   , _Characters
   , _Encounters
   , _Jobs
-  , _ability
   , _ViewChar
   , _ViewEnc
   ) where
@@ -15,13 +14,11 @@ module ToA.Data.Route
 import Prelude hiding ((/))
 
 import Data.Generic.Rep (class Generic)
-import Data.Lens (Lens', lens')
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Prism (Prism', prism')
 import Data.Maybe (Maybe(..))
-import Data.Tuple.Nested ((/\))
-import Routing.Duplex (RouteDuplex', optional, param, root, segment)
+import Routing.Duplex (RouteDuplex', optional, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
 
@@ -61,16 +58,9 @@ routeCodec = root $ sum
 
 data JobPath
   = None
-  | WithClass Name (Maybe Name)
-  | WithSoul Name Name (Maybe Name)
-  | WithJob Name Name Name (Maybe Name)
-
-_ability :: Lens' JobPath (Maybe Name)
-_ability = lens' case _ of
-  None -> Nothing /\ const None
-  (WithClass c a) -> a /\ WithClass c
-  (WithSoul c s a) -> a /\ WithSoul c s
-  (WithJob c s j a) -> a /\ WithJob c s j
+  | WithClass Name
+  | WithSoul Name Name
+  | WithJob Name Name Name
 
 derive instance Generic JobPath _
 derive instance Eq JobPath
@@ -78,17 +68,13 @@ derive instance Eq JobPath
 jobPath :: RouteDuplex' JobPath
 jobPath = sum
   { "None": noArgs
-  , "WithClass": name segment / optional (name ability)
-  , "WithSoul": name segment / name segment / optional (name ability)
-  , "WithJob": name segment / name segment / name segment / optional
-      (name ability)
+  , "WithClass": name segment
+  , "WithSoul": name segment / name segment
+  , "WithJob": name segment / name segment / name segment
   }
 
 name :: RouteDuplex' String -> RouteDuplex' Name
 name = simple _Newtype
-
-ability :: RouteDuplex' String
-ability = param "ability"
 
 data CharacterPath
   = EditChar (Maybe Name)

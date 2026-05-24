@@ -45,6 +45,7 @@ import Routing.Duplex (print)
 
 import ToA.Component.Ability (renderAbility)
 import ToA.Component.Markup (markup)
+import ToA.Component.Panel (tripanel)
 import ToA.Data.Env (Env, _navigate, _saveChar)
 import ToA.Data.Icon.Character
   ( Character
@@ -147,295 +148,221 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                   D.h2 [] [ D.text_ $ c ^. _name <<< _Newtype ]
               ]
 
-          , D.div
-              [ css_
-                  [ "flex"
-                  , "flex-col"
-                  , "sm:flex-row"
-                  , "overflow-hidden"
-                  , "gap-2"
-                  ]
-              ]
+          , tripanel
               [ D.div
-                  [ css_
-                      [ "flex"
-                      , "flex-1"
-                      , "sm:min-w-48"
-                      , "sm:max-w-56"
-                      , "overflow-scroll"
-                      , "p-2"
-                      , "gap-2"
-                      , "border"
-                      , "border-solid"
-                      , "border-rounded-sm"
-                      , "border-sky-800"
-                      ]
-                  ]
-                  [ D.div
-                      [ css_ [ "grow" ] ]
-                      [ D.div
-                          [ css_ [ "flex", "justify-between" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "HP: " ]
+                  [ css_ [ "flex", "justify-between" ] ]
+                  [ D.span
+                      [ css_ [ "font-bold" ] ]
+                      [ D.text_ "HP: " ]
 
-                          , D.div
-                              [ css_ [ "flex" ] ] $ char # foldMap \c ->
-                              [ D.input
-                                  [ css_
-                                      [ "bg-stone-500"
-                                      , "text-stone-800"
-                                      , "dark:bg-stone-700"
-                                      , "dark:text-stone-300"
-                                      ]
-                                  , DA.xtypeNumber
-                                  , DA.min_ "0"
-                                  , DA.max_ $
-                                      cls ^. _Just <<< _hp <<< to show
-                                  , DA.value_ $ c ^. _currentHp <<< to show
-                                  , DL.numberOn_ DL.change $ floor >>> \n ->
-                                      (env ^. _saveChar) (c # _currentHp .~ n)
-                                  ]
-                                  []
-                              , D.div
-                                  [ css_ [ "min-w-8", "text-right" ] ]
-                                  [ D.text_ $ "/ " <>
-                                      cls ^. _Just <<< _hp <<< to show
-                                  ]
-                              ]
-                          ]
-
-                      , D.div
-                          [ css_ [ "flex", "justify-between" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Vigor: " ]
-                          , D.div
-                              [ css_ [ "flex" ] ] $ char # foldMap \c ->
-                              [ D.input
-                                  [ css_
-                                      [ "bg-stone-500"
-                                      , "text-stone-800"
-                                      , "dark:bg-stone-700"
-                                      , "dark:text-stone-300"
-                                      ]
-                                  , DA.xtypeNumber
-                                  , DA.min_ "0"
-                                  , DA.max_ "99"
-                                  , DA.value_ $ c ^. _currentVigor <<< to show
-                                  , DL.numberOn_ DL.change $ floor >>> \n ->
-                                      (env ^. _saveChar)
-                                        (c # _currentVigor .~ n)
-                                  ]
-                                  []
-                              , D.div
-                                  [ css_ [ "min-w-8", "text-right" ] ]
-                                  [ D.text_ $ "/ " <>
-                                      cls ^. _Just <<< _hp <<< to
-                                        (show <<< (_ / 4))
-                                  ]
-                              ]
-                          ]
-
-                      , hr
-
-                      , D.div
-                          [ css_ [ "w-max" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Defense: " ]
-                          , D.span []
-                              [ D.text_ $ cls ^. _Just <<< _defense
-                                  <<< to show
-                              ]
-                          ]
-
-                      , D.div
-                          [ css_ [ "w-max" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Free Move: " ]
-                          , D.span []
-                              [ D.text_ $ cls ^. _Just <<< _move <<<
-                                  to show
-                              ]
-                          ]
-
-                      , hr
-
-                      , D.div
+                  , D.div
+                      [ css_ [ "flex" ] ] $ char # foldMap \c ->
+                      [ D.input
                           [ css_
-                              [ "flex"
-                              , "flex-col"
-                              , "w-full"
-                              , "overflow-hidden"
+                              [ "bg-stone-500"
+                              , "text-stone-800"
+                              , "dark:bg-stone-700"
+                              , "dark:text-stone-300"
                               ]
-                          ] $ char # foldMap \c ->
-                          keywords
-                            ^:: traversed
-                            <<< filtered (has (_category <<< _Status))
-                            <<< to \k -> renderStatus env c (k ^. _name) 3
-
-                      , hr
-
+                          , DA.xtypeNumber
+                          , DA.min_ "0"
+                          , DA.max_ $
+                              cls ^. _Just <<< _hp <<< to show
+                          , DA.value_ $ c ^. _currentHp <<< to show
+                          , DL.numberOn_ DL.change $ floor >>> \n ->
+                              (env ^. _saveChar) (c # _currentHp .~ n)
+                          ]
+                          []
                       , D.div
-                          [ css_
-                              [ "flex"
-                              , "flex-col"
-                              , "w-full"
-                              , "overflow-hidden"
-                              ]
-                          ] $
-                          [ D.div
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Power Dice" ]
-                          ] <>
-                            ( char # foldMap \c ->
-                                ( c # (_currentPowerDice <<< itraversed)
-                                    `ifoldMapOf`
-                                      (pure <.. renderPowerDie env c)
-                                ) <>
-                                  [ D.div
-                                      [ css_
-                                          [ "w-full"
-                                          , "flex"
-                                          , "justify-center"
-                                          ]
-                                      ]
-                                      [ D.button
-                                          [ DL.runOn_ DL.click $
-                                              (env ^. _saveChar)
-                                                ( c #
-                                                    _currentPowerDice <<< at ""
-                                                      ?~ 0
-                                                )
-                                          ]
-                                          [ D.text_ "+" ]
-                                      ]
-                                  ]
-                            )
+                          [ css_ [ "min-w-8", "text-right" ] ]
+                          [ D.text_ $ "/ " <> cls ^. _Just <<< _hp <<< to show ]
                       ]
                   ]
 
               , D.div
-                  [ css_ [ "flex", "flex-3", "overflow-scroll", "gap-2" ] ]
-                  [ D.div
-                      [ css_
-                          [ "flex", "flex-col", "lg:flex-row", "grow", "gap-2" ]
-                      ]
-                      [ D.div
+                  [ css_ [ "flex", "justify-between" ] ]
+                  [ D.span
+                      [ css_ [ "font-bold" ] ]
+                      [ D.text_ "Vigor: " ]
+
+                  , D.div
+                      [ css_ [ "flex" ] ] $ char # foldMap \c ->
+                      [ D.input
                           [ css_
-                              [ "flex-1"
-                              , "flex"
-                              , "flex-col"
-                              , "lg:overflow-scroll"
-                              , "p-2"
-                              , "gap-x-2"
-                              , "gap-y-4"
-                              , "border"
-                              , "border-solid"
-                              , "border-rounded-sm"
-                              , "border-sky-800"
+                              [ "bg-stone-500"
+                              , "text-stone-800"
+                              , "dark:bg-stone-700"
+                              , "dark:text-stone-300"
                               ]
+                          , DA.xtypeNumber
+                          , DA.min_ "0"
+                          , DA.max_ "99"
+                          , DA.value_ $ c ^. _currentVigor <<< to show
+                          , DL.numberOn_ DL.change $ floor >>> \n ->
+                              (env ^. _saveChar)
+                                (c # _currentVigor .~ n)
                           ]
-                          [ D.div
-                              [ css_
-                                  [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
-                                  , "gap-2"
-                                  ]
-                              ]
-                              $ trs <#> \t ->
-                                  D.div
-                                    []
-                                    [ D.div
-                                        [ css_ [ "font-bold" ] ]
-                                        [ D.text_ $ t ^. _name <<< _Newtype ]
-                                    , t # _desc #~ markup icon_
-                                    ]
-
-                          , D.div
-                              [ css_
-                                  [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
-                                  , "gap-2"
-                                  ]
-                              ]
-                              $ tls <#> \t ->
-                                  D.div
-                                    []
-                                    [ D.div
-                                        [ css_ [ "font-bold" ]
-                                        , DA.style_ $ fromMaybe ""
-                                            $ renderedInline
-                                            $ render =<<
-                                                color <$> colours
-                                                  ^? traversed
-                                                    <<< filtered
-                                                      ( view _name >>> eq
-                                                          (t ^. _colour)
-                                                      )
-                                                    <<< _value
-                                        ]
-                                        [ D.text_ $ t ^. _name <<< _Newtype ]
-                                    , t # _desc #~ markup icon_
-                                    ]
-
-                          , D.div
-                              [ css_
-                                  [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
-                                  , "gap-2"
-                                  ]
-                              ]
-                              [ D.div
-                                  [ css_ [ "flex", "gap-x-2" ] ]
-                                  $
-                                    abilities
-                                      ^:: traversed
-                                      <<< filtered
-                                        ( preview _name >>> eq
-                                            (cls ^? _Just <<< _basic)
-                                        )
-                                      <<< to (renderAbility icon_)
-
-                              , guard
-                                  ( char # hasn't
-                                      ( _Just <<< _build <<< _level <<< only
-                                          Zero
-                                      )
-                                  )
-                                  $ D.div
-                                      [ css_ [ "flex", "gap-x-2" ] ]
-                                  $
-                                    abilities
-                                      ^:: traversed
-                                      <<< filtered
-                                        ( preview _name >>>
-                                            eq (job ^? _Just <<< _limitBreak)
-                                        )
-                                      <<< to (renderAbility icon_)
-                              ]
-                          ]
-
+                          []
                       , D.div
-                          [ css_
-                              [ "flex-2"
-                              , "grid"
-                              , "grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]"
-                              , "lg:overflow-scroll"
-                              , "p-2"
-                              , "gap-x-2"
-                              , "gap-y-6"
-                              , "border"
-                              , "border-solid"
-                              , "border-rounded-sm"
-                              , "border-sky-800"
-                              ]
+                          [ css_ [ "min-w-8", "text-right" ] ]
+                          [ D.text_ $ "/ " <>
+                              cls ^. _Just <<< _hp <<< to (show <<< (_ / 4))
                           ]
-                          $ abs <#> renderAbility icon_
                       ]
                   ]
+
+              , hr
+
+              , D.div
+                  [ css_ [ "w-max" ] ]
+                  [ D.span
+                      [ css_ [ "font-bold" ] ]
+                      [ D.text_ "Defense: " ]
+
+                  , D.span []
+                      [ D.text_ $ cls ^. _Just <<< _defense <<< to show ]
+                  ]
+
+              , D.div
+                  [ css_ [ "w-max" ] ]
+                  [ D.span
+                      [ css_ [ "font-bold" ] ]
+                      [ D.text_ "Free Move: " ]
+
+                  , D.span []
+                      [ D.text_ $ cls ^. _Just <<< _move <<< to show ]
+                  ]
+
+              , hr
+
+              , D.div
+                  [ css_
+                      [ "flex"
+                      , "flex-col"
+                      , "w-full"
+                      , "overflow-hidden"
+                      ]
+                  ] $ char # foldMap \c ->
+                  keywords
+                    ^:: traversed
+                    <<< filtered (has (_category <<< _Status))
+                    <<< to \k -> renderStatus env c (k ^. _name) 3
+
+              , hr
+
+              , D.div
+                  [ css_
+                      [ "flex"
+                      , "flex-col"
+                      , "w-full"
+                      , "overflow-hidden"
+                      ]
+                  ] $
+                  [ D.div
+                      [ css_ [ "font-bold" ] ]
+                      [ D.text_ "Power Dice" ]
+                  ] <>
+                    ( char # foldMap \c ->
+                        ( c # (_currentPowerDice <<< itraversed)
+                            `ifoldMapOf` (pure <.. renderPowerDie env c)
+                        ) <>
+                          [ D.div
+                              [ css_
+                                  [ "w-full"
+                                  , "flex"
+                                  , "justify-center"
+                                  ]
+                              ]
+                              [ D.button
+                                  [ DL.runOn_ DL.click $
+                                      (env ^. _saveChar)
+                                        (c # _currentPowerDice <<< at "" ?~ 0)
+                                  ]
+                                  [ D.text_ "+" ]
+                              ]
+                          ]
+                    )
+              ]
+              [ D.div
+                  [ css_
+                      [ "grid"
+                      , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
+                      , "gap-2"
+                      ]
+                  ]
+                  $ trs <#> \t ->
+                      D.div []
+                        [ D.div
+                            [ css_ [ "font-bold" ] ]
+                            [ D.text_ $ t ^. _name <<< _Newtype ]
+                        , t # _desc #~ markup icon_
+                        ]
+
+              , D.div
+                  [ css_
+                      [ "grid"
+                      , "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
+                      , "gap-2"
+                      ]
+                  ]
+                  $ tls <#> \t ->
+                      D.div []
+                        [ D.div
+                            [ css_ [ "font-bold" ]
+                            , DA.style_ $ fromMaybe ""
+                                $ renderedInline
+                                $ render =<<
+                                    color <$> colours
+                                      ^? traversed
+                                        <<< filtered
+                                          (view _name >>> eq (t ^. _colour))
+                                        <<< _value
+                            ]
+                            [ D.text_ $ t ^. _name <<< _Newtype ]
+                        , t # _desc #~ markup icon_
+                        ]
+
+              , D.div
+                  [ css_
+                      [ "grid"
+                      , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
+                      , "gap-2"
+                      ]
+                  ]
+                  [ D.div
+                      [ css_ [ "flex", "gap-x-2" ] ]
+                      $
+                        abilities
+                          ^:: traversed
+                          <<< filtered
+                            (preview _name >>> eq (cls ^? _Just <<< _basic))
+                          <<< to (renderAbility icon_)
+
+                  , guard
+                      ( char # hasn't
+                          (_Just <<< _build <<< _level <<< only Zero)
+                      )
+                      $ D.div
+                          [ css_ [ "flex", "gap-x-2" ] ]
+                      $
+                        abilities
+                          ^:: traversed
+                          <<< filtered
+                            ( preview _name >>>
+                                eq (job ^? _Just <<< _limitBreak)
+                            )
+                          <<< to (renderAbility icon_)
+                  ]
+              ]
+              [ D.div
+                  [ css_
+                      [ "grid"
+                      , "grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]"
+                      , "gap-x-2"
+                      , "gap-y-6"
+                      ]
+                  ]
+                  $ abs <#> renderAbility icon_
               ]
           ]
 
