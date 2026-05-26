@@ -113,7 +113,7 @@ breaker =
               ]
           }
       , Talent
-          { id: Id "topple|talent|beaker"
+          { id: Id "topple|talent|breaker"
           , name: Name "Topple"
           , colour: Name "Red"
           , description:
