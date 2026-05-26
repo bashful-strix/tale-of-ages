@@ -21,7 +21,6 @@ import ToA.Data.Env (Env, _navigate, _saveTheme)
 import ToA.Data.Route
   ( Route(..)
   , JobPath(..)
-  , CharacterPath(..)
   , EncounterPath(..)
   , routeCodec
   )
@@ -50,7 +49,7 @@ titleBar env@{ theme } =
             [ css_ [ "flex", "h-full" ] ] $
             [ "ToA" /\ Home
             , "Jobs" /\ Jobs None
-            , "Characters" /\ Characters (ViewChar Nothing)
+            , "Characters" /\ Characters Nothing
             , "Encounters" /\ Encounters (ViewEnc Nothing)
             ] <#> \(label /\ route) ->
               D.li

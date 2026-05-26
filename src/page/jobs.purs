@@ -80,14 +80,10 @@ jobsPage env@{ icon } path = Deku.do
     [ css_ [ "flex", "grow", "gap-2" ] ]
     [ D.div
         [ css $ open <#> \o ->
-            -- [ "absolute"
-            -- [ "static"
             [ "flex"
             , "flex-col"
             , "grow"
             , "shrink-0"
-            -- , "min-h-full"
-            -- , "h-dvh"
             , "overflow-hidden"
             , "transition-[width]"
             , "ease-in-out"

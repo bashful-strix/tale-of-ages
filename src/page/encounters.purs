@@ -8,7 +8,7 @@ import Color (lighten)
 import CSS (backgroundColor, render, renderedInline)
 
 import Data.Filterable (filter)
-import Data.Foldable (foldMap, intercalate, null)
+import Data.Foldable (foldMap, null)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Lens
   ( (^.)
@@ -39,7 +39,7 @@ import Deku.Hooks ((<#~>))
 
 import Routing.Duplex (print)
 
-import ToA.Component.Ability (renderCost, renderStep, renderTags)
+import ToA.Component.Ability (renderCost, renderStep, renderTag)
 import ToA.Component.Markup (markup)
 import ToA.Data.Env (Env, _deleteEnc, _navigate)
 import ToA.Data.Icon (Icon)
@@ -844,10 +844,8 @@ renderAbility icon@{ colours } (FoeAbility fa) =
         [ css_ [ "font-bold" ] ]
         [ D.text_ $ unwrap fa.name ]
     , D.div
-        [ css_ [ "italic" ] ]
-        [ D.text_ $ intercalate ", " $
-            [ renderCost fa.cost ] <> renderTags fa.tags
-        ]
+        [ css_ [ "flex", "flex-wrap", "gap-1" ] ] $
+        [ renderCost fa.cost ] <> (renderTag <$> fa.tags)
     , markup icon fa.description
     , fa.chain # foldMap \fac ->
         D.ul
@@ -878,10 +876,8 @@ renderAbility icon@{ colours } (FoeAbility fa) =
                     [ D.text_ $ unwrap ai.name ]
                 ]
             , D.div
-                [ css_ [ "italic" ] ]
-                [ D.text_ $ intercalate ", " $
-                    [ renderCost ai.cost ] <> renderTags ai.tags
-                ]
+                [ css_ [ "flex", "flex-wrap", "gap-1" ] ] $
+                [ renderCost fa.cost ] <> (renderTag <$> fa.tags)
             , D.div []
                 [ D.ol
                     [ css_ [ "flex", "flex-col", "gap-y-1" ] ]

@@ -27,7 +27,7 @@ import ToA.Data.Icon.Name (Name)
 data Route
   = Home
   | Jobs JobPath
-  | Characters CharacterPath
+  | Characters (Maybe CharacterPath)
   | Encounters EncounterPath
 
 _Jobs :: Prism' Route JobPath
@@ -35,7 +35,7 @@ _Jobs = prism' Jobs case _ of
   Jobs p -> Just p
   _ -> Nothing
 
-_Characters :: Prism' Route CharacterPath
+_Characters :: Prism' Route (Maybe CharacterPath)
 _Characters = prism' Characters case _ of
   Characters c -> Just c
   _ -> Nothing
@@ -52,7 +52,7 @@ routeCodec :: RouteDuplex' Route
 routeCodec = root $ sum
   { "Home": noArgs
   , "Jobs": "jobs" / jobPath
-  , "Characters": "characters" / characterPath
+  , "Characters": "characters" / optional characterPath
   , "Encounters": "encounters" / encounterPath
   }
 
@@ -77,21 +77,23 @@ name :: RouteDuplex' String -> RouteDuplex' Name
 name = simple _Newtype
 
 data CharacterPath
-  = EditChar (Maybe Name)
-  | ViewChar (Maybe Name)
-  | CombatChar (Maybe Name)
+  = EditChar Name
+  | CreateChar
+  | ViewChar Name
+  | CombatChar Name
 
 derive instance Generic CharacterPath _
 derive instance Eq CharacterPath
 
 characterPath :: RouteDuplex' CharacterPath
 characterPath = sum
-  { "EditChar": "edit" / optional (name segment)
-  , "ViewChar": optional (name segment)
-  , "CombatChar": "combat" / optional (name segment)
+  { "EditChar": "edit" / name segment
+  , "CreateChar": "create" / noArgs
+  , "ViewChar": name segment
+  , "CombatChar": "combat" / name segment
   }
 
-_ViewChar :: Prism' CharacterPath (Maybe Name)
+_ViewChar :: Prism' CharacterPath Name
 _ViewChar = prism' ViewChar case _ of
   ViewChar c -> Just c
   _ -> Nothing

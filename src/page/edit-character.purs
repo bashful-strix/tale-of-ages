@@ -41,7 +41,8 @@ import ToA.Util.Html (css_)
 editCharacterPage :: Env -> Maybe Name -> Nut
 editCharacterPage env@{ characters, icon } pathChar =
   (/\) <$> characters <*> icon <#~> \(chars /\ icon_) -> Deku.do
-    setChar /\ char <- useState $ encode (stringCharacter icon_)
+    setChar /\ char <- useState
+      $ encode (stringCharacter icon_)
       $ fromMaybe emptyChar
       $ chars ^? traversed <<< filtered (preview _name >>> eq pathChar)
 
@@ -88,7 +89,7 @@ editCharacterPage env@{ characters, icon } pathChar =
                       Right c -> do
                         c # env ^. _saveChar
                         (env ^. _navigate)
-                          (Characters $ ViewChar $ Just $ c ^. _name)
+                          (Characters $ Just $ ViewChar $ c ^. _name)
                           Nothing
                   , DA.disabled $ show <<< isLeft <$> parsed
                   , css_
@@ -104,7 +105,7 @@ editCharacterPage env@{ characters, icon } pathChar =
 
               , D.button
                   [ DL.runOn_ DL.click $
-                      (env ^. _navigate) (Characters $ ViewChar pathChar)
+                      (env ^. _navigate) (Characters $ ViewChar <$> pathChar)
                         Nothing
                   , css_ [ "px-2", "py-1", "border", "border-solid" ]
                   ]

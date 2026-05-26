@@ -18,6 +18,7 @@ import ToA.Data.Theme (themeCodec)
 import ToA.Page.Characters (charactersPage)
 import ToA.Page.Combat (combatPage)
 import ToA.Page.EditCharacter (editCharacterPage)
+import ToA.Page.ViewCharacter (viewCharacterPage)
 import ToA.Page.Encounters (encountersPage)
 import ToA.Page.EditEncounter (editEncounterPage)
 import ToA.Page.Home (homePage)
@@ -49,9 +50,12 @@ toa env@{ route, systemTheme, theme } =
             Just Home -> homePage
             Just (Jobs path) -> jobsPage env path
             Just (Characters path) -> case path of
-              EditChar char -> editCharacterPage env char
-              ViewChar char -> charactersPage env char
-              CombatChar char -> combatPage env char
+              Nothing -> charactersPage env
+              Just subpath -> case subpath of
+                EditChar char -> editCharacterPage env $ Just char
+                CreateChar -> editCharacterPage env Nothing
+                ViewChar char -> viewCharacterPage env char
+                CombatChar char -> combatPage env char
             Just (Encounters path) -> case path of
               EditEnc enc -> editEncounterPage env enc
               ViewEnc enc -> encountersPage env enc

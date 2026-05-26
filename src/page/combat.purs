@@ -75,7 +75,7 @@ import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
 import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((#~), (^::))
 
-combatPage :: Env -> Maybe Name -> Nut
+combatPage :: Env -> Name -> Nut
 combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
   <#~>
     \( chars /\
@@ -83,7 +83,7 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
            { abilities, classes, colours, jobs, keywords, talents, traits }
      ) ->
       let
-        char = pathChar >>= \c -> chars ^. at c
+        char = chars ^. at pathChar
 
         job = jobs
           ^? traversed
@@ -132,10 +132,10 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
               [ char # foldMap \c ->
                   D.a
                     [ DA.href_ $ print routeCodec
-                        (Characters $ ViewChar $ c ^? _name)
+                        (Characters $ Just $ ViewChar $ c ^. _name)
                     , DL.click_ $
                         (env ^. _navigate)
-                          (Characters $ ViewChar $ c ^? _name) <<< pure
+                          (Characters $ Just $ ViewChar $ c ^. _name) <<< pure
                     , css_
                         [ "px-2"
                         , "py-1"
@@ -147,7 +147,9 @@ combatPage env@{ characters, icon } pathChar = ((/\) <$> characters <*> icon)
                     [ D.text_ "View" ]
 
               , char # foldMap \c ->
-                  D.h2 [] [ D.text_ $ c ^. _name <<< _Newtype ]
+                  D.h2
+                    [ css_ [ "font-bold" ] ]
+                    [ D.text_ $ c ^. _name <<< _Newtype ]
               ]
 
           , tripanel

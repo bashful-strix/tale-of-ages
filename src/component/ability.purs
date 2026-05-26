@@ -1,9 +1,12 @@
 module ToA.Component.Ability
   ( renderAbility
+  , printCost
+  , printTag
   , renderCost
+  , renderTagBox
+  , renderTag
   , renderInset
   , renderStep
-  , renderTags
   ) where
 
 import Prelude
@@ -111,45 +114,12 @@ renderAbility icon@{ colours } a =
         ]
 
     , D.div
-        []
-        [ D.span []
-            [ D.text_ $ intercalate ", " $
-                [ a # _action #~ case _ of
-                    Quick -> "Quick"
-                    One -> "1 action"
-                    Two -> "2 actions"
-                    Interrupt n -> "Interrupt " <> show n
-                ]
-                  <> (a # _resolve #~ pure <<< (_ <> " resolve") <<< show)
-                  <>
-                    ( a # _tags <<< traversed #~ pure <<< case _ of
-                        Attack -> "Attack"
-                        End -> "End"
-                        RangeTag r -> case r of
-                          Range i j -> "Range " <> show i <> "-" <> show j
-                          Close -> "Close"
-                          Melee -> "Melee"
-                          Adjacent -> "Adjacent"
-                        AreaTag p -> case p of
-                          Line n -> "Line " <> show n
-                          Arc n -> "Arc " <> show n
-                          Blast n -> "Blast " <> show n
-                          Burst n x -> "Burst " <> show n <> " ("
-                            <> (if x then "self" else "target")
-                            <> ")"
-                          Cross n -> "Cross " <> show n
-                        TargetTag t -> case t of
-                          Self -> "Self"
-                          Ally -> "Ally"
-                          Foe -> "Foe"
-                          Summon -> "Summon"
-                          Space -> "Space"
-                          Object -> "Object"
-                          Character -> "Character"
-                        KeywordTag k -> k ^. simple _Newtype
-                        LimitTag n l -> show n <> "/" <> l
-                    )
-            ]
+        [ css_ [ "flex", "flex-wrap", "gap-1" ] ]
+        [ a # _action #~ renderCost
+        , a # _resolve #~ renderTagBox [ "bg-amber-500", "text-white" ]
+            <<< (_ <> " resolve")
+            <<< show
+        , a # _tags <<< traversed #~ renderTag
         ]
 
     , D.div [ css_ [ "italic" ] ] [ markup icon $ a ^. _desc ]
@@ -157,15 +127,15 @@ renderAbility icon@{ colours } a =
     , renderSteps icon $ a ^. _steps
     ]
 
-renderCost :: Action -> String
-renderCost = case _ of
+printCost :: Action -> String
+printCost = case _ of
   Quick -> "Quick"
   One -> "1 action"
   Two -> "2 actions"
   Interrupt n -> "Interrupt " <> show n
 
-renderTags :: Array Tag -> Array String
-renderTags = map case _ of
+printTag :: Tag -> String
+printTag = case _ of
   Attack -> "Attack"
   End -> "End"
   RangeTag r -> case r of
@@ -192,6 +162,20 @@ renderTags = map case _ of
     Character -> "Character"
   KeywordTag k -> k ^. simple _Newtype
   LimitTag n l -> show n <> "/" <> l
+
+renderTagBox :: Array String -> String -> Nut
+renderTagBox styles name =
+  D.div
+    [ css_ $ [ "shrink-0", "px-1", "rounded" ] <> styles ]
+    [ D.text_ name ]
+
+renderCost :: Action -> Nut
+renderCost =
+  renderTagBox [ "bg-indigo-500", "text-white" ] <<< printCost
+
+renderTag :: Tag -> Nut
+renderTag =
+  renderTagBox [ "bg-sky-500", "text-white" ] <<< printTag
 
 renderSteps :: Icon -> Array Step -> Nut
 renderSteps icon steps =
@@ -226,7 +210,7 @@ renderStep icon = case _ of
   InsetStep d s t ins ->
     D.li []
       [ renderStepName icon d s
-      , D.span [] [ markup icon t]
+      , D.span [] [ markup icon t ]
       , D.div
           [ css_ [ "pl-8" ] ]
           [ renderInset icon ins ]
@@ -314,7 +298,7 @@ renderInset icon@{ colours } = case _ of
       , D.div
           [ css_ [ "italic" ] ]
           [ D.text_ $ intercalate ", " $
-              [ renderCost ai.cost ] <> renderTags ai.tags
+              [ printCost ai.cost ] <> (printTag <$> ai.tags)
           ]
       , D.div []
           [ D.ol
