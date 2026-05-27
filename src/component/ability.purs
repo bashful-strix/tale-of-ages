@@ -14,7 +14,7 @@ import Prelude
 import CSS (backgroundColor, lighten, render, renderedInline)
 
 import Data.Foldable (foldMap, intercalate, length)
-import Data.Lens ((^.), (^?), filtered, has, only, to, traversed, view)
+import Data.Lens ((^.), (^?), filtered, has, is, only, to, traversed, view)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe, fromMaybe)
@@ -77,39 +77,8 @@ renderAbility icon@{ colours } a =
                 ^. _tags
                   <<< traversed
                   <<< filtered (has $ only Attack)
-                  <<< to \_ ->
-                    D.span
-                      [ css_ [ "icon-[game-icons--crossed-swords]" ]
-                      , DA.title_ "Attack"
-                      ]
-                      []
-            , a ^. _action <<< to case _ of
-                Quick ->
-                  D.span
-                    [ css_ [ "icon-[game-icons--quick-slash]" ]
-                    , DA.title_ "Quick"
-                    ]
-                    []
-                One ->
-                  D.span
-                    [ css_ [ "icon-[game-icons--serrated-slash]" ]
-                    , DA.title_ "1 action"
-                    ]
-                    []
-                Two ->
-                  D.span
-                    [ css_ [ "flex" ]
-                    , DA.title_ "2 actions"
-                    ]
-                    [ D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
-                    , D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
-                    ]
-                Interrupt n ->
-                  D.span
-                    [ css_ [ "icon-[game-icons--divert]" ]
-                    , DA.title_ $ "Interrupt " <> show n
-                    ]
-                    []
+                  <<< to \_ -> renderAttackSign
+            , renderActionSign $ a ^. _action
             ]
         ]
 
@@ -133,6 +102,35 @@ printCost = case _ of
   One -> "1 action"
   Two -> "2 actions"
   Interrupt n -> "Interrupt " <> show n
+
+renderActionSign :: Action -> Nut
+renderActionSign = case _ of
+  Quick ->
+    D.span
+      [ css_ [ "icon-[game-icons--quick-slash]" ]
+      , DA.title_ "Quick"
+      ]
+      []
+  One ->
+    D.span
+      [ css_ [ "icon-[game-icons--serrated-slash]" ]
+      , DA.title_ "1 action"
+      ]
+      []
+  Two ->
+    D.span
+      [ css_ [ "flex" ]
+      , DA.title_ "2 actions"
+      ]
+      [ D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
+      , D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
+      ]
+  Interrupt n ->
+    D.span
+      [ css_ [ "icon-[game-icons--divert]" ]
+      , DA.title_ $ "Interrupt " <> show n
+      ]
+      []
 
 printTag :: Tag -> String
 printTag = case _ of
@@ -163,6 +161,14 @@ printTag = case _ of
   KeywordTag k -> k ^. simple _Newtype
   LimitTag n l -> show n <> "/" <> l
 
+renderAttackSign :: Nut
+renderAttackSign =
+  D.span
+    [ css_ [ "icon-[game-icons--crossed-swords]" ]
+    , DA.title_ "Attack"
+    ]
+    []
+
 renderTagBox :: Array String -> String -> Nut
 renderTagBox styles name =
   D.div
@@ -174,8 +180,11 @@ renderCost =
   renderTagBox [ "bg-indigo-500", "text-white" ] <<< printCost
 
 renderTag :: Tag -> Nut
-renderTag =
-  renderTagBox [ "bg-sky-500", "text-white" ] <<< printTag
+renderTag tag =
+  renderTagBox
+    [ if tag # is (only Attack) then "bg-rose-500" else "bg-sky-500"
+    , "text-white"
+    ] $ printTag tag
 
 renderSteps :: Icon -> Array Step -> Nut
 renderSteps icon steps =
@@ -274,18 +283,18 @@ renderInset icon@{ colours } = case _ of
 
   AbilityInset ai ->
     D.div
-      [ css_ [ "ml-8" ] ]
+      [ css_ [ "flex", "flex-col", "gap-y-1", "ml-8" ] ]
       [ D.div
           [ css_
               [ "flex"
-              , "gap-x-1"
+              , "justify-between"
               , "bg-stone-500"
               , "text-stone-800"
               , "dark:bg-stone-700"
               , "dark:text-stone-300"
               ]
           ]
-          [ D.span
+          [ D.h4
               [ css_ [ "text-white", "font-bold" ]
               , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
                   (backgroundColor <<< lighten 0.2) <$> colours
@@ -294,12 +303,18 @@ renderInset icon@{ colours } = case _ of
                       <<< _value
               ]
               [ D.text_ $ ai.name ^. simple _Newtype ]
+          , D.div
+              [ css_ [ "flex", "items-center", "gap-2", "mr-2" ] ]
+              [ ai.tags
+                  ^. traversed
+                    <<< filtered (has $ only Attack)
+                    <<< to \_ -> renderAttackSign
+              , renderActionSign ai.cost
+              ]
           ]
       , D.div
-          [ css_ [ "italic" ] ]
-          [ D.text_ $ intercalate ", " $
-              [ printCost ai.cost ] <> (printTag <$> ai.tags)
-          ]
+          [ css_ [ "flex", "flex-wrap", "gap-1" ] ] $
+          [ renderCost ai.cost ] <> (renderTag <$> ai.tags)
       , D.div []
           [ D.ol
               [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
