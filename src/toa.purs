@@ -1,5 +1,6 @@
 module ToA
-  ( toaDeku
+  ( Query(..)
+  , toaDeku
   , toa
   ) where
 
@@ -25,7 +26,7 @@ import Type.Row (type (+))
 
 import ToA.ToAM (ToAM, Store, liftRun)
 import ToA.Capability.Log (LOG, debug)
-import ToA.Capability.Navigate (NAVIGATE, matchRoutes)
+import ToA.Capability.Navigate (NAVIGATE)
 import ToA.Capability.Theme (THEME, readSystem)
 import ToA.Component.TitleBar (titleBar)
 import ToA.Data.Env (Env)
@@ -48,9 +49,10 @@ import ToA.Page.Jobs (jobsPage)
 import ToA.Page.Unknown (unknownPage)
 import ToA.Util.Html (css, css_)
 
+data Query a = OnRoute Route a
 data Action = Init | Receive (Connected Store Unit)
 
-toa :: ∀ r q o. Component q Unit o (ToAM (LOG + NAVIGATE + THEME + r))
+toa :: ∀ r o. Component Query Unit o (ToAM (LOG + NAVIGATE + THEME + r))
 toa =
   connect selectAll
     $ mkComponent
@@ -60,6 +62,9 @@ toa =
             { initialize = pure Init
             , receive = pure <<< Receive
             , handleAction = act
+            , handleQuery = case _ of
+                OnRoute route a ->
+                  updateStore _ { route = pure route } $> Just a
             }
         }
   where
@@ -68,7 +73,7 @@ toa =
     Init -> do
       systemTheme <- liftRun readSystem
       updateStore _ { systemTheme = systemTheme }
-      liftRun $ matchRoutes (\route -> updateStore _ { route = pure route })
+      -- liftRun $ matchRoutes (\route -> updateStore _ { route = pure route })
       liftRun $ debug "test"
     Receive { context } -> put context
 
