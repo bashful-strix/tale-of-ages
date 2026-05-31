@@ -12,13 +12,17 @@ module ToA.Data.Icon.Job
   , _III
   , _IV
 
+  , stringJobLevel
   , jobLevelP
   , jsonJobLevel
   ) where
 
 import Prelude
+import PointFree ((~$))
 
+import Data.Codec (Codec', codec')
 import Data.Codec.JSON as CJ
+import Data.Either (Either)
 import Data.FastVect.FastVect (Vect)
 import Data.Lens (Lens')
 import Data.Lens.Iso.Newtype (_Newtype)
@@ -27,7 +31,7 @@ import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Tuple.Nested (type (/\))
 
-import Parsing (Parser)
+import Parsing (Parser, ParseError, runParser)
 import Parsing.Combinators (choice)
 import Parsing.String (string)
 
@@ -99,6 +103,7 @@ data JobLevel
   | IV
 
 derive instance Eq JobLevel
+derive instance Ord JobLevel
 instance Show JobLevel where
   show I = "I"
   show II = "II"
@@ -116,6 +121,9 @@ _III = only III
 
 _IV :: Prism' JobLevel Unit
 _IV = only IV
+
+stringJobLevel :: Codec' (Either ParseError) String JobLevel
+stringJobLevel = codec' (runParser ~$ jobLevelP) show
 
 jobLevelP :: Parser String JobLevel
 jobLevelP = choice

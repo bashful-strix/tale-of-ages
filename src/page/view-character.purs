@@ -5,7 +5,7 @@ module ToA.Page.ViewCharacter
 import Prelude
 import PointFree ((~$))
 
-import CSS (backgroundColor, color, render, renderedInline)
+import CSS (backgroundColor, render, renderedInline)
 
 import Data.Array (sort)
 import Data.Foldable (elem, foldMap)
@@ -39,7 +39,8 @@ import Deku.Hooks ((<#~>))
 import Routing.Duplex (print)
 
 import ToA.Component.Ability (renderAbility)
-import ToA.Component.Markup (markup)
+import ToA.Component.Talent (renderTalent)
+import ToA.Component.Trait (renderTrait)
 import ToA.Data.Env (Env, _deleteChar, _navigate)
 import ToA.Data.Icon.Character
   ( Level(..)
@@ -53,14 +54,13 @@ import ToA.Data.Icon.Character
   )
 import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
 import ToA.Data.Icon.Colour (_colour, _value)
-import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Id (_id)
 import ToA.Data.Icon.Job (_limitBreak)
 import ToA.Data.Icon.Name (Name, _name)
 import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
 import ToA.Util.Html (css_, hr)
-import ToA.Util.Optic ((#~), (^::))
+import ToA.Util.Optic ((^::))
 
 viewCharacterPage :: Env -> Name -> Nut
 viewCharacterPage env@{ characters, icon } pathChar =
@@ -318,14 +318,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
                                     , "gap-2"
                                     ]
                                 ]
-                                $ trs <#> \t ->
-                                    D.div
-                                      []
-                                      [ D.div
-                                          [ css_ [ "font-bold" ] ]
-                                          [ D.text_ $ t ^. _name <<< _Newtype ]
-                                      , t # _desc #~ markup icon_
-                                      ]
+                                $ trs <#> renderTrait icon_
 
                             , D.div
                                 [ css_
@@ -334,25 +327,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
                                     , "gap-2"
                                     ]
                                 ]
-                                $ tls <#> \t ->
-                                    D.div
-                                      []
-                                      [ D.div
-                                          [ css_ [ "font-bold" ]
-                                          , DA.style_ $ fromMaybe ""
-                                              $ renderedInline
-                                              $ render =<<
-                                                  color <$> colours
-                                                    ^? traversed
-                                                      <<< filtered
-                                                        ( view _name >>> eq
-                                                            (t ^. _colour)
-                                                        )
-                                                      <<< _value
-                                          ]
-                                          [ D.text_ $ t ^. _name <<< _Newtype ]
-                                      , t # _desc #~ markup icon_
-                                      ]
+                                $ tls <#> renderTalent icon_
 
                             , D.div
                                 [ css_

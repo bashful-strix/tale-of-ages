@@ -37,6 +37,8 @@ module ToA.Data.Icon.Character
   , _inactive
 
   , Level(..)
+  , fromInt
+  , toInt
 
   , stringCharacter
   , jsonCharacter
@@ -251,6 +253,9 @@ derive instance Eq Level
 derive instance Ord Level
 instance Show Level where
   show = show <<< toInt
+instance Bounded Level where
+  bottom = Zero
+  top = Twelve
 
 toInt :: Level -> Int
 toInt Zero = 0

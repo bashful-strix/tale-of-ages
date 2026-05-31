@@ -123,8 +123,7 @@ jobsPage env@{ icon } path = Deku.do
     , D.div
         [ css_ [ "flex", "flex-col", "grow", "gap-2", "max-h-dvh" ] ] $
         [ guard open $
-            D.div -- overlay
-
+            D.div
               [ css_
                   [ "w-full"
                   , "h-full"
