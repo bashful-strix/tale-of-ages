@@ -4,10 +4,10 @@ package:
     - arrays
     - codec
     - codec-json
+    - colors
     - console
     - control
     - css
-    - debug
     - deku-core
     - deku-dom
     - effect
@@ -17,24 +17,24 @@ package:
     - foldable-traversable
     - foreign
     - hyrule
+    - integers
+    - js-uri
     - json
-    - lists
     - maybe
+    - newtype
     - ordered-collections
     - parsing
     - point-free
     - prelude
+    - profunctor
     - profunctor-lenses
-    - random
     - routing
     - routing-duplex
     - run
-    - st
     - strings
     - tuples
     - typelevel-prelude
     - web-cssom-view
-    - web-dom
     - web-events
     - web-html
     - web-pointerevents
