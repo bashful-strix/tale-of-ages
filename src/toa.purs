@@ -15,12 +15,12 @@ import ToA.Component.TitleBar (titleBar)
 import ToA.Data.Env (Env)
 import ToA.Data.Route (Route(..), CharacterPath(..), EncounterPath(..))
 import ToA.Data.Theme (themeCodec)
-import ToA.Page.Characters (charactersPage)
-import ToA.Page.Combat (combatPage)
-import ToA.Page.EditCharacter (editCharacterPage)
-import ToA.Page.ViewCharacter (viewCharacterPage)
-import ToA.Page.Encounters (encountersPage)
-import ToA.Page.EditEncounter (editEncounterPage)
+import ToA.Page.Character.Combat (combatCharacterPage)
+import ToA.Page.Character.Edit (editCharacterPage)
+import ToA.Page.Character.List (listCharacterPage)
+import ToA.Page.Character.View (viewCharacterPage)
+import ToA.Page.Encounter.Edit (editEncounterPage)
+import ToA.Page.Encounter.View (viewEncounterPage)
 import ToA.Page.Home (homePage)
 import ToA.Page.Jobs (jobsPage)
 import ToA.Page.Unknown (unknownPage)
@@ -50,15 +50,15 @@ toa env@{ route, systemTheme, theme } =
             Just Home -> homePage
             Just (Jobs path) -> jobsPage env path
             Just (Characters path) -> case path of
-              Nothing -> charactersPage env
+              Nothing -> listCharacterPage env
               Just subpath -> case subpath of
-                EditChar char -> editCharacterPage env $ Just char
+                CombatChar char -> combatCharacterPage env char
                 CreateChar -> editCharacterPage env Nothing
+                EditChar char -> editCharacterPage env $ Just char
                 ViewChar char -> viewCharacterPage env char
-                CombatChar char -> combatPage env char
             Just (Encounters path) -> case path of
               EditEnc enc -> editEncounterPage env enc
-              ViewEnc enc -> encountersPage env enc
+              ViewEnc enc -> viewEncounterPage env enc
             Nothing -> unknownPage
         ]
     ]

@@ -1,5 +1,5 @@
-module ToA.Page.Characters
-  ( charactersPage
+module ToA.Page.Character.List
+  ( listCharacterPage
   ) where
 
 import Prelude
@@ -42,8 +42,8 @@ import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
 import ToA.Util.Html (css_)
 import ToA.Util.Optic ((^::))
 
-charactersPage :: Env -> Nut
-charactersPage env@{ characters, icon } =
+listCharacterPage :: Env -> Nut
+listCharacterPage env@{ characters, icon } =
   ((/\) <$> characters <*> icon) <#~> \(chars /\ { colours, jobs }) ->
     D.div
       [ css_ [ "flex", "flex-col", "items-center", "grow", "gap-2" ] ]

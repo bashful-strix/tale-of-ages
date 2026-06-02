@@ -1,4 +1,4 @@
-module ToA.Page.EditCharacter
+module ToA.Page.Character.Edit
   ( editCharacterPage
   , editCharacterTextPage
   ) where

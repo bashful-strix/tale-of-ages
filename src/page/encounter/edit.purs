@@ -1,4 +1,4 @@
-module ToA.Page.EditEncounter
+module ToA.Page.Encounter.Edit
   ( editEncounterPage
   ) where
 

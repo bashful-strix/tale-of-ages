@@ -1,5 +1,5 @@
-module ToA.Page.Encounters
-  ( encountersPage
+module ToA.Page.Encounter.View
+  ( viewEncounterPage
   ) where
 
 import Prelude
@@ -64,8 +64,8 @@ import ToA.Data.Route
 import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((^::))
 
-encountersPage :: Env -> Maybe Name -> Nut
-encountersPage env@{ encounters, icon, route } pathEnc =
+viewEncounterPage :: Env -> Maybe Name -> Nut
+viewEncounterPage env@{ encounters, icon, route } pathEnc =
   ((/\) <$> encounters <*> icon)
     <#~>
       \(encs /\ icon_) ->

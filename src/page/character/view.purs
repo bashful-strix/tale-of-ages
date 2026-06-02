@@ -1,4 +1,4 @@
-module ToA.Page.ViewCharacter
+module ToA.Page.Character.View
   ( viewCharacterPage
   ) where
 
