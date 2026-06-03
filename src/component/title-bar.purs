@@ -2,13 +2,12 @@ module ToA.Component.TitleBar
   ( titleBar
   ) where
 
-import Prelude
-import Data.Lens ((^.))
+import ToA.Prelude
 
 import Data.Codec (decode, encode)
 import Data.Filterable (filter)
+import Data.Lens ((^.))
 import Data.Maybe (Maybe(..))
-import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
 import Deku.DOM as D
@@ -20,8 +19,8 @@ import Routing.Duplex (print)
 import ToA.Data.Env (Env, _navigate, _saveTheme)
 import ToA.Data.Route
   ( Route(..)
-  , JobPath(..)
   , EncounterPath(..)
+  , JobPath(..)
   , routeCodec
   )
 import ToA.Data.Theme (Theme(..), themeCodec)
@@ -36,7 +35,7 @@ titleBar env@{ theme } =
         , "shrink-0"
         , "items-center"
         , "justify-between"
-        , "px-2"
+        , "pr-2"
         , "bg-stone-500"
         , "text-stone-800"
         , "dark:bg-stone-700"
@@ -47,14 +46,14 @@ titleBar env@{ theme } =
         [ css_ [ "flex", "h-full" ] ]
         [ D.ul
             [ css_ [ "flex", "h-full" ] ] $
-            [ "ToA" /\ Home
-            , "Jobs" /\ Jobs None
-            , "Characters" /\ Characters Nothing
-            , "Encounters" /\ Encounters (ViewEnc Nothing)
-            ] <#> \(label /\ route) ->
+            [ "ToA" /\ "icon-[game-icons--black-book]" /\ Home
+            , "Jobs" /\ "icon-[game-icons--sverd-i-fjell]" /\ Jobs None
+            , "Characters" /\ "icon-[game-icons--archive-register]" /\ Characters Nothing
+            , "Encounters" /\ "icon-[game-icons--guarded-tower]" /\ Encounters (ViewEnc Nothing)
+            ] <#> \(label /\ sign /\ route) ->
               D.li
                 [ css_ [ "flex", "h-full" ] ]
-                [ routeLink env label route ]
+                [ routeLink env label sign route ]
         ]
 
     , D.div []
@@ -84,19 +83,26 @@ titleBar env@{ theme } =
         ]
     ]
 
-routeLink :: Env -> String -> Route -> Nut
-routeLink env label route =
+routeLink :: Env -> String -> String -> Route -> Nut
+routeLink env label sign route =
   D.a
     [ DA.href_ $ print routeCodec route
     , DL.click_ $ (env ^. _navigate) route <<< pure
     , css_
-        [ "h-full"
-        , "content-center"
+        [ "flex"
+        , "items-center"
+        , "gap-2"
+        , "h-full"
+        , "max-w-10"
+        , "sm:max-w-none"
         , "px-2"
+        , "overflow-hidden"
         , "hover:bg-stone-400"
         , "focus:bg-stone-400"
         , "dark:hover:bg-stone-500"
         , "dark:focus:bg-stone-500"
         ]
     ]
-    [ D.text_ label ]
+    [ D.span [ css_ [ "size-6", "shrink-0", sign ] ] []
+    , D.text_ label
+    ]

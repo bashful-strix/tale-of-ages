@@ -30,8 +30,8 @@ toa :: Env -> Nut
 toa env@{ route, systemTheme, theme } =
   D.div
     [ css $ theme <#> \t ->
-        [ "w-screen"
-        , "h-screen"
+        [ "w-dvw"
+        , "h-dvh"
         , "flex"
         , "flex-col"
         , "overflow-hidden"
@@ -47,7 +47,7 @@ toa env@{ route, systemTheme, theme } =
     , D.div
         [ css_ [ "flex", "grow", "overflow-hidden", "m-2" ] ]
         [ route <#~> case _ of
-            Just Home -> homePage
+            Just Home -> homePage env
             Just (Jobs path) -> jobsPage env path
             Just (Characters path) -> case path of
               Nothing -> listCharacterPage env
