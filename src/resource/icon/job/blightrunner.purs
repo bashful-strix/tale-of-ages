@@ -44,7 +44,7 @@ blightrunner =
       [ Job
           { name: Name "Blightrunner"
           , colour: Name "Yellow"
-          , sign: Sign "icon-[game-icons--running-ninja]"
+          , sign: Sign "icon-[game-icons--sprint]"
           , soul: Name "Ranger"
           , class: Name "Vagabond"
           , description:
