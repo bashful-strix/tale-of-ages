@@ -33,7 +33,7 @@ import Data.Lens
 import Data.Lens.At (at)
 import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Map (empty, lookup, member)
+import Data.Map (empty, fromFoldable, lookup, member)
 import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
 import Data.Monoid (guard)
 import Data.Profunctor.Strong (first, second)
@@ -638,7 +638,7 @@ editCharacterText :: Env -> (Mode -> Effect Unit) -> Maybe Character -> Nut
 editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
   setChar /\ char <- useState
     $ encode (stringCharacter icon_)
-    $ fromMaybe emptyChar initChar
+    $ fromMaybe emptyTextChar initChar
 
   let parsed = decode (stringCharacter icon_) <$> char
 
@@ -728,9 +728,9 @@ editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
         ]
     ]
 
-emptyChar :: Character
-emptyChar = Character
-  { name: Name ""
+emptyTextChar :: Character
+emptyTextChar = Character
+  { name: Name "<Character name>"
   , state: State
       { combat:
           { hp: 0
@@ -749,12 +749,12 @@ emptyChar = Character
       }
   , build: Build
       { level: Zero
-      , primary: Name ""
-      , jobs: empty
-      , talents: []
+      , primary: Name "<Primary job>"
+      , jobs: fromFoldable [ Name "<Job 1>" /\ I, Name "<Job 2>" /\ IV ]
+      , talents: [ Id "<Talent>" ]
       , abilities:
-          { active: []
-          , inactive: []
+          { active: [ Name "<Active ability>" ]
+          , inactive: [ Name "<Inactive ability>" ]
           }
       }
   }
