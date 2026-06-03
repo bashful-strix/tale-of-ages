@@ -2,10 +2,9 @@ module ToA.Page.Character.Edit
   ( editCharacterPage
   ) where
 
-import Prelude
-import PointFree ((~$))
+import ToA.Prelude
 
-import CSS (color, render, renderedInline)
+import CSS (color)
 
 import Data.Array (cons, deleteAt, elem, modifyAt, snoc, updateAt)
 import Data.Codec (decode, encode)
@@ -38,9 +37,8 @@ import Data.Maybe (Maybe(..), fromMaybe, isNothing, maybe)
 import Data.Monoid (guard)
 import Data.Profunctor.Strong (first, second)
 import Data.Tuple (fst)
-import Data.Tuple.Nested ((/\))
 
-import Deku.Core (Nut)
+import Deku.Core (Nut, fixed)
 import Deku.Do as Deku
 import Deku.DOM as D
 import Deku.DOM.Attributes as DA
@@ -84,7 +82,7 @@ import ToA.Data.Icon.Job (_abilities, _talents) as J
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), CharacterPath(..))
-import ToA.Util.Html (css_, hr)
+import ToA.Util.Html (css_, hr, style_)
 import ToA.Util.Optic ((^::), (#~))
 
 data Mode = Visual | Text
@@ -95,7 +93,7 @@ editCharacterPage env@{ characters } pathChar =
     setMode /\ mode <- useState Visual
 
     let
-      initChar = chars ^? traversed <<< filtered (preview _name >>> eq pathChar)
+      initChar = chars ^? traversed <. filtered (preview _name >>> eq pathChar)
 
     mode <#~> case _ of
       Visual -> editCharacterForm env setMode initChar
@@ -104,26 +102,27 @@ editCharacterPage env@{ characters } pathChar =
 editCharacterForm :: Env -> (Mode -> Effect Unit) -> Maybe Character -> Nut
 editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
   setName /\ name <- useState
-    $ initChar ^. _Just <<< _name <<< _Newtype
+    (initChar ^. _Just <. _name <. _Newtype)
   setLevel /\ level <- useState $ fromMaybe Zero
-    $ initChar ^? _Just <<< _build <<< _level
+    (initChar ^? _Just <. _build <. _level)
   setJobs /\ jobs <- useState $ fromMaybe empty
-    $ initChar ^? _Just <<< _build <<< _jobs
+    (initChar ^? _Just <. _build <. _jobs)
   setPrimary /\ primary <- useState
-    $ initChar ^? _Just <<< _build <<< _primary
+    (initChar ^? _Just <. _build <. _primary)
   setTalents /\ talents <- useState
-    $ initChar ^. _Just <<< _build <<< _talents
+    (initChar ^. _Just <. _build <. _talents)
   setAbilities /\ abilities <- useState
-    $ initChar ^. _Just <<< _build <<< _abilities
-        <<< takeBoth _active _inactive
-        <<< to \(a /\ i) -> ((_ /\ true) <$> a) <> ((_ /\ false) <$> i)
+    ( initChar ^. _Just <. _build <. _abilities
+        <. takeBoth _active _inactive
+        <. to \(a /\ i) -> ((_ /\ true) <$> a) <> ((_ /\ false) <$> i)
+    )
 
   setPreview /\ pre <- useState'
 
-  partitionedAbilities <- useHotRant $ abilities <#>
-    partitionMap
+  partitionedAbilities <- useHotRant $ abilities
+    <#> partitionMap
       (\(a /\ isActive) -> if isActive then Right a else Left a)
-      >>> \{ left, right } -> { active: right, inactive: left }
+    >>> \{ left, right } -> { active: right, inactive: left }
   activeAbilities <- useHotRant $ partitionedAbilities <#> _.active
   inactiveAbilities <- useHotRant $ partitionedAbilities <#> _.inactive
 
@@ -131,15 +130,19 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
     icon_.jobs # filter (view _name >>> member ~$ js)
   charClasses <- useHotRant $ charJobs <#> \js ->
     icon_.classes # filter
-      (view _name >>> elem ~$ (js ^:: traversed <<< _class))
+      (view _name >>> elem ~$ (js ^:: traversed <. _class))
   charTalents <- useHotRant $ charJobs <#> \js ->
     icon_.talents # filter
-      (view _id >>> elem ~$ (js ^:: traversed <<< J._talents <<< traversed))
-  charAbilities <- useHotRant $ (/\) <$> charJobs <*> charClasses
+      (view _id >>> elem ~$ (js ^:: traversed <. J._talents <. traversed))
+  charAbilities <- useHotRant $ charJobs <&> charClasses
     <#> \(js /\ cs) -> icon_.abilities # filter
       ( view _name >>> elem ~$
-          ( cs ^. traversed <<< _apprentice <>
-              js ^:: traversed <<< J._abilities <<< traversed <<< _2
+          ( cs ^. traversed <. _apprentice
+              <> js
+              ^:: traversed
+              <. J._abilities
+              <. traversed
+              <. _2
           )
       )
 
@@ -148,14 +151,13 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
       D.div []
         [ D.div
             [ css_ [ "font-bold" ]
-            , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
-                color <$> icon_.colours
-                  ^? traversed
-                    <<< filtered (view _name >>> eq (j ^. _colour))
-                    <<< _value
+            , style_ $ fromMaybe (pure unit) $ color <$> icon_.colours
+                ^? traversed
+                  <. filtered (view _name >>> eq (j ^. _colour))
+                  <. _value
             ]
-            [ D.text_ $ j ^. _name <<< _Newtype ]
-        , icon_.traits # traversed <<< filtered (_name `elemOf` (j ^. _trait))
+            [ D.text_ $ j ^. _name <. _Newtype ]
+        , icon_.traits # traversed <. filtered (_name `elemOf` (j ^. _trait))
             #~ renderTrait icon_
         ]
     previewTalents = charTalents <#> foldMap (renderTalent icon_)
@@ -173,18 +175,18 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
       in
         do
           p <- p'
-          state <- case initChar ^? _Just <<< _state of
+          state <- case initChar ^? _Just <. _state of
             Just s -> Just s
             Nothing -> do
               hp <- ccs ^?
                 traversed
-                  <<< filtered
+                  <. filtered
                     ( preview _name >>> eq
-                        ( cjs ^? traversed <<< filtered (_name `elemOf` p) <<<
+                        ( cjs ^? traversed <. filtered (_name `elemOf` p) <.
                             _class
                         )
                     )
-                  <<< _hp
+                  <. _hp
               pure $ State
                 { combat:
                     { hp
@@ -216,12 +218,15 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
             [ css_
                 [ "px-2"
                 , "py-1"
-                , "border"
-                , "border-solid"
+                , "rounded"
+                , "bg-stone-500"
+                , "text-stone-800"
+                , "dark:bg-stone-700"
+                , "dark:text-stone-300"
                 , "hover:bg-stone-400"
-                , "hover:dark:bg-stone-800"
-                , "disabled:border-stone-700"
-                , "disabled:text-stone-700"
+                , "focus:bg-stone-400"
+                , "dark:hover:bg-stone-500"
+                , "dark:focus:bg-stone-500"
                 ]
             , DL.runOn_ DL.click $ setMode Text
             ]
@@ -233,12 +238,18 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 [ css_
                     [ "px-2"
                     , "py-1"
-                    , "border"
-                    , "border-solid"
-                    , "hover:bg-stone-400"
-                    , "hover:dark:bg-stone-800"
-                    , "disabled:border-stone-700"
-                    , "disabled:text-stone-700"
+                    , "rounded"
+                    , "bg-stone-500"
+                    , "text-stone-800"
+                    , "dark:bg-stone-700"
+                    , "dark:text-stone-300"
+                    , "hover:not-disabled:bg-stone-400"
+                    , "focus:not-disabled:bg-stone-400"
+                    , "dark:hover:not-disabled:bg-stone-500"
+                    , "dark:focus:not-disabled:bg-stone-500"
+                    , "disabled:bg-stone-600"
+                    , "disabled:text-stone-400"
+                    , "disabled:dark:text-stone-800"
                     ]
                 , DA.xtypeSubmit
                 , DA.disabled $ show <<< isNothing <$> character
@@ -254,10 +265,15 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 [ css_
                     [ "px-2"
                     , "py-1"
-                    , "border"
-                    , "border-solid"
+                    , "rounded"
+                    , "bg-stone-500"
+                    , "text-stone-800"
+                    , "dark:bg-stone-700"
+                    , "dark:text-stone-300"
                     , "hover:bg-stone-400"
-                    , "hover:dark:bg-stone-800"
+                    , "focus:bg-stone-400"
+                    , "dark:hover:bg-stone-500"
+                    , "dark:focus:bg-stone-500"
                     ]
                 , DA.xtypeButton
                 , DL.runOn_ DL.click $
@@ -310,8 +326,10 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                         , DL.runOn_ DL.focus $ setPreview previewJobs
                         , DL.selectOn_ DL.change $ \newN -> do
                             setJobs $ js
-                              # at n .~ Nothing
-                              # at (Name newN) ?~ l
+                              # at n
+                              .~ Nothing
+                                # at (Name newN)
+                              ?~ l
                             when (isNothing p) $ setPrimary $ Just $ Name newN
                         ] $ intercalate [ hr ] $
                         [ D.option
@@ -323,24 +341,24 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                                 icon_.souls
                                 <#> \s ->
                                   D.optgroup
-                                    [ DA.label_ $ s ^. _name <<< _Newtype ] $
-                                    filter (_soul `elemOf` (s ^. _name))
-                                      icon_.jobs
-                                      <#> \j ->
-                                        D.option
-                                          ( [ DA.value_ $ j ^. _name <<<
-                                                _Newtype
-                                            ] <> guard (n == j ^. _name)
-                                              [ DA.selected_ "selected" ]
-                                          )
-                                          [ D.text_ $ j ^. _name <<< _Newtype
-                                          ]
+                                    [ DA.label_ $ s ^. _name <. _Newtype ]
+                                    $ filter (_soul `elemOf` (s ^. _name))
+                                        icon_.jobs
+                                    <#> \j ->
+                                      D.option
+                                        ( [ DA.value_ $ j ^. _name <. _Newtype
+                                          ] <> guard (n == j ^. _name)
+                                            [ DA.selected_ "selected" ]
+                                        )
+                                        [ D.text_ $ j ^. _name <. _Newtype ]
                           )
 
                     , D.select
                         [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
-                        , DL.selectOn_ DL.change $
-                            decode stringJobLevel >>> hush >>> maybe
+                        , DL.selectOn_ DL.change
+                            $ decode stringJobLevel
+                            >>> hush
+                            >>> maybe
                               (pure unit)
                               ( \newL -> setJobs (js # at n ?~ newL)
                               )
@@ -388,8 +406,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     , "hover:dark:bg-stone-800"
                     ]
                 , DA.xtypeButton
-                , DL.runOn DL.click $ jobs <#>
-                    setJobs <<< (at (Name "") ?~ I)
+                , DL.runOn DL.click $ jobs
+                    <#> setJobs
+                    <<< (at (Name "") ?~ I)
                 ]
                 [ D.text_ "+" ]
             ]
@@ -401,7 +420,8 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 <$> charJobs
                 <*> charTalents
                 <*> previewTalents
-                <*> talents <#~> \{ cjs, cts, pts, jts } ->
+                <*> talents
+                <#~> \{ cjs, cts, pts, jts } ->
                   jts # itraversed `ifoldMapOf` \i id ->
                     D.div
                       [ css_ [ "flex", "justify-between", "gap-2" ] ]
@@ -409,8 +429,10 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                           [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
                           , DL.runOn_ DL.mouseover $ setPreview pts
                           , DL.runOn_ DL.focus $ setPreview pts
-                          , DL.selectOn_ DL.change $
-                              Id >>> (updateAt i ~$ jts) >>> maybe (pure unit)
+                          , DL.selectOn_ DL.change
+                              $ Id
+                              >>> (updateAt i ~$ jts)
+                              >>> maybe (pure unit)
                                 setTalents
                           ]
                           [ intercalate hr $
@@ -420,27 +442,27 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                               ) `cons`
                                 ( cjs <#> \j ->
                                     D.optgroup
-                                      [ DA.label_ $ j ^. _name <<< _Newtype ]
+                                      [ DA.label_ $ j ^. _name <. _Newtype ]
                                       $ cts
-                                          # filter
-                                              ( view _id >>> elem ~$
-                                                  ( j ^:: J._talents <<<
-                                                      traversed
-                                                  )
+                                      # filter
+                                          ( view _id >>> elem ~$
+                                              ( j ^:: J._talents <.
+                                                  traversed
                                               )
-                                          <#> \t ->
-                                            D.option
-                                              ( [ DA.value_ $ t ^. _id <<<
-                                                    _Newtype
-                                                , DA.disabled $
-                                                    show <<< elem (t ^. _id)
-                                                      <$> talents
-                                                ] <> guard (id == t ^. _id)
-                                                  [ DA.selected_ "selected" ]
-                                              )
-                                              [ D.text_ $ t ^. _name <<<
-                                                  _Newtype
-                                              ]
+                                          )
+                                      <#> \t ->
+                                        D.option
+                                          ( [ DA.value_ $ t ^. _id <.
+                                                _Newtype
+                                            , DA.disabled
+                                                $ show
+                                                <<< elem (t ^. _id)
+                                                <$> talents
+                                            ] <> guard (id == t ^. _id)
+                                              [ DA.selected_ "selected" ]
+                                          )
+                                          [ D.text_ $ t ^. _name <. _Newtype
+                                          ]
                                 )
                           ]
 
@@ -453,8 +475,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                               , "hover:dark:bg-stone-800"
                               ]
                           , DA.xtypeButton
-                          , DL.runOn DL.click $ talents <#>
-                              deleteAt i >>> maybe (pure unit) setTalents
+                          , DL.runOn DL.click $ talents
+                              <#> deleteAt i
+                              >>> maybe (pure unit) setTalents
                           ]
                           [ D.text_ "-" ]
                       ]
@@ -468,8 +491,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     , "hover:dark:bg-stone-800"
                     ]
                 , DA.xtypeButton
-                , DL.runOn DL.click $ talents <#>
-                    setTalents <<< (snoc ~$ Id "")
+                , DL.runOn DL.click $ talents
+                    <#> setTalents
+                    <<< (snoc ~$ Id "")
                 ]
                 [ D.text_ "+" ]
             ]
@@ -482,7 +506,8 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 <*> charClasses
                 <*> previewAbilities
                 <*> jobs
-                <*> abilities <#~> \{ cjs, ccs, pas, js, jas } ->
+                <*> abilities
+                <#~> \{ cjs, ccs, pas, js, jas } ->
                   jas # itraversed `ifoldMapOf` \i (n /\ x) ->
                     D.div
                       [ css_ [ "flex", "justify-between", "gap-2" ] ]
@@ -493,66 +518,66 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                           , DL.selectOn_ DL.change $ \newA ->
                               modifyAt i (first $ const $ Name newA) jas
                                 # maybe (pure unit) setAbilities
-                          ] $ join
-                          [ [ D.option
-                                [ DA.value_ "" ]
-                                [ D.text_ "-- Select ability --" ]
-                            , hr
-                            ]
+                          ]
+                          [ D.option
+                              [ DA.value_ "" ]
+                              [ D.text_ "-- Select ability --" ]
 
-                          , ccs <#> \c ->
+                          , hr
+
+                          , fixed $ ccs <#> \c ->
                               D.optgroup
-                                [ DA.label_ $ c ^. _name <<< _Newtype ] $
-                                icon_.abilities
-                                  # filter
-                                      ( view _name >>> elem ~$
-                                          (c ^. _apprentice)
-                                      )
-                                  <#> \a ->
-                                    D.option
-                                      ( [ DA.value_ $ a ^. _name <<<
-                                            _Newtype
-                                        , DA.disabled_
-                                            $ show <<< elem (a ^. _name) <<<
-                                                map fst
-                                            $ jas
-                                        ] <> guard (n == a ^. _name)
-                                          [ DA.selected_ "selected" ]
-                                      )
-                                      [ D.text_ $ a ^. _name <<< _Newtype ]
+                                [ DA.label_ $ c ^. _name <. _Newtype ]
+                                $ icon_.abilities
+                                # filter
+                                    ( view _name >>> elem ~$
+                                        (c ^. _apprentice)
+                                    )
+                                <#> \a ->
+                                  D.option
+                                    ( [ DA.value_ $ a ^. _name <. _Newtype
+                                      , DA.disabled_
+                                          $ show
+                                          <<< elem (a ^. _name)
+                                          <<< map fst
+                                          $ jas
+                                      ] <> guard (n == a ^. _name)
+                                        [ DA.selected_ "selected" ]
+                                    )
+                                    [ D.text_ $ a ^. _name <. _Newtype ]
 
-                          , [ hr ]
+                          , hr
 
-                          , cjs <#> \j ->
+                          , fixed $ cjs <#> \j ->
                               D.optgroup
-                                [ DA.label_ $ j ^. _name <<< _Newtype ] $
-                                icon_.abilities
-                                  # filter
-                                      ( view _name >>> elem ~$
-                                          ( j ^:: J._abilities
-                                              <<< traversed
-                                              <<< filtered
-                                                ( preview _1 >>>
-                                                    ( _ <= lookup
-                                                        (j ^. _name)
-                                                        js
-                                                    )
-                                                )
-                                              <<< _2
-                                          )
-                                      )
-                                  <#> \a ->
-                                    D.option
-                                      ( [ DA.value_ $ a ^. _name <<<
-                                            _Newtype
-                                        , DA.disabled_
-                                            $ show <<< elem (a ^. _name) <<<
-                                                map fst
-                                            $ jas
-                                        ] <> guard (n == a ^. _name)
-                                          [ DA.selected_ "selected" ]
-                                      )
-                                      [ D.text_ $ a ^. _name <<< _Newtype ]
+                                [ DA.label_ $ j ^. _name <. _Newtype ]
+                                $ icon_.abilities
+                                # filter
+                                    ( view _name >>> elem ~$
+                                        ( j ^:: J._abilities
+                                            <. traversed
+                                            <. filtered
+                                              ( preview _1 >>>
+                                                  ( _ <= lookup
+                                                      (j ^. _name)
+                                                      js
+                                                  )
+                                              )
+                                            <. _2
+                                        )
+                                    )
+                                <#> \a ->
+                                  D.option
+                                    ( [ DA.value_ $ a ^. _name <. _Newtype
+                                      , DA.disabled_
+                                          $ show
+                                          <<< elem (a ^. _name)
+                                          <<< map fst
+                                          $ jas
+                                      ] <> guard (n == a ^. _name)
+                                        [ DA.selected_ "selected" ]
+                                    )
+                                    [ D.text_ $ a ^. _name <. _Newtype ]
                           ]
 
                       , D.button
@@ -562,9 +587,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                               , if x then "bg-sky-600"
                                 else "bg-stone-500 dark:bg-stone-700"
                               ]
-                          , DL.runOn_ DL.click $
-                              modifyAt i (second not) jas
-                                # maybe (pure unit) setAbilities
+                          , DL.runOn_ DL.click
+                              $ modifyAt i (second not) jas
+                              # maybe (pure unit) setAbilities
                           ]
                           []
 
@@ -577,8 +602,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                               , "hover:dark:bg-stone-800"
                               ]
                           , DA.xtypeButton
-                          , DL.runOn_ DL.click $
-                              deleteAt i jas # maybe (pure unit) setAbilities
+                          , DL.runOn_ DL.click
+                              $ deleteAt i jas
+                              # maybe (pure unit) setAbilities
                           ]
                           [ D.text_ "-" ]
                       ]
@@ -592,8 +618,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     , "hover:dark:bg-stone-800"
                     ]
                 , DA.xtypeButton
-                , DL.runOn DL.click $ abilities <#>
-                    setAbilities <<< (snoc ~$ (Name "" /\ false))
+                , DL.runOn DL.click $ abilities
+                    <#> setAbilities
+                    <<< (snoc ~$ (Name "" /\ false))
                 ]
                 [ D.text_ "+" ]
             ]
@@ -610,7 +637,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 [ css_ [ "col-span-full", "text-center", "font-bold" ] ]
                 [ D.text_ "Active" ]
             , activeAbilities <#~> traversed #~ \n ->
-                icon_.abilities # traversed <<< filtered (_name `elemOf` n) #~
+                icon_.abilities # traversed <. filtered (_name `elemOf` n) #~
                   renderAbility icon_
             ]
 
@@ -628,7 +655,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 [ css_ [ "col-span-full", "text-center", "font-bold" ] ]
                 [ D.text_ "Inactive" ]
             , inactiveAbilities <#~> traversed #~ \n ->
-                icon_.abilities # traversed <<< filtered (_name `elemOf` n) #~
+                icon_.abilities # traversed <. filtered (_name `elemOf` n) #~
                   renderAbility icon_
             ]
         ]
@@ -652,12 +679,15 @@ editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 [ css_
                     [ "px-2"
                     , "py-1"
-                    , "border"
-                    , "border-solid"
+                    , "rounded"
+                    , "bg-stone-500"
+                    , "text-stone-800"
+                    , "dark:bg-stone-700"
+                    , "dark:text-stone-300"
                     , "hover:bg-stone-400"
-                    , "hover:dark:bg-stone-800"
-                    , "disabled:border-stone-700"
-                    , "disabled:text-stone-700"
+                    , "focus:bg-stone-400"
+                    , "dark:hover:bg-stone-500"
+                    , "dark:focus:bg-stone-500"
                     ]
                 , DL.runOn_ DL.click $ setMode Visual
                 ]
@@ -677,20 +707,37 @@ editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     , css_
                         [ "px-2"
                         , "py-1"
-                        , "border"
-                        , "border-solid"
-                        , "disabled:border-stone-700"
-                        , "disabled:text-stone-700"
+                        , "rounded"
+                        , "bg-stone-500"
+                        , "text-stone-800"
+                        , "dark:bg-stone-700"
+                        , "dark:text-stone-300"
+                        , "hover:bg-stone-400"
+                        , "focus:bg-stone-400"
+                        , "dark:hover:bg-stone-500"
+                        , "dark:focus:bg-stone-500"
                         ]
                     ]
                     [ D.text_ "Save" ]
 
                 , D.button
-                    [ DL.runOn_ DL.click $
+                    [ css_
+                        [ "px-2"
+                        , "py-1"
+                        , "rounded"
+                        , "bg-stone-500"
+                        , "text-stone-800"
+                        , "dark:bg-stone-700"
+                        , "dark:text-stone-300"
+                        , "hover:bg-stone-400"
+                        , "focus:bg-stone-400"
+                        , "dark:hover:bg-stone-500"
+                        , "dark:focus:bg-stone-500"
+                        ]
+                    , DL.runOn_ DL.click $
                         (env ^. _navigate)
                           (Characters $ ViewChar <<< view _name <$> initChar)
                           Nothing
-                    , css_ [ "px-2", "py-1", "border", "border-solid" ]
                     ]
                     [ D.text_ "Cancel" ]
                 ]
@@ -717,7 +764,7 @@ editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 ]
                 [ D.text char ]
 
-            , (/\) <$> char <*> parsed <#~> \(c /\ p) -> case p of
+            , char <&> parsed <#~> \(c /\ p) -> case p of
                 Right _ -> mempty
                 Left e ->
                   D.pre
