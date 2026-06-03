@@ -8,8 +8,10 @@ package:
     - console
     - control
     - css
+    - debug
     - deku-core
     - deku-dom
+    - dom-filereader
     - effect
     - either
     - fast-vect
@@ -18,6 +20,7 @@ package:
     - foreign
     - hyrule
     - integers
+    - js-promise-aff
     - js-uri
     - json
     - maybe
@@ -34,6 +37,7 @@ package:
     - strings
     - tuples
     - typelevel-prelude
+    - web-clipboard
     - web-cssom-view
     - web-events
     - web-html
@@ -48,7 +52,7 @@ package:
 
 workspace:
   packageSet:
-    registry: 66.9.1
+    registry: 77.5.0
 
   extraPackages:
     hyrule:

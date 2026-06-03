@@ -2,14 +2,10 @@ module Main
   ( main
   ) where
 
-import Prelude
-import PointFree ((<..))
-
-import Control.Alt ((<|>))
+import ToA.Prelude
 
 import Data.Map (empty)
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Tuple.Nested ((/\))
 
 import Effect (Effect)
 

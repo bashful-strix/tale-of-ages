@@ -2,29 +2,11 @@ module ToA.Page.Character.List
   ( listCharacterPage
   ) where
 
-import Prelude
+import ToA.Prelude
 
-import CSS (backgroundColor, render, renderedInline)
-
-import Data.Codec (encode)
-import Data.Foldable (foldMap, intercalate)
-import Data.Lens
-  ( (^.)
-  , (^?)
-  , preview
-  , view
-  , ifoldMapOf
-  , findOf
-  , filtered
-  , to
-  , traversed
-  , _Just
-  )
-import Data.Lens.Common (simple)
-import Data.Lens.Indexed (itraversed)
-import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (Maybe(..), fromMaybe, maybe)
-import Data.Tuple.Nested ((/\))
+import Data.Foldable (foldMap)
+import Data.Lens ((^.))
+import Data.Maybe (Maybe(..))
 
 import Deku.Core (Nut)
 import Deku.DOM as D
@@ -32,143 +14,125 @@ import Deku.DOM.Attributes as DA
 import Deku.DOM.Listeners as DL
 import Deku.Hooks ((<#~>))
 
-import JSURI (encodeURIComponent)
 import Routing.Duplex (print)
 
-import ToA.Data.Env (Env, _navigate)
-import ToA.Data.Icon.Character (stringCharacter, _build, _jobs, _level, _primary)
-import ToA.Data.Icon.Colour (_colour, _value)
+import ToA.Component.Character
+  ( characterSummary
+  , exportCharacter
+  , importCharacter
+  )
+import ToA.Data.Env (Env, _deleteChar, _navigate)
 import ToA.Data.Icon.Name (_name)
-import ToA.Data.Icon.Sign (_sign)
 import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
 import ToA.Util.Html (css_)
-import ToA.Util.Optic ((^::))
 
 listCharacterPage :: Env -> Nut
 listCharacterPage env@{ characters, icon } =
-  ((/\) <$> characters <*> icon) <#~> \(chars /\ icon_@{ colours, jobs }) ->
+  characters <&> icon <#~> \(chars /\ icon_) ->
     D.div
-      [ css_ [ "flex", "flex-col", "items-center", "grow", "gap-2" ] ]
+      [ css_
+          [ "flex"
+          , "flex-col"
+          , "items-center"
+          , "grow"
+          , "gap-2"
+          , "overflow-scroll"
+          ]
+      ]
       [ chars # foldMap \char ->
-          let
-            primary = char ^. _build <<< _primary
-            job = jobs # traversed `findOf` (view _name >>> eq primary)
-          in
-            D.div
+          D.div
+            [ css_
+                [ "flex"
+                , "w-full"
+                , "sm:max-w-4/5"
+                , "md:max-w-3/5"
+                , "rounded"
+                , "bg-stone-500"
+                , "text-stone-800"
+                ]
+            ]
+            [ D.a
+                [ css_
+                    [ "flex"
+                    , "grow"
+                    , "items-center"
+                    , "gap-2"
+                    , "p-2"
+                    , "dark:bg-stone-700"
+                    , "dark:text-stone-300"
+                    , "hover:bg-stone-400"
+                    , "focus:bg-stone-400"
+                    , "dark:hover:bg-stone-500"
+                    , "dark:focus:bg-stone-500"
+                    ]
+                , DA.href_ $ print routeCodec $ Characters $ Just $ ViewChar $
+                    char ^. _name
+                , DL.click_
+                    $ (env ^. _navigate)
+                        (Characters $ Just $ ViewChar $ char ^. _name)
+                    <<< pure
+                ]
+                [ characterSummary icon_ char ]
+
+            , D.div
+                [ css_ [ "flex", "flex-col" ] ]
+                [ D.button
+                    [ css_
+                        [ "flex"
+                        , "grow"
+                        , "items-center"
+                        , "px-2"
+                        , "dark:bg-stone-700"
+                        , "dark:text-stone-300"
+                        , "hover:bg-red-400"
+                        , "focus:bg-red-400"
+                        ]
+                    , DL.runOn_ DL.click $ (env ^. _deleteChar) char
+                    ]
+                    [ D.text_ "Delete" ]
+
+                , exportCharacter icon_
+                    [ "flex"
+                    , "grow"
+                    , "items-center"
+                    , "px-2"
+                    , "dark:bg-stone-700"
+                    , "dark:text-stone-300"
+                    , "hover:bg-stone-400"
+                    , "focus:bg-stone-400"
+                    , "dark:hover:bg-stone-500"
+                    , "dark:focus:bg-stone-500"
+                    ]
+                    char
+                ]
+            ]
+
+      , D.div
+          [ css_ [ "flex", "gap-2" ] ]
+          [ D.a
               [ css_
                   [ "flex"
-                  , "w-full"
-                  , "sm:max-w-4/5"
-                  , "md:max-w-3/5"
+                  , "items-center"
+                  , "gap-2"
+                  , "p-2"
                   , "rounded"
                   , "bg-stone-500"
                   , "text-stone-800"
+                  , "dark:bg-stone-700"
+                  , "dark:text-stone-300"
+                  , "hover:bg-stone-400"
+                  , "focus:bg-stone-400"
+                  , "dark:hover:bg-stone-500"
+                  , "dark:focus:bg-stone-500"
                   ]
+              , DA.href_ $ print routeCodec $ Characters $ Just CreateChar
+              , DL.click_
+                  $ (env ^. _navigate)
+                      (Characters $ Just CreateChar)
+                  <<< pure
               ]
-              [ D.a
-                  [ css_
-                      [ "flex"
-                      , "grow"
-                      , "items-center"
-                      , "gap-2"
-                      , "p-2"
-                      , "dark:bg-stone-700"
-                      , "dark:text-stone-300"
-                      , "hover:bg-stone-400"
-                      , "focus:bg-stone-400"
-                      , "dark:hover:bg-stone-500"
-                      , "dark:focus:bg-stone-500"
-                      ]
-                  , DA.href_ $ print routeCodec $ Characters $ Just $ ViewChar $
-                      char ^. _name
-                  , DL.click_ $
-                      (env ^. _navigate)
-                        (Characters $ Just $ ViewChar $ char ^. _name) <<< pure
-                  ]
-                  [ D.div
-                      [ css_ $ [ "size-16" ]
-                          <> job ^:: _Just <<< _sign <<< _Newtype
-                      ]
-                      []
-                  , D.div
-                      [ css_ [ "flex", "flex-col" ] ]
-                      [ D.h3
-                          [ css_ [ "font-bold" ] ]
-                          [ D.text_ $ char ^. _name <<< _Newtype ]
+              [ D.text_ "Create" ]
 
-                      , D.div
-                          [ css_ [ "flex", "gap-2" ] ]
-                          [ D.div []
-                              [ D.text_ $ "L " <> char
-                                  ^. _build <<< _level <<< to show
-                              ]
-                          , D.text_ "∷"
-                          , D.div
-                              [ css_ [ "font-bold", "text-white" ]
-                              , DA.style_ $ fromMaybe "" $ renderedInline $
-                                  render =<< colours
-                                    ^? traversed
-                                      <<< filtered
-                                        ( preview _name >>> eq
-                                            (job ^? _Just <<< _colour)
-                                        )
-                                      <<< _value
-                                      <<< to backgroundColor
-                              ]
-                              [ D.text_ $ primary ^. simple _Newtype ]
-                          ]
-
-                      , D.div []
-                          [ D.text_
-                              $ intercalate " | "
-                              $ char # (_build <<< _jobs <<< itraversed)
-                                  `ifoldMapOf` \n l ->
-                                    [ (n ^. simple _Newtype) <> " " <> show l ]
-                          ]
-                      ]
-                  ]
-
-              , (encodeURIComponent $ encode (stringCharacter icon_) char)
-                  # maybe mempty \charData ->
-                    D.a
-                      [ css_
-                          [ "flex"
-                          , "items-center"
-                          , "gap-2"
-                          , "p-2"
-                          , "dark:bg-stone-700"
-                          , "dark:text-stone-300"
-                          , "hover:bg-stone-400"
-                          , "focus:bg-stone-400"
-                          , "dark:hover:bg-stone-500"
-                          , "dark:focus:bg-stone-500"
-                          ]
-                      , DA.href_ $ "data:text/plain;charset=utf8," <> charData
-                      , DA.download_ $ (char ^. _name <<< _Newtype) <> ".txt"
-                      ]
-                      [ D.text_ "Export" ]
-              ]
-
-      , D.a
-          [ css_
-              [ "flex"
-              , "items-center"
-              , "gap-2"
-              , "p-2"
-              , "rounded"
-              , "bg-stone-500"
-              , "text-stone-800"
-              , "dark:bg-stone-700"
-              , "dark:text-stone-300"
-              , "hover:bg-stone-400"
-              , "focus:bg-stone-400"
-              , "dark:hover:bg-stone-500"
-              , "dark:focus:bg-stone-500"
-              ]
-          , DA.href_ $ print routeCodec $ Characters $ Just CreateChar
-          , DL.click_ $
-              (env ^. _navigate)
-                (Characters $ Just CreateChar) <<< pure
+          , importCharacter env
           ]
-          [ D.text_ "Create character" ]
       ]
