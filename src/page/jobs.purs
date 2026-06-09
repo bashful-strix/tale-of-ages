@@ -74,7 +74,9 @@ import ToA.Util.Html (css, css_, hr)
 
 jobsPage :: Env -> JobPath -> Nut
 jobsPage env@{ icon } path = Deku.do
-  setOpen /\ open <- useState false
+  setOpen /\ open <- useState $ case path of
+    None -> true
+    _ -> false
 
   D.div
     [ css_ [ "flex", "grow", "gap-2" ] ]
