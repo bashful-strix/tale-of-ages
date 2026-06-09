@@ -44,8 +44,7 @@ module ToA.Data.Icon.Character
   , jsonCharacter
   ) where
 
-import Prelude
-import PointFree ((~$))
+import ToA.Prelude
 
 import Data.Array (elem, length, uncons)
 import Data.Codec (Codec', codec')
@@ -74,12 +73,10 @@ import Data.Newtype (class Newtype, unwrap)
 import Data.Profunctor.Strong (first)
 import Data.Traversable (traverse_)
 import Data.Tuple (fst)
-import Data.Tuple.Nested (type (/\), (/\))
 
 import Parsing (Parser, ParseError, fail, liftMaybe, runParser)
 import Parsing.Combinators
-  ( (<|>)
-  , choice
+  ( choice
   , lookAhead
   , optional
   , optionMaybe
@@ -113,31 +110,31 @@ instance Eq Character where
   eq (Character { name: n }) (Character { name: m }) = n == m
 
 instance Named Character where
-  _name = _Newtype <<< key @"name"
+  _name = _Newtype <. key @"name"
 
 _build :: Lens' Character Build
-_build = _Newtype <<< key @"build"
+_build = _Newtype <. key @"build"
 
 _state :: Lens' Character State
-_state = _Newtype <<< key @"state"
+_state = _Newtype <. key @"state"
 
 _currentHp :: Lens' Character Int
-_currentHp = _state <<< _combat <<< _hp
+_currentHp = _state <. _combat <. _hp
 
 _currentVigor :: Lens' Character Int
-_currentVigor = _state <<< _combat <<< _vigor
+_currentVigor = _state <. _combat <. _vigor
 
 _currentPowerDice :: Lens' Character (Map String Int)
-_currentPowerDice = _state <<< _combat <<< _powerDice
+_currentPowerDice = _state <. _combat <. _powerDice
 
 _currentStatus :: Lens' Character (Map Name Int)
-_currentStatus = _state <<< _combat <<< _status
+_currentStatus = _state <. _combat <. _status
 
 _currentParRes :: Lens' Character Int
-_currentParRes = _state <<< _combat <<< _partyResolve
+_currentParRes = _state <. _combat <. _partyResolve
 
 _currentPerRes :: Lens' Character Int
-_currentPerRes = _state <<< _expedition <<< _personalResolve
+_currentPerRes = _state <. _expedition <. _personalResolve
 
 newtype State = State StateData
 
@@ -150,10 +147,10 @@ type StateData =
   }
 
 _combat :: Lens' State CombatStateData
-_combat = _Newtype <<< key @"combat"
+_combat = _Newtype <. key @"combat"
 
 _expedition :: Lens' State ExpeditionStateData
-_expedition = _Newtype <<< key @"expedition"
+_expedition = _Newtype <. key @"expedition"
 
 type CombatStateData =
   { hp :: Int
@@ -214,19 +211,19 @@ derive instance Newtype Build _
 derive instance Eq Build
 
 _level :: Lens' Build Level
-_level = _Newtype <<< key @"level"
+_level = _Newtype <. key @"level"
 
 _primary :: Lens' Build Name
-_primary = _Newtype <<< key @"primary"
+_primary = _Newtype <. key @"primary"
 
 _jobs :: Lens' Build (Map Name JobLevel)
-_jobs = _Newtype <<< key @"jobs"
+_jobs = _Newtype <. key @"jobs"
 
 _talents :: Lens' Build (Array Id)
-_talents = _Newtype <<< key @"talents"
+_talents = _Newtype <. key @"talents"
 
 _abilities :: Lens' Build { active :: Array Name, inactive :: Array Name }
-_abilities = _Newtype <<< key @"abilities"
+_abilities = _Newtype <. key @"abilities"
 
 _active :: Lens' { active :: Array Name, inactive :: Array Name } (Array Name)
 _active = key @"active"
@@ -295,12 +292,12 @@ stringCharacter icon = codec' parseChar (serialise icon)
     map \(name /\ build) ->
       let
         job = icon # firstOf
-          (I._jobs <<< folded <<< _name <<< filtered (eq (build ^. _primary)))
+          (I._jobs <. folded <. _name <. filtered (eq (build ^. _primary)))
         hp = icon # firstOf
           ( I._classes
-              <<< folded
-              <<< filtered (eq job <<< preview _name)
-              <<< C._hp
+              <. folded
+              <. filtered (eq job <<< preview _name)
+              <. C._hp
           )
       in
         Character
@@ -340,19 +337,19 @@ serialise icon (Character { name, build: Build build }) =
         "- "
           <>
             ( icon # foldOf
-                ( I._talents <<< traversed <<< filtered (eq t <<< view _id)
-                    <<< _name
-                    <<< _Newtype
+                ( I._talents <. traversed <. filtered (eq t <<< view _id)
+                    <. _name
+                    <. _Newtype
                 )
             )
           <>
             ( icon # foldMapOf
                 ( I._jobs
-                    <<< folded
-                    <<< filtered
-                      (has (J._talents <<< folded <<< filtered (eq t)))
-                    <<< _name
-                    <<< _Newtype
+                    <. folded
+                    <. filtered
+                      (has (J._talents <. folded <. filtered (eq t)))
+                    <. _name
+                    <. _Newtype
                 )
                 (" | " <> _)
             )
@@ -361,11 +358,11 @@ serialise icon (Character { name, build: Build build }) =
         <>
           ( icon # foldMapOf
               ( I._jobs
-                  <<< folded
-                  <<< filtered
-                    (has (J._abilities <<< folded <<< _2 <<< filtered (eq a)))
-                  <<< _name
-                  <<< _Newtype
+                  <. folded
+                  <. filtered
+                    (has (J._abilities <. folded <. _2 <. filtered (eq a)))
+                  <. _name
+                  <. _Newtype
               )
               (" | " <> _)
           )
@@ -373,11 +370,11 @@ serialise icon (Character { name, build: Build build }) =
         <>
           ( icon # foldMapOf
               ( I._jobs
-                  <<< folded
-                  <<< filtered
-                    (has (J._abilities <<< folded <<< _2 <<< filtered (eq a)))
-                  <<< _name
-                  <<< _Newtype
+                  <. folded
+                  <. filtered
+                    (has (J._abilities <. folded <. _2 <. filtered (eq a)))
+                  <. _name
+                  <. _Newtype
               )
               (" | " <> _)
           )
@@ -410,7 +407,7 @@ optJob icon term = do
     Just jn ->
       let
         foundJob = icon # firstOf
-          (I._jobs <<< folded <<< filtered (eq jn <<< view _name))
+          (I._jobs <. folded <. filtered (eq jn <<< view _name))
       in
         case foundJob of
           Nothing -> fail $ "No job " <> jn ^. simple _Newtype
@@ -425,9 +422,9 @@ talent icon = do
   job <- optJob icon (void (char '\n'))
 
   let
-    ids = icon ^:: I._talents <<< traversed
-      <<< filtered (eq name <<< view (_name <<< _Newtype))
-      <<< _id
+    ids = icon ^:: I._talents <. traversed
+      <. filtered (eq name <<< view (_name <. _Newtype))
+      <. _id
 
   case job of
     Nothing -> case uncons ids of
@@ -437,9 +434,9 @@ talent icon = do
         _ -> fail $ "Several talents called " <> name <> ", try adding a job"
     Just j ->
       liftMaybe
-        (\_ -> "No talent " <> name <> " for job " <> j ^. _name <<< _Newtype)
+        (\_ -> "No talent " <> name <> " for job " <> j ^. _name <. _Newtype)
         $ j # firstOf
-            (J._talents <<< traversed <<< filtered (elem ~$ ids))
+            (J._talents <. traversed <. filtered (elem ~$ ids))
 
 ability :: Icon -> Parser String (Name /\ Boolean)
 ability icon = do
@@ -456,9 +453,9 @@ ability icon = do
   job <- optJob icon (void (char '\n') <|> eof)
 
   let
-    names = icon ^:: I._abilities <<< traversed
-      <<< filtered (eq name <<< view (_name <<< _Newtype))
-      <<< _name
+    names = icon ^:: I._abilities <. traversed
+      <. filtered (eq name <<< view (_name <. _Newtype))
+      <. _name
 
   ab <- case job of
     Nothing -> case uncons names of
@@ -468,9 +465,9 @@ ability icon = do
         _ -> fail $ "Several abilities called " <> name <> ", try adding a job"
     Just j ->
       liftMaybe
-        (\_ -> "No ability " <> name <> " for job " <> j ^. _name <<< _Newtype)
+        (\_ -> "No ability " <> name <> " for job " <> j ^. _name <. _Newtype)
         $ j # firstOf
-            (J._abilities <<< traversed <<< _2 <<< filtered (elem ~$ names))
+            (J._abilities <. traversed <. _2 <. filtered (elem ~$ names))
 
   pure $ ab /\ isActive
 
@@ -486,7 +483,7 @@ buildParser icon = do
   primary /\ _ <- label "Primary" *> anyTill (string "\n")
   void $ liftMaybe (\_ -> "Invalid primary job name: " <> primary) $ icon #
     findOf
-      (I._jobs <<< traversed <<< _name <<< _Newtype)
+      (I._jobs <. traversed <. _name <. _Newtype)
       (_ == primary)
 
   gap
@@ -499,7 +496,7 @@ buildParser icon = do
     <* string "\n"
   jobs # traverse_ \(job /\ _) ->
     liftMaybe (\_ -> "Invalid job: " <> job) $ icon # findOf
-      (I._jobs <<< traversed <<< _name <<< _Newtype)
+      (I._jobs <. traversed <. _name <. _Newtype)
       (_ == job)
 
   gap

@@ -17,12 +17,7 @@ import Deku.DOM.Listeners as DL
 import Routing.Duplex (print)
 
 import ToA.Data.Env (Env, _navigate, _saveTheme)
-import ToA.Data.Route
-  ( Route(..)
-  , EncounterPath(..)
-  , JobPath(..)
-  , routeCodec
-  )
+import ToA.Data.Route (Route(..), JobPath(..), routeCodec)
 import ToA.Data.Theme (Theme(..), themeCodec)
 import ToA.Util.Html (css_)
 
@@ -45,12 +40,16 @@ titleBar env@{ theme } =
     [ D.nav
         [ css_ [ "flex", "h-full" ] ]
         [ D.ul
-            [ css_ [ "flex", "h-full" ] ] $
-            [ "ToA" /\ "icon-[game-icons--black-book]" /\ Home
-            , "Jobs" /\ "icon-[game-icons--sverd-i-fjell]" /\ Jobs None
-            , "Characters" /\ "icon-[game-icons--archive-register]" /\ Characters Nothing
-            , "Encounters" /\ "icon-[game-icons--guarded-tower]" /\ Encounters (ViewEnc Nothing)
-            ] <#> \(label /\ sign /\ route) ->
+            [ css_ [ "flex", "h-full" ] ]
+            $
+              [ "ToA" /\ "icon-[game-icons--black-book]" /\ Home
+              , "Jobs" /\ "icon-[game-icons--sverd-i-fjell]" /\ Jobs None
+              , "Characters" /\ "icon-[game-icons--archive-register]" /\
+                  Characters Nothing
+              , "Encounters" /\ "icon-[game-icons--guarded-tower]" /\ Encounters
+                  Nothing
+              ]
+            <#> \(label /\ sign /\ route) ->
               D.li
                 [ css_ [ "flex", "h-full" ] ]
                 [ routeLink env label sign route ]
@@ -58,8 +57,7 @@ titleBar env@{ theme } =
 
     , D.div []
         [ D.select
-            [ DL.selectOn_ DL.change $
-                (env ^. _saveTheme) <<< decode themeCodec
+            [ DL.selectOn_ DL.change $ (env ^. _saveTheme) <<< decode themeCodec
             ]
             [ D.option
                 [ DA.value_ $ encode themeCodec Light

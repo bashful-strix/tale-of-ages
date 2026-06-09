@@ -17,7 +17,6 @@ import Routing.Duplex (print)
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Route
   ( Route(..)
-  , EncounterPath(..)
   , JobPath(..)
   , routeCodec
   )
@@ -57,7 +56,7 @@ homePage env =
           , "Characters" /\ "icon-[game-icons--archive-register]" /\ Just
               (Characters Nothing)
           , "Encounters" /\ "icon-[game-icons--guarded-tower]" /\ Just
-              (Encounters (ViewEnc Nothing))
+              (Encounters Nothing)
           ]
         <#> \(label /\ sign /\ route) -> case route of
           Just r ->

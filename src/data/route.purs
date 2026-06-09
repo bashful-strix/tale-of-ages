@@ -28,7 +28,7 @@ data Route
   = Home
   | Jobs JobPath
   | Characters (Maybe CharacterPath)
-  | Encounters EncounterPath
+  | Encounters (Maybe EncounterPath)
 
 _Jobs :: Prism' Route JobPath
 _Jobs = prism' Jobs case _ of
@@ -40,7 +40,7 @@ _Characters = prism' Characters case _ of
   Characters c -> Just c
   _ -> Nothing
 
-_Encounters :: Prism' Route EncounterPath
+_Encounters :: Prism' Route (Maybe EncounterPath)
 _Encounters = prism' Encounters case _ of
   Encounters e -> Just e
   _ -> Nothing
@@ -53,7 +53,7 @@ routeCodec = root $ sum
   { "Home": noArgs
   , "Jobs": "jobs" / jobPath
   , "Characters": "characters" / optional characterPath
-  , "Encounters": "encounters" / encounterPath
+  , "Encounters": "encounters" / optional encounterPath
   }
 
 data JobPath
@@ -99,19 +99,21 @@ _ViewChar = prism' ViewChar case _ of
   _ -> Nothing
 
 data EncounterPath
-  = EditEnc (Maybe Name)
-  | ViewEnc (Maybe Name)
+  = EditEnc Name
+  | CreateEnc
+  | ViewEnc Name
 
 derive instance Generic EncounterPath _
 derive instance Eq EncounterPath
 
 encounterPath :: RouteDuplex' EncounterPath
 encounterPath = sum
-  { "EditEnc": "edit" / optional (name segment)
-  , "ViewEnc": optional (name segment)
+  { "EditEnc": "edit" / name segment
+  , "CreateEnc": "create" / noArgs
+  , "ViewEnc": name segment
   }
 
-_ViewEnc :: Prism' EncounterPath (Maybe Name)
+_ViewEnc :: Prism' EncounterPath Name
 _ViewEnc = prism' ViewEnc case _ of
   ViewEnc c -> Just c
   _ -> Nothing

@@ -2,14 +2,13 @@ module ToA.Page.Encounter.Edit
   ( editEncounterPage
   ) where
 
-import Prelude
+import ToA.Prelude
 
 import Data.Codec (decode, encode)
 import Data.Either (Either(..), isLeft)
 import Data.Foldable (intercalate)
-import Data.Lens ((^.), (^?), preview, filtered, traversed)
+import Data.Lens ((^.), (^?), preview, view, filtered, traversed)
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
 import Deku.Do as Deku
@@ -35,9 +34,11 @@ import ToA.Util.Html (css_)
 
 editEncounterPage :: Env -> Maybe Name -> Nut
 editEncounterPage env@{ encounters, icon } pathEnc =
-  (/\) <$> encounters <*> icon <#~> \(encs /\ _) -> Deku.do
+  encounters <&> icon <#~> \(encs /\ _) -> Deku.do
+    let initEnc = encs ^? traversed <. filtered (preview _name >>> eq pathEnc)
+
     setEnc /\ enc <- useState $ encode stringEncounter $ fromMaybe emptyEnc $
-      encs ^? traversed <<< filtered (preview _name >>> eq pathEnc)
+      initEnc
 
     let parsed = decode stringEncounter <$> enc
 
@@ -82,7 +83,7 @@ editEncounterPage env@{ encounters, icon } pathEnc =
                       Right e -> do
                         e # env ^. _saveEnc
                         (env ^. _navigate)
-                          (Encounters $ ViewEnc $ Just $ e ^. _name)
+                          (Encounters $ Just $ ViewEnc $ e ^. _name)
                           Nothing
                   , DA.disabled $ show <<< isLeft <$> parsed
                   , css_
@@ -98,7 +99,8 @@ editEncounterPage env@{ encounters, icon } pathEnc =
 
               , D.button
                   [ DL.runOn_ DL.click $
-                      (env ^. _navigate) (Encounters $ ViewEnc pathEnc)
+                      (env ^. _navigate)
+                        (Encounters $ ViewEnc <<< view _name <$> initEnc)
                         Nothing
                   , css_ [ "px-2", "py-1", "border", "border-solid" ]
                   ]

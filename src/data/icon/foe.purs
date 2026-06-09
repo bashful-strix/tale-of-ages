@@ -16,7 +16,8 @@ import Data.Newtype (class Newtype)
 
 import ToA.Data.Icon.Ability (Action, Step, Tag)
 import ToA.Data.Icon.Chapter (Chapter)
-import ToA.Data.Icon.Name (Name, class Named)
+import ToA.Data.Icon.Colour (class Coloured)
+import ToA.Data.Icon.Name (class Named, Name)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Util.Optic (key)
 
@@ -86,6 +87,15 @@ instance Named Foe where
     Legend a -> map Legend <$> lensStore k a
     where
     k = key @"name"
+
+instance Coloured Foe where
+  _colour = lens' case _ of
+    Foe a -> map Foe <$> lensStore k a
+    Mob a -> map Mob <$> lensStore k a
+    Elite a -> map Elite <$> lensStore k a
+    Legend a -> map Legend <$> lensStore k a
+    where
+    k = key @"colour"
 
 newtype FoeClass = FoeClass
   { name :: Name

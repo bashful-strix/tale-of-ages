@@ -1,30 +1,37 @@
 module ToA.Data.Icon.Encounter
   ( Encounter(..)
   , EncounterData
+  , _notes
+  , _foes
+  , _reserves
+
   , FoeEntry(..)
   , FoeEntryData
+  , _alias
+  , _count
+  , _faction
+  , _template
 
   , stringEncounter
   , jsonEncounter
   ) where
 
-import Prelude
-import PointFree ((~$))
+import ToA.Prelude
 
 import Data.Codec (Codec', codec')
 import Data.Codec.JSON as CJ
 import Data.Codec.JSON.Common as CJC
 import Data.Codec.JSON.Record as CJR
 import Data.Either (Either)
+import Data.Lens (Lens')
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Foldable (foldMap, intercalate)
 import Data.Maybe (Maybe)
 import Data.Newtype (class Newtype, unwrap)
 import Data.Tuple (fst)
-import Data.Tuple.Nested ((/\))
 
 import Parsing (Parser, ParseError, runParser)
-import Parsing.Combinators ((<|>), lookAhead, optional, optionMaybe)
+import Parsing.Combinators (lookAhead, optional, optionMaybe)
 import Parsing.Combinators.Array (many)
 import Parsing.String (anyTill, char, eof, string)
 import Parsing.String.Basic (intDecimal, skipSpaces)
@@ -42,7 +49,23 @@ type FoeEntryData =
 
 newtype FoeEntry = FoeEntry FoeEntryData
 
+derive instance Newtype FoeEntry _
 derive newtype instance Eq FoeEntry
+
+instance Named FoeEntry where
+  _name = _Newtype <. key @"name"
+
+_alias :: Lens' FoeEntry (Maybe String)
+_alias = _Newtype <. key @"alias"
+
+_count :: Lens' FoeEntry Int
+_count = _Newtype <. key @"count"
+
+_faction :: Lens' FoeEntry (Maybe Name)
+_faction = _Newtype <. key @"faction"
+
+_template :: Lens' FoeEntry (Maybe Name)
+_template = _Newtype <. key @"template"
 
 jsonFoeEntry :: CJ.Codec FoeEntry
 jsonFoeEntry = CJ.coercible "FoeEntry" foeEntry_
@@ -68,7 +91,16 @@ derive instance Newtype Encounter _
 derive newtype instance Eq Encounter
 
 instance Named Encounter where
-  _name = _Newtype <<< key @"name"
+  _name = _Newtype <. key @"name"
+
+_notes :: Lens' Encounter (Maybe String)
+_notes = _Newtype <. key @"notes"
+
+_foes :: Lens' Encounter (Array FoeEntry)
+_foes = _Newtype <. key @"foes"
+
+_reserves :: Lens' Encounter (Array FoeEntry)
+_reserves = _Newtype <. key @"reserves"
 
 stringEncounter :: Codec' (Either ParseError) String Encounter
 stringEncounter = codec' parseEnc serialiseEncounter

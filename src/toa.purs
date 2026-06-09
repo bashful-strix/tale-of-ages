@@ -20,6 +20,7 @@ import ToA.Page.Character.Edit (editCharacterPage)
 import ToA.Page.Character.List (listCharacterPage)
 import ToA.Page.Character.View (viewCharacterPage)
 import ToA.Page.Encounter.Edit (editEncounterPage)
+import ToA.Page.Encounter.List (listEncounterPage)
 import ToA.Page.Encounter.View (viewEncounterPage)
 import ToA.Page.Home (homePage)
 import ToA.Page.Jobs (jobsPage)
@@ -57,8 +58,11 @@ toa env@{ route, systemTheme, theme } =
                 EditChar char -> editCharacterPage env $ Just char
                 ViewChar char -> viewCharacterPage env char
             Just (Encounters path) -> case path of
-              EditEnc enc -> editEncounterPage env enc
-              ViewEnc enc -> viewEncounterPage env enc
+              Nothing -> listEncounterPage env
+              Just subpath -> case subpath of
+                CreateEnc -> editEncounterPage env Nothing
+                EditEnc enc -> editEncounterPage env $ Just enc
+                ViewEnc enc -> viewEncounterPage env enc
             Nothing -> unknownPage
         ]
     ]

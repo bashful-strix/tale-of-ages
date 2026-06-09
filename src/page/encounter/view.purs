@@ -2,19 +2,17 @@ module ToA.Page.Encounter.View
   ( viewEncounterPage
   ) where
 
-import Prelude
+import ToA.Prelude
 
 import Color (lighten)
 import CSS (backgroundColor, render, renderedInline)
 
-import Data.Filterable (filter)
 import Data.Foldable (foldMap, null)
 import Data.FunctorWithIndex (mapWithIndex)
 import Data.Lens
   ( (^.)
   , (^?)
   , _Just
-  , _Nothing
   , filtered
   , preview
   , to
@@ -24,12 +22,9 @@ import Data.Lens
 import Data.Lens.At (at)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Lens.Prism (is, isn't)
-import Data.Map (keys)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (guard)
 import Data.Newtype (unwrap, wrap)
-import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
 import Deku.DOM as D
@@ -54,231 +49,167 @@ import ToA.Data.Icon.Foe
   , Faction(..)
   )
 import ToA.Data.Icon.Name (Name(..), _name)
-import ToA.Data.Route
-  ( Route(..)
-  , EncounterPath(..)
-  , routeCodec
-  , _Encounters
-  , _ViewEnc
-  )
+import ToA.Data.Route (Route(..), EncounterPath(..), routeCodec)
 import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((^::))
 
-viewEncounterPage :: Env -> Maybe Name -> Nut
-viewEncounterPage env@{ encounters, icon, route } pathEnc =
-  ((/\) <$> encounters <*> icon)
-    <#~>
-      \(encs /\ icon_) ->
-        let
-          enc = pathEnc >>= \e -> encs ^. at e
+viewEncounterPage :: Env -> Name -> Nut
+viewEncounterPage env@{ encounters, icon } pathEnc =
+  encounters <&> icon <#~> \(encs /\ icon_) ->
+    let
+      enc = encs ^. at pathEnc
 
-        in
-          D.div
-            [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
-            [ D.div
-                [ css_ [ "flex", "justify-between", "gap-x-2" ] ]
-                [ D.select
-                    [ DL.selectOn_ DL.change $ \e ->
-                        (env ^. _navigate)
-                          ( Encounters $
-                              if e == mempty then ViewEnc Nothing
-                              else ViewEnc $ pure (Name e)
-                          )
-                          Nothing
-                    , css_
-                        [ "grow"
-                        , "px-2"
-                        , "py-1"
-                        , "border"
-                        , "border-solid"
-                        , "border-stone-700"
-                        ]
-                    ]
-                    ( [ D.option
-                          [ DA.value_ mempty
-                          , DA.selected $ "selected" <$ filter
-                              ( is
-                                  ( _Just <<< _Encounters <<< _ViewEnc <<<
-                                      _Nothing
-                                  )
-                              )
-                              route
-                          , DA.unset @"selected" $ filter
-                              ( isn't
-                                  ( _Just <<< _Encounters <<< _ViewEnc <<<
-                                      _Nothing
-                                  )
-                              )
-                              route
-                          ]
-                          [ D.text_ "Select encounter" ]
-                      ] <>
-                        ( keys encs # foldMap \e ->
-                            let
-                              prs = _Just <<< _Encounters <<< _ViewEnc <<< _Just
-                                <<< filtered (eq e)
-                            in
-                              [ D.option
-                                  [ DA.value_ $ e ^. simple _Newtype
-                                  , DA.selected $ "selected" <$ filter (is prs)
-                                      route
-                                  , DA.unset @"selected" $ filter (isn't prs)
-                                      route
-                                  ]
-                                  [ D.text_ $ e ^. simple _Newtype ]
-                              ]
-                        )
-                    )
-
-                , enc # foldMap \e ->
-                    D.button
-                      [ DL.runOn_ DL.click $ do
-                          e # env ^. _deleteEnc
-                          (env ^. _navigate) (Encounters $ ViewEnc Nothing)
-                            Nothing
-                      , css_
-                          [ "px-2"
-                          , "py-1"
-                          , "border"
-                          , "border-solid"
-                          , "border-stone-700"
-                          ]
+    in
+      D.div
+        [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
+        [ D.div
+            [ css_ [ "flex", "justify-between", "gap-x-2" ] ]
+            [ enc # foldMap \e ->
+                D.button
+                  [ DL.runOn_ DL.click $ do
+                      e # env ^. _deleteEnc
+                      (env ^. _navigate) (Encounters Nothing) Nothing
+                  , css_
+                      [ "px-2"
+                      , "py-1"
+                      , "border"
+                      , "border-solid"
+                      , "border-stone-700"
                       ]
-                      [ D.text_ "Delete" ]
+                  ]
+                  [ D.text_ "Delete" ]
 
-                , enc # foldMap \e ->
-                    D.a
-                      [ DA.href_ $ print routeCodec
-                          (Encounters $ EditEnc $ e ^? _name)
-                      , DL.click_ $
-                          (env ^. _navigate)
-                            (Encounters $ EditEnc $ e ^? _name) <<<
-                            pure
-                      , css_
-                          [ "px-2"
-                          , "py-1"
-                          , "border"
-                          , "border-solid"
-                          , "border-stone-700"
-                          ]
+            , enc # foldMap \e ->
+                D.a
+                  [ DA.href_ $ print routeCodec
+                      (Encounters $ Just $ EditEnc $ e ^. _name)
+                  , DL.click_
+                      $ (env ^. _navigate)
+                          (Encounters $ Just $ EditEnc $ e ^. _name)
+                      <<< pure
+                  , css_
+                      [ "px-2"
+                      , "py-1"
+                      , "border"
+                      , "border-solid"
+                      , "border-stone-700"
                       ]
-                      [ D.text_ "Edit" ]
+                  ]
+                  [ D.text_ "Edit" ]
 
-                , D.a
-                    [ DA.href_ $ print routeCodec
-                        (Encounters $ EditEnc Nothing)
-                    , DL.click_ $
-                        (env ^. _navigate) (Encounters $ EditEnc Nothing)
-                          <<< pure
-                    , css_
-                        [ "px-2"
-                        , "py-1"
-                        , "border"
-                        , "border-solid"
-                        , "border-stone-700"
-                        ]
+            , D.a
+                [ DA.href_ $ print routeCodec
+                    (Encounters $ Just CreateEnc)
+                , DL.click_
+                    $ (env ^. _navigate) (Encounters $ Just CreateEnc)
+                    <<< pure
+                , css_
+                    [ "px-2"
+                    , "py-1"
+                    , "border"
+                    , "border-solid"
+                    , "border-stone-700"
                     ]
-                    [ D.text_ "Create" ]
                 ]
+                [ D.text_ "Create" ]
+            ]
 
-            , D.div
-                [ css_ [ "flex", "grow", "overflow-hidden", "gap-2" ] ]
-                [ D.div
-                    [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
-                    [ guard
-                        ( not $ null $
-                            enc
-                              ^:: _Just
-                              <<< simple _Newtype
-                              <<< to _.notes
-                              <<< traversed
-                        ) $
-                        D.div
-                          [ css_
-                              [ "flex"
-                              , "flex-col"
-                              , "shrink-0"
-                              , "p-2"
-                              , "gap-1"
-                              , "border"
-                              , "border-solid"
-                              , "border-rounded-sm"
-                              , "border-sky-800"
-                              ]
+        , D.div
+            [ css_ [ "flex", "grow", "overflow-hidden", "gap-2" ] ]
+            [ D.div
+                [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
+                [ guard
+                    ( not $ null
+                        $ enc
+                        ^:: _Just
+                        <. simple _Newtype
+                        <. to _.notes
+                        <. traversed
+                    ) $
+                    D.div
+                      [ css_
+                          [ "flex"
+                          , "flex-col"
+                          , "shrink-0"
+                          , "p-2"
+                          , "gap-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-rounded-sm"
+                          , "border-sky-800"
                           ]
-                          [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Notes:" ]
-                          , D.div []
-                              [ enc
-                                  ^. _Just
-                                    <<< simple _Newtype
-                                    <<< to _.notes
-                                    <<< _Just
-                                    <<< to D.text_
-                              ]
-                          ]
-
-                    , D.div
-                        [ css_
-                            [ "flex"
-                            , "flex-col"
-                            , "overflow-hidden"
-                            , "p-2"
-                            , "gap-1"
-                            , "border"
-                            , "border-solid"
-                            , "border-rounded-sm"
-                            , "border-sky-800"
-                            ]
-                        ]
-                        [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Foes:" ]
-                        , D.div
-                            [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
-                            ( enc
-                                ^:: _Just
+                      ]
+                      [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Notes:" ]
+                      , D.div []
+                          [ enc
+                              ^. _Just
                                 <<< simple _Newtype
-                                <<< to _.foes
-                                <<< traversed
-                                <<< to (renderFoeEntry icon_)
-                            )
-                        ]
+                                <<< to _.notes
+                                <<< _Just
+                                <<< to D.text_
+                          ]
+                      ]
 
-                    , guard
-                        ( not $ null $
-                            enc
+                , D.div
+                    [ css_
+                        [ "flex"
+                        , "flex-col"
+                        , "overflow-hidden"
+                        , "p-2"
+                        , "gap-1"
+                        , "border"
+                        , "border-solid"
+                        , "border-rounded-sm"
+                        , "border-sky-800"
+                        ]
+                    ]
+                    [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Foes:" ]
+                    , D.div
+                        [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
+                        ( enc
+                            ^:: _Just
+                            <<< simple _Newtype
+                            <<< to _.foes
+                            <<< traversed
+                            <<< to (renderFoeEntry icon_)
+                        )
+                    ]
+
+                , guard
+                    ( not $ null $ enc
+                        ^. _Just
+                        <<< simple _Newtype
+                        <<< to _.reserves
+                    ) $
+                    D.div
+                      [ css_
+                          [ "flex"
+                          , "flex-col"
+                          , "overflow-hidden"
+                          , "p-2"
+                          , "gap-1"
+                          , "border"
+                          , "border-solid"
+                          , "border-rounded-sm"
+                          , "border-sky-800"
+                          ]
+                      ]
+                      [ D.h3
+                          [ css_ [ "font-bold" ] ]
+                          [ D.text_ "Reserves:" ]
+                      , D.div
+                          [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
+                          ( enc
                               ^:: _Just
                               <<< simple _Newtype
                               <<< to _.reserves
                               <<< traversed
-                        ) $
-                        D.div
-                          [ css_
-                              [ "flex"
-                              , "flex-col"
-                              , "overflow-hidden"
-                              , "p-2"
-                              , "gap-1"
-                              , "border"
-                              , "border-solid"
-                              , "border-rounded-sm"
-                              , "border-sky-800"
-                              ]
-                          ]
-                          [ D.h3
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Reserves:" ]
-                          , D.div
-                              [ css_ [ "flex", "gap-2", "overflow-hidden" ] ]
-                              ( enc
-                                  ^:: _Just
-                                  <<< simple _Newtype
-                                  <<< to _.reserves
-                                  <<< traversed
-                                  <<< to (renderFoeEntry icon_)
-                              )
-                          ]
-                    ]
+                              <<< to (renderFoeEntry icon_)
+                          )
+                      ]
                 ]
             ]
+        ]
 
 renderFoeEntry :: Icon -> FoeEntry -> Nut
 renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
@@ -330,11 +261,12 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
                                 =<<
-                                  backgroundColor <$> colours
-                                    ^? traversed
-                                      <<< filtered
-                                        (view _name >>> eq (Name "Purple"))
-                                      <<< _value
+                                  backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ tn ]
                       , fef # foldMap \(Faction fef_) ->
@@ -342,21 +274,23 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
                                 =<<
-                                  backgroundColor <$> colours
-                                    ^? traversed
-                                      <<< filtered
-                                        (view _name >>> eq (Name "Purple"))
-                                      <<< _value
+                                  backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ $ fef_.name ^. simple _Newtype ]
                       , D.span
                           [ css_ [ "text-white", "font-bold" ]
                           , DA.style_ $ fromMaybe "" $ renderedInline $ render
                               =<<
-                                backgroundColor <$> colours
-                                  ^? traversed
-                                    <<< filtered (view _name >>> eq f.colour)
-                                    <<< _value
+                                backgroundColor
+                              <$> colours
+                              ^? traversed
+                                <<< filtered (view _name >>> eq f.colour)
+                                <<< _value
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype
                           ]
@@ -399,17 +333,19 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                   [ css_ [ "overflow-scroll" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs <#> \(FoeTrait ft) ->
-                          D.div []
-                            [ D.div
-                                [ css_ [ "font-bold" ] ]
-                                [ D.text_ $ unwrap ft.name ]
-                            , markup icon ft.description
-                            ]
+                      $ trs
+                      <#> \(FoeTrait ft) ->
+                        D.div []
+                          [ D.div
+                              [ css_ [ "font-bold" ] ]
+                              [ D.text_ $ unwrap ft.name ]
+                          , markup icon ft.description
+                          ]
                   , guard (not $ null trs) hr
                   , D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ abs <#> renderAbility icon
+                      $ abs
+                      <#> renderAbility icon
                   ]
               ]
 
@@ -457,11 +393,12 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
                                 =<<
-                                  backgroundColor <$> colours
-                                    ^? traversed
-                                      <<< filtered
-                                        (view _name >>> eq (Name "Purple"))
-                                      <<< _value
+                                  backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ tn ]
                       , fef # foldMap \(Faction fef_) ->
@@ -469,21 +406,23 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
                                 =<<
-                                  backgroundColor <$> colours
-                                    ^? traversed
-                                      <<< filtered
-                                        (view _name >>> eq (Name "Purple"))
-                                      <<< _value
+                                  backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ $ fef_.name ^. simple _Newtype ]
                       , D.span
                           [ css_ [ "text-white", "font-bold" ]
                           , DA.style_ $ fromMaybe "" $ renderedInline $ render
                               =<<
-                                backgroundColor <$> colours
-                                  ^? traversed
-                                    <<< filtered (view _name >>> eq f.colour)
-                                    <<< _value
+                                backgroundColor
+                              <$> colours
+                              ^? traversed
+                                <<< filtered (view _name >>> eq f.colour)
+                                <<< _value
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype ]
                       , cls # foldMap \(FoeClass c) ->
@@ -520,17 +459,19 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                   [ css_ [ "overflow-scroll" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs <#> \(FoeTrait ft) ->
-                          D.div []
-                            [ D.div
-                                [ css_ [ "font-bold" ] ]
-                                [ D.text_ $ unwrap ft.name ]
-                            , markup icon ft.description
-                            ]
+                      $ trs
+                      <#> \(FoeTrait ft) ->
+                        D.div []
+                          [ D.div
+                              [ css_ [ "font-bold" ] ]
+                              [ D.text_ $ unwrap ft.name ]
+                          , markup icon ft.description
+                          ]
                   , guard (not $ null trs) hr
                   , D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ abs <#> renderAbility icon
+                      $ abs
+                      <#> renderAbility icon
                   ]
               ]
 
@@ -581,11 +522,12 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                           D.span
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<< backgroundColor <$> colours
-                                  ^? traversed
-                                    <<< filtered
-                                      (view _name >>> eq (Name "Purple"))
-                                    <<< _value
+                                =<< backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ tn ]
                       , fef # foldMap \(Faction fef_) ->
@@ -593,21 +535,23 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
                                 =<<
-                                  backgroundColor <$> colours
-                                    ^? traversed
-                                      <<< filtered
-                                        (view _name >>> eq (Name "Purple"))
-                                      <<< _value
+                                  backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ $ fef_.name ^. simple _Newtype ]
                       , D.span
                           [ css_ [ "text-white", "font-bold" ]
                           , DA.style_ $ fromMaybe "" $ renderedInline $ render
                               =<<
-                                backgroundColor <$> colours
-                                  ^? traversed
-                                    <<< filtered (view _name >>> eq f.colour)
-                                    <<< _value
+                                backgroundColor
+                              <$> colours
+                              ^? traversed
+                                <<< filtered (view _name >>> eq f.colour)
+                                <<< _value
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype ]
                       , D.span
@@ -647,17 +591,19 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                   [ css_ [ "overflow-scroll" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs <#> \(FoeTrait ft) ->
-                          D.div []
-                            [ D.div
-                                [ css_ [ "font-bold" ] ]
-                                [ D.text_ $ unwrap ft.name ]
-                            , markup icon ft.description
-                            ]
+                      $ trs
+                      <#> \(FoeTrait ft) ->
+                        D.div []
+                          [ D.div
+                              [ css_ [ "font-bold" ] ]
+                              [ D.text_ $ unwrap ft.name ]
+                          , markup icon ft.description
+                          ]
                   , guard (not $ null trs) hr
                   , D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ abs <#> renderAbility icon
+                      $ abs
+                      <#> renderAbility icon
                   ]
               ]
 
@@ -705,11 +651,12 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
                                 =<<
-                                  backgroundColor <$> colours
-                                    ^? traversed
-                                      <<< filtered
-                                        (view _name >>> eq (Name "Purple"))
-                                      <<< _value
+                                  backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ tn ]
                       , fef # foldMap \(Faction fef_) ->
@@ -717,21 +664,23 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                             [ css_ [ "text-white", "font-bold" ]
                             , DA.style_ $ fromMaybe "" $ renderedInline $ render
                                 =<<
-                                  backgroundColor <$> colours
-                                    ^? traversed
-                                      <<< filtered
-                                        (view _name >>> eq (Name "Purple"))
-                                      <<< _value
+                                  backgroundColor
+                                <$> colours
+                                ^? traversed
+                                  <<< filtered
+                                    (view _name >>> eq (Name "Purple"))
+                                  <<< _value
                             ]
                             [ D.text_ $ fef_.name ^. simple _Newtype ]
                       , D.span
                           [ css_ [ "text-white", "font-bold" ]
                           , DA.style_ $ fromMaybe "" $ renderedInline $ render
                               =<<
-                                backgroundColor <$> colours
-                                  ^? traversed
-                                    <<< filtered (view _name >>> eq f.colour)
-                                    <<< _value
+                                backgroundColor
+                              <$> colours
+                              ^? traversed
+                                <<< filtered (view _name >>> eq f.colour)
+                                <<< _value
                           ]
                           [ D.text_ $ f.name ^. simple _Newtype
                           ]
@@ -774,24 +723,26 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                   [ css_ [ "overflow-scroll" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs <#> \(FoeTrait ft) ->
-                          D.div []
-                            [ D.div
-                                [ css_ [ "font-bold" ] ]
-                                [ D.text_ $ unwrap ft.name ]
-                            , markup icon ft.description
-                            ]
+                      $ trs
+                      <#> \(FoeTrait ft) ->
+                        D.div []
+                          [ D.div
+                              [ css_ [ "font-bold" ] ]
+                              [ D.text_ $ unwrap ft.name ]
+                          , markup icon ft.description
+                          ]
                   , guard (not $ null trs) hr
                   , D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ ras <#> \(FoeTrait ft) ->
-                          D.div []
-                            [ D.div
-                                [ css_ [ "font-bold" ] ]
-                                [ D.text_ $ unwrap ft.name <> " (round action)"
-                                ]
-                            , markup icon ft.description
-                            ]
+                      $ ras
+                      <#> \(FoeTrait ft) ->
+                        D.div []
+                          [ D.div
+                              [ css_ [ "font-bold" ] ]
+                              [ D.text_ $ unwrap ft.name <> " (round action)"
+                              ]
+                          , markup icon ft.description
+                          ]
                   , guard (not $ null ras) hr
                   , D.div
                       [ css_ [ "flex", "flex-col", "gap-2", "px-4" ] ]
@@ -800,7 +751,8 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                       , hr
                       , D.div
                           [ css_ [ "flex", "gap-2" ] ]
-                          $ f.phases.details # mapWithIndex \i p ->
+                          $ f.phases.details
+                          # mapWithIndex \i p ->
                               D.div []
                                 [ D.div
                                     [ css_ [ "font-bold" ] ]
@@ -809,29 +761,32 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                                 , guard (not $ null p.description) hr
                                 , D.div
                                     [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                                    $ p.traits <#> \(FoeTrait ft) ->
-                                        D.div []
-                                          [ D.div
-                                              [ css_ [ "font-bold" ] ]
-                                              [ D.text_ $ unwrap ft.name ]
-                                          , markup icon ft.description
-                                          ]
+                                    $ p.traits
+                                    <#> \(FoeTrait ft) ->
+                                      D.div []
+                                        [ D.div
+                                            [ css_ [ "font-bold" ] ]
+                                            [ D.text_ $ unwrap ft.name ]
+                                        , markup icon ft.description
+                                        ]
                                 , guard (not $ null p.traits) hr
                                 , D.div
                                     [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                                    $ p.roundActions <#> \(FoeTrait ft) ->
-                                        D.div []
-                                          [ D.div
-                                              [ css_ [ "font-bold" ] ]
-                                              [ D.text_ $ unwrap ft.name <>
-                                                  " (round action)"
-                                              ]
-                                          , markup icon ft.description
-                                          ]
+                                    $ p.roundActions
+                                    <#> \(FoeTrait ft) ->
+                                      D.div []
+                                        [ D.div
+                                            [ css_ [ "font-bold" ] ]
+                                            [ D.text_ $ unwrap ft.name <>
+                                                " (round action)"
+                                            ]
+                                        , markup icon ft.description
+                                        ]
                                 , guard (not $ null p.roundActions) hr
                                 , D.div
                                     [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                                    $ p.abilities <#> renderAbility icon
+                                    $ p.abilities
+                                    <#> renderAbility icon
                                 ]
                       ]
                   ]
@@ -844,8 +799,9 @@ renderAbility icon@{ colours } (FoeAbility fa) =
         [ css_ [ "font-bold" ] ]
         [ D.text_ $ unwrap fa.name ]
     , D.div
-        [ css_ [ "flex", "flex-wrap", "gap-1" ] ] $
-        [ renderCost fa.cost ] <> (renderTag <$> fa.tags)
+        [ css_ [ "flex", "flex-wrap", "gap-1" ] ]
+        $ [ renderCost fa.cost ]
+        <> (renderTag <$> fa.tags)
     , markup icon fa.description
     , fa.chain # foldMap \fac ->
         D.ul
@@ -867,21 +823,24 @@ renderAbility icon@{ colours } (FoeAbility fa) =
                 ]
                 [ D.span
                     [ css_ [ "text-white", "font-bold" ]
-                    , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
-                        (backgroundColor <<< lighten 0.2) <$> colours
-                          ^? traversed
-                            <<< filtered (view _name >>> eq ai.colour)
-                            <<< _value
+                    , DA.style_ $ fromMaybe "" $ renderedInline $ render
+                        =<< (backgroundColor <<< lighten 0.2)
+                        <$> colours
+                        ^? traversed
+                          <<< filtered (view _name >>> eq ai.colour)
+                          <<< _value
                     ]
                     [ D.text_ $ unwrap ai.name ]
                 ]
             , D.div
-                [ css_ [ "flex", "flex-wrap", "gap-1" ] ] $
-                [ renderCost fa.cost ] <> (renderTag <$> fa.tags)
+                [ css_ [ "flex", "flex-wrap", "gap-1" ] ]
+                $ [ renderCost fa.cost ]
+                <> (renderTag <$> fa.tags)
             , D.div []
                 [ D.ol
                     [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-                    $ ai.steps <#> renderStep icon
+                    $ ai.steps
+                    <#> renderStep icon
                 ]
             ]
 
@@ -900,11 +859,12 @@ renderAbility icon@{ colours } (FoeAbility fa) =
                 ]
                 [ D.span
                     [ css_ [ "text-white", "font-bold" ]
-                    , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
-                        (backgroundColor <<< lighten 0.2) <$> colours
-                          ^? traversed
-                            <<< filtered (view _name >>> eq si.colour)
-                            <<< _value
+                    , DA.style_ $ fromMaybe "" $ renderedInline $ render
+                        =<< (backgroundColor <<< lighten 0.2)
+                        <$> colours
+                        ^? traversed
+                          <<< filtered (view _name >>> eq si.colour)
+                          <<< _value
                     ]
                     [ D.text_ $ unwrap si.name ]
                 ]
@@ -914,13 +874,14 @@ renderAbility icon@{ colours } (FoeAbility fa) =
             , D.div []
                 [ D.ol
                     [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-                    $ si.effects <#> \eff ->
-                        D.li []
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Summon effect: " ]
-                          , markup icon eff
-                          ]
+                    $ si.effects
+                    <#> \eff ->
+                      D.li []
+                        [ D.span
+                            [ css_ [ "font-bold" ] ]
+                            [ D.text_ "Summon effect: " ]
+                        , markup icon eff
+                        ]
                 ]
             ]
     ]

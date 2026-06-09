@@ -1,7 +1,7 @@
-module ToA.Component.Character
-  ( characterSummary
-  , exportCharacter
-  , importCharacter
+module ToA.Component.Encounter
+  ( encounterSummary
+  , exportEncounter
+  , importEncounter
   ) where
 
 import ToA.Prelude
@@ -10,26 +10,24 @@ import Promise.Aff (toAffE)
 import CSS (backgroundColor)
 
 import Codec.JSON.DecodeError (print) as CJDE
+import Data.Array (null)
 import Data.Bifunctor (lmap)
 import Data.Codec (decode, encode)
 import Data.Codec.JSON (decode, encode) as CJ
-import Data.Foldable (intercalate)
 import Data.Lens
   ( (^.)
   , (^?)
   , preview
   , view
-  , ifoldMapOf
-  , findOf
+  , elemOf
   , filtered
+  , folded
   , to
-  , traversed
   , _Just
   )
-import Data.Lens.Common (simple)
-import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe(..), fromMaybe, maybe)
+import Data.Monoid (guard)
 import Data.Traversable (for, for_, traverse, traverse_)
 
 import Deku.Core (Nut, attributeAtYourOwnRisk, fixed)
@@ -57,73 +55,114 @@ import Web.HTML.HTMLInputElement (files, fromEventTarget)
 import Web.HTML.Window (navigator)
 
 import ToA.Data.Async (AsyncData(..), fromEither)
-import ToA.Data.Env (Env, _saveChar)
+import ToA.Data.Env (Env, _saveEnc)
 import ToA.Data.FileFormat (FileFormat(..))
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Character
-  ( Character
-  , jsonCharacter
-  , stringCharacter
-  , _build
-  , _jobs
-  , _level
-  , _primary
-  )
 import ToA.Data.Icon.Colour (_colour, _value)
-import ToA.Data.Icon.Name (_name)
-import ToA.Data.Icon.Sign (_sign)
+import ToA.Data.Icon.Encounter
+  ( Encounter
+  , FoeEntry
+  , _foes
+  , _reserves
+  , _alias
+  , _count
+  , _faction
+  , _template
+  , jsonEncounter
+  , stringEncounter
+  )
+import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Util.Html (css, css_, style_)
-import ToA.Util.Optic ((^::))
+import ToA.Util.Optic ((#~))
 
-characterSummary :: Icon -> Character -> Nut
-characterSummary { colours, jobs } char =
+encounterSummary :: Icon -> Encounter -> Nut
+encounterSummary icon enc =
+  D.div
+    [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
+    [ D.h3
+        [ css_ [ "font-bold" ] ]
+        [ D.text_ $ enc ^. _name <. _Newtype ]
+
+    , D.div
+        [ css_
+            [ "grid", "sm:grid-cols-2", "gap-x-4", "gap-y-2" ]
+        ]
+        [ D.div []
+            [ D.h4 [ css_ [ "font-bold" ] ] [ D.text_ "Foes" ]
+            , enc # _foes #~ renderFoeList icon
+            ]
+        , guard (not $ null $ enc ^. _reserves) $
+            D.div []
+              [ D.h4 [ css_ [ "font-bold" ] ] [ D.text_ "Reserves" ]
+              , enc # _reserves #~ renderFoeList icon
+              ]
+        ]
+    ]
+
+renderFoeList :: Icon -> Array FoeEntry -> Nut
+renderFoeList { colours, foes } foeEntries =
   let
-    primary = char ^. _build <. _primary
-    job = jobs # traversed `findOf` (view _name >>> eq primary)
+    purple = colours
+      ^? folded
+        <. filtered (view _name >>> eq (Name "Purple"))
+        <. _value
   in
-    D.div
-      [ css_ [ "flex", "items-center", "gap-2" ] ]
-      [ D.div
-          [ css_ $ [ "shrink-0", "size-16" ]
-              <> (job ^:: _Just <. _sign <. _Newtype)
-          ]
-          []
-      , D.div
-          [ css_ [ "flex", "flex-col" ] ]
-          [ D.h3
-              [ css_ [ "font-bold" ] ]
-              [ D.text_ $ char ^. _name <. _Newtype ]
-
-          , D.div
-              [ css_ [ "flex", "gap-2" ] ]
-              [ D.div []
-                  [ D.text_ $ "L " <> char ^. _build <. _level <. to show ]
-              , D.text_ "∷"
-              , D.div
-                  [ css_ [ "font-bold", "text-white" ]
-                  , style_ $ fromMaybe (pure unit) $
-                      colours
-                      ^? traversed
-                        <. filtered
-                          (preview _name >>> eq (job ^? _Just <. _colour))
-                        <. _value
-                        <. to backgroundColor
+    D.ul [] $ foeEntries <#> \foe ->
+      D.li
+        [ css_ [ "flex", "gap-2", "items-end-safe" ] ]
+        [ D.span
+            [ css_
+                [ "flex"
+                , "flex-wrap"
+                , "grow"
+                , "gap-x-1"
+                , "text-white"
+                , "font-bold"
+                ]
+            ]
+            [ foe # _template <. _Just <. _Newtype #~ \template ->
+                D.span
+                  [ style_ $ fromMaybe (pure unit)
+                      $ backgroundColor
+                      <$> purple
                   ]
-                  [ D.text_ $ primary ^. simple _Newtype ]
-              ]
+                  [ D.text_ template ]
 
-          , D.div []
-              [ D.text_
-                  $ intercalate " | "
-                  $ char
-                  # (_build <. _jobs <. itraversed) `ifoldMapOf` \n l ->
-                      [ (n ^. simple _Newtype) <> " " <> show l ]
-              ]
-          ]
-      ]
+            , foe # _faction <. _Just <. _Newtype #~ \faction ->
+                D.span
+                  [ style_ $ fromMaybe (pure unit)
+                      $ backgroundColor
+                      <$> purple
+                  ]
+                  [ D.text_ faction ]
 
-exportCharacter :: Icon -> Array String -> Character -> Nut
-exportCharacter icon_ styles char = Deku.do
+            , D.span
+                [ style_ $ fromMaybe (pure unit) $ backgroundColor <$> colours
+                    ^? folded
+                      <. filtered
+                        ( preview _name >>> eq
+                            ( foes
+                                ^? folded
+                                  <. filtered (_name `elemOf` (foe ^. _name))
+                                  <. _colour
+                            )
+                        )
+                      <. _value
+                ]
+                [ D.text_ $ foe ^. _name <. _Newtype ]
+            ]
+
+        , foe # _alias <. _Just #~ \alias ->
+            D.span
+              [ css_ [ "italic" ] ]
+              [ D.text_ alias ]
+
+        , D.span []
+            [ D.text_ $ "x" <> foe ^. _count <. to show ]
+        ]
+
+exportEncounter :: Array String -> Encounter -> Nut
+exportEncounter styles enc = Deku.do
   setDialog /\ dialog' <- useState'
   dialog <- useHotRant dialog'
 
@@ -152,11 +191,11 @@ exportCharacter icon_ styles char = Deku.do
             , DA.autofocus_ "true"
             ]
             [ D.h2 [ css_ [ "font-bold" ] ] [ D.text_ "Export" ]
-            , D.h3 [] [ D.text_ $ char ^. _name <. _Newtype ]
+            , D.h3 [] [ D.text_ $ enc ^. _name <. _Newtype ]
             , D.div
                 [ css_ [ "flex", "gap-1" ] ]
-                [ (encodeURIComponent $ encode (stringCharacter icon_) char)
-                    # maybe mempty \charData ->
+                [ (encodeURIComponent $ encode stringEncounter enc)
+                    # maybe mempty \encData ->
                         D.a
                           [ css_
                               [ "flex"
@@ -173,14 +212,13 @@ exportCharacter icon_ styles char = Deku.do
                               , "dark:focus:bg-stone-500"
                               ]
                           , DA.href_ $ "data:text/plain;charset=utf8," <>
-                              charData
-                          , DA.download_ $ (char ^. _name <<< _Newtype) <>
-                              ".txt"
+                              encData
+                          , DA.download_ $ (enc ^. _name <<< _Newtype) <> ".txt"
                           ]
                           [ D.text_ "Text" ]
 
-                , (encodeURIComponent $ J.print $ CJ.encode jsonCharacter char)
-                    # maybe mempty \charData ->
+                , (encodeURIComponent $ J.print $ CJ.encode jsonEncounter enc)
+                    # maybe mempty \encData ->
                         D.a
                           [ css_
                               [ "flex"
@@ -197,8 +235,8 @@ exportCharacter icon_ styles char = Deku.do
                               , "dark:focus:bg-stone-500"
                               ]
                           , DA.href_ $ "data:application/json;charset=utf8," <>
-                              charData
-                          , DA.download_ $ (char ^. _name <<< _Newtype) <>
+                              encData
+                          , DA.download_ $ (enc ^. _name <<< _Newtype) <>
                               ".json"
                           ]
                           [ D.text_ "JSON" ]
@@ -224,7 +262,7 @@ exportCharacter icon_ styles char = Deku.do
                         mcb <- clipboard =<< navigator =<< window
                         for_ mcb \cb -> launchAff_ do
                           toAffE $
-                            writeText (encode (stringCharacter icon_) char) cb
+                            writeText (encode stringEncounter enc) cb
                           liftEffect $ for_ (fromElement d) (close Nothing)
                     ]
                     [ D.text_ "Copy" ]
@@ -256,8 +294,8 @@ exportCharacter icon_ styles char = Deku.do
         ]
     ]
 
-importCharacter :: Env -> Nut
-importCharacter env = Deku.do
+importEncounter :: Env -> Nut
+importEncounter env = Deku.do
   setDialog /\ dialog' <- useState'
   dialog <- useHotRant dialog'
 
@@ -300,18 +338,17 @@ importCharacter env = Deku.do
             setFile /\ file <- useState NotAsked
 
             let
-              fileChar = ado
-                icon_ <- env.icon
+              fileEnc = ado
                 fo <- format
                 afi <- file
                 in
                   afi >>= fromEither <<< \fi ->
                     case fo of
                       Text -> lmap (parseErrorHuman fi 20) $
-                        decode (stringCharacter icon_) fi
+                        decode stringEncounter fi
                       Json -> lmap pure
                         $ J.parse fi
-                        >>= (CJ.decode jsonCharacter >>> lmap CJDE.print)
+                        >>= (CJ.decode jsonEncounter >>> lmap CJDE.print)
 
             D.form
               [ css_
@@ -396,7 +433,7 @@ importCharacter env = Deku.do
                       ]
                   ]
 
-              , fileChar <#~> case _ of
+              , fileEnc <#~> case _ of
                   NotAsked -> mempty
                   Loading -> D.div [] [ D.text_ "Loading..." ]
                   Success c -> env.icon <#~> \icon ->
@@ -412,7 +449,7 @@ importCharacter env = Deku.do
                           , "dark:text-stone-300"
                           ]
                       ]
-                      [ characterSummary icon c ]
+                      [ encounterSummary icon c ]
                   Error e ->
                     D.div
                       [ css_
@@ -454,11 +491,11 @@ importCharacter env = Deku.do
                           , "dark:focus:bg-stone-500"
                           ]
                       , DA.xtypeSubmit
-                      , DA.disabled $ fileChar <#> show <<< case _ of
+                      , DA.disabled $ fileEnc <#> show <<< case _ of
                           Success _ -> false
                           _ -> true
-                      , DL.runOn DL.click $ fileChar <#> case _ of
-                          Success c -> (env ^. _saveChar) c
+                      , DL.runOn DL.click $ fileEnc <#> case _ of
+                          Success c -> (env ^. _saveEnc) c
                           _ -> pure unit
                       ]
                       [ D.text_ "Import" ]
