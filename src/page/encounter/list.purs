@@ -37,7 +37,7 @@ listEncounterPage env@{ encounters, icon } =
           , "items-center"
           , "grow"
           , "gap-2"
-          , "overflow-scroll"
+          , "overflow-y-auto"
           ]
       ]
       [ encs # foldMap \enc ->

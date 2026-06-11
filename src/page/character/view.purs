@@ -109,7 +109,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
         D.div
           [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
           [ D.div
-              [ css_ [ "flex", "items-center", "justify-between", "gap-x-2" ] ]
+              [ css_ [ "flex", "items-center", "gap-x-2" ] ]
               [ char # foldMap \c ->
                   D.a
                     [ DA.href_ $ print routeCodec
@@ -216,7 +216,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
                       , "flex-1"
                       , "sm:min-w-48"
                       , "sm:max-w-56"
-                      , "overflow-scroll"
+                      , "overflow-y-auto"
                       , "p-2"
                       , "gap-2"
                       , "border"
@@ -314,7 +314,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
                   ]
 
               , D.div
-                  [ css_ [ "flex", "flex-3", "overflow-scroll", "gap-2" ] ]
+                  [ css_ [ "flex", "flex-3", "overflow-y-auto", "gap-2" ] ]
                   [ D.div
                       [ css_
                           [ "flex"
@@ -329,7 +329,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
                               [ "flex-1"
                               , "flex"
                               , "flex-col"
-                              , "lg:overflow-scroll"
+                              , "lg:overflow-y-auto"
                               , "p-2"
                               , "gap-x-2"
                               , "gap-y-4"
@@ -401,7 +401,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
                               [ "flex-2"
                               , "grid"
                               , "grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]"
-                              , "lg:overflow-scroll"
+                              , "lg:overflow-y-auto"
                               , "p-2"
                               , "gap-x-2"
                               , "gap-y-6"

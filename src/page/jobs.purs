@@ -180,7 +180,7 @@ jobList env@{ icon } = icon <#~> \{ classes, colours, jobs, souls } ->
         [ "flex"
         , "flex-col"
         , "overflow-x-hidden"
-        , "overflow-y-scroll"
+        , "overflow-y-auto"
         , "text-nowrap"
         , "text-black"
         ]
@@ -443,7 +443,6 @@ renderSoul icon name = icon <#~> \icon_@{ colours, jobs, souls } ->
           [ "w-full"
           , "flex"
           , "flex-col"
-          , "overflow-scroll"
           , "items-center"
           , "justify-center-safe"
           , "gap-4"
@@ -536,8 +535,7 @@ renderJobPassives icon@{ abilities, colours, jobs, talents, traits } name =
         [ D.h3
             [ css_ [ "font-bold" ] ]
             [ D.text_ $ j ^. _trait <<< _Newtype ]
-        , D.div
-            [ css_ [ "overflow-scroll" ] ]
+        , D.div []
             $ traits #
                 traversed <<< filtered (_name `elemOf` (j ^. _trait))
                   #~ \t ->
@@ -549,8 +547,7 @@ renderJobPassives icon@{ abilities, colours, jobs, talents, traits } name =
     , D.div
         [ css_ [ "flex", "flex-col" ] ]
         [ D.h3 [ css_ [ "font-bold" ] ] [ D.text_ "Talents" ]
-        , D.div
-            [ css_ [ "overflow-scroll" ] ]
+        , D.div []
             [ D.ul [] $
                 talents
                   ^:: traversed

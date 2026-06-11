@@ -37,7 +37,7 @@ listCharacterPage env@{ characters, icon } =
           , "items-center"
           , "grow"
           , "gap-2"
-          , "overflow-scroll"
+          , "overflow-y-auto"
           ]
       ]
       [ chars # foldMap \char ->

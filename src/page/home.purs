@@ -31,7 +31,7 @@ homePage env =
         , "grow"
         , "items-center"
         , "gap-6"
-        , "overflow-scroll"
+        , "overflow-y-auto"
         ]
     ]
     [ D.h1

@@ -35,12 +35,12 @@ toa env@{ route, systemTheme, theme } =
         , "h-dvh"
         , "flex"
         , "flex-col"
-        , "overflow-hidden"
         , "text-sm"
         , "bg-stone-300"
         , "text-stone-700"
         , "dark:bg-stone-900"
         , "dark:text-stone-400"
+        , "scheme-light-dark"
         , encode themeCodec (fromMaybe systemTheme t)
         ]
     ]

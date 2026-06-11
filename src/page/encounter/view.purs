@@ -330,7 +330,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                       ]
                   ]
               , D.div
-                  [ css_ [ "overflow-scroll" ] ]
+                  [ css_ [ "overflow-y-auto" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
                       $ trs
@@ -456,7 +456,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                         [ D.text_ fa ]
                   ]
               , D.div
-                  [ css_ [ "overflow-scroll" ] ]
+                  [ css_ [ "overflow-y-auto" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
                       $ trs
@@ -588,7 +588,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                       ]
                   ]
               , D.div
-                  [ css_ [ "overflow-scroll" ] ]
+                  [ css_ [ "overflow-y-auto" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
                       $ trs
@@ -720,7 +720,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                       ]
                   ]
               , D.div
-                  [ css_ [ "overflow-scroll" ] ]
+                  [ css_ [ "overflow-y-auto" ] ]
                   [ D.div
                       [ css_ [ "flex", "flex-col", "gap-2" ] ]
                       $ trs

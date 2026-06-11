@@ -27,7 +27,7 @@ tripanel side a b =
             , "flex-col"
             , "sm:min-w-48"
             , "sm:max-w-56"
-            , "overflow-scroll"
+            , "overflow-y-auto"
             , "p-2"
             , "gap-2"
             , "border"
@@ -39,7 +39,7 @@ tripanel side a b =
         side
 
     , D.div
-        [ css_ [ "flex", "flex-3", "overflow-scroll", "gap-2" ] ]
+        [ css_ [ "flex", "flex-3", "overflow-y-auto", "gap-2" ] ]
         [ D.div
             [ css_ [ "flex", "flex-col", "lg:flex-row", "grow", "gap-2" ] ]
             [ D.div
@@ -47,7 +47,7 @@ tripanel side a b =
                     [ "flex-1"
                     , "flex"
                     , "flex-col"
-                    , "lg:overflow-scroll"
+                    , "lg:overflow-y-auto"
                     , "p-2"
                     , "gap-x-2"
                     , "gap-y-4"
@@ -62,7 +62,7 @@ tripanel side a b =
             , D.div
                 [ css_
                     [ "flex-2"
-                    , "lg:overflow-scroll"
+                    , "lg:overflow-y-auto"
                     , "p-2"
                     , "gap-x-2"
                     , "gap-y-6"
