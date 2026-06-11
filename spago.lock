@@ -14,9 +14,8 @@
             "console",
             "control",
             "css",
-            "deku-core",
-            "deku-dom",
             "dom-filereader",
+            "dom-indexed",
             "effect",
             "either",
             "fast-vect",
@@ -24,13 +23,17 @@
             "fixed-points",
             "foldable-traversable",
             "foreign",
-            "hyrule",
+            "halogen",
+            "halogen-css",
+            "halogen-store",
             "integers",
             "js-promise-aff",
             "js-uri",
             "json",
+            "lists",
             "matryoshka",
             "maybe",
+            "media-types",
             "newtype",
             "ordered-collections",
             "parsing",
@@ -40,7 +43,7 @@
             "profunctor-lenses",
             "routing",
             "routing-duplex",
-            "run",
+            "safe-coerce",
             "strings",
             "tuples",
             "typelevel-prelude",
@@ -49,8 +52,8 @@
             "web-events",
             "web-file",
             "web-html",
-            "web-pointerevents",
-            "web-storage"
+            "web-storage",
+            "web-uievents"
           ]
         },
         "test": {
@@ -717,31 +720,7 @@
         "zipperarray": "2.0.0"
       }
     },
-    "extra_packages": {
-      "deku": {
-        "git": "https://github.com/mikesol/purescript-deku.git",
-        "ref": "v0.12.0",
-        "subdir": "deku"
-      },
-      "deku-core": {
-        "git": "https://github.com/mikesol/purescript-deku.git",
-        "ref": "v0.12.0",
-        "subdir": "deku-core"
-      },
-      "deku-dom": {
-        "git": "https://github.com/mikesol/purescript-deku.git",
-        "ref": "v0.12.0",
-        "subdir": "deku-dom"
-      },
-      "hyrule": {
-        "git": "https://github.com/mikesol/purescript-hyrule.git",
-        "ref": "v2.5.2",
-        "dependencies": [
-          "js-timers",
-          "unsafe-reference"
-        ]
-      }
-    }
+    "extra_packages": {}
   },
   "packages": {
     "aff": {
@@ -1029,73 +1008,6 @@
         "tuples"
       ]
     },
-    "debug": {
-      "type": "registry",
-      "version": "6.0.2",
-      "integrity": "sha256-d/EzRm/J2JyzvlIeo2Ex78Y7HRB0IXBitnVJywL4gHk=",
-      "dependencies": [
-        "functions",
-        "prelude"
-      ]
-    },
-    "deku-core": {
-      "type": "git",
-      "url": "https://github.com/mikesol/purescript-deku.git",
-      "rev": "276f48adde3d9354f61917f7e9ae2ae7b43df6b2",
-      "subdir": "deku-core",
-      "dependencies": [
-        "aff",
-        "arrays",
-        "catenable-lists",
-        "control",
-        "debug",
-        "effect",
-        "either",
-        "fast-vect",
-        "filterable",
-        "foldable-traversable",
-        "foreign-object",
-        "free",
-        "heterogeneous",
-        "hyrule",
-        "maybe",
-        "newtype",
-        "nullable",
-        "ordered-collections",
-        "prelude",
-        "profunctor",
-        "quickcheck",
-        "record",
-        "safe-coerce",
-        "st",
-        "strings",
-        "stringutils",
-        "transformers",
-        "tuples",
-        "unsafe-coerce",
-        "untagged-union",
-        "web-dom",
-        "web-dom-parser",
-        "web-events",
-        "web-html",
-        "web-uievents",
-        "yoga-json"
-      ]
-    },
-    "deku-dom": {
-      "type": "git",
-      "url": "https://github.com/mikesol/purescript-deku.git",
-      "rev": "276f48adde3d9354f61917f7e9ae2ae7b43df6b2",
-      "subdir": "deku-dom",
-      "dependencies": [
-        "deku-core",
-        "hyrule",
-        "web-html",
-        "web-pointerevents",
-        "web-touchevents",
-        "web-uievents"
-      ]
-    },
     "distributive": {
       "type": "registry",
       "version": "6.0.0",
@@ -1124,6 +1036,23 @@
         "web-events",
         "web-file",
         "web-html"
+      ]
+    },
+    "dom-indexed": {
+      "type": "registry",
+      "version": "13.0.0",
+      "integrity": "sha256-Tr9uDQdmKN4TUGMg1/4KzsVu5zPa8OqKB4N6/S2a8vU=",
+      "dependencies": [
+        "datetime",
+        "media-types",
+        "prelude",
+        "strings",
+        "web-clipboard",
+        "web-events",
+        "web-html",
+        "web-pointerevents",
+        "web-touchevents",
+        "web-uievents"
       ]
     },
     "effect": {
@@ -1327,6 +1256,23 @@
         "unsafe-coerce"
       ]
     },
+    "freeap": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-e7SiV9rg+rVARsU9cxA/02sps7ubogvVgYwj8nWosX4=",
+      "dependencies": [
+        "const",
+        "either",
+        "gen",
+        "lists",
+        "newtype",
+        "nonempty",
+        "prelude",
+        "tailrec",
+        "tuples",
+        "unsafe-coerce"
+      ]
+    },
     "functions": {
       "type": "registry",
       "version": "6.0.0",
@@ -1372,27 +1318,161 @@
         "unfoldable"
       ]
     },
-    "heterogeneous": {
+    "halogen": {
       "type": "registry",
-      "version": "0.7.0",
-      "integrity": "sha256-pQwcFvhWL8noktxaoD7FlLs2F2lYf3QHoyO0VOWO3I0=",
+      "version": "7.0.0",
+      "integrity": "sha256-YrUm27QEiE1DyGaGJ5MNLVg4H/P3gnX/NVv1gRtWjB4=",
       "dependencies": [
+        "aff",
+        "bifunctors",
+        "console",
+        "control",
+        "dom-indexed",
+        "effect",
         "either",
+        "exceptions",
         "foldable-traversable",
-        "functors",
+        "foreign",
+        "fork",
+        "free",
+        "freeap",
+        "functions",
+        "halogen-subscriptions",
+        "halogen-vdom",
+        "lazy",
+        "lists",
+        "maybe",
+        "media-types",
+        "newtype",
+        "ordered-collections",
+        "parallel",
         "prelude",
-        "record",
+        "profunctor",
+        "refs",
+        "strings",
+        "tailrec",
+        "transformers",
         "tuples",
-        "variant"
+        "unfoldable",
+        "unsafe-coerce",
+        "unsafe-reference",
+        "web-clipboard",
+        "web-dom",
+        "web-events",
+        "web-file",
+        "web-html",
+        "web-touchevents",
+        "web-uievents"
       ]
     },
-    "hyrule": {
-      "type": "git",
-      "url": "https://github.com/mikesol/purescript-hyrule.git",
-      "rev": "122ee1745c9faa60d6e9659db4291032cb5db053",
+    "halogen-css": {
+      "type": "registry",
+      "version": "10.0.0",
+      "integrity": "sha256-ST10fyB5oMrOIlKfehmIKWdE/MtC09k6TEny/hDwh2Y=",
       "dependencies": [
-        "js-timers",
+        "arrays",
+        "css",
+        "either",
+        "foldable-traversable",
+        "foreign-object",
+        "halogen",
+        "maybe",
+        "media-types",
+        "prelude",
+        "strings",
+        "tuples"
+      ]
+    },
+    "halogen-hooks": {
+      "type": "registry",
+      "version": "0.6.3",
+      "integrity": "sha256-r5d32RCzNykEr7JsCGu23jHkJDz0awO5VbzKY7ah0qI=",
+      "dependencies": [
+        "aff",
+        "arrays",
+        "bifunctors",
+        "effect",
+        "exceptions",
+        "foldable-traversable",
+        "foreign-object",
+        "free",
+        "freeap",
+        "halogen",
+        "halogen-subscriptions",
+        "maybe",
+        "newtype",
+        "ordered-collections",
+        "parallel",
+        "partial",
+        "prelude",
+        "refs",
+        "tailrec",
+        "transformers",
+        "tuples",
+        "unsafe-coerce",
+        "unsafe-reference",
+        "web-dom",
+        "web-html"
+      ]
+    },
+    "halogen-store": {
+      "type": "registry",
+      "version": "0.5.4",
+      "integrity": "sha256-/4KpdO0Bv7htUW9a6rM5nCYsizXZbhpclPwlhvDq5u0=",
+      "dependencies": [
+        "aff",
+        "distributive",
+        "effect",
+        "fork",
+        "halogen",
+        "halogen-hooks",
+        "halogen-subscriptions",
+        "maybe",
+        "prelude",
+        "refs",
+        "tailrec",
+        "transformers",
+        "tuples",
         "unsafe-reference"
+      ]
+    },
+    "halogen-subscriptions": {
+      "type": "registry",
+      "version": "2.0.0",
+      "integrity": "sha256-1eBtVZENgGtKuOY9H0iuYD3dO1CSqmOIyhYe4OhypOU=",
+      "dependencies": [
+        "arrays",
+        "contravariant",
+        "control",
+        "effect",
+        "foldable-traversable",
+        "maybe",
+        "prelude",
+        "refs",
+        "safe-coerce",
+        "unsafe-reference"
+      ]
+    },
+    "halogen-vdom": {
+      "type": "registry",
+      "version": "8.0.0",
+      "integrity": "sha256-jk6aj/tH630skFVk6mB5Q+0g2zb897KX72T63fJhJ2Y=",
+      "dependencies": [
+        "arrays",
+        "bifunctors",
+        "effect",
+        "foreign",
+        "foreign-object",
+        "functions",
+        "maybe",
+        "newtype",
+        "nullable",
+        "prelude",
+        "refs",
+        "tuples",
+        "unsafe-coerce",
+        "web-dom",
+        "web-events"
       ]
     },
     "identity": {
@@ -1422,16 +1502,6 @@
       "integrity": "sha256-HyoT1I5qIHRq8RSZji6zZDvqnpVjLw748utrKwZtqsw=",
       "dependencies": [
         "control",
-        "prelude"
-      ]
-    },
-    "js-bigints": {
-      "type": "registry",
-      "version": "2.2.1",
-      "integrity": "sha256-r1rE6Olv5b3JrP32lY2uKJ+eBRTsrVnC983K8VWwqe4=",
-      "dependencies": [
-        "integers",
-        "maybe",
         "prelude"
       ]
     },
@@ -1479,15 +1549,6 @@
         "maybe",
         "prelude",
         "transformers"
-      ]
-    },
-    "js-timers": {
-      "type": "registry",
-      "version": "6.1.0",
-      "integrity": "sha256-mYEL4zjFOzrDeVCnR9Hg3pcZaBZilB6zPGaZ4fzRmzg=",
-      "dependencies": [
-        "effect",
-        "prelude"
       ]
     },
     "js-uri": {
@@ -1563,20 +1624,6 @@
         "tailrec",
         "tuples",
         "unfoldable"
-      ]
-    },
-    "literals": {
-      "type": "registry",
-      "version": "1.0.2",
-      "integrity": "sha256-ZkGRFD6gb8etYvyMYpX1Z7lx1Tql7R1VGnD1Dzinup8=",
-      "dependencies": [
-        "integers",
-        "maybe",
-        "numbers",
-        "partial",
-        "prelude",
-        "typelevel-prelude",
-        "unsafe-coerce"
       ]
     },
     "matryoshka": {
@@ -2144,28 +2191,6 @@
         "tuples"
       ]
     },
-    "run": {
-      "type": "registry",
-      "version": "5.0.0",
-      "integrity": "sha256-zGCyG7IamjYWypKMXTP9PFis2ShnoZJKZiu3SbXMc+M=",
-      "dependencies": [
-        "aff",
-        "control",
-        "effect",
-        "either",
-        "free",
-        "maybe",
-        "newtype",
-        "partial",
-        "prelude",
-        "tailrec",
-        "tuples",
-        "type-equality",
-        "typelevel-prelude",
-        "unsafe-coerce",
-        "variant"
-      ]
-    },
     "safe-coerce": {
       "type": "registry",
       "version": "2.0.0",
@@ -2299,20 +2324,6 @@
         "unsafe-coerce"
       ]
     },
-    "stringutils": {
-      "type": "registry",
-      "version": "0.0.13",
-      "integrity": "sha256-dWtlJqMC2RK9jNupbLLOmZJYWejRk+cGqgs1In76QJk=",
-      "dependencies": [
-        "arrays",
-        "functions",
-        "integers",
-        "maybe",
-        "prelude",
-        "strings",
-        "unsafe-coerce"
-      ]
-    },
     "tailrec": {
       "type": "registry",
       "version": "6.1.0",
@@ -2439,22 +2450,6 @@
         "prelude"
       ]
     },
-    "untagged-union": {
-      "type": "registry",
-      "version": "1.0.0",
-      "integrity": "sha256-MQvpb13TZEBoi9n/AoQ7ugniSQqbN6XQmAjii9pqJRk=",
-      "dependencies": [
-        "either",
-        "foreign",
-        "foreign-object",
-        "literals",
-        "maybe",
-        "newtype",
-        "prelude",
-        "tuples",
-        "unsafe-coerce"
-      ]
-    },
     "validation": {
       "type": "registry",
       "version": "6.0.0",
@@ -2530,19 +2525,6 @@
         "prelude",
         "unsafe-coerce",
         "web-events"
-      ]
-    },
-    "web-dom-parser": {
-      "type": "registry",
-      "version": "8.0.0",
-      "integrity": "sha256-g8utHk8RtXOyM6B+O0ko247v4K5fdbaj0wjztHEc53U=",
-      "dependencies": [
-        "arrays",
-        "effect",
-        "either",
-        "maybe",
-        "prelude",
-        "web-dom"
       ]
     },
     "web-events": {
@@ -2667,59 +2649,6 @@
         "unsafe-coerce",
         "web-events",
         "web-html"
-      ]
-    },
-    "yoga-json": {
-      "type": "registry",
-      "version": "5.2.1",
-      "integrity": "sha256-12I7qIf27oKV/D/YRcHtGpN8n7GQ0Bm3uzvI4ZjOQrs=",
-      "dependencies": [
-        "arrays",
-        "bifunctors",
-        "control",
-        "datetime",
-        "effect",
-        "either",
-        "exceptions",
-        "foldable-traversable",
-        "foreign",
-        "foreign-object",
-        "free",
-        "identity",
-        "integers",
-        "js-bigints",
-        "js-date",
-        "lists",
-        "maybe",
-        "newtype",
-        "nullable",
-        "numbers",
-        "ordered-collections",
-        "partial",
-        "prelude",
-        "record",
-        "safe-coerce",
-        "strings",
-        "transformers",
-        "tuples",
-        "typelevel-prelude",
-        "unsafe-coerce",
-        "variant",
-        "yoga-tree"
-      ]
-    },
-    "yoga-tree": {
-      "type": "registry",
-      "version": "1.0.0",
-      "integrity": "sha256-s8rIVEQkRi1VrMc92T9ceXcY0X6r5A4QqT6f7GgmDQI=",
-      "dependencies": [
-        "arrays",
-        "control",
-        "foldable-traversable",
-        "free",
-        "maybe",
-        "prelude",
-        "tailrec"
       ]
     }
   }

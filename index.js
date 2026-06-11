@@ -1,2 +1,2 @@
 import { main } from './output/Main';
-main();
+main(import.meta.env.DEV)();

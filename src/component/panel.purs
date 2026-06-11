@@ -2,15 +2,19 @@ module ToA.Component.Panel
   ( tripanel
   ) where
 
-import Deku.Core (Nut)
-import Deku.DOM as D
+import Halogen.HTML as HD
 
-import ToA.Util.Html (css_)
+import ToA.Util.Html (css)
 
-tripanel :: Array Nut -> Array Nut -> Array Nut -> Nut
+tripanel
+  :: ∀ w i
+   . Array (HD.HTML w i)
+  -> Array (HD.HTML w i)
+  -> Array (HD.HTML w i)
+  -> HD.HTML w i
 tripanel side a b =
-  D.div
-    [ css_
+  HD.div
+    [ css
         [ "flex"
         , "flex-col"
         , "sm:flex-row"
@@ -20,8 +24,8 @@ tripanel side a b =
         , "gap-2"
         ]
     ]
-    [ D.div
-        [ css_
+    [ HD.div
+        [ css
             [ "flex"
             , "flex-1"
             , "flex-col"
@@ -38,12 +42,12 @@ tripanel side a b =
         ]
         side
 
-    , D.div
-        [ css_ [ "flex", "flex-3", "overflow-y-auto", "gap-2" ] ]
-        [ D.div
-            [ css_ [ "flex", "flex-col", "lg:flex-row", "grow", "gap-2" ] ]
-            [ D.div
-                [ css_
+    , HD.div
+        [ css [ "flex", "flex-3", "overflow-y-auto", "gap-2" ] ]
+        [ HD.div
+            [ css [ "flex", "flex-col", "lg:flex-row", "grow", "gap-2" ] ]
+            [ HD.div
+                [ css
                     [ "flex-1"
                     , "flex"
                     , "flex-col"
@@ -59,8 +63,8 @@ tripanel side a b =
                 ]
                 a
 
-            , D.div
-                [ css_
+            , HD.div
+                [ css
                     [ "flex-2"
                     , "lg:overflow-y-auto"
                     , "p-2"

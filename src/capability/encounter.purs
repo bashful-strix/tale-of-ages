@@ -1,12 +1,8 @@
 module ToA.Capability.Encounter
-  ( EncounterF
-  , ENCOUNTER
-
-  , runEncounter
-
-  , save
-  , delete
-  , readStorage
+  ( class Encounter
+  , saveEnc
+  , deleteEnc
+  , readEncs
   ) where
 
 import Prelude
@@ -18,65 +14,50 @@ import Data.Lens ((^.), (.~))
 import Data.Lens.At (at)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Map (Map, empty, singleton)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), maybe)
 import JSON (parse, print)
 
-import Run (Run, EFFECT, interpret, lift, on, send)
-import Type.Proxy (Proxy(..))
-import Type.Row (type (+))
+import Halogen (HalogenM, lift)
+import Halogen.Store.Monad (updateStore)
 
-import ToA.Capability.Log (LOG, debug)
-import ToA.Capability.Storage (STORAGE, read, write)
+import ToA.ToAM (ToAM)
+import ToA.Capability.Log (debug)
+import ToA.Capability.Storage (read, write)
 import ToA.Data.Icon.Encounter (Encounter, jsonEncounter)
 import ToA.Data.Icon.Name (Name, _name, jsonName)
 
-data EncounterF a
-  = Save Encounter a
-  | Delete Encounter a
-  | ReadStorage (Maybe (Map Name Encounter) -> a)
-
-derive instance Functor EncounterF
-
-type ENCOUNTER r = (enccounter :: EncounterF | r)
-_enccounter = Proxy :: Proxy "enccounter"
-
-save :: ∀ r. Encounter -> Run (ENCOUNTER + r) Unit
-save enc = lift _enccounter (Save enc unit)
-
-delete :: ∀ r. Encounter -> Run (ENCOUNTER + r) Unit
-delete enc = lift _enccounter (Delete enc unit)
-
-readStorage :: ∀ r. Run (ENCOUNTER + r) (Maybe (Map Name Encounter))
-readStorage = lift _enccounter (ReadStorage identity)
+class Encounter m where
+  saveEnc :: Encounter -> m Unit
+  deleteEnc :: Encounter -> m Unit
+  readEncs :: m (Maybe (Map Name Encounter))
 
 encMap :: Codec (Map Name Encounter)
 encMap = CJC.map jsonName jsonEncounter
 
-browserEnc :: ∀ r. EncounterF ~> Run (EFFECT + LOG + STORAGE + r)
-browserEnc = case _ of
-  Save enc next -> do
+instance Encounter ToAM where
+  saveEnc enc = do
     debug $ "save encounter: " <> enc ^. _name <<< _Newtype
-    es <- read "encounters"
-    write "encounters" $ print $ encode encMap $
-      case es >>= parse >>> hush >>= decode encMap >>> hush of
+    encs <- readEncs
+    let
+      newEncs = case encs of
         Nothing -> singleton (enc ^. _name) enc
-        Just encs -> encs # at (enc ^. _name) .~ pure enc
-    pure next
+        Just es -> es # at (enc ^. _name) .~ pure enc
+    updateStore _ { encounters = newEncs }
+    write "encounters" $ print $ encode encMap newEncs
 
-  Delete enc next -> do
+  deleteEnc enc = do
     debug $ "delete encounter: " <> enc ^. _name <<< _Newtype
-    es <- read "encounters"
-    write "encounters" $ print $ encode encMap $
-      case es >>= parse >>> hush >>= decode encMap >>> hush of
-        Nothing -> empty
-        Just encs -> encs # at (enc ^. _name) .~ Nothing
-    pure next
+    encs <- readEncs
+    let newEncs = encs # maybe empty (at (enc ^. _name) .~ Nothing)
+    updateStore _ { encounters = newEncs }
+    write "encounters" $ print $ encode encMap newEncs
 
-  ReadStorage reply -> do
+  readEncs = do
     debug $ "read storage encounters"
     read "encounters"
-      <#> reply <<< (_ >>= (parse >>> hush >=> decode encMap >>> hush))
+      <#> (_ >>= (parse >>> hush >=> decode encMap >>> hush))
 
-runEncounter
-  :: ∀ r. Run (EFFECT + LOG + STORAGE + ENCOUNTER + r) ~> Run (EFFECT + LOG + STORAGE + r)
-runEncounter = interpret (on _enccounter browserEnc send)
+instance (Monad m, Encounter m) => Encounter (HalogenM s a sl o m) where
+  saveEnc = lift <<< saveEnc
+  deleteEnc = lift <<< deleteEnc
+  readEncs = lift readEncs

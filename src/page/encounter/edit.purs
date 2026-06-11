@@ -5,124 +5,162 @@ module ToA.Page.Encounter.Edit
 import ToA.Prelude
 
 import Data.Codec (decode, encode)
-import Data.Either (Either(..), isLeft)
+import Data.Either (Either(..), hush, isLeft)
 import Data.Foldable (intercalate)
 import Data.Lens ((^.), (^?), preview, view, filtered, traversed)
+import Data.Map (empty)
 import Data.Maybe (Maybe(..), fromMaybe)
 
-import Deku.Core (Nut)
-import Deku.Do as Deku
-import Deku.DOM as D
-import Deku.DOM.Attributes as DA
-import Deku.DOM.Combinators as DC
-import Deku.DOM.Listeners as DL
-import Deku.Hooks ((<#~>), useState)
+import Halogen as H
+import Halogen.HTML as HD
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectAll)
 
 import Parsing.String (parseErrorHuman)
 
-import Web.HTML.HTMLTextAreaElement (fromEventTarget, value)
+import Web.UIEvent.MouseEvent (MouseEvent)
 
-import ToA.Data.Env (Env, _navigate, _saveEnc)
+import ToA.Capability.Encounter (class Encounter, saveEnc)
+import ToA.Capability.Navigate (class Navigate, navigate)
+import ToA.Data.Route (Route(..), EncounterPath(..))
+import ToA.Data.Store (Store, StoreAction)
+
 import ToA.Data.Icon.Encounter
   ( Encounter(..)
   , FoeEntry(..)
+  , FoeState(..)
   , stringEncounter
   )
 import ToA.Data.Icon.Name (Name(..), _name)
-import ToA.Data.Route (Route(..), EncounterPath(..))
-import ToA.Util.Html (css_)
+
+import ToA.Util.Html (css)
 import ToA.Util.Style as S
-
-editEncounterPage :: Env -> Maybe Name -> Nut
-editEncounterPage env@{ encounters, icon } pathEnc =
-  encounters <&> icon <#~> \(encs /\ _) -> Deku.do
-    let initEnc = encs ^? traversed <. filtered (preview _name >>> eq pathEnc)
-
-    setEnc /\ enc <- useState $ encode stringEncounter $ fromMaybe emptyEnc $
-      initEnc
-
-    let parsed = decode stringEncounter <$> enc
-
-    D.div
-      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-      [ D.form
-          [ css_ [ "flex", "flex-col", "gap-2" ] ]
-          [ D.label
-              [ DA.for_ "edit", css_ [ "font-bold" ] ]
-              [ D.text_ "Edit encounter" ]
-
-          , D.div
-              [ css_ [ "flex" ] ]
-              [ D.textarea
-                  [ DC.transformOn { fromEventTarget, value } DL.input
-                      (pure setEnc)
-                  , DA.rows_ "15"
-                  , DA.cols_ "40"
-                  , DA.id_ "edit"
-                  , css_
-                      [ "mx-2"
-                      , "font-mono"
-                      , "bg-stone-400"
-                      , "dark:bg-stone-800"
-                      ]
-                  ]
-                  [ D.text enc ]
-
-              , (/\) <$> enc <*> parsed <#~> \(c /\ p) -> case p of
-                  Right _ -> mempty
-                  Left e ->
-                    D.pre
-                      [ css_ [ "text-red-600" ] ]
-                      [ D.text_ $ intercalate "\n" $ parseErrorHuman c 20 e ]
-              ]
-
-          , D.div
-              [ css_ [ "flex", "gap-2" ] ]
-              [ D.button
-                  [ DL.runOn DL.click $ parsed <#> case _ of
-                      Left _ -> pure unit
-                      Right e -> do
-                        e # env ^. _saveEnc
-                        (env ^. _navigate)
-                          (Encounters $ Just $ ViewEnc $ e ^. _name)
-                          Nothing
-                  , DA.disabled $ show <<< isLeft <$> parsed
-                  , css_ S.button
-                  ]
-                  [ D.text_ "Save" ]
-
-              , D.button
-                  [ DL.runOn_ DL.click $
-                      (env ^. _navigate)
-                        (Encounters $ ViewEnc <<< view _name <$> initEnc)
-                        Nothing
-                  , css_ S.button
-                  ]
-                  [ D.text_ "Cancel" ]
-              ]
-          ]
-      ]
 
 emptyEnc :: Encounter
 emptyEnc = Encounter
   { name: Name "<Encounter name>"
+  , players: 1
   , notes: Just "<Notes>"
   , foes:
-      [ FoeEntry
+      [ Active
           { name: Name "Foe name"
           , alias: Just "Foe alias"
-          , count: 1
           , faction: Just $ Name "Faction"
           , template: Just $ Name "Template"
+          , state: [ FoeState { hp: 0, vigor: 0, status: empty } ]
           }
-      ]
-  , reserves:
-      [ FoeEntry
+      , Reserve
           { name: Name "Reserve foe name"
           , alias: Nothing
-          , count: 2
           , faction: Nothing
           , template: Nothing
+          , state:
+              [ FoeState { hp: 0, vigor: 0, status: empty }
+              , FoeState { hp: 0, vigor: 0, status: empty }
+              ]
           }
       ]
   }
+
+data Action
+  = Receive (Connected Store (Maybe Name))
+  | Navigate Route (Maybe MouseEvent)
+  | SetTextEnc String
+  | SaveEnc (Maybe Encounter)
+
+editEncounterPage
+  :: ∀ q o m
+   . MonadStore StoreAction Store m
+  => Encounter m
+  => Navigate m
+  => H.Component q (Maybe Name) o m
+editEncounterPage =
+  connect selectAll $ H.mkComponent
+    { initialState: deriveState
+    , render
+    , eval: H.mkEval H.defaultEval
+        { handleAction = act
+        , receive = pure <<< Receive
+        }
+    }
+  where
+
+  deriveState { context: { encounters, icon }, input } =
+    let
+      pathEnc = encounters ^? traversed <. filtered (preview _name >>> eq input)
+    in
+      { icon
+      , pathEnc
+      , text: encode (stringEncounter icon) $ fromMaybe emptyEnc pathEnc
+      }
+
+  act = case _ of
+    Receive update -> H.put $ deriveState update
+    Navigate r e -> navigate r e
+    SetTextEnc text -> H.modify_ _ { text = text }
+    SaveEnc menc -> case menc of
+      Nothing -> pure unit
+      Just enc -> do
+        saveEnc enc
+        navigate (Encounters $ Just $ ViewEnc $ enc ^. _name) Nothing
+
+  render { icon, pathEnc, text } =
+    let
+      parsed = decode (stringEncounter icon) text
+    in
+      HD.div
+        [ css [ "flex", "flex-col", "gap-2" ] ]
+        [ HD.form
+            [ css [ "flex", "flex-col", "gap-2" ] ]
+            [ HD.label
+                [ css [ "font-bold" ], HP.for "edit" ]
+                [ HD.text "Edit encounter" ]
+
+            , HD.div
+                [ css [ "flex" ] ]
+                [ HD.textarea
+                    [ css
+                        [ "mx-2"
+                        , "font-mono"
+                        , "bg-stone-400"
+                        , "dark:bg-stone-800"
+                        ]
+                    , HP.rows 15
+                    , HP.cols 40
+                    , HP.id "edit"
+                    , HP.value text
+                    , HE.onValueChange SetTextEnc
+                    ]
+
+                , case parsed of
+                    Right _ -> HD.span [] []
+                    Left e ->
+                      HD.pre
+                        [ css [ "text-red-600" ] ]
+                        [ HD.text $ intercalate "\n" $ parseErrorHuman text 20 e
+                        ]
+                ]
+
+            , HD.div
+                [ css [ "flex", "gap-2" ] ]
+                [ HD.button
+                    [ css S.button
+                    , HP.type_ HP.ButtonButton
+                    , HP.disabled $ isLeft parsed
+                    , HE.onClick \_ -> SaveEnc $ hush parsed
+                    ]
+                    [ HD.text "Save" ]
+
+                , HD.button
+                    [ css S.button
+                    , HE.onClick \_ -> Navigate
+                        (Encounters $ ViewEnc <<< view _name <$> pathEnc)
+                        Nothing
+                    ]
+                    [ HD.text "Cancel" ]
+                ]
+            ]
+        ]

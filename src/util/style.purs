@@ -56,4 +56,4 @@ buttonDanger =
 
 input :: Array String
 input =
-  [ "px-1", "bg-stone-400", "dark:bg-stone-800" ]
+  [ "px-1", "bg-stone-400", "dark:bg-stone-700" ]

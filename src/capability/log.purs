@@ -1,9 +1,5 @@
 module ToA.Capability.Log
-  ( LogF
-  , LOG
-
-  , runLog
-
+  ( class Log
   , log
   , error
   , warn
@@ -11,50 +7,43 @@ module ToA.Capability.Log
   , debug
   ) where
 
-import Prelude
+import ToA.Prelude
 
 import Effect.Class (liftEffect)
 import Effect.Console as Console
 
-import Run (Run, EFFECT, interpret, lift, on, send)
-import Type.Proxy (Proxy(..))
-import Type.Row (type (+))
+import Halogen (HalogenM, lift)
+import Halogen.Store.Monad (getStore)
 
+import ToA.ToAM (ToAM)
 import ToA.Data.Log (Level(..))
 
-data LogF a = Log Level String a
+class Log m where
+  log :: Level -> String -> m Unit
 
-derive instance Functor LogF
-
-type LOG r = (log :: LogF | r)
-_log = Proxy :: Proxy "log"
-
-log :: ∀ r. Level -> String -> Run (LOG + r) Unit
-log lvl msg = lift _log (Log lvl msg unit)
-
-error :: ∀ r. String -> Run (LOG + r) Unit
+error :: ∀ m. Log m =>  String -> m Unit
 error = log Error
 
-warn :: ∀ r. String -> Run (LOG + r) Unit
+warn :: ∀ m. Log m => String -> m Unit
 warn = log Warn
 
-info :: ∀ r. String -> Run (LOG + r) Unit
+info :: ∀ m. Log m => String -> m Unit
 info = log Info
 
-debug :: ∀ r. String -> Run (LOG + r) Unit
+debug :: ∀ m. Log m => String -> m Unit
 debug = log Debug
 
-consoleLog :: ∀ r. Level -> LogF ~> Run (EFFECT + r)
-consoleLog logLevel (Log lvl msg next) = do
-  when
-    (lvl >= logLevel)
-    $ liftEffect
-    $ show lvl <> " " <> msg # case lvl of
-        Error -> Console.error
-        Warn -> Console.warn
-        Info -> Console.info
-        Debug -> Console.debug
-  pure next
+instance Log ToAM where
+  log lvl msg = do
+    { logLevel } <- getStore
+    when
+      (lvl >= logLevel)
+      $ liftEffect
+      $ show lvl <> " " <> msg # case lvl of
+          Debug -> Console.debug
+          Info -> Console.info
+          Warn -> Console.warn
+          Error -> Console.error
 
-runLog :: ∀ r. Level -> Run (EFFECT + LOG + r) ~> Run (EFFECT + r)
-runLog logLevel = interpret (on _log (consoleLog logLevel) send)
+instance (Monad m, Log m) => Log (HalogenM s a sl o m) where
+  log = lift <.. log

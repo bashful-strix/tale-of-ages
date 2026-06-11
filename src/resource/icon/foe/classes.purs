@@ -158,7 +158,7 @@ foeClasses =
           , colour: Name "Purple"
           , description: text "Legend"
           , hp: 40
-          , maxVigor: Just 10
+          , maxVigor: Just 15
           , defense: 4
           , move: 4
           , traits:

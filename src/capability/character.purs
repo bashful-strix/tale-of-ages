@@ -1,12 +1,8 @@
 module ToA.Capability.Character
-  ( CharacterF
-  , CHAR
-
-  , runCharacter
-
-  , save
-  , delete
-  , readStorage
+  ( class Character
+  , saveChar
+  , deleteChar
+  , readChars
   ) where
 
 import Prelude
@@ -18,65 +14,50 @@ import Data.Lens ((^.), (.~))
 import Data.Lens.At (at)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Map (Map, empty, singleton)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), maybe)
 import JSON (parse, print)
 
-import Run (Run, EFFECT, interpret, lift, on, send)
-import Type.Proxy (Proxy(..))
-import Type.Row (type (+))
+import Halogen (HalogenM, lift)
+import Halogen.Store.Monad (updateStore)
 
-import ToA.Capability.Log (LOG, debug)
-import ToA.Capability.Storage (STORAGE, read, write)
+import ToA.ToAM (ToAM)
+import ToA.Capability.Log (debug)
+import ToA.Capability.Storage (read, write)
 import ToA.Data.Icon.Character (Character, jsonCharacter)
 import ToA.Data.Icon.Name (Name, _name, jsonName)
 
-data CharacterF a
-  = Save Character a
-  | Delete Character a
-  | ReadStorage (Maybe (Map Name Character) -> a)
-
-derive instance Functor CharacterF
-
-type CHAR r = (char :: CharacterF | r)
-_char = Proxy :: Proxy "char"
-
-save :: ∀ r. Character -> Run (CHAR + r) Unit
-save char = lift _char (Save char unit)
-
-delete :: ∀ r. Character -> Run (CHAR + r) Unit
-delete char = lift _char (Delete char unit)
-
-readStorage :: ∀ r. Run (CHAR + r) (Maybe (Map Name Character))
-readStorage = lift _char (ReadStorage identity)
+class Character m where
+  saveChar :: Character -> m Unit
+  deleteChar :: Character -> m Unit
+  readChars :: m (Maybe (Map Name Character))
 
 charMap :: Codec (Map Name Character)
 charMap = CJC.map jsonName jsonCharacter
 
-browserChar :: ∀ r. CharacterF ~> Run (EFFECT + LOG + STORAGE + r)
-browserChar = case _ of
-  Save char next -> do
+instance Character ToAM where
+  saveChar char = do
     debug $ "save character: " <> char ^. _name <<< _Newtype
-    cs <- read "characters"
-    write "characters" $ print $ encode charMap $
-      case cs >>= parse >>> hush >>= decode charMap >>> hush of
+    chars <- readChars
+    let
+      newChars = case chars of
         Nothing -> singleton (char ^. _name) char
-        Just chars -> chars # at (char ^. _name) .~ pure char
-    pure next
+        Just cs -> cs # at (char ^. _name) .~ pure char
+    updateStore _ { characters = newChars }
+    write "characters" $ print $ encode charMap newChars
 
-  Delete char next -> do
+  deleteChar char = do
     debug $ "delete character: " <> char ^. _name <<< _Newtype
-    cs <- read "characters"
-    write "characters" $ print $ encode charMap $
-      case cs >>= parse >>> hush >>= decode charMap >>> hush of
-        Nothing -> empty
-        Just chars -> chars # at (char ^. _name) .~ Nothing
-    pure next
+    chars <- readChars
+    let newChars = chars # maybe empty (at (char ^. _name) .~ Nothing)
+    updateStore _ { characters = newChars }
+    write "characters" $ print $ encode charMap newChars
 
-  ReadStorage reply -> do
+  readChars = do
     debug $ "read storage characters"
     read "characters"
-      <#> reply <<< (_ >>= (parse >>> hush >=> decode charMap >>> hush))
+      <#> (_ >>= (parse >>> hush >=> decode charMap >>> hush))
 
-runCharacter
-  :: ∀ r. Run (EFFECT + LOG + STORAGE + CHAR + r) ~> Run (EFFECT + LOG + STORAGE + r)
-runCharacter = interpret (on _char browserChar send)
+instance (Monad m, Character m) => Character (HalogenM s a sl o m) where
+  saveChar = lift <<< saveChar
+  deleteChar = lift <<< deleteChar
+  readChars = lift readChars

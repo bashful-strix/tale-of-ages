@@ -16,50 +16,16 @@ import Data.String.Pattern (Pattern(..), Replacement(..))
 
 import Matryoshka (cata)
 
-import Deku.Core (Nut)
-import Deku.DOM as D
-import Deku.DOM.Attributes as DA
+import Halogen.HTML as HD
+import Halogen.HTML.Properties as HP
 
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Markup (Markup, MarkupF(..), ListKind(..))
 import ToA.Data.Icon.Name (_name)
-import ToA.Util.Html (css_)
+
+import ToA.Util.Html (css)
 import ToA.Util.Optic ((#~))
-
-markup :: Icon -> Markup -> Nut
-markup { keywords } = cata case _ of
-  Text text -> D.span [] [ D.text_ text ]
-  Bold text -> D.span [ css_ [ "font-bold" ] ] [ text ]
-  Italic text -> D.span [ css_ [ "italic" ] ] [ text ]
-  Newline -> D.br [] []
-
-  Power -> D.span [] [ D.text_ "[+]" ]
-  Weakness -> D.span [] [ D.text_ "[-]" ]
-  Dice n d -> D.span [] [ D.text_ $ show n <> show d ]
-
-  List kind items ->
-    D.ol
-      [ css_
-          [ "ml-4"
-          , case kind of
-              Ordered -> "list-decimal"
-              Unordered -> "list-disc"
-          ]
-      ] $ items <#> \item -> D.li [] [ item ]
-
-  Ref ref text ->
-    let
-      k = keywords ^? traversed <<< filtered (view _name >>> eq ref)
-    in
-      D.span
-        [ css_ [ "underline" ]
-        , DA.title_ $ k # maybe
-            (ref ^. simple _Newtype)
-            (_desc #~ printMarkup)
-        ]
-        [ text ]
-  Seq texts -> D.span [] texts
 
 printMarkup :: Markup -> String
 printMarkup = cata case _ of
@@ -81,3 +47,37 @@ printMarkup = cata case _ of
     items # foldMap \item -> "- " <> item <> "\n"
   Ref _ text -> text
   Seq texts -> intercalate " " texts
+
+markup :: ∀ w i. Icon -> Markup -> HD.HTML w i
+markup { keywords } = cata case _ of
+  Text text -> HD.span [] [ HD.text text ]
+  Bold text -> HD.span [ css [ "font-bold" ] ] [ text ]
+  Italic text -> HD.span [ css [ "italic" ] ] [ text ]
+  Newline -> HD.br []
+
+  Power -> HD.span [] [ HD.text "[+]" ]
+  Weakness -> HD.span [] [ HD.text "[-]" ]
+  Dice n d -> HD.span [] [ HD.text $ show n <> show d ]
+
+  List kind items ->
+    HD.ol
+      [ css
+          [ "ml-4"
+          , case kind of
+              Ordered -> "list-decimal"
+              Unordered -> "list-disc"
+          ]
+      ] $ items <#> \item ->  HD.li [] [ item ]
+
+  Ref ref text ->
+    let
+      k = keywords ^? traversed <<< filtered (view _name >>> eq ref)
+    in
+      HD.span
+        [ css [ "underline" ]
+        , HP.title $ k # maybe
+            (ref ^. simple _Newtype)
+            (_desc #~ printMarkup)
+        ]
+        [ text ]
+  Seq texts -> HD.span [] texts

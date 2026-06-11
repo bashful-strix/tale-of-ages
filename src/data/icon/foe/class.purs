@@ -39,6 +39,9 @@ newtype FoeClass = FoeClass
 
 derive instance Newtype FoeClass _
 
+instance Eq FoeClass where
+  eq (FoeClass { name: a }) (FoeClass { name: b }) = a == b
+
 instance Named FoeClass where
   _name = _Newtype <<< key @"name"
 

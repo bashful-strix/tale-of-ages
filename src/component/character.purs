@@ -13,6 +13,7 @@ import Codec.JSON.DecodeError (print) as CJDE
 import Data.Bifunctor (lmap)
 import Data.Codec (decode, encode)
 import Data.Codec.JSON (decode, encode) as CJ
+import Data.Filterable (compact)
 import Data.Foldable (intercalate)
 import Data.Lens
   ( (^.)
@@ -29,36 +30,41 @@ import Data.Lens
 import Data.Lens.Common (simple)
 import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
-import Data.Maybe (Maybe(..), fromMaybe, maybe)
-import Data.Traversable (for, for_, traverse, traverse_)
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Traversable (for_, traverse_)
 
-import Deku.Core (Nut, attributeAtYourOwnRisk, fixed)
-import Deku.Do as Deku
-import Deku.DOM as D
-import Deku.DOM.Attributes as DA
-import Deku.DOM.Listeners as DL
-import Deku.DOM.Self as Self
-import Deku.Hooks ((<#~>), useHotRant, useState, useState')
+import Data.MediaType.Common (applicationJSON, textPlain)
+import DOM.HTML.Indexed.InputAcceptType (mediaType)
 
-import Effect.Aff (attempt, launchAff_, message)
+import Effect.Aff (attempt, message)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
+
+import Halogen as H
+import Halogen.HTML as HD
+import Halogen.HTML.CSS (style)
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectEq)
 
 import JSON (parse, print) as J
 import JSURI (encodeURIComponent)
 import Parsing.String (parseErrorHuman)
 import Web.Clipboard (clipboard, writeText)
-import Web.Event.Event (target)
-import Web.File.File (toBlob)
-import Web.File.FileList (item)
+import Web.File.File (File, toBlob)
 import Web.File.FileReader.Aff (readAsText)
 import Web.HTML (window)
-import Web.HTML.HTMLDialogElement (close, fromElement, showModal)
-import Web.HTML.HTMLInputElement (files, fromEventTarget)
+import Web.HTML.Common as WC
+import Web.HTML.HTMLDialogElement (close, fromHTMLElement, showModal)
 import Web.HTML.Window (navigator)
 
+import ToA.Capability.Character (class Character, saveChar)
 import ToA.Data.Async (AsyncData(..), fromEither)
-import ToA.Data.Env (Env, _saveChar)
 import ToA.Data.FileFormat (FileFormat(..))
+import ToA.Data.Store (Store, StoreAction)
+
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Character
   ( Character
@@ -72,37 +78,38 @@ import ToA.Data.Icon.Character
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Name (_name)
 import ToA.Data.Icon.Sign (_sign)
-import ToA.Util.Html (css, css_, style_)
+
+import ToA.Util.Html (css)
 import ToA.Util.Optic ((^::))
 import ToA.Util.Style as S
 
-characterSummary :: Icon -> Character -> Nut
+characterSummary :: ∀ w i. Icon -> Character -> HD.HTML w i
 characterSummary { colours, jobs } char =
   let
     primary = char ^. _build <. _primary
     job = jobs # traversed `findOf` (view _name >>> eq primary)
   in
-    D.div
-      [ css_ [ "flex", "items-center", "gap-2" ] ]
-      [ D.div
-          [ css_ $ [ "shrink-0", "size-16" ]
+    HD.div
+      [ css [ "flex", "items-center", "gap-2" ] ]
+      [ HD.div
+          [ css $ [ "shrink-0", "size-16" ]
               <> (job ^:: _Just <. _sign <. _Newtype)
           ]
           []
-      , D.div
-          [ css_ [ "flex", "flex-col" ] ]
-          [ D.h3
-              [ css_ [ "font-bold" ] ]
-              [ D.text_ $ char ^. _name <. _Newtype ]
+      , HD.div
+          [ css [ "flex", "flex-col" ] ]
+          [ HD.h3
+              [ css [ "font-bold" ] ]
+              [ HD.text $ char ^. _name <. _Newtype ]
 
-          , D.div
-              [ css_ [ "flex", "gap-2" ] ]
-              [ D.div []
-                  [ D.text_ $ "L " <> char ^. _build <. _level <. to show ]
-              , D.text_ "∷"
-              , D.div
-                  [ css_ [ "font-bold", "text-white" ]
-                  , style_ $ fromMaybe (pure unit) $
+          , HD.div
+              [ css [ "flex", "gap-2" ] ]
+              [ HD.div []
+                  [ HD.text $ "L " <> char ^. _build <. _level <. to show ]
+              , HD.text "∷"
+              , HD.div
+                  [ css [ "font-bold", "text-white" ]
+                  , style $ fromMaybe (pure unit) $
                       colours
                       ^? traversed
                         <. filtered
@@ -110,11 +117,11 @@ characterSummary { colours, jobs } char =
                         <. _value
                         <. to backgroundColor
                   ]
-                  [ D.text_ $ primary ^. simple _Newtype ]
+                  [ HD.text $ primary ^. simple _Newtype ]
               ]
 
-          , D.div []
-              [ D.text_
+          , HD.div []
+              [ HD.text
                   $ intercalate " | "
                   $ char
                   # (_build <. _jobs <. itraversed) `ifoldMapOf` \n l ->
@@ -123,218 +130,282 @@ characterSummary { colours, jobs } char =
           ]
       ]
 
-exportCharacter :: Icon -> Array String -> Character -> Nut
-exportCharacter icon_ styles char = Deku.do
-  setDialog /\ dialog' <- useState'
-  dialog <- useHotRant dialog'
+data ExportAction i
+  = ReceiveExport (Connected Icon i)
+  | OpenExport
+  | CloseExport
+  | CopyExport
 
-  fixed
-    [ D.button
-        [ css_ $ S.button <> styles
-        , DL.runOn DL.click $ dialog <#> fromElement >>> traverse_ showModal
-        ]
-        [ D.text_ "Export" ]
+exportCharacter
+  :: ∀ q i o m
+   . MonadAff m
+  => MonadStore StoreAction Store m
+  => Array String
+  -> Array String
+  -> Character
+  -> H.Component q i o m
+exportCharacter containerCss buttonCss char =
+  connect (selectEq _.icon) $ H.mkComponent
+    { initialState: _.context
+    , render
+    , eval: H.mkEval H.defaultEval
+        { handleAction = act
+        , receive = Just <<< ReceiveExport
+        }
+    }
+  where
+  dialog = H.RefLabel "dialog"
 
-    , D.dialog
-        [ css_
-            [ "w-sm"
-            , "m-auto"
-            , "p-2"
-            , "bg-stone-300"
-            , "text-stone-700"
-            , "dark:bg-stone-900"
-            , "dark:text-stone-400"
-            ]
-        , pure $ attributeAtYourOwnRisk "closedby" "any"
-        , Self.self_ setDialog
-        ]
-        [ D.div
-            [ css_ [ "flex", "flex-col", "gap-2" ]
-            , DA.autofocus_ "true"
-            ]
-            [ D.h2 [ css_ [ "font-bold" ] ] [ D.text_ "Export" ]
-            , D.h3 [] [ D.text_ $ char ^. _name <. _Newtype ]
-            , D.div
-                [ css_ [ "flex", "gap-1" ] ]
-                [ (encodeURIComponent $ encode (stringCharacter icon_) char)
-                    # maybe mempty \charData ->
-                        D.a
-                          [ css_ $ S.button <>
+  act = case _ of
+    ReceiveExport input ->
+      H.put $ _.context input
+    OpenExport -> do
+      d <- H.getHTMLElementRef dialog
+      liftEffect $ traverse_ showModal (fromHTMLElement =<< d)
+    CloseExport -> do
+      d <- H.getHTMLElementRef dialog
+      liftEffect $ traverse_ (close Nothing) (fromHTMLElement =<< d)
+    CopyExport -> do
+      mcb <- liftEffect $ clipboard =<< navigator =<< window
+      icon <- H.get
+      for_ mcb \cb -> do
+        liftAff $ toAffE $
+          writeText (encode (stringCharacter icon) char) cb
+      d <- H.getHTMLElementRef dialog
+      liftEffect $ traverse_ (close Nothing) (fromHTMLElement =<< d)
+
+  render icon =
+    HD.div
+      [ css containerCss ]
+      [ HD.button
+          [ css $ S.button <> buttonCss
+          , HP.type_ HP.ButtonButton
+          , HE.onClick \_ -> OpenExport
+          ]
+          [ HD.text "Export" ]
+
+      , HD.dialog
+          [ css
+              [ "w-sm"
+              , "m-auto"
+              , "p-2"
+              , "bg-stone-300"
+              , "text-stone-700"
+              , "dark:bg-stone-900"
+              , "dark:text-stone-400"
+              ]
+          , HP.prop (WC.PropName "closedby") "any"
+          , HP.ref dialog
+          ]
+          [ HD.div
+              [ css [ "flex", "flex-col", "gap-2" ]
+              -- , HP.autofocus true
+              ]
+              [ HD.h2 [ css [ "font-bold" ] ] [ HD.text "Export" ]
+              , HD.h3 [] [ HD.text $ char ^. _name <. _Newtype ]
+              , HD.div
+                  [ css [ "flex", "gap-1" ] ] $ compact
+                  [ (encodeURIComponent $ encode (stringCharacter icon) char)
+                      <#> \charData ->
+                        HD.a
+                          [ css $ S.button <>
                               [ "flex", "grow", "justify-center", "py-2" ]
-                          , DA.href_ $ "data:text/plain;charset=utf8," <>
+                          , HP.href $ "data:text/plain;charset=utf8," <>
                               charData
-                          , DA.download_ $ (char ^. _name <<< _Newtype) <>
-                              ".txt"
+                          , HP.download $ (char ^. _name <<< _Newtype) <> ".txt"
                           ]
-                          [ D.text_ "Text" ]
+                          [ HD.text "Text" ]
 
-                , (encodeURIComponent $ J.print $ CJ.encode jsonCharacter char)
-                    # maybe mempty \charData ->
-                        D.a
-                          [ css_ $ S.button <>
+                  , ( encodeURIComponent $ J.print $ CJ.encode jsonCharacter
+                        char
+                    )
+                      <#> \charData ->
+                        HD.a
+                          [ css $ S.button <>
                               [ "flex", "grow", "justify-center", "py-2" ]
-                          , DA.href_ $ "data:application/json;charset=utf8," <>
+                          , HP.href $ "data:application/json;charset=utf8," <>
                               charData
-                          , DA.download_ $ (char ^. _name <<< _Newtype) <>
+                          , HP.download $ (char ^. _name <<< _Newtype) <>
                               ".json"
                           ]
-                          [ D.text_ "JSON" ]
+                          [ HD.text "JSON" ]
 
-                , D.button
-                    [ css_ $ S.button <>
-                        [ "flex", "grow", "justify-center", "gap-2", "py-2" ]
-                    , DA.xtypeButton
-                    , DL.runOn DL.click $ dialog <#> \d -> do
-                        mcb <- clipboard =<< navigator =<< window
-                        for_ mcb \cb -> launchAff_ do
-                          toAffE $
-                            writeText (encode (stringCharacter icon_) char) cb
-                          liftEffect $ for_ (fromElement d) (close Nothing)
-                    ]
-                    [ D.text_ "Copy" ]
-                ]
+                  , pure $ HD.button
+                      [ css $ S.button <>
+                          [ "flex", "grow", "justify-center", "gap-2", "py-2" ]
+                      , HP.type_ HP.ButtonButton
+                      , HE.onClick \_ -> CopyExport
+                      ]
+                      [ HD.text "Copy" ]
+                  ]
 
-            , D.button
-                [ css_ $ S.button <>
-                    [ "flex", "justify-center", "gap-2", "py-2" ]
-                , DA.xtypeButton
-                , DL.runOn DL.click $ dialog
-                    <#> fromElement
-                    >>> traverse_ (close Nothing)
-                ]
-                [ D.text_ "Close" ]
-            ]
-        ]
-    ]
+              , HD.button
+                  [ css $ S.button <>
+                      [ "flex", "justify-center", "gap-2", "py-2" ]
+                  , HP.type_ HP.ButtonButton
+                  , HE.onClick \_ -> CloseExport
+                  ]
+                  [ HD.text "Close" ]
+              ]
+          ]
+      ]
 
-importCharacter :: Env -> Nut
-importCharacter env = Deku.do
-  setDialog /\ dialog' <- useState'
-  dialog <- useHotRant dialog'
+data ImportAction i
+  = ReceiveImport (Connected Icon i)
+  | OpenImport
+  | CloseImport
+  | SetFormat FileFormat
+  | SetFile (Maybe File)
+  | Import
 
-  fixed
-    [ D.button
-        [ css_ $ S.button <> [ "py-2" ]
-        , DL.runOn DL.click $ dialog <#> fromElement >>> traverse_ showModal
-        ]
-        [ D.text_ "Import" ]
+importCharacter
+  :: ∀ q i o m
+   . MonadAff m
+  => MonadStore StoreAction Store m
+  => Character m
+  => H.Component q i o m
+importCharacter =
+  connect (selectEq _.icon) $ H.mkComponent
+    { initialState: \{ context } ->
+        { icon: context
+        , format: Text
+        , fileChar: NotAsked
+        }
+    , render
+    , eval: H.mkEval H.defaultEval
+        { handleAction = act
+        , receive = Just <<< ReceiveImport
+        }
+    }
+  where
+  dialog = H.RefLabel "dialog"
 
-    , D.dialog
-        [ css_
-            [ "w-full"
-            , "sm:max-w-3/5"
-            , "md:max-w-2/5"
-            , "h-3/4"
-            , "m-auto"
-            , "p-2"
-            , "bg-stone-300"
-            , "text-stone-700"
-            , "dark:bg-stone-900"
-            , "dark:text-stone-400"
-            ]
-        , pure $ attributeAtYourOwnRisk "closedby" "any"
-        , Self.self_ setDialog
-        ]
-        [ Deku.do
-            setFormat /\ format <- useState Text
-            setFile /\ file <- useState NotAsked
+  act = case _ of
+    ReceiveImport { context } ->
+      H.modify_ _ { icon = context }
+    OpenImport -> do
+      d <- H.getHTMLElementRef dialog
+      liftEffect $ traverse_ showModal (fromHTMLElement =<< d)
+    CloseImport -> do
+      d <- H.getHTMLElementRef dialog
+      liftEffect $ traverse_ (close Nothing) (fromHTMLElement =<< d)
+    SetFormat format ->
+      H.modify_ _ { format = format }
+    SetFile fs -> do
+      case fs of
+        Nothing -> pure unit
+        Just file -> do
+          f <- liftAff
+            $ fromEither
+            <<< lmap (pure <<< message)
+            <$> attempt (readAsText $ toBlob file)
+          { icon, format } <- H.get
+          let
+            fileChar = f >>= fromEither <<< \fi -> case format of
+              Text -> lmap (parseErrorHuman fi 20) $
+                decode (stringCharacter icon) fi
+              Json -> lmap pure
+                $ J.parse fi
+                >>= (CJ.decode jsonCharacter >>> lmap CJDE.print)
+          H.modify_ _ { fileChar = fileChar }
+    Import ->
+      H.gets _.fileChar >>= case _ of
+        Success c -> saveChar c
+        _ -> pure unit
 
-            let
-              fileChar = ado
-                icon_ <- env.icon
-                fo <- format
-                afi <- file
-                in
-                  afi >>= fromEither <<< \fi ->
-                    case fo of
-                      Text -> lmap (parseErrorHuman fi 20) $
-                        decode (stringCharacter icon_) fi
-                      Json -> lmap pure
-                        $ J.parse fi
-                        >>= (CJ.decode jsonCharacter >>> lmap CJDE.print)
+  render { icon, format, fileChar } =
+    HD.div []
+      [ HD.button
+          [ css $ S.button <> [ "py-2" ]
+          , HP.type_ HP.ButtonButton
+          , HE.onClick \_ -> OpenImport
+          ]
+          [ HD.text "Import" ]
 
-            D.form
-              [ css_
+      , HD.dialog
+          [ css
+              [ "w-full"
+              , "sm:max-w-3/5"
+              , "md:max-w-2/5"
+              , "h-3/4"
+              , "m-auto"
+              , "p-2"
+              , "bg-stone-300"
+              , "text-stone-700"
+              , "dark:bg-stone-900"
+              , "dark:text-stone-400"
+              ]
+          , HP.prop (WC.PropName "closedby") "any"
+          , HP.ref dialog
+          ]
+          [ HD.form
+              [ css
                   [ "flex"
                   , "flex-col"
                   , "h-full"
                   , "justify-between"
                   , "gap-2"
                   ]
-              , DA.autofocus_ "true"
-              , DA.method_ "dialog"
+              -- , HP.autofocus true
+              , HP.method HP.Dialog
               ]
-              [ D.div
-                  [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                  [ D.h2 [ css_ [ "font-bold" ] ] [ D.text_ "Import" ]
-                  , D.div
-                      [ css_ [ "flex", "flex-wrap", "gap-2" ] ]
-                      [ D.div
-                          [ css_ [ "flex", "items-center", "gap-1" ] ]
+              [ HD.div
+                  [ css [ "flex", "flex-col", "gap-2" ] ]
+                  [ HD.h2 [ css [ "font-bold" ] ] [ HD.text "Import" ]
+                  , HD.div
+                      [ css [ "flex", "flex-wrap", "gap-2" ] ]
+                      [ HD.div
+                          [ css [ "flex", "items-center", "gap-1" ] ]
                           $ [ Text, Json ]
                           <#> \f ->
-                            D.button
+                            HD.button
                               [ css
-                                  $ pure
-                                      [ "flex-1"
-                                      , "p-2"
-                                      , "rounded"
-                                      , "text-white"
-                                      ]
+                                  $
+                                    [ "flex-1"
+                                    , "p-2"
+                                    , "rounded"
+                                    , "text-white"
+                                    ]
                                   <>
-                                    ( format <#> eq f >>>
-                                        if _ then [ "bg-sky-600" ]
-                                        else
-                                          [ "cursor-pointer"
-                                          , "disabled:cursor-not-allowed"
-                                          , "bg-stone-500"
-                                          , "dark:bg-stone-700"
-                                          , "hover:bg-stone-400"
-                                          , "focus:bg-stone-400"
-                                          , "dark:hover:bg-stone-500"
-                                          , "dark:focus:bg-stone-500"
-                                          ]
-                                    )
-                              , DA.xtypeButton
-                              , DL.runOn_ DL.click $ setFormat f
+                                    if format == f then [ "bg-sky-600" ]
+                                    else
+                                      [ "cursor-pointer"
+                                      , "disabled:cursor-not-allowed"
+                                      , "bg-stone-500"
+                                      , "dark:bg-stone-700"
+                                      , "hover:bg-stone-400"
+                                      , "focus:bg-stone-400"
+                                      , "dark:hover:bg-stone-500"
+                                      , "dark:focus:bg-stone-500"
+                                      ]
+                              , HP.type_ HP.ButtonButton
+                              , HE.onClick \_ -> SetFormat f
                               ]
-                              [ D.text_ $ show f ]
+                              [ HD.text $ show f ]
 
-                      , D.input
-                          [ css_ $ S.button <>
+                      , HD.input
+                          [ css $ S.button <>
                               [ "flex"
                               , "grow"
                               , "items-center"
                               , "gap-2"
                               , "py-2"
                               ]
-                          , DA.xtypeFile
-                          , DA.accept $ format <#> case _ of
-                              Text -> "text/plain"
-                              Json -> "application/json"
-                          , DL.change_ \e -> do
-                              fs <- traverse files
-                                (fromEventTarget =<< target e)
-                              launchAff_ $ void
-                                $ for (item 0 =<< join fs)
-                                $ toBlob
-                                >>> readAsText
-                                >>> attempt
-                                >=> lmap (pure <<< message)
-                                >>> fromEither
-                                >>> setFile
-                                >>> liftEffect
+                          , HP.type_ HP.InputFile
+                          , HP.accept case format of
+                              Text -> mediaType textPlain
+                              Json -> mediaType applicationJSON
+                          , HE.onFileUpload SetFile
                           ]
-                          []
                       ]
                   ]
 
-              , fileChar <#~> case _ of
-                  NotAsked -> mempty
-                  Loading -> D.div [] [ D.text_ "Loading..." ]
-                  Success c -> env.icon <#~> \icon ->
-                    D.div
-                      [ css_
+              , case fileChar of
+                  NotAsked -> HD.span [] []
+                  Loading -> HD.div [] [ HD.text "Loading..." ]
+                  Success c ->
+                    HD.div
+                      [ css
                           [ "w-full"
                           , "max-w-7/8"
                           , "self-center"
@@ -347,16 +418,16 @@ importCharacter env = Deku.do
                       ]
                       [ characterSummary icon c ]
                   Error e ->
-                    D.div
-                      [ css_
+                    HD.div
+                      [ css
                           [ "w-full"
                           , "max-w-7/8"
                           , "self-center"
                           ]
                       ]
-                      [ D.div [] [ D.text_ "Invalid file:" ]
-                      , D.div
-                          [ css_
+                      [ HD.div [] [ HD.text "Invalid file:" ]
+                      , HD.div
+                          [ css
                               [ "p-2"
                               , "font-mono"
                               , "bg-stone-500"
@@ -365,33 +436,30 @@ importCharacter env = Deku.do
                               ]
                           ]
                           $ e
-                          <#> \l -> D.div [] [ D.text_ l ]
+                          <#> \l -> HD.div [] [ HD.text l ]
                       ]
 
-              , D.div
-                  [ css_ [ "flex", "gap-2", "justify-end-safe" ] ]
-                  [ D.button
-                      [ css_ $ S.button <>
+              , HD.div
+                  [ css [ "flex", "gap-2", "justify-end-safe" ] ]
+                  [ HD.button
+                      [ css $ S.button <>
                           [ "flex", "justify-center", "gap-2", "py-2" ]
-                      , DA.xtypeSubmit
-                      , DA.disabled $ fileChar <#> show <<< case _ of
+                      , HP.type_ HP.ButtonSubmit
+                      , HP.disabled case fileChar of
                           Success _ -> false
                           _ -> true
-                      , DL.runOn DL.click $ fileChar <#> case _ of
-                          Success c -> (env ^. _saveChar) c
-                          _ -> pure unit
+                      , HE.onClick \_ -> Import
                       ]
-                      [ D.text_ "Import" ]
+                      [ HD.text "Import" ]
 
-                  , D.button
-                      [ css_ $ S.button <>
+                  , HD.button
+                      [ css $ S.button <>
                           [ "flex", "justify-center", "gap-2", "py-2" ]
-                      , DL.runOn DL.click $ dialog
-                          <#> fromElement
-                          >>> traverse_ (close Nothing)
+                      , HP.type_ HP.ButtonButton
+                      , HE.onClick \_ -> CloseImport
                       ]
-                      [ D.text_ "Cancel" ]
+                      [ HD.text "Cancel" ]
                   ]
               ]
-        ]
-    ]
+          ]
+      ]

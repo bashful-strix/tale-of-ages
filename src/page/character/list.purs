@@ -8,30 +8,68 @@ import Data.Foldable (foldMap)
 import Data.Lens ((^.))
 import Data.Maybe (Maybe(..))
 
-import Deku.Core (Nut)
-import Deku.DOM as D
-import Deku.DOM.Attributes as DA
-import Deku.DOM.Listeners as DL
-import Deku.Hooks ((<#~>))
+import Effect.Aff.Class (class MonadAff)
+
+import Halogen as H
+import Halogen.HTML as HD
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectAll)
 
 import Routing.Duplex (print)
+
+import Type.Proxy (Proxy(..))
+import Web.UIEvent.MouseEvent (MouseEvent)
+
+import ToA.Capability.Character (class Character, deleteChar)
+import ToA.Capability.Navigate (class Navigate, navigate)
+import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
+import ToA.Data.Store (Store, StoreAction)
+
+import ToA.Data.Icon.Character (Character)
+import ToA.Data.Icon.Name (_name)
 
 import ToA.Component.Character
   ( characterSummary
   , exportCharacter
   , importCharacter
   )
-import ToA.Data.Env (Env, _deleteChar, _navigate)
-import ToA.Data.Icon.Name (_name)
-import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
-import ToA.Util.Html (css_)
+import ToA.Util.Html (css)
 import ToA.Util.Style as S
 
-listCharacterPage :: Env -> Nut
-listCharacterPage env@{ characters, icon } =
-  characters <&> icon <#~> \(chars /\ icon_) ->
-    D.div
-      [ css_
+data Action i
+  = Receive (Connected Store i)
+  | Navigate Route (Maybe MouseEvent)
+  | DeleteChar Character
+
+listCharacterPage
+  :: ∀ q i o m
+   . MonadAff m
+  => MonadStore StoreAction Store m
+  => Character m
+  => Navigate m
+  => H.Component q i o m
+listCharacterPage =
+  connect selectAll $ H.mkComponent
+    { initialState: _.context
+    , render
+    , eval: H.mkEval H.defaultEval
+        { handleAction = act
+        , receive = pure <<< Receive
+        }
+    }
+  where
+
+  act = case _ of
+    Receive { context } -> H.put context
+    Navigate r e -> navigate r e
+    DeleteChar c -> deleteChar c
+
+  render { characters, icon } =
+    HD.div
+      [ css
           [ "flex"
           , "flex-col"
           , "items-center"
@@ -39,10 +77,10 @@ listCharacterPage env@{ characters, icon } =
           , "gap-2"
           , "overflow-y-auto"
           ]
-      ]
-      [ chars # foldMap \char ->
-          D.div
-            [ css_
+      ] $ join
+      [ characters # foldMap \char -> pure $
+          HD.div
+            [ css
                 [ "flex"
                 , "w-full"
                 , "sm:max-w-4/5"
@@ -52,44 +90,48 @@ listCharacterPage env@{ characters, icon } =
                 , "text-stone-800"
                 ]
             ]
-            [ D.a
-                [ css_ $ S.interactable <>
+            [ HD.a
+                [ css $ S.interactable <>
                     [ "flex", "grow", "items-center", "gap-2", "p-2" ]
-                , DA.href_ $ print routeCodec $ Characters $ Just $ ViewChar $
+                , HP.href $ print routeCodec $ Characters $ Just $ ViewChar $
                     char ^. _name
-                , DL.click_
-                    $ (env ^. _navigate)
-                        (Characters $ Just $ ViewChar $ char ^. _name)
+                , HE.onClick $ Navigate
+                    (Characters $ Just $ ViewChar $ char ^. _name)
                     <<< pure
                 ]
-                [ characterSummary icon_ char ]
+                [ characterSummary icon char ]
 
-            , D.div
-                [ css_ [ "flex", "flex-col" ] ]
-                [ D.button
-                    [ css_ $ S.interactableDanger <>
+            , HD.div
+                [ css [ "flex", "flex-col" ] ]
+                [ HD.button
+                    [ css $ S.interactableDanger <>
                         [ "flex", "grow", "items-center", "px-2" ]
-                    , DL.runOn_ DL.click $ (env ^. _deleteChar) char
+                    , HE.onClick \_ -> DeleteChar char
                     ]
-                    [ D.text_ "Delete" ]
+                    [ HD.text "Delete" ]
 
-                , exportCharacter icon_
-                    [ "flex", "grow", "items-center", "px-2", "rounded-none" ]
-                    char
+                , HD.slot_
+                    (Proxy :: _ "exportChar")
+                    (char ^. _name)
+                    (exportCharacter
+                      [ "flex", "grow" ]
+                      [  "items-center", "px-2", "rounded-none" ]
+                      char
+                    )
+                    unit
                 ]
             ]
 
-      , D.div
-          [ css_ [ "flex", "gap-2" ] ]
-          [ D.a
-              [ css_ $ S.button <> [ "flex", "items-center", "gap-2", "p-2" ]
-              , DA.href_ $ print routeCodec $ Characters $ Just CreateChar
-              , DL.click_
-                  $ (env ^. _navigate) (Characters $ Just CreateChar)
-                  <<< pure
-              ]
-              [ D.text_ "Create" ]
+      , [ HD.div
+            [ css [ "flex", "gap-2" ] ]
+            [ HD.a
+                [ css $ S.button <> [ "flex", "items-center", "gap-2", "p-2" ]
+                , HP.href $ print routeCodec $ Characters $ Just CreateChar
+                , HE.onClick $ Navigate (Characters $ Just CreateChar) <<< pure
+                ]
+                [ HD.text "Create" ]
 
-          , importCharacter env
-          ]
+            , HD.slot_ (Proxy :: _ "importChar") unit importCharacter unit
+            ]
+        ]
       ]

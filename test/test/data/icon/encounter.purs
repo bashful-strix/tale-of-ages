@@ -4,12 +4,14 @@ import Prelude
 
 import Data.Codec (decode, encode)
 import Data.Maybe (Maybe(..))
+import Data.Map (empty)
 
 import ToA.Data.Icon.Name (Name(..))
 
 import ToA.Data.Icon.Encounter
   ( Encounter(..)
   , FoeEntry(..)
+  , FoeState(..)
   , stringEncounter
   )
 
@@ -23,42 +25,55 @@ spec = do
       let
         e = Encounter
           { name: Name "Test Name"
+          , players: 1
           , notes: Just "Some notes."
           , foes:
-              [ FoeEntry
+              [ Active
                   { name: Name "Foe 1"
                   , alias: Just "Foe 1 Alias"
-                  , count: 1
                   , faction: Just $ Name "Faction"
                   , template: Just $ Name "Template"
+                  , state: [ FoeState { hp: 0, vigor: 0, status: empty } ]
                   }
-              , FoeEntry
+              , Active
                   { name: Name "Foe 2"
                   , alias: Nothing
-                  , count: 2
                   , faction: Just $ Name "Faction"
                   , template: Nothing
+                  , state:
+                      [ FoeState { hp: 0, vigor: 0, status: empty }
+                      , FoeState { hp: 0, vigor: 0, status: empty }
+                      ]
                   }
-              ]
-          , reserves:
-              [ FoeEntry
+              , Reserve
                   { name: Name "Foe 3"
                   , alias: Just "Foe 3 Alias"
-                  , count: 3
                   , faction: Nothing
                   , template: Just $ Name "Template"
+                  , state:
+                      [ FoeState { hp: 0, vigor: 0, status: empty }
+                      , FoeState { hp: 0, vigor: 0, status: empty }
+                      , FoeState { hp: 0, vigor: 0, status: empty }
+                      ]
                   }
-              , FoeEntry
+              , Reserve
                   { name: Name "Foe 4"
                   , alias: Nothing
-                  , count: 4
                   , faction: Nothing
                   , template: Nothing
+                  , state:
+                      [ FoeState { hp: 0, vigor: 0, status: empty }
+                      , FoeState { hp: 0, vigor: 0, status: empty }
+                      , FoeState { hp: 0, vigor: 0, status: empty }
+                      , FoeState { hp: 0, vigor: 0, status: empty }
+                      ]
                   }
               ]
           }
 
-      (AnyShow <$> decode stringEncounter (encode stringEncounter e))
+      ( AnyShow <$> decode (stringEncounter mempty)
+          (encode (stringEncounter mempty) e)
+      )
         `shouldEqual` pure (AnyShow e)
 
     it "should roundtrip text" do
@@ -77,7 +92,8 @@ Reserves
 - 3x {Template} Foe 3 | Foe 3 Alias
 - 4x Foe 4"""
 
-      (encode stringEncounter <$> decode stringEncounter t) `shouldEqual` pure t
+      (encode (stringEncounter mempty) <$> decode (stringEncounter mempty) t)
+        `shouldEqual` pure t
 
     it "should decode an unusual text encounter" do
       let
@@ -90,19 +106,19 @@ Foes
 Reserves
 """
 
-      (AnyShow <$> decode stringEncounter t) `shouldEqual`
+      (AnyShow <$> decode (stringEncounter mempty) t) `shouldEqual`
         ( pure $ AnyShow $ Encounter
             { name: Name "Test Name"
+            , players: 1
             , notes: Nothing
             , foes:
-                [ FoeEntry
+                [ Active
                     { name: Name "Foe 1"
                     , alias: Just "Foe 1 Alias"
-                    , count: 1
                     , faction: Just $ Name "Faction Name"
                     , template: Just $ Name "Template"
+                    , state: [ FoeState { hp: 0, vigor: 0, status: empty } ]
                     }
                 ]
-            , reserves: []
             }
         )

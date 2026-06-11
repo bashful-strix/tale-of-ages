@@ -15,18 +15,19 @@ module ToA.Component.Ability
 
 import Prelude
 
-import CSS (backgroundColor, lighten, render, renderedInline)
+import CSS (backgroundColor, lighten)
 
-import Data.Foldable (foldMap, intercalate)
+import Data.Array.NonEmpty (intersperse, toArray)
+import Data.Foldable (foldMap)
 import Data.Lens ((^.), (^?), filtered, has, is, only, to, traversed, view)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe, fromMaybe)
 import Data.Monoid (guard)
 
-import Deku.Core (Nut)
-import Deku.DOM as D
-import Deku.DOM.Attributes as DA
+import Halogen.HTML as HD
+import Halogen.HTML.CSS (style)
+import Halogen.HTML.Properties as HP
 
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
@@ -44,60 +45,11 @@ import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Markup (length)
 import ToA.Data.Icon.Name (_name)
-
 import ToA.Data.Icon.Pc.Ability (Ability, _action, _resolve, _steps, _tags)
 
 import ToA.Component.Markup (markup)
-import ToA.Util.Optic ((#~))
-import ToA.Util.Html (css_)
-
-renderAbility :: Icon -> Ability -> Nut
-renderAbility icon@{ colours } a =
-  D.div
-    [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-    [ D.div
-        [ css_
-            [ "flex"
-            , "justify-between"
-            , "bg-stone-400"
-            , "text-stone-800"
-            , "dark:bg-stone-700"
-            , "dark:text-stone-300"
-            ]
-        ]
-        [ D.h3
-            [ css_ [ "text-white", "font-bold" ]
-            , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
-                backgroundColor <$> colours
-                  ^? traversed
-                    <<< filtered (view _name >>> eq (a ^. _colour))
-                    <<< _value
-            ]
-            [ D.text_ $ a ^. _name <<< _Newtype ]
-        , D.div
-            [ css_ [ "flex", "items-center", "gap-2", "mr-2" ] ]
-            [ a
-                ^. _tags
-                  <<< traversed
-                  <<< filtered (has $ only Attack)
-                  <<< to \_ -> renderAttackSign
-            , renderActionSign $ a ^. _action
-            ]
-        ]
-
-    , D.div
-        [ css_ [ "flex", "flex-wrap", "gap-1" ] ]
-        [ a # _action #~ renderCost
-        , a # _resolve #~ renderTagBox [ "bg-amber-500", "text-white" ]
-            <<< (_ <> " resolve")
-            <<< show
-        , a # _tags <<< traversed #~ renderTag
-        ]
-
-    , D.div [ css_ [ "italic" ] ] [ markup icon $ a ^. _desc ]
-
-    , renderSteps icon $ a ^. _steps
-    ]
+import ToA.Util.Html (css)
+import ToA.Util.Optic ((^::), (#~))
 
 printCost :: Action -> String
 printCost = case _ of
@@ -105,35 +57,6 @@ printCost = case _ of
   One -> "1 action"
   Two -> "2 actions"
   Interrupt n -> "Interrupt " <> show n
-
-renderActionSign :: Action -> Nut
-renderActionSign = case _ of
-  Quick ->
-    D.span
-      [ css_ [ "icon-[game-icons--quick-slash]" ]
-      , DA.title_ "Quick"
-      ]
-      []
-  One ->
-    D.span
-      [ css_ [ "icon-[game-icons--serrated-slash]" ]
-      , DA.title_ "1 action"
-      ]
-      []
-  Two ->
-    D.span
-      [ css_ [ "flex" ]
-      , DA.title_ "2 actions"
-      ]
-      [ D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
-      , D.span [ css_ [ "icon-[game-icons--serrated-slash]" ] ] []
-      ]
-  Interrupt n ->
-    D.span
-      [ css_ [ "icon-[game-icons--divert]" ]
-      , DA.title_ $ "Interrupt " <> show n
-      ]
-      []
 
 printTag :: Tag -> String
 printTag = case _ of
@@ -164,102 +87,179 @@ printTag = case _ of
   KeywordTag k -> k ^. simple _Newtype
   LimitTag n l -> show n <> "/" <> l
 
-renderAttackSign :: Nut
+renderAbility :: ∀ w i. Icon -> Ability -> HD.HTML w i
+renderAbility icon@{ colours } a =
+  HD.div
+    [ css [ "flex", "flex-col", "gap-y-1" ] ]
+    [ HD.div
+        [ css
+            [ "flex"
+            , "justify-between"
+            , "bg-stone-400"
+            , "text-stone-800"
+            , "dark:bg-stone-700"
+            , "dark:text-stone-300"
+            ]
+        ]
+        [ HD.h3
+            [ css [ "text-white", "font-bold" ]
+            , style $ fromMaybe (pure unit) $ backgroundColor <$> colours
+                ^? traversed
+                  <<< filtered (view _name >>> eq (a ^. _colour))
+                  <<< _value
+            ]
+            [ HD.text $ a ^. _name <<< _Newtype ]
+        , HD.div
+            [ css [ "flex", "items-center", "gap-2", "mr-2" ] ] $
+            ( a
+                ^:: _tags
+                  <<< traversed
+                  <<< filtered (has $ only Attack)
+                  <<< to \_ -> renderAttackSign
+            ) <> [ renderActionSign $ a ^. _action ]
+        ]
+
+    , HD.div
+        [ css [ "flex", "flex-wrap", "gap-1" ] ] $ join
+        [ a # _action #~ pure <<< renderCost
+        , a # _resolve #~ pure <<< renderTagBox [ "bg-amber-500", "text-white" ]
+            <<< (_ <> " resolve")
+            <<< show
+        , a # _tags <<< traversed #~ pure <<< renderTag
+        ]
+
+    , HD.div [ css [ "italic" ] ] [ markup icon $ a ^. _desc ]
+
+    , renderSteps icon $ a ^. _steps
+    ]
+
+renderActionSign :: ∀ w i. Action -> HD.HTML w i
+renderActionSign = case _ of
+  Quick ->
+    HD.span
+      [ css [ "icon-[game-icons--quick-slash]" ]
+      , HP.title "Quick"
+      ]
+      []
+  One ->
+    HD.span
+      [ css [ "icon-[game-icons--serrated-slash]" ]
+      , HP.title "1 action"
+      ]
+      []
+  Two ->
+    HD.span
+      [ css [ "flex" ]
+      , HP.title "2 actions"
+      ]
+      [ HD.span [ css [ "icon-[game-icons--serrated-slash]" ] ] []
+      , HD.span [ css [ "icon-[game-icons--serrated-slash]" ] ] []
+      ]
+  Interrupt n ->
+    HD.span
+      [ css [ "icon-[game-icons--divert]" ]
+      , HP.title $ "Interrupt " <> show n
+      ]
+      []
+
+renderAttackSign :: ∀ w i. HD.HTML w i
 renderAttackSign =
-  D.span
-    [ css_ [ "icon-[game-icons--crossed-swords]" ]
-    , DA.title_ "Attack"
+  HD.span
+    [ css [ "icon-[game-icons--crossed-swords]" ]
+    , HP.title "Attack"
     ]
     []
 
-renderTagBox :: Array String -> String -> Nut
+renderTagBox :: ∀ w i. Array String -> String -> HD.HTML w i
 renderTagBox styles name =
-  D.div
-    [ css_ $ [ "shrink-0", "px-1", "rounded" ] <> styles ]
-    [ D.text_ name ]
+  HD.div
+    [ css $ [ "shrink-0", "px-1", "rounded" ] <> styles ]
+    [ HD.text name ]
 
-renderCost :: Action -> Nut
+renderCost :: ∀ w i. Action -> HD.HTML w i
 renderCost =
   renderTagBox [ "bg-indigo-500", "text-white" ] <<< printCost
 
-renderTag :: Tag -> Nut
+renderTag :: ∀ w i. Tag -> HD.HTML w i
 renderTag tag =
   renderTagBox
     [ if tag # is (only Attack) then "bg-rose-500" else "bg-sky-500"
     , "text-white"
     ] $ printTag tag
 
-renderSteps :: Icon -> Array Step -> Nut
+renderSteps :: ∀ w i. Icon -> Array Step -> HD.HTML w i
 renderSteps icon steps =
-  D.div []
-    [ D.ol
-        [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+  HD.div []
+    [ HD.ol
+        [ css [ "flex", "flex-col", "gap-y-1" ] ]
         $ renderStep icon <$> steps
     ]
 
-renderStep :: Icon -> Step -> Nut
+renderStep :: ∀ w i. Icon -> Step -> HD.HTML w i
 renderStep icon = case _ of
   Step s d t ->
-    D.li [] [ renderStepName icon s d, D.span [] [ markup icon t ] ]
+    HD.li [] [ renderStepName icon s d, HD.span [] [ markup icon t ] ]
+
   AttackStep m h ->
-    D.li []
-      [ D.span []
-          [ D.span
-              [ css_ [ "font-bold" ] ]
-              [ D.text_ "Attack" ]
-          , D.text_ ": "
+    HD.li []
+      [ HD.span []
+          [ HD.span
+              [ css [ "font-bold" ] ]
+              [ HD.text "Attack" ]
+          , HD.text ": "
           ]
-      , D.span []
-          [ markup icon m
-          , D.span [] [ D.text_ "." ]
-          , guard (length h > 0) $
-              D.span []
-                [ D.span [ css_ [ "italic" ] ] [ D.text_ " Hit: " ]
-                , markup icon h
-                ]
-          ]
+      , HD.span [] $
+          [ markup icon m ] <>
+            guard (length h > 0)
+              [ HD.span [] [ HD.text "." ]
+              , HD.span [] $
+                  [ HD.span [ css [ "italic" ] ] [ HD.text " Hit: " ]
+                  , markup icon h
+                  ]
+              ]
       ]
+
   InsetStep d s t ins ->
-    D.li []
+    HD.li []
       [ renderStepName icon d s
-      , D.span [] [ markup icon t ]
-      , D.div
-          [ css_ [ "pl-8" ] ]
+      , HD.span [] [ markup icon t ]
+      , HD.div
+          [ css [ "pl-8" ] ]
           [ renderInset icon ins ]
       ]
 
-renderStepName :: Icon -> StepType -> Maybe Die -> Nut
+renderStepName :: ∀ w i. Icon -> StepType -> Maybe Die -> HD.HTML w i
 renderStepName icon s d =
-  D.span
-    [ css_ [ "font-bold" ] ]
+  HD.span
+    [ css [ "font-bold" ] ]
     [ label s
-    , D.text_ $ foldMap (const " [X]") d
-    , D.text_ ": "
+    , HD.text $ foldMap (const " [X]") d
+    , HD.text ": "
     ]
   where
   label = case _ of
-    Eff -> D.text_ "Effect"
-    OnHit -> D.text_ "On hit"
-    AreaEff -> D.text_ "Area effect"
-    TriggerStep -> D.text_ "Trigger"
-    KeywordStep k -> D.text_ $ k ^. simple _Newtype
+    Eff -> HD.text "Effect"
+    OnHit -> HD.text "On hit"
+    AreaEff -> HD.text "Area effect"
+    TriggerStep -> HD.text "Trigger"
+    KeywordStep k -> HD.text $ k ^. simple _Newtype
     VariableKeywordStep k n ->
-      D.text_ $ k ^. simple _Newtype <> " " <> show n
+      HD.text $ k ^. simple _Newtype <> " " <> show n
     AltStep ss ->
-      intercalate
-        (D.span [ css_ [ "font-normal" ] ] [ D.text_ ", or " ])
+      HD.span [] $ toArray $ intersperse
+        (HD.span [ css [ "font-normal" ] ] [ HD.text ", or " ])
         (label <$> ss)
-    SummonEff -> D.text_ "Summon effect"
-    SummonAction -> D.text_ "Summon action"
+    SummonEff -> HD.text "Summon effect"
+    SummonAction -> HD.text "Summon action"
     OtherStep k -> markup icon k
 
-renderInset :: Icon -> Inset -> Nut
+renderInset :: ∀ w i. Icon -> Inset -> HD.HTML w i
 renderInset icon@{ colours } = case _ of
   SummonInset si ->
-    D.div
-      [ css_ [ "ml-8" ] ]
-      [ D.div
-          [ css_
+    HD.div
+      [ css [ "ml-8" ] ]
+      [ HD.div
+          [ css
               [ "flex"
               , "gap-x-1"
               , "bg-stone-400"
@@ -268,27 +268,27 @@ renderInset icon@{ colours } = case _ of
               , "dark:text-stone-300"
               ]
           ]
-          [ D.span
-              [ css_ [ "text-white", "font-bold" ]
-              , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+          [ HD.span
+              [ css [ "text-white", "font-bold" ]
+              , style $ fromMaybe (pure unit) $
                   (backgroundColor <<< lighten 0.2) <$> colours
                     ^? traversed
                       <<< filtered (view _name >>> eq si.colour)
                       <<< _value
               ]
-              [ D.text_ $ si.name ^. simple _Newtype ]
+              [ HD.text $ si.name ^. simple _Newtype ]
           ]
-      , D.div
-          [ css_ [ "italic" ] ]
-          [ D.text_ $ "Summon (" <> show si.max <> ")" ]
+      , HD.div
+          [ css [ "italic" ] ]
+          [ HD.text $ "Summon (" <> show si.max <> ")" ]
       , renderSteps icon si.abilities
       ]
 
   AbilityInset ai ->
-    D.div
-      [ css_ [ "flex", "flex-col", "gap-y-1", "ml-8" ] ]
-      [ D.div
-          [ css_
+    HD.div
+      [ css [ "flex", "flex-col", "gap-y-1", "ml-8" ] ]
+      [ HD.div
+          [ css
               [ "flex"
               , "justify-between"
               , "bg-stone-400"
@@ -297,39 +297,38 @@ renderInset icon@{ colours } = case _ of
               , "dark:text-stone-300"
               ]
           ]
-          [ D.h4
-              [ css_ [ "text-white", "font-bold" ]
-              , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+          [ HD.h4
+              [ css [ "text-white", "font-bold" ]
+              , style $ fromMaybe (pure unit) $
                   (backgroundColor <<< lighten 0.2) <$> colours
                     ^? traversed
                       <<< filtered (view _name >>> eq ai.colour)
                       <<< _value
               ]
-              [ D.text_ $ ai.name ^. simple _Newtype ]
-          , D.div
-              [ css_ [ "flex", "items-center", "gap-2", "mr-2" ] ]
-              [ ai.tags
-                  ^. traversed
+              [ HD.text $ ai.name ^. simple _Newtype ]
+          , HD.div
+              [ css [ "flex", "items-center", "gap-2", "mr-2" ] ] $
+              ( ai.tags
+                  ^:: traversed
                     <<< filtered (has $ only Attack)
                     <<< to \_ -> renderAttackSign
-              , renderActionSign ai.cost
-              ]
+              ) <> [ renderActionSign ai.cost ]
           ]
-      , D.div
-          [ css_ [ "flex", "flex-wrap", "gap-1" ] ] $
+      , HD.div
+          [ css [ "flex", "flex-wrap", "gap-1" ] ] $
           [ renderCost ai.cost ] <> (renderTag <$> ai.tags)
-      , D.div []
-          [ D.ol
-              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+      , HD.div []
+          [ HD.ol
+              [ css [ "flex", "flex-col", "gap-y-1" ] ]
               $ ai.steps <#> renderStep icon
           ]
       ]
 
   KeywordInset ki ->
-    D.div
-      [ css_ [ "ml-8" ] ]
-      [ D.div
-          [ css_
+    HD.div
+      [ css [ "ml-8" ] ]
+      [ HD.div
+          [ css
               [ "flex"
               , "gap-x-1"
               , "bg-stone-400"
@@ -338,22 +337,22 @@ renderInset icon@{ colours } = case _ of
               , "dark:text-stone-300"
               ]
           ]
-          [ D.span
-              [ css_ [ "text-white", "font-bold" ]
-              , DA.style_ $ fromMaybe "" $ renderedInline $ render =<<
+          [ HD.span
+              [ css [ "text-white", "font-bold" ]
+              , style $ fromMaybe (pure unit) $
                   (backgroundColor <<< lighten 0.2) <$> colours
                     ^? traversed
                       <<< filtered (view _name >>> eq ki.colour)
                       <<< _value
               ]
-              [ D.text_ $ ki.name ^. simple _Newtype ]
+              [ HD.text $ ki.name ^. simple _Newtype ]
           ]
-      , D.div
-          [ css_ [ "italic" ] ]
-          [ D.text_ $ ki.keyword ^. simple _Newtype ]
-      , D.div []
-          [ D.ol
-              [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+      , HD.div
+          [ css [ "italic" ] ]
+          [ HD.text $ ki.keyword ^. simple _Newtype ]
+      , HD.div []
+          [ HD.ol
+              [ css [ "flex", "flex-col", "gap-y-1" ] ]
               $ ki.steps <#> renderStep icon
           ]
       ]

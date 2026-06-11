@@ -1,51 +1,16 @@
 module ToA.Util.Html
   ( css
-  , css_
-  , style
-  , style_
-
   , hr
   ) where
 
 import Prelude
 
-import CSS (CSS, render, renderedInline)
-import Data.Maybe (fromMaybe)
-import Data.String (joinWith)
+import Halogen.HTML as HD
+import Halogen.HTML.Properties as HP
 
-import Deku.Attribute (Attribute)
-import Deku.Core (Nut)
-import Deku.DOM as D
-import Deku.DOM.Attributes (klass, style) as DA
+css :: ∀ r i. Array String -> HP.IProp (class :: String | r) i
+css = HP.classes <<< map HD.ClassName
 
-css
-  :: forall r f
-   . Functor f
-  => f (Array String)
-  -> f (Attribute (klass :: String | r))
-css = DA.klass <<< map (joinWith " ")
-
-css_
-  :: forall r f
-   . Applicative f
-  => Array String
-  -> f (Attribute (klass :: String | r))
-css_ = css <<< pure
-
-style
-  :: ∀ r f
-   . Functor f
-  => f CSS
-  -> f (Attribute (style :: String | r))
-style = DA.style <<< map (fromMaybe "" <<< renderedInline <<< render)
-
-style_
-  :: ∀ r f
-   . Applicative f
-  => CSS
-  -> f (Attribute (style :: String | r))
-style_ = style <<< pure
-
-hr :: Nut
+hr :: ∀ w i. HD.HTML w i
 hr =
-  D.hr [ css_ [ "my-1", "text-stone-500", "dark:text-stone-700" ] ] []
+  HD.hr [ css [ "my-1", "text-stone-500", "dark:text-stone-700" ] ]

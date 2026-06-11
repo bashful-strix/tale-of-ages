@@ -57,6 +57,9 @@ newtype Faction = Faction
 
 derive instance Newtype Faction _
 
+instance Eq Faction where
+  eq (Faction { name: a }) (Faction { name: b }) = a == b
+
 instance Named Faction where
   _name = _Newtype <<< key @"name"
 

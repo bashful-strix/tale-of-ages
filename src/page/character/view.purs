@@ -4,7 +4,7 @@ module ToA.Page.Character.View
 
 import ToA.Prelude
 
-import CSS (backgroundColor, render, renderedInline)
+import CSS (backgroundColor)
 
 import Data.Array (sort)
 import Data.Foldable (elem, foldMap)
@@ -28,21 +28,30 @@ import Data.Lens.Prism (only)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (guard)
 
-import Deku.Core (Nut)
-import Deku.DOM as D
-import Deku.DOM.Attributes as DA
-import Deku.DOM.Listeners as DL
-import Deku.Hooks ((<#~>))
+import Effect.Aff.Class (class MonadAff)
+
+import Halogen as H
+import Halogen.HTML as HD
+import Halogen.HTML.CSS (style)
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectAll)
 
 import Routing.Duplex (print)
 
-import ToA.Component.Ability (renderAbility)
-import ToA.Component.Character (exportCharacter)
-import ToA.Component.Talent (renderTalent)
-import ToA.Component.Trait (renderTrait)
-import ToA.Data.Env (Env, _deleteChar, _navigate)
+import Type.Proxy (Proxy(..))
+import Web.UIEvent.MouseEvent (MouseEvent)
+
+import ToA.Capability.Character (class Character, deleteChar)
+import ToA.Capability.Navigate (class Navigate, navigate)
+import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
+import ToA.Data.Store (Store, StoreAction)
+
 import ToA.Data.Icon.Character
-  ( Level(..)
+  ( Character
+  , Level(..)
   , _build
   , _jobs
   , _level
@@ -60,126 +69,100 @@ import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Icon.Pc.Class (_basic, _defense, _hp, _move)
 import ToA.Data.Icon.Pc.Job (_limitBreak)
 
-import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
-
-import ToA.Util.Html (css_, hr)
+import ToA.Component.Ability (renderAbility)
+import ToA.Component.Character (exportCharacter)
+import ToA.Component.Talent (renderTalent)
+import ToA.Component.Trait (renderTrait)
+import ToA.Util.Html (css, hr)
 import ToA.Util.Optic ((^::))
 import ToA.Util.Style as S
 
-viewCharacterPage :: Env -> Name -> Nut
-viewCharacterPage env@{ characters, icon } pathChar =
-  characters <&> icon <#~>
-    \(chars /\ icon_@{ abilities, classes, colours, jobs, talents, traits }) ->
-      let
-        char = chars ^. at pathChar
+data Action
+  = Receive (Connected Store Name)
+  | Navigate Route (Maybe MouseEvent)
+  | DeleteChar Character
 
-        job = jobs
-          ^? traversed
-            <. filtered
-              (preview _name >>> eq (char ^? _Just <. _build <. _primary))
+viewCharacterPage
+  :: ∀ q o m
+   . MonadAff m
+  => MonadStore StoreAction Store m
+  => Character m
+  => Navigate m
+  => H.Component q Name o m
+viewCharacterPage =
+  connect selectAll $ H.mkComponent
+    { initialState: \{ context, input } -> { env: context, pathChar: input }
+    , render
+    , eval: H.mkEval H.defaultEval
+        { handleAction = act
+        , receive = pure <<< Receive
+        }
+    }
+  where
 
-        cls = classes
-          ^? traversed
-            <. filtered (preview _name >>> eq (job ^? _Just <. _class))
+  act = case _ of
+    Receive { context, input } ->
+      H.modify_ _ { env = context, pathChar = input }
+    Navigate r e -> navigate r e
+    DeleteChar c -> do
+      deleteChar c
+      navigate (Characters Nothing) Nothing
 
-        trs =
-          traits
-            ^:: traversed
-            <. filtered
-              ( preview _name >>>
-                  ( ( (\_ -> pure Zero /= (char ^? _Just <. _build <. _level))
-                        && (eq (job ^? _Just <. _trait))
-                    ) ||
-                      (eq (cls ^? _Just <. _trait))
-                  )
-              )
+  render
+    { env:
+        { characters
+        , icon: icon@{ abilities, classes, colours, jobs, talents, traits }
+        }
+    , pathChar
+    } =
+    let
+      char = characters ^. at pathChar
 
-        tls =
-          talents
-            ^:: traversed
-            <. filtered
-              ( view _id >>> elem ~$
-                  (char ^:: _Just <. _build <. _talents <. traversed)
-              )
+      job = jobs
+        ^? traversed
+          <. filtered
+            (preview _name >>> eq (char ^? _Just <. _build <. _primary))
 
-        abs = sort
-          $ abilities
+      cls = classes
+        ^? traversed
+          <. filtered (preview _name >>> eq (job ^? _Just <. _class))
+
+      trs =
+        traits
           ^:: traversed
           <. filtered
-            ( view _name >>> elem ~$
-                (char ^. _Just <. _build <. _abilities <. _active)
+            ( preview _name >>>
+                ( ( (\_ -> pure Zero /= (char ^? _Just <. _build <. _level))
+                      && (eq (job ^? _Just <. _trait))
+                  ) ||
+                    (eq (cls ^? _Just <. _trait))
+                )
             )
 
-      in
-        D.div
-          [ css_ [ "flex", "flex-col", "grow", "gap-2" ] ]
-          [ D.div
-              [ css_ [ "flex", "items-center", "gap-x-2" ] ]
-              [ char # foldMap \c ->
-                  D.a
-                    [ DA.href_ $ print routeCodec
-                        (Characters $ Just $ CombatChar $ c ^. _name)
-                    , DL.click_
-                        $ (env ^. _navigate)
-                            (Characters $ Just $ CombatChar $ c ^. _name)
-                        <<< pure
-                    , css_
-                        [ "px-2"
-                        , "py-1"
-                        , "rounded"
-                        , "bg-stone-400"
-                        , "text-stone-800"
-                        , "dark:bg-stone-700"
-                        , "dark:text-stone-300"
-                        , "hover:bg-stone-500"
-                        , "focus:bg-stone-500"
-                        , "dark:hover:bg-stone-500"
-                        , "dark:focus:bg-stone-500"
-                        ]
-                    ]
-                    [ D.text_ "Combat" ]
+      tls =
+        talents
+          ^:: traversed
+          <. filtered
+            ( view _id >>> elem ~$
+                (char ^:: _Just <. _build <. _talents <. traversed)
+            )
 
-              , char # foldMap \c ->
-                  D.h2
-                    [ css_ [ "font-bold", "grow" ] ]
-                    [ D.text_ $ c ^. _name <<< _Newtype ]
+      abs = sort
+        $ abilities
+        ^:: traversed
+        <. filtered
+          ( view _name >>> elem ~$
+              (char ^. _Just <. _build <. _abilities <. _active)
+          )
 
-              , char # foldMap \c ->
-                  D.button
-                    [ DL.runOn_ DL.click $ do
-                        c # env ^. _deleteChar
-                        (env ^. _navigate) (Characters Nothing)
-                          Nothing
-                    , css_ S.buttonDanger
-                    ]
-                    [ D.text_ "Delete" ]
-
-              , char # foldMap \c ->
-                  D.a
-                    [ DA.href_ $ print routeCodec
-                        (Characters $ Just $ EditChar $ c ^. _name)
-                    , DL.click_
-                        $ (env ^. _navigate)
-                            (Characters $ Just $ EditChar $ c ^. _name)
-                        <<< pure
-                    , css_
-                        [ "px-2"
-                        , "py-1"
-                        , "rounded"
-                        , "bg-stone-400"
-                        , "text-stone-800"
-                        , "dark:bg-stone-700"
-                        , "dark:text-stone-300"
-                        , "hover:bg-stone-500"
-                        , "focus:bg-stone-500"
-                        , "dark:hover:bg-stone-500"
-                        , "dark:focus:bg-stone-500"
-                        ]
-                    ]
-                    [ D.text_ "Edit" ]
-
-              , char # foldMap
-                  ( exportCharacter icon_
+    in
+      HD.div
+        [ css [ "flex", "flex-col", "grow", "gap-2" ] ]
+        [ HD.div
+            [ css [ "flex", "items-center", "gap-x-2" ] ] $ join
+            [ char # foldMap \c -> pure $
+                HD.a
+                  [ css
                       [ "px-2"
                       , "py-1"
                       , "rounded"
@@ -192,176 +175,233 @@ viewCharacterPage env@{ characters, icon } pathChar =
                       , "dark:hover:bg-stone-500"
                       , "dark:focus:bg-stone-500"
                       ]
+                  , HP.href $ print routeCodec
+                      (Characters $ Just $ CombatChar $ c ^. _name)
+                  , HE.onClick $ Navigate
+                      (Characters $ Just $ CombatChar $ c ^. _name) <<< pure
+                  ]
+                  [ HD.text "Combat" ]
+
+            , char # foldMap \c -> pure $
+                HD.h2
+                  [ css [ "font-bold", "grow" ] ]
+                  [ HD.text $ c ^. _name <<< _Newtype ]
+
+            , char # foldMap \c -> pure $
+                HD.button
+                  [ css S.buttonDanger
+                  , HE.onClick $ \_ -> DeleteChar c
+                  ]
+                  [ HD.text "Delete" ]
+
+            , char # foldMap \c -> pure $
+                HD.a
+                  [ css
+                      [ "px-2"
+                      , "py-1"
+                      , "rounded"
+                      , "bg-stone-400"
+                      , "text-stone-800"
+                      , "dark:bg-stone-700"
+                      , "dark:text-stone-300"
+                      , "hover:bg-stone-500"
+                      , "focus:bg-stone-500"
+                      , "dark:hover:bg-stone-500"
+                      , "dark:focus:bg-stone-500"
+                      ]
+                  , HP.href $ print routeCodec
+                      (Characters $ Just $ EditChar $ c ^. _name)
+                  , HE.onClick $ Navigate
+                      (Characters $ Just $ EditChar $ c ^. _name)
+                      <<< pure
+                  ]
+                  [ HD.text "Edit" ]
+
+            , char # foldMap \c -> pure $
+                HD.slot_
+                  (Proxy :: _ "export")
+                  unit
+                  ( exportCharacter
+                      []
+                      [ "px-2"
+                      , "py-1"
+                      , "rounded"
+                      , "bg-stone-400"
+                      , "text-stone-800"
+                      , "dark:bg-stone-700"
+                      , "dark:text-stone-300"
+                      , "hover:bg-stone-500"
+                      , "focus:bg-stone-500"
+                      , "dark:hover:bg-stone-500"
+                      , "dark:focus:bg-stone-500"
+                      ]
+                      c
                   )
-              ]
+                  unit
+            ]
 
-          , D.div
-              [ css_
-                  [ "flex"
-                  , "flex-col"
-                  , "sm:flex-row"
-                  , "overflow-hidden"
-                  , "gap-2"
-                  ]
-              ]
-              [ D.div
-                  [ css_
-                      [ "flex"
-                      , "flex-1"
-                      , "sm:min-w-48"
-                      , "sm:max-w-56"
-                      , "overflow-y-auto"
-                      , "p-2"
-                      , "gap-2"
-                      , "border"
-                      , "border-solid"
-                      , "border-rounded-sm"
-                      , "border-sky-800"
-                      ]
-                  ]
-                  [ D.div
-                      [ css_ [ "grow" ] ]
-                      [ D.div
-                          [ css_ [ "w-max", "font-bold", "text-white" ]
-                          , DA.style_ $ fromMaybe "" $ renderedInline
-                              $ render
-                              =<< backgroundColor
-                              <$> colours
-                              ^? traversed
-                                <<< filtered
-                                  ( preview _name >>> eq
-                                      (job ^? _Just <<< _colour)
-                                  )
-                                <<< _value
-                          ]
-                          [ D.text_ $ job ^. _Just <<< _name <<< _Newtype ]
+        , HD.div
+            [ css
+                [ "flex"
+                , "flex-col"
+                , "sm:flex-row"
+                , "overflow-hidden"
+                , "gap-2"
+                ]
+            ]
+            [ HD.div
+                [ css
+                    [ "flex"
+                    , "flex-1"
+                    , "sm:min-w-48"
+                    , "sm:max-w-56"
+                    , "overflow-y-auto"
+                    , "p-2"
+                    , "gap-2"
+                    , "border"
+                    , "border-solid"
+                    , "border-rounded-sm"
+                    , "border-sky-800"
+                    ]
+                ]
+                [ HD.div
+                    [ css [ "grow" ] ]
+                    [ HD.div
+                        [ css [ "w-max", "font-bold", "text-white" ]
+                        , style $ fromMaybe (pure unit) $
+                            backgroundColor
+                            <$> colours
+                            ^? traversed
+                              <<< filtered
+                                ( preview _name >>> eq
+                                    (job ^? _Just <<< _colour)
+                                )
+                              <<< _value
+                        ]
+                        [ HD.text $ job ^. _Just <<< _name <<< _Newtype ]
 
-                      , D.div
-                          [ css_ [ "w-max", "font-bold" ] ]
-                          [ D.text_ $ cls ^. _Just <<< _name <<< _Newtype ]
+                    , HD.div
+                        [ css [ "w-max", "font-bold" ] ]
+                        [ HD.text $ cls ^. _Just <<< _name <<< _Newtype ]
 
-                      , hr
+                    , hr
 
-                      , D.div
-                          [ css_ [ "w-max" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Level " ]
-                          , D.span []
-                              [ D.text_ $ char
-                                  ^. _Just <<< _build <<< _level <<< to show
-                              ]
-                          ]
+                    , HD.div
+                        [ css [ "w-max" ] ]
+                        [ HD.span
+                            [ css [ "font-bold" ] ]
+                            [ HD.text "Level " ]
+                        , HD.span []
+                            [ HD.text $ char
+                                ^. _Just <<< _build <<< _level <<< to show
+                            ]
+                        ]
 
-                      , D.div
-                          [ css_ [ "w-max" ] ] $ char
-                          # (_Just <<< _build <<< _jobs <<< itraversed)
-                              `ifoldMapOf` \n l -> pure $
-                                D.div []
-                                  [ D.span
-                                      [ css_ [ "font-bold" ] ]
-                                      [ D.text_
-                                          $ (n ^. simple _Newtype)
-                                          <> " "
-                                      ]
-                                  , D.span [] [ D.text_ $ show l ]
-                                  ]
+                    , HD.div
+                        [ css [ "w-max" ] ] $ char
+                        # (_Just <<< _build <<< _jobs <<< itraversed)
+                            `ifoldMapOf` \n l -> pure $
+                              HD.div []
+                                [ HD.span
+                                    [ css [ "font-bold" ] ]
+                                    [ HD.text
+                                        $ (n ^. simple _Newtype)
+                                        <> " "
+                                    ]
+                                , HD.span [] [ HD.text $ show l ]
+                                ]
 
-                      , hr
+                    , hr
 
-                      , D.div
-                          [ css_ [ "w-max" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "HP: " ]
-                          , D.span []
-                              [ D.text_ $ cls ^. _Just <<< _hp <<< to \hp ->
-                                  show hp
-                                    <> " (25% HP: "
-                                    <> show (hp / 4)
-                                    <> ")"
-                              ]
-                          ]
+                    , HD.div
+                        [ css [ "w-max" ] ]
+                        [ HD.span
+                            [ css [ "font-bold" ] ]
+                            [ HD.text "HP: " ]
+                        , HD.span []
+                            [ HD.text $ cls ^. _Just <<< _hp <<< to \hp ->
+                                show hp
+                                  <> " (25% HP: "
+                                  <> show (hp / 4)
+                                  <> ")"
+                            ]
+                        ]
 
-                      , D.div
-                          [ css_ [ "w-max" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Defense: " ]
-                          , D.span []
-                              [ D.text_ $
-                                  cls ^. _Just <<< _defense <<< to show
-                              ]
-                          ]
+                    , HD.div
+                        [ css [ "w-max" ] ]
+                        [ HD.span
+                            [ css [ "font-bold" ] ]
+                            [ HD.text "Defense: " ]
+                        , HD.span []
+                            [ HD.text $ cls ^. _Just <<< _defense <<< to show ]
+                        ]
 
-                      , D.div
-                          [ css_ [ "w-max" ] ]
-                          [ D.span
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ "Free Move: " ]
-                          , D.span []
-                              [ D.text_ $
-                                  cls ^. _Just <<< _move <<< to show
-                              ]
-                          ]
-                      ]
-                  ]
+                    , HD.div
+                        [ css [ "w-max" ] ]
+                        [ HD.span
+                            [ css [ "font-bold" ] ]
+                            [ HD.text "Free Move: " ]
+                        , HD.span []
+                            [ HD.text $ cls ^. _Just <<< _move <<< to show ]
+                        ]
+                    ]
+                ]
 
-              , D.div
-                  [ css_ [ "flex", "flex-3", "overflow-y-auto", "gap-2" ] ]
-                  [ D.div
-                      [ css_
-                          [ "flex"
-                          , "flex-col"
-                          , "lg:flex-row"
-                          , "grow"
-                          , "gap-2"
-                          ]
-                      ]
-                      [ D.div
-                          [ css_
-                              [ "flex-1"
-                              , "flex"
-                              , "flex-col"
-                              , "lg:overflow-y-auto"
-                              , "p-2"
-                              , "gap-x-2"
-                              , "gap-y-4"
-                              , "border"
-                              , "border-solid"
-                              , "border-rounded-sm"
-                              , "border-sky-800"
-                              ]
-                          ]
-                          [ D.div
-                              [ css_
-                                  [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
-                                  , "gap-2"
-                                  ]
-                              ]
-                              $ trs
-                              <#> renderTrait icon_
+            , HD.div
+                [ css [ "flex", "flex-3", "overflow-y-auto", "gap-2" ] ]
+                [ HD.div
+                    [ css
+                        [ "flex"
+                        , "flex-col"
+                        , "lg:flex-row"
+                        , "grow"
+                        , "gap-2"
+                        ]
+                    ]
+                    [ HD.div
+                        [ css
+                            [ "flex-1"
+                            , "flex"
+                            , "flex-col"
+                            , "lg:overflow-y-auto"
+                            , "p-2"
+                            , "gap-x-2"
+                            , "gap-y-4"
+                            , "border"
+                            , "border-solid"
+                            , "border-rounded-sm"
+                            , "border-sky-800"
+                            ]
+                        ]
+                        [ HD.div
+                            [ css
+                                [ "grid"
+                                , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
+                                , "gap-2"
+                                ]
+                            ]
+                            $ trs
+                            <#> renderTrait icon
 
-                          , D.div
-                              [ css_
-                                  [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
-                                  , "gap-2"
-                                  ]
-                              ]
-                              $ tls
-                              <#> renderTalent icon_
+                        , HD.div
+                            [ css
+                                [ "grid"
+                                , "grid-cols-[repeat(auto-fit,minmax(100px,1fr))]"
+                                , "gap-2"
+                                ]
+                            ]
+                            $ tls
+                            <#> renderTalent icon
 
-                          , D.div
-                              [ css_
-                                  [ "grid"
-                                  , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
-                                  , "gap-2"
-                                  ]
-                              ]
-                              [ D.div
-                                  [ css_ [ "flex", "gap-x-2" ] ]
+                        , HD.div
+                            [ css
+                                [ "grid"
+                                , "grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))]"
+                                , "gap-2"
+                                ]
+                            ] $ join
+                            [ [ HD.div
+                                  [ css [ "flex", "gap-x-2" ] ]
                                   $
                                     abilities
                                   ^:: traversed
@@ -369,45 +409,46 @@ viewCharacterPage env@{ characters, icon } pathChar =
                                     ( preview _name >>> eq
                                         (cls ^? _Just <<< _basic)
                                     )
-                                  <<< to (renderAbility icon_)
+                                  <<< to (renderAbility icon)
+                              ]
 
-                              , guard
-                                  ( char # hasn't
-                                      ( _Just <<< _build <<< _level <<< only
-                                          Zero
-                                      )
-                                  )
-                                  $ D.div
-                                      [ css_ [ "flex", "gap-x-2" ] ]
-                                  $
-                                    abilities
-                                  ^:: traversed
-                                  <<< filtered
-                                    ( preview _name >>>
-                                        eq (job ^? _Just <<< _limitBreak)
+                            , guard
+                                ( char # hasn't
+                                    ( _Just <<< _build <<< _level <<< only
+                                        Zero
                                     )
-                                  <<< to (renderAbility icon_)
-                              ]
-                          ]
+                                )
+                                $ pure
+                                $ HD.div [ css [ "flex", "gap-x-2" ] ]
+                                $
+                                  abilities
+                                ^:: traversed
+                                <<< filtered
+                                  ( preview _name >>>
+                                      eq (job ^? _Just <<< _limitBreak)
+                                  )
+                                <<< to (renderAbility icon)
+                            ]
+                        ]
 
-                      , D.div
-                          [ css_
-                              [ "flex-2"
-                              , "grid"
-                              , "grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]"
-                              , "lg:overflow-y-auto"
-                              , "p-2"
-                              , "gap-x-2"
-                              , "gap-y-6"
-                              , "border"
-                              , "border-solid"
-                              , "border-rounded-sm"
-                              , "border-sky-800"
-                              ]
-                          ]
-                          $ abs
-                          <#> renderAbility icon_
-                      ]
-                  ]
-              ]
-          ]
+                    , HD.div
+                        [ css
+                            [ "flex-2"
+                            , "grid"
+                            , "grid-cols-[repeat(auto-fit,minmax(min(250px,100%),1fr))]"
+                            , "lg:overflow-y-auto"
+                            , "p-2"
+                            , "gap-x-2"
+                            , "gap-y-6"
+                            , "border"
+                            , "border-solid"
+                            , "border-rounded-sm"
+                            , "border-sky-800"
+                            ]
+                        ]
+                        $ abs
+                        <#> renderAbility icon
+                    ]
+                ]
+            ]
+        ]

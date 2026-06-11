@@ -7,22 +7,22 @@ import Prelude
 import Data.Lens ((^.))
 import Data.Lens.Iso.Newtype (_Newtype)
 
-import Deku.Core (Nut)
-import Deku.DOM as D
+import Halogen.HTML as HD
 
-import ToA.Component.Markup (markup)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Name (_name)
 import ToA.Data.Icon.Trait (Trait)
-import ToA.Util.Html (css_)
+
+import ToA.Component.Markup (markup)
+import ToA.Util.Html (css)
 import ToA.Util.Optic ((#~))
 
-renderTrait :: Icon -> Trait -> Nut
+renderTrait :: ∀ w i. Icon -> Trait -> HD.HTML w i
 renderTrait icon trait =
-  D.div []
-    [ D.div
-        [ css_ [ "font-bold" ] ]
-        [ D.text_ $ trait ^. _name <<< _Newtype ]
+  HD.div []
+    [ HD.div
+        [ css [ "font-bold" ] ]
+        [ HD.text $ trait ^. _name <<< _Newtype ]
     , trait # _desc #~ markup icon
     ]

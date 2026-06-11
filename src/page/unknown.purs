@@ -2,19 +2,18 @@ module ToA.Page.Unknown
   ( unknownPage
   ) where
 
-import Deku.Core (Nut)
-import Deku.DOM as D
+import Halogen.HTML as HD
 
-import ToA.Util.Html (css_)
+import ToA.Util.Html (css)
 
-unknownPage :: Nut
+unknownPage :: ∀ w i. HD.HTML w i
 unknownPage =
-  D.div
-    [ css_
+  HD.div
+    [ css
         [ "flex"
         , "grow"
         , "items-center"
         , "justify-center"
         ]
     ]
-    [ D.text_ "Whoops! We can't find that page..." ]
+    [ HD.text "Whoops! We can't find that page..." ]

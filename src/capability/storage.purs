@@ -1,65 +1,47 @@
 module ToA.Capability.Storage
-  ( StorageF
-  , STORAGE
-
-  , runStorage
-
+  ( class Storage
   , read
   , write
   , delete
   ) where
 
-import Prelude
+import ToA.Prelude
 
 import Data.Maybe (Maybe)
+
 import Effect.Class (liftEffect)
 
-import Run (Run, EFFECT, interpret, lift, on, send)
-import Type.Proxy (Proxy(..))
-import Type.Row (type (+))
+import Halogen (HalogenM, lift)
 
-import Web.Storage.Storage (Storage, getItem, removeItem, setItem)
+import Web.HTML (window)
+import Web.HTML.Window (localStorage)
+import Web.Storage.Storage (getItem, removeItem, setItem)
 
-import ToA.Capability.Log (LOG, debug)
+import ToA.ToAM (ToAM)
+import ToA.Capability.Log (debug)
 
-data StorageF a
-  = Read String (Maybe String -> a)
-  | Write String String a
-  | Delete String a
+class Storage m where
+  read :: String  -> m (Maybe String)
+  write :: String -> String -> m Unit
+  delete :: String -> m Unit
 
-derive instance Functor StorageF
-
-type STORAGE r = (storage :: StorageF | r)
-_storage = Proxy :: Proxy "storage"
-
-read :: ∀ r. String -> Run (STORAGE + r) (Maybe String)
-read key = lift _storage (Read key identity)
-
-write :: ∀ r. String -> String -> Run (STORAGE + r) Unit
-write key value = lift _storage (Write key value unit)
-
-delete :: ∀ r. String -> Run (STORAGE + r) Unit
-delete key = lift _storage (Delete key unit)
-
-localStorage :: ∀ r. Storage -> StorageF ~> Run (EFFECT + LOG + r)
-localStorage storage = case _ of
-  Read key reply -> do
+instance Storage ToAM where
+  read key = do
+    storage <- liftEffect $ window >>= localStorage
     debug $ "read storage: " <> key
-    item <- liftEffect $ getItem key storage
-    pure $ reply item
+    liftEffect $ getItem key storage
 
-  Write key value next -> do
+  write key value = do
+    storage <- liftEffect $ window >>= localStorage
     debug $ "write storage: " <> key <> " | " <> value
     liftEffect $ setItem key value storage
-    pure next
 
-  Delete key next -> do
+  delete key = do
+    storage <- liftEffect $ window >>= localStorage
     debug $ "delete storage: " <> key
     liftEffect $ removeItem key storage
-    pure next
 
-runStorage
-  :: ∀ r
-   . Storage
-  -> Run (EFFECT + LOG + STORAGE + r) ~> Run (EFFECT + LOG + r)
-runStorage storage = interpret (on _storage (localStorage storage) send)
+instance (Monad m, Storage m) => Storage (HalogenM s a sl o m) where
+  read = lift <<< read
+  write = lift <.. write
+  delete = lift <<< delete

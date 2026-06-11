@@ -10,9 +10,8 @@ package:
     - console
     - control
     - css
-    - deku-core
-    - deku-dom
     - dom-filereader
+    - dom-indexed
     - effect
     - either
     - fast-vect
@@ -20,13 +19,17 @@ package:
     - fixed-points
     - foldable-traversable
     - foreign
-    - hyrule
+    - halogen
+    - halogen-css
+    - halogen-store
     - integers
     - js-promise-aff
     - js-uri
     - json
+    - lists
     - matryoshka
     - maybe
+    - media-types
     - newtype
     - ordered-collections
     - parsing
@@ -36,7 +39,7 @@ package:
     - profunctor-lenses
     - routing
     - routing-duplex
-    - run
+    - safe-coerce
     - strings
     - tuples
     - typelevel-prelude
@@ -45,8 +48,8 @@ package:
     - web-events
     - web-file
     - web-html
-    - web-pointerevents
     - web-storage
+    - web-uievents
 
   test:
     main: Test.Main
@@ -57,26 +60,3 @@ package:
 workspace:
   packageSet:
     registry: 81.1.0
-
-  extraPackages:
-    hyrule:
-      git: https://github.com/mikesol/purescript-hyrule.git
-      ref: v2.5.2
-      dependencies:
-        - js-timers
-        - unsafe-reference
-
-    deku:
-      git: https://github.com/mikesol/purescript-deku.git
-      subdir: deku
-      ref: v0.12.0
-
-    deku-core:
-      git: https://github.com/mikesol/purescript-deku.git
-      subdir: deku-core
-      ref: v0.12.0
-
-    deku-dom:
-      git: https://github.com/mikesol/purescript-deku.git
-      subdir: deku-dom
-      ref: v0.12.0

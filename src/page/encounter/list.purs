@@ -8,30 +8,68 @@ import Data.Foldable (foldMap)
 import Data.Lens ((^.))
 import Data.Maybe (Maybe(..))
 
-import Deku.Core (Nut)
-import Deku.DOM as D
-import Deku.DOM.Attributes as DA
-import Deku.DOM.Listeners as DL
-import Deku.Hooks ((<#~>))
+import Effect.Aff.Class (class MonadAff)
+
+import Halogen as H
+import Halogen.HTML as HD
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
+import Halogen.Store.Connect (Connected, connect)
+import Halogen.Store.Monad (class MonadStore)
+import Halogen.Store.Select (selectAll)
 
 import Routing.Duplex (print)
+
+import Type.Proxy (Proxy(..))
+import Web.UIEvent.MouseEvent (MouseEvent)
+
+import ToA.Capability.Encounter (class Encounter, deleteEnc)
+import ToA.Capability.Navigate (class Navigate, navigate)
+import ToA.Data.Route (Route(..), EncounterPath(..), routeCodec)
+import ToA.Data.Store (Store, StoreAction)
+
+import ToA.Data.Icon.Encounter (Encounter)
+import ToA.Data.Icon.Name (_name)
 
 import ToA.Component.Encounter
   ( encounterSummary
   , exportEncounter
   , importEncounter
   )
-import ToA.Data.Env (Env, _deleteEnc, _navigate)
-import ToA.Data.Icon.Name (_name)
-import ToA.Data.Route (Route(..), EncounterPath(..), routeCodec)
-import ToA.Util.Html (css_)
+import ToA.Util.Html (css)
 import ToA.Util.Style as S
 
-listEncounterPage :: Env -> Nut
-listEncounterPage env@{ encounters, icon } =
-  encounters <&> icon <#~> \(encs /\ icon_) ->
-    D.div
-      [ css_
+data Action i
+  = Receive (Connected Store i)
+  | Navigate Route (Maybe MouseEvent)
+  | DeleteEnc Encounter
+
+listEncounterPage
+  :: ∀ q i o m
+   . MonadAff m
+  => MonadStore StoreAction Store m
+  => Encounter m
+  => Navigate m
+  => H.Component q i o m
+listEncounterPage =
+  connect selectAll $ H.mkComponent
+    { initialState: _.context
+    , render
+    , eval: H.mkEval H.defaultEval
+        { handleAction = act
+        , receive = pure <<< Receive
+        }
+    }
+  where
+
+  act = case _ of
+    Receive { context } -> H.put context
+    Navigate r e -> navigate r e
+    DeleteEnc e -> deleteEnc e
+
+  render { encounters, icon } =
+    HD.div
+      [ css
           [ "flex"
           , "flex-col"
           , "items-center"
@@ -39,10 +77,10 @@ listEncounterPage env@{ encounters, icon } =
           , "gap-2"
           , "overflow-y-auto"
           ]
-      ]
-      [ encs # foldMap \enc ->
-          D.div
-            [ css_
+      ] $ join
+      [ encounters # foldMap \enc -> pure $
+          HD.div
+            [ css
                 [ "flex"
                 , "w-full"
                 , "sm:max-w-4/5"
@@ -52,46 +90,47 @@ listEncounterPage env@{ encounters, icon } =
                 , "text-stone-800"
                 ]
             ]
-            [ D.a
-                [ css_ $ S.interactable <>
+            [ HD.a
+                [ css $ S.interactable <>
                     [ "flex", "grow", "items-center", "gap-2", "p-2" ]
-                , DA.href_ $ print routeCodec $ Encounters $ Just $ ViewEnc $
+                , HP.href $ print routeCodec $ Encounters $ Just $ ViewEnc $
                     enc ^. _name
-                , DL.click_
-                    $ (env ^. _navigate)
-                        (Encounters $ Just $ ViewEnc $ enc ^. _name)
-                    <<< pure
+                , HE.onClick $ Navigate
+                    (Encounters $ Just $ ViewEnc $ enc ^. _name) <<< pure
                 ]
-                [ encounterSummary icon_ enc ]
+                [ encounterSummary icon enc ]
 
-            , D.div
-                [ css_ [ "flex", "flex-col" ] ]
-                [ D.button
-                    [ css_ $ S.interactableDanger <>
+            , HD.div
+                [ css [ "flex", "flex-col" ] ]
+                [ HD.button
+                    [ css $ S.interactableDanger <>
                         [ "flex", "grow", "items-center", "px-2" ]
-                    , DL.runOn_ DL.click $ (env ^. _deleteEnc) enc
+                    , HE.onClick \_ -> DeleteEnc enc
                     ]
-                    [ D.text_ "Delete" ]
+                    [ HD.text "Delete" ]
 
-                , exportEncounter
-                    [ "flex", "grow", "items-center", "px-2", "rounded-none" ]
-                    enc
+                , HD.slot_
+                    (Proxy :: _ "exportEnc")
+                    (enc ^. _name)
+                    ( exportEncounter
+                        [ "flex", "grow" ]
+                        [ "items-center", "px-2", "rounded-none" ]
+                        enc
+                    )
+                    unit
                 ]
             ]
 
-      , D.div
-          [ css_ [ "flex", "gap-2" ] ]
-          [ D.a
-              [ css_ $ S.button <>
-                  [ "flex", "items-center", "gap-2", "py-2" ]
-              , DA.href_ $ print routeCodec $ Encounters $ Just CreateEnc
-              , DL.click_
-                  $ (env ^. _navigate)
-                      (Encounters $ Just CreateEnc)
-                  <<< pure
-              ]
-              [ D.text_ "Create" ]
+      , [ HD.div
+            [ css [ "flex", "gap-2" ] ]
+            [ HD.a
+                [ css $ S.button <> [ "flex", "items-center", "gap-2", "py-2" ]
+                , HP.href $ print routeCodec $ Encounters $ Just CreateEnc
+                , HE.onClick $ Navigate (Encounters $ Just CreateEnc) <<< pure
+                ]
+                [ HD.text "Create" ]
 
-          , importEncounter env
-          ]
+            , HD.slot_ (Proxy :: _ "importEnc") unit importEncounter unit
+            ]
+        ]
       ]
