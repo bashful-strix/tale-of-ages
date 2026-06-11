@@ -8,6 +8,7 @@ import Data.Codec (decode, encode)
 import Data.Either (Either(..), isLeft)
 import Data.Foldable (intercalate)
 import Data.Lens ((^.), (^?), preview, view, filtered, traversed)
+import Data.Map (empty)
 import Data.Maybe (Maybe(..), fromMaybe)
 
 import Deku.Core (Nut)
@@ -26,6 +27,7 @@ import ToA.Data.Env (Env, _navigate, _saveEnc)
 import ToA.Data.Icon.Encounter
   ( Encounter(..)
   , FoeEntry(..)
+  , FoeState(..)
   , stringEncounter
   )
 import ToA.Data.Icon.Name (Name(..), _name)
@@ -35,13 +37,14 @@ import ToA.Util.Style as S
 
 editEncounterPage :: Env -> Maybe Name -> Nut
 editEncounterPage env@{ encounters, icon } pathEnc =
-  encounters <&> icon <#~> \(encs /\ _) -> Deku.do
+  encounters <&> icon <#~> \(encs /\ icon_) -> Deku.do
     let initEnc = encs ^? traversed <. filtered (preview _name >>> eq pathEnc)
 
-    setEnc /\ enc <- useState $ encode stringEncounter $ fromMaybe emptyEnc $
-      initEnc
+    setEnc /\ enc <- useState $ encode (stringEncounter icon_)
+      $ fromMaybe emptyEnc
+      $ initEnc
 
-    let parsed = decode stringEncounter <$> enc
+    let parsed = decode (stringEncounter icon_) <$> enc
 
     D.div
       [ css_ [ "flex", "flex-col", "gap-2" ] ]
@@ -106,23 +109,25 @@ editEncounterPage env@{ encounters, icon } pathEnc =
 emptyEnc :: Encounter
 emptyEnc = Encounter
   { name: Name "<Encounter name>"
+  , players: 1
   , notes: Just "<Notes>"
   , foes:
-      [ FoeEntry
+      [ Active
           { name: Name "Foe name"
           , alias: Just "Foe alias"
-          , count: 1
           , faction: Just $ Name "Faction"
           , template: Just $ Name "Template"
+          , state: [ FoeState { hp: 0, vigor: 0, status: empty } ]
           }
-      ]
-  , reserves:
-      [ FoeEntry
+      , Reserve
           { name: Name "Reserve foe name"
           , alias: Nothing
-          , count: 2
           , faction: Nothing
           , template: Nothing
+          , state:
+              [ FoeState { hp: 0, vigor: 0, status: empty }
+              , FoeState { hp: 0, vigor: 0, status: empty }
+              ]
           }
       ]
   }

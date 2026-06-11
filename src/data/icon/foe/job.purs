@@ -30,7 +30,8 @@ module ToA.Data.Icon.Foe.Job
 
 import ToA.Prelude
 
-import Data.Lens (Lens')
+import Data.Function (on)
+import Data.Lens (Lens', view)
 import Data.Lens.Lens (lens', lensStore)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Prism (Prism', prism')
@@ -42,7 +43,7 @@ import ToA.Data.Icon.Chapter (Chapter)
 import ToA.Data.Icon.Class (class Classed)
 import ToA.Data.Icon.Colour (class Coloured)
 import ToA.Data.Icon.Description (class Described)
-import ToA.Data.Icon.Name (class Named, Name)
+import ToA.Data.Icon.Name (class Named, Name, _name)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Trait (class Traited)
 
@@ -149,6 +150,12 @@ data FoeJob
       , specials :: Maybe Specials
       | FoeJobData + ()
       }
+
+instance Eq FoeJob where
+  eq = eq `on` view _name
+
+instance Ord FoeJob where
+  compare = compare `on` view _name
 
 instance Named FoeJob where
   _name = lens' case _ of

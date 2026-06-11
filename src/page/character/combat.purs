@@ -23,7 +23,6 @@ import Data.Lens
   , to
   , traversed
   , view
-  , ifoldMapOf
   )
 import Data.Lens.At (at)
 import Data.Lens.Common (simple)
@@ -75,7 +74,7 @@ import ToA.Data.Icon.Pc.Job (_limitBreak)
 import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
 
 import ToA.Util.Html (css_, hr, style_)
-import ToA.Util.Optic ((#~), (^::))
+import ToA.Util.Optic ((^::), (#~), (#@~))
 
 combatCharacterPage :: Env -> Name -> Nut
 combatCharacterPage env@{ characters, icon } pathChar =
@@ -191,8 +190,7 @@ combatCharacterPage env@{ characters, icon } pathChar =
                             [ css_ $ [ "min-w-8", "text-right" ]
                                 <> max ^. _Just <. to \m ->
                                 if hp <= m / 4 then [ "text-red-500" ]
-                                else if hp <= m / 2 then
-                                  [ "text-orange-500" ]
+                                else if hp <= m / 2 then [ "text-orange-500" ]
                                 else []
                             ]
                             [ D.text_ $ "/ " <> max ^. _Just <. to show ]
@@ -279,7 +277,7 @@ combatCharacterPage env@{ characters, icon } pathChar =
                   <>
                     ( char # foldMap \c ->
                         ( c # (_currentPowerDice <. itraversed)
-                            `ifoldMapOf` (pure <.. renderPowerDie env c)
+                            #@~ (pure <.. renderPowerDie env c)
                         ) <>
                           [ D.div
                               [ css_

@@ -10,13 +10,15 @@ import Promise.Aff (toAffE)
 import CSS (backgroundColor)
 
 import Codec.JSON.DecodeError (print) as CJDE
-import Data.Array (null)
+import Data.Array (length, null)
 import Data.Bifunctor (lmap)
 import Data.Codec (decode, encode)
 import Data.Codec.JSON (decode, encode) as CJ
+import Data.Filterable (partition)
 import Data.Lens
   ( (^.)
   , (^?)
+  , is
   , preview
   , view
   , elemOf
@@ -63,11 +65,11 @@ import ToA.Data.Icon.Encounter
   ( Encounter
   , FoeEntry
   , _foes
-  , _reserves
   , _alias
-  , _count
   , _faction
+  , _state
   , _template
+  , _Active
   , jsonEncounter
   , stringEncounter
   )
@@ -90,15 +92,17 @@ encounterSummary icon enc =
         ]
         [ D.div []
             [ D.h4 [ css_ [ "font-bold" ] ] [ D.text_ "Foes" ]
-            , enc # _foes #~ renderFoeList icon
+            , renderFoeList icon foes
             ]
-        , guard (not $ null $ enc ^. _reserves) $
+        , guard (not $ null reserves) $
             D.div []
               [ D.h4 [ css_ [ "font-bold" ] ] [ D.text_ "Reserves" ]
-              , enc # _reserves #~ renderFoeList icon
+              , renderFoeList icon reserves
               ]
         ]
     ]
+  where
+  { yes: foes, no: reserves } = partition (is _Active) (enc ^. _foes)
 
 renderFoeList :: Icon -> Array FoeEntry -> Nut
 renderFoeList { colours, foes } foeEntries =
@@ -159,11 +163,11 @@ renderFoeList { colours, foes } foeEntries =
               [ D.text_ alias ]
 
         , D.span []
-            [ D.text_ $ "x" <> foe ^. _count <. to show ]
+            [ D.text_ $ "x" <> foe ^. _state <. to (length >>> show) ]
         ]
 
-exportEncounter :: Array String -> Encounter -> Nut
-exportEncounter styles enc = Deku.do
+exportEncounter :: Icon -> Array String -> Encounter -> Nut
+exportEncounter icon_ styles enc = Deku.do
   setDialog /\ dialog' <- useState'
   dialog <- useHotRant dialog'
 
@@ -195,7 +199,7 @@ exportEncounter styles enc = Deku.do
             , D.h3 [] [ D.text_ $ enc ^. _name <. _Newtype ]
             , D.div
                 [ css_ [ "flex", "gap-1" ] ]
-                [ (encodeURIComponent $ encode stringEncounter enc)
+                [ (encodeURIComponent $ encode (stringEncounter icon_) enc)
                     # maybe mempty \encData ->
                         D.a
                           [ css_ $ S.button <>
@@ -226,7 +230,7 @@ exportEncounter styles enc = Deku.do
                         mcb <- clipboard =<< navigator =<< window
                         for_ mcb \cb -> launchAff_ do
                           toAffE $
-                            writeText (encode stringEncounter enc) cb
+                            writeText (encode (stringEncounter icon_) enc) cb
                           liftEffect $ for_ (fromElement d) (close Nothing)
                     ]
                     [ D.text_ "Copy" ]
@@ -279,13 +283,14 @@ importEncounter env = Deku.do
 
             let
               fileEnc = ado
+                icon_ <- env.icon
                 fo <- format
                 afi <- file
                 in
                   afi >>= fromEither <<< \fi ->
                     case fo of
                       Text -> lmap (parseErrorHuman fi 20) $
-                        decode stringEncounter fi
+                        decode (stringEncounter icon_) fi
                       Json -> lmap pure
                         $ J.parse fi
                         >>= (CJ.decode jsonEncounter >>> lmap CJDE.print)

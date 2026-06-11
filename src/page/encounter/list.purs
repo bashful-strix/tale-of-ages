@@ -74,6 +74,7 @@ listEncounterPage env@{ encounters, icon } =
                     [ D.text_ "Delete" ]
 
                 , exportEncounter
+                    icon_
                     [ "flex", "grow", "items-center", "px-2", "rounded-none" ]
                     enc
                 ]
