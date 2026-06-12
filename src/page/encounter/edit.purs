@@ -31,6 +31,7 @@ import ToA.Data.Icon.Encounter
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Route (Route(..), EncounterPath(..))
 import ToA.Util.Html (css_)
+import ToA.Util.Style as S
 
 editEncounterPage :: Env -> Maybe Name -> Nut
 editEncounterPage env@{ encounters, icon } pathEnc =
@@ -86,14 +87,7 @@ editEncounterPage env@{ encounters, icon } pathEnc =
                           (Encounters $ Just $ ViewEnc $ e ^. _name)
                           Nothing
                   , DA.disabled $ show <<< isLeft <$> parsed
-                  , css_
-                      [ "px-2"
-                      , "py-1"
-                      , "border"
-                      , "border-solid"
-                      , "disabled:border-stone-700"
-                      , "disabled:text-stone-700"
-                      ]
+                  , css_ S.button
                   ]
                   [ D.text_ "Save" ]
 
@@ -102,7 +96,7 @@ editEncounterPage env@{ encounters, icon } pathEnc =
                       (env ^. _navigate)
                         (Encounters $ ViewEnc <<< view _name <$> initEnc)
                         Nothing
-                  , css_ [ "px-2", "py-1", "border", "border-solid" ]
+                  , css_ S.button
                   ]
                   [ D.text_ "Cancel" ]
               ]

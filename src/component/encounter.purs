@@ -74,6 +74,7 @@ import ToA.Data.Icon.Encounter
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Util.Html (css, css_, style_)
 import ToA.Util.Optic ((#~))
+import ToA.Util.Style as S
 
 encounterSummary :: Icon -> Encounter -> Nut
 encounterSummary icon enc =
@@ -197,20 +198,8 @@ exportEncounter styles enc = Deku.do
                 [ (encodeURIComponent $ encode stringEncounter enc)
                     # maybe mempty \encData ->
                         D.a
-                          [ css_
-                              [ "flex"
-                              , "grow"
-                              , "justify-center"
-                              , "p-2"
-                              , "bg-stone-500"
-                              , "text-stone-800"
-                              , "dark:bg-stone-700"
-                              , "dark:text-stone-300"
-                              , "hover:bg-stone-400"
-                              , "focus:bg-stone-400"
-                              , "dark:hover:bg-stone-500"
-                              , "dark:focus:bg-stone-500"
-                              ]
+                          [ css_ $ S.button <>
+                              [ "flex", "grow", "justify-center", "py-2" ]
                           , DA.href_ $ "data:text/plain;charset=utf8," <>
                               encData
                           , DA.download_ $ (enc ^. _name <<< _Newtype) <> ".txt"
@@ -220,20 +209,8 @@ exportEncounter styles enc = Deku.do
                 , (encodeURIComponent $ J.print $ CJ.encode jsonEncounter enc)
                     # maybe mempty \encData ->
                         D.a
-                          [ css_
-                              [ "flex"
-                              , "grow"
-                              , "justify-center"
-                              , "p-2"
-                              , "bg-stone-500"
-                              , "text-stone-800"
-                              , "dark:bg-stone-700"
-                              , "dark:text-stone-300"
-                              , "hover:bg-stone-400"
-                              , "focus:bg-stone-400"
-                              , "dark:hover:bg-stone-500"
-                              , "dark:focus:bg-stone-500"
-                              ]
+                          [ css_ $ S.button <>
+                              [ "flex", "grow", "justify-center", "py-2" ]
                           , DA.href_ $ "data:application/json;charset=utf8," <>
                               encData
                           , DA.download_ $ (enc ^. _name <<< _Newtype) <>
@@ -242,21 +219,8 @@ exportEncounter styles enc = Deku.do
                           [ D.text_ "JSON" ]
 
                 , D.button
-                    [ css_
-                        [ "flex"
-                        , "grow"
-                        , "justify-center"
-                        , "gap-2"
-                        , "p-2"
-                        , "bg-stone-500"
-                        , "text-stone-800"
-                        , "dark:bg-stone-700"
-                        , "dark:text-stone-300"
-                        , "hover:bg-stone-400"
-                        , "focus:bg-stone-400"
-                        , "dark:hover:bg-stone-500"
-                        , "dark:focus:bg-stone-500"
-                        ]
+                    [ css_ $ S.button <>
+                        [ "flex", "grow", "justify-center", "gap-2", "py-2" ]
                     , DA.xtypeButton
                     , DL.runOn DL.click $ dialog <#> \d -> do
                         mcb <- clipboard =<< navigator =<< window
@@ -269,21 +233,8 @@ exportEncounter styles enc = Deku.do
                 ]
 
             , D.button
-                [ css_
-                    [ "flex"
-                    , "justify-center"
-                    , "gap-2"
-                    , "p-2"
-                    , "rounded"
-                    , "bg-stone-500"
-                    , "text-stone-800"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    , "hover:bg-stone-400"
-                    , "focus:bg-stone-400"
-                    , "dark:hover:bg-stone-500"
-                    , "dark:focus:bg-stone-500"
-                    ]
+                [ css_ $ S.button <>
+                    [ "flex", "justify-center", "gap-2", "py-2" ]
                 , DA.xtypeButton
                 , DL.runOn DL.click $ dialog
                     <#> fromElement
@@ -301,18 +252,7 @@ importEncounter env = Deku.do
 
   fixed
     [ D.button
-        [ css_
-            [ "p-2"
-            , "rounded"
-            , "bg-stone-500"
-            , "text-stone-800"
-            , "dark:bg-stone-700"
-            , "dark:text-stone-300"
-            , "hover:bg-stone-400"
-            , "focus:bg-stone-400"
-            , "dark:hover:bg-stone-500"
-            , "dark:focus:bg-stone-500"
-            ]
+        [ css_ S.button
         , DL.runOn DL.click $ dialog <#> fromElement >>> traverse_ showModal
         ]
         [ D.text_ "Import" ]
@@ -382,7 +322,9 @@ importEncounter env = Deku.do
                                     ( format <#> eq f >>>
                                         if _ then [ "bg-sky-600" ]
                                         else
-                                          [ "bg-stone-500"
+                                          [ "cursor-pointer"
+                                          , "disabled:cursor-not-allowed"
+                                          , "bg-stone-500"
                                           , "dark:bg-stone-700"
                                           , "hover:bg-stone-400"
                                           , "focus:bg-stone-400"
@@ -396,21 +338,12 @@ importEncounter env = Deku.do
                               [ D.text_ $ show f ]
 
                       , D.input
-                          [ css_
+                          [ css_ $ S.button <>
                               [ "flex"
                               , "grow"
                               , "items-center"
                               , "gap-2"
-                              , "p-2"
-                              , "rounded"
-                              , "bg-stone-500"
-                              , "text-stone-800"
-                              , "dark:bg-stone-700"
-                              , "dark:text-stone-300"
-                              , "hover:bg-stone-400"
-                              , "focus:bg-stone-400"
-                              , "dark:hover:bg-stone-500"
-                              , "dark:focus:bg-stone-500"
+                              , "py-2"
                               ]
                           , DA.xtypeFile
                           , DA.accept $ format <#> case _ of
@@ -475,21 +408,8 @@ importEncounter env = Deku.do
               , D.div
                   [ css_ [ "flex", "gap-2", "justify-end-safe" ] ]
                   [ D.button
-                      [ css_
-                          [ "flex"
-                          , "justify-center"
-                          , "gap-2"
-                          , "p-2"
-                          , "rounded"
-                          , "bg-stone-500"
-                          , "text-stone-800"
-                          , "dark:bg-stone-700"
-                          , "dark:text-stone-300"
-                          , "hover:bg-stone-400"
-                          , "focus:bg-stone-400"
-                          , "dark:hover:bg-stone-500"
-                          , "dark:focus:bg-stone-500"
-                          ]
+                      [ css_ $ S.button <>
+                          [ "flex", "justify-center", "gap-2", "py-2" ]
                       , DA.xtypeSubmit
                       , DA.disabled $ fileEnc <#> show <<< case _ of
                           Success _ -> false
@@ -501,21 +421,8 @@ importEncounter env = Deku.do
                       [ D.text_ "Import" ]
 
                   , D.button
-                      [ css_
-                          [ "flex"
-                          , "justify-center"
-                          , "gap-2"
-                          , "p-2"
-                          , "rounded"
-                          , "bg-stone-500"
-                          , "text-stone-800"
-                          , "dark:bg-stone-700"
-                          , "dark:text-stone-300"
-                          , "hover:bg-stone-400"
-                          , "focus:bg-stone-400"
-                          , "dark:hover:bg-stone-500"
-                          , "dark:focus:bg-stone-500"
-                          ]
+                      [ css_ $ S.button <>
+                          [ "flex", "justify-center", "gap-2", "py-2" ]
                       , DL.runOn DL.click $ dialog
                           <#> fromElement
                           >>> traverse_ (close Nothing)

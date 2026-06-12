@@ -57,7 +57,9 @@ titleBar env@{ theme } =
 
     , D.div []
         [ D.select
-            [ DL.selectOn_ DL.change $ (env ^. _saveTheme) <<< decode themeCodec
+            [ DL.selectOn_ DL.change
+                $ (env ^. _saveTheme)
+                <<< decode themeCodec
             ]
             [ D.option
                 [ DA.value_ $ encode themeCodec Light

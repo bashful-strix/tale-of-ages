@@ -25,6 +25,7 @@ import ToA.Data.Env (Env, _deleteChar, _navigate)
 import ToA.Data.Icon.Name (_name)
 import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
 import ToA.Util.Html (css_)
+import ToA.Util.Style as S
 
 listCharacterPage :: Env -> Nut
 listCharacterPage env@{ characters, icon } =
@@ -52,19 +53,8 @@ listCharacterPage env@{ characters, icon } =
                 ]
             ]
             [ D.a
-                [ css_
-                    [ "flex"
-                    , "grow"
-                    , "items-center"
-                    , "gap-2"
-                    , "p-2"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    , "hover:bg-stone-400"
-                    , "focus:bg-stone-400"
-                    , "dark:hover:bg-stone-500"
-                    , "dark:focus:bg-stone-500"
-                    ]
+                [ css_ $ S.interactable <>
+                    [ "flex", "grow", "items-center", "gap-2", "p-2" ]
                 , DA.href_ $ print routeCodec $ Characters $ Just $ ViewChar $
                     char ^. _name
                 , DL.click_
@@ -77,32 +67,16 @@ listCharacterPage env@{ characters, icon } =
             , D.div
                 [ css_ [ "flex", "flex-col" ] ]
                 [ D.button
-                    [ css_
-                        [ "flex"
-                        , "grow"
-                        , "items-center"
-                        , "px-2"
-                        , "dark:bg-stone-700"
-                        , "dark:text-stone-300"
-                        , "hover:bg-red-400"
-                        , "focus:bg-red-400"
-                        ]
+                    [ css_ $ S.interactableDanger <>
+                        [ "flex", "grow", "items-center", "px-2" ]
                     , DL.runOn_ DL.click $ (env ^. _deleteChar) char
                     ]
                     [ D.text_ "Delete" ]
 
                 , exportCharacter icon_
-                    [ "flex"
-                    , "grow"
-                    , "items-center"
-                    , "px-2"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    , "hover:bg-stone-400"
-                    , "focus:bg-stone-400"
-                    , "dark:hover:bg-stone-500"
-                    , "dark:focus:bg-stone-500"
-                    ]
+                    ( S.interactable <>
+                        [ "flex", "grow", "items-center", "px-2" ]
+                    )
                     char
                 ]
             ]
@@ -110,25 +84,10 @@ listCharacterPage env@{ characters, icon } =
       , D.div
           [ css_ [ "flex", "gap-2" ] ]
           [ D.a
-              [ css_
-                  [ "flex"
-                  , "items-center"
-                  , "gap-2"
-                  , "p-2"
-                  , "rounded"
-                  , "bg-stone-500"
-                  , "text-stone-800"
-                  , "dark:bg-stone-700"
-                  , "dark:text-stone-300"
-                  , "hover:bg-stone-400"
-                  , "focus:bg-stone-400"
-                  , "dark:hover:bg-stone-500"
-                  , "dark:focus:bg-stone-500"
-                  ]
+              [ css_ $ S.button <> [ "flex", "items-center", "gap-2", "p-2" ]
               , DA.href_ $ print routeCodec $ Characters $ Just CreateChar
               , DL.click_
-                  $ (env ^. _navigate)
-                      (Characters $ Just CreateChar)
+                  $ (env ^. _navigate) (Characters $ Just CreateChar)
                   <<< pure
               ]
               [ D.text_ "Create" ]

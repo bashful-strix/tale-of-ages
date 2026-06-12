@@ -10,7 +10,7 @@ import Data.Array (cons, deleteAt, elem, modifyAt, snoc, updateAt)
 import Data.Codec (decode, encode)
 import Data.Either (Either(..), hush, isLeft)
 import Data.Filterable (filter, partitionMap)
-import Data.Foldable (foldMap, intercalate)
+import Data.Foldable (all, foldMap, intercalate)
 import Data.Int (floor)
 import Data.Lens
   ( (^.)
@@ -30,6 +30,7 @@ import Data.Lens
   , _Just
   )
 import Data.Lens.At (at)
+import Data.Lens.Common (simple)
 import Data.Lens.Indexed (itraversed)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Map (empty, fromFoldable, lookup, member)
@@ -84,6 +85,7 @@ import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), CharacterPath(..))
 import ToA.Util.Html (css_, hr, style_)
 import ToA.Util.Optic ((^::), (#~))
+import ToA.Util.Style as S
 
 data Mode = Visual | Text
 
@@ -215,19 +217,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
     [ D.div
         [ css_ [ "flex", "justify-between", "gap-2" ] ]
         [ D.button
-            [ css_
-                [ "px-2"
-                , "py-1"
-                , "rounded"
-                , "bg-stone-500"
-                , "text-stone-800"
-                , "dark:bg-stone-700"
-                , "dark:text-stone-300"
-                , "hover:bg-stone-400"
-                , "focus:bg-stone-400"
-                , "dark:hover:bg-stone-500"
-                , "dark:focus:bg-stone-500"
-                ]
+            [ css_ S.button
             , DL.runOn_ DL.click $ setMode Text
             ]
             [ D.text_ "Text" ]
@@ -235,22 +225,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
         , D.div
             [ css_ [ "flex", "gap-2" ] ]
             [ D.button
-                [ css_
-                    [ "px-2"
-                    , "py-1"
-                    , "rounded"
-                    , "bg-stone-500"
-                    , "text-stone-800"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    , "hover:not-disabled:bg-stone-400"
-                    , "focus:not-disabled:bg-stone-400"
-                    , "dark:hover:not-disabled:bg-stone-500"
-                    , "dark:focus:not-disabled:bg-stone-500"
-                    , "disabled:bg-stone-600"
-                    , "disabled:text-stone-400"
-                    , "disabled:dark:text-stone-800"
-                    ]
+                [ css_ S.button
                 , DA.xtypeSubmit
                 , DA.disabled $ show <<< isNothing <$> character
                 , DL.runOn DL.click $ character <#> maybe (pure unit) \c -> do
@@ -262,19 +237,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                 [ D.text_ "Save" ]
 
             , D.button
-                [ css_
-                    [ "px-2"
-                    , "py-1"
-                    , "rounded"
-                    , "bg-stone-500"
-                    , "text-stone-800"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    , "hover:bg-stone-400"
-                    , "focus:bg-stone-400"
-                    , "dark:hover:bg-stone-500"
-                    , "dark:focus:bg-stone-500"
-                    ]
+                [ css_ S.button
                 , DA.xtypeButton
                 , DL.runOn_ DL.click $
                     (env ^. _navigate)
@@ -291,7 +254,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
             [ css_ [ "flex", "justify-between", "gap-2" ] ]
             [ D.span [ css_ [ "font-bold" ] ] [ D.text_ "Name" ]
             , D.input
-                [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
+                [ css_ S.input
                 , DA.value name
                 , DL.valueOn_ DL.change setName
                 ]
@@ -302,7 +265,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
             [ css_ [ "flex", "justify-between", "gap-2" ] ]
             [ D.span [ css_ [ "font-bold" ] ] [ D.text_ "Level" ]
             , D.input
-                [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
+                [ css_ S.input
                 , DA.xtypeNumber
                 , DA.min_ $ show $ L.toInt bottom
                 , DA.max_ $ show $ L.toInt top
@@ -316,21 +279,18 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
         , D.fieldset
             [ css_ [ "flex", "flex-col", "gap-1" ] ]
             [ D.legend [ css_ [ "font-bold" ] ] [ D.text_ "Jobs" ]
-            , (/\) <$> jobs <*> primary <#~> \(js /\ p) ->
+            , jobs <&> primary <#~> \(js /\ p) ->
                 js # itraversed `ifoldMapOf` \n l ->
                   D.div
                     [ css_ [ "flex", "justify-between", "gap-2" ] ]
                     [ D.select
-                        [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
+                        [ css_ S.input
+                        , DA.name_ $ n ^. simple _Newtype <> "Job"
                         , DL.runOn_ DL.mouseover $ setPreview previewJobs
                         , DL.runOn_ DL.focus $ setPreview previewJobs
                         , DL.selectOn_ DL.change $ \newN -> do
-                            setJobs $ js
-                              # at n
-                              .~ Nothing
-                                # at (Name newN)
-                              ?~ l
-                            when (isNothing p) $ setPrimary $ Just $ Name newN
+                            setJobs $ js # at n .~ Nothing # at (Name newN) ?~ l
+                            when (all (eq n) p) $ setPrimary $ Just $ Name newN
                         ] $ intercalate [ hr ] $
                         [ D.option
                             [ DA.value_ "" ]
@@ -354,14 +314,13 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                           )
 
                     , D.select
-                        [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
+                        [ css_ S.input
+                        , DA.name_ $ n ^. simple _Newtype <> "JobLevel"
                         , DL.selectOn_ DL.change
                             $ decode stringJobLevel
                             >>> hush
-                            >>> maybe
-                              (pure unit)
-                              ( \newL -> setJobs (js # at n ?~ newL)
-                              )
+                            >>> maybe (pure unit)
+                              (\newL -> setJobs (js # at n ?~ newL))
                         ] $ [ I, II, III, IV ] <#> \jl ->
                         D.option
                           ( [ DA.value_ $ encode stringJobLevel jl
@@ -372,6 +331,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     , D.button
                         [ css_
                             [ "rounded"
+                            , "self-center"
                             , "size-[1em]"
                             , if p == Just n then "bg-sky-600"
                               else "bg-stone-500 dark:bg-stone-700"
@@ -382,13 +342,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                         []
 
                     , D.button
-                        [ css_
-                            [ "px-2"
-                            , "border"
-                            , "rounded"
-                            , "hover:bg-stone-400"
-                            , "hover:dark:bg-stone-800"
-                            ]
+                        [ css_ $ S.interactable <> [ "px-2", "rounded" ]
                         , DA.xtypeButton
                         , DL.runOn_ DL.click do
                             setJobs $ js # at n .~ Nothing
@@ -398,17 +352,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     ]
 
             , D.button
-                [ css_
-                    [ "px-2"
-                    , "border"
-                    , "rounded"
-                    , "hover:bg-stone-400"
-                    , "hover:dark:bg-stone-800"
-                    ]
+                [ css_ S.button
                 , DA.xtypeButton
-                , DL.runOn DL.click $ jobs
-                    <#> setJobs
-                    <<< (at (Name "") ?~ I)
+                , DL.runOn DL.click $ jobs <#> setJobs <<< (at (Name "") ?~ I)
                 ]
                 [ D.text_ "+" ]
             ]
@@ -426,14 +372,13 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     D.div
                       [ css_ [ "flex", "justify-between", "gap-2" ] ]
                       [ D.select
-                          [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
+                          [ css_ S.input
+                          , DA.name_ $ "talent-" <> show i
                           , DL.runOn_ DL.mouseover $ setPreview pts
                           , DL.runOn_ DL.focus $ setPreview pts
-                          , DL.selectOn_ DL.change
-                              $ Id
+                          , DL.selectOn_ DL.change $ Id
                               >>> (updateAt i ~$ jts)
-                              >>> maybe (pure unit)
-                                setTalents
+                              >>> maybe (pure unit) setTalents
                           ]
                           [ intercalate hr $
                               ( D.option
@@ -446,14 +391,11 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                                       $ cts
                                       # filter
                                           ( view _id >>> elem ~$
-                                              ( j ^:: J._talents <.
-                                                  traversed
-                                              )
+                                              (j ^:: J._talents <. traversed)
                                           )
                                       <#> \t ->
                                         D.option
-                                          ( [ DA.value_ $ t ^. _id <.
-                                                _Newtype
+                                          ( [ DA.value_ $ t ^. _id <. _Newtype
                                             , DA.disabled
                                                 $ show
                                                 <<< elem (t ^. _id)
@@ -461,19 +403,12 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                                             ] <> guard (id == t ^. _id)
                                               [ DA.selected_ "selected" ]
                                           )
-                                          [ D.text_ $ t ^. _name <. _Newtype
-                                          ]
+                                          [ D.text_ $ t ^. _name <. _Newtype ]
                                 )
                           ]
 
                       , D.button
-                          [ css_
-                              [ "px-2"
-                              , "border"
-                              , "rounded"
-                              , "hover:bg-stone-400"
-                              , "hover:dark:bg-stone-800"
-                              ]
+                          [ css_ $ S.interactable <> [ "px-2", "rounded" ]
                           , DA.xtypeButton
                           , DL.runOn DL.click $ talents
                               <#> deleteAt i
@@ -483,17 +418,9 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                       ]
 
             , D.button
-                [ css_
-                    [ "px-2"
-                    , "border"
-                    , "rounded"
-                    , "hover:bg-stone-400"
-                    , "hover:dark:bg-stone-800"
-                    ]
+                [ css_ S.button
                 , DA.xtypeButton
-                , DL.runOn DL.click $ talents
-                    <#> setTalents
-                    <<< (snoc ~$ Id "")
+                , DL.runOn DL.click $ talents <#> setTalents <<< (snoc ~$ Id "")
                 ]
                 [ D.text_ "+" ]
             ]
@@ -512,7 +439,8 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                     D.div
                       [ css_ [ "flex", "justify-between", "gap-2" ] ]
                       [ D.select
-                          [ css_ [ "bg-stone-400", "dark:bg-stone-800" ]
+                          [ css_ S.input
+                          , DA.name_ $ "ability-" <> show i <> "-name"
                           , DL.runOn_ DL.mouseover $ setPreview pas
                           , DL.runOn_ DL.focus $ setPreview pas
                           , DL.selectOn_ DL.change $ \newA ->
@@ -525,13 +453,20 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
 
                           , hr
 
-                          , fixed $ ccs <#> \c ->
+                          , fixed $ cjs <#> \j ->
                               D.optgroup
-                                [ DA.label_ $ c ^. _name <. _Newtype ]
+                                [ DA.label_ $ j ^. _name <. _Newtype ]
                                 $ icon_.abilities
                                 # filter
                                     ( view _name >>> elem ~$
-                                        (c ^. _apprentice)
+                                        ( j ^:: J._abilities
+                                            <. traversed
+                                            <. filtered
+                                              ( preview _1 >>>
+                                                  (_ <= lookup (j ^. _name) js)
+                                              )
+                                            <. _2
+                                        )
                                     )
                                 <#> \a ->
                                   D.option
@@ -548,24 +483,12 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
 
                           , hr
 
-                          , fixed $ cjs <#> \j ->
+                          , fixed $ ccs <#> \c ->
                               D.optgroup
-                                [ DA.label_ $ j ^. _name <. _Newtype ]
+                                [ DA.label_ $ c ^. _name <. _Newtype ]
                                 $ icon_.abilities
                                 # filter
-                                    ( view _name >>> elem ~$
-                                        ( j ^:: J._abilities
-                                            <. traversed
-                                            <. filtered
-                                              ( preview _1 >>>
-                                                  ( _ <= lookup
-                                                      (j ^. _name)
-                                                      js
-                                                  )
-                                              )
-                                            <. _2
-                                        )
-                                    )
+                                    (view _name >>> elem ~$ (c ^. _apprentice))
                                 <#> \a ->
                                   D.option
                                     ( [ DA.value_ $ a ^. _name <. _Newtype
@@ -583,6 +506,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                       , D.button
                           [ css_
                               [ "rounded"
+                              , "self-center"
                               , "size-[1em]"
                               , if x then "bg-sky-600"
                                 else "bg-stone-500 dark:bg-stone-700"
@@ -594,13 +518,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                           []
 
                       , D.button
-                          [ css_
-                              [ "px-2"
-                              , "border"
-                              , "rounded"
-                              , "hover:bg-stone-400"
-                              , "hover:dark:bg-stone-800"
-                              ]
+                          [ css_ $ S.interactable <> [ "px-2", "rounded" ]
                           , DA.xtypeButton
                           , DL.runOn_ DL.click
                               $ deleteAt i jas
@@ -610,13 +528,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                       ]
 
             , D.button
-                [ css_
-                    [ "px-2"
-                    , "border"
-                    , "rounded"
-                    , "hover:bg-stone-400"
-                    , "hover:dark:bg-stone-800"
-                    ]
+                [ css_ S.button
                 , DA.xtypeButton
                 , DL.runOn DL.click $ abilities
                     <#> setAbilities
@@ -676,19 +588,7 @@ editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
         [ D.div
             [ css_ [ "flex", "justify-between", "gap-2" ] ]
             [ D.button
-                [ css_
-                    [ "px-2"
-                    , "py-1"
-                    , "rounded"
-                    , "bg-stone-500"
-                    , "text-stone-800"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    , "hover:bg-stone-400"
-                    , "focus:bg-stone-400"
-                    , "dark:hover:bg-stone-500"
-                    , "dark:focus:bg-stone-500"
-                    ]
+                [ css_ S.button
                 , DL.runOn_ DL.click $ setMode Visual
                 ]
                 [ D.text_ "Visual" ]
@@ -704,36 +604,12 @@ editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                             (Characters $ Just $ ViewChar $ c ^. _name)
                             Nothing
                     , DA.disabled $ show <<< isLeft <$> parsed
-                    , css_
-                        [ "px-2"
-                        , "py-1"
-                        , "rounded"
-                        , "bg-stone-500"
-                        , "text-stone-800"
-                        , "dark:bg-stone-700"
-                        , "dark:text-stone-300"
-                        , "hover:bg-stone-400"
-                        , "focus:bg-stone-400"
-                        , "dark:hover:bg-stone-500"
-                        , "dark:focus:bg-stone-500"
-                        ]
+                    , css_ S.button
                     ]
                     [ D.text_ "Save" ]
 
                 , D.button
-                    [ css_
-                        [ "px-2"
-                        , "py-1"
-                        , "rounded"
-                        , "bg-stone-500"
-                        , "text-stone-800"
-                        , "dark:bg-stone-700"
-                        , "dark:text-stone-300"
-                        , "hover:bg-stone-400"
-                        , "focus:bg-stone-400"
-                        , "dark:hover:bg-stone-500"
-                        , "dark:focus:bg-stone-500"
-                        ]
+                    [ css_ S.button
                     , DL.runOn_ DL.click $
                         (env ^. _navigate)
                           (Characters $ ViewChar <<< view _name <$> initChar)
@@ -750,17 +626,12 @@ editCharacterText env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
         , D.div
             [ css_ [ "flex" ] ]
             [ D.textarea
-                [ DC.transformOn { fromEventTarget, value } DL.input
+                [ css_ $ S.input <> [ "mx-2", "font-mono" ]
+                , DC.transformOn { fromEventTarget, value } DL.input
                     (pure setChar)
                 , DA.rows_ "15"
                 , DA.cols_ "40"
                 , DA.id_ "edit"
-                , css_
-                    [ "mx-2"
-                    , "font-mono"
-                    , "bg-stone-400"
-                    , "dark:bg-stone-800"
-                    ]
                 ]
                 [ D.text char ]
 
