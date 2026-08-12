@@ -193,7 +193,7 @@ workshopKnight =
               [ Step AreaEff (Just D6)
                   [ Text
                       """Push all adjacent foes 1 or (5+) two spaces, then deal
-                      2 damage to one of those foes. if you are adjacent to 3 or
+                      2 damage to one of those foes. If you are adjacent to 3 or
                       more foes, increase damage and push by +2."""
                   ]
               , Step (KeywordStep (Name "Conserve")) Nothing
@@ -258,7 +258,7 @@ workshopKnight =
           { name: Name "Arsenal"
           , colour: Name "Red"
           , description:
-              [ Text "Your bandoliers contain more than just weaponry." ]
+              [ Text "Your bandoleers contain more than just weaponry." ]
           , cost: One
           , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 3)) ]
           , steps:

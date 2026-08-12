@@ -57,7 +57,7 @@ zephyr =
               , Newline
               , Newline
               , Text
-                  """The Zephyrs are tight knight priesthood of messengers to
+                  """The Zephyrs are tight knit priesthood of messengers to
                   which the wind is an old and familiar song. In quiet times,
                   they tend to the flocks of messenger birds and maintain the
                   (sometimes very mundane) aerial flow of letters, mail, and
@@ -275,7 +275,7 @@ zephyr =
                             start of your next turn, losing all its effects."""
                         ]
                       , [ Text
-                            """At the start of eadh of your turns, any existing
+                            """At the start of each of your turns, any existing
                             space grows, counting as +1 space higher (max
                             +3)."""
                         ]

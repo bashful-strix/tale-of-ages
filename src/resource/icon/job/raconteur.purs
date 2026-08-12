@@ -219,7 +219,7 @@ raconteur =
           , colour: Name "Green"
           , description:
               [ Text
-                  """Your Quick tongue lashes out in reply, stabbing like a
+                  """Your quick tongue lashes out in reply, stabbing like a
                   dagger."""
               ]
           , cost: One

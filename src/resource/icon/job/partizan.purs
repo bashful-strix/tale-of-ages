@@ -53,7 +53,7 @@ partizan =
                   vaulting poles to leap from roof to roof, even when the
                   caravan is in motion. They are prodigious monster hunters,
                   using the motions of their poles to leap to breathtaking
-                  heights in order to plunge their blades every deeper. Once the
+                  heights in order to plunge their blades ever deeper. Once the
                   path of the Paritzan is taken up, a warrior does not expect to
                   live a long life, and will throw themselves at all threats to
                   the caravan with the poise and bravado of those closest to the
@@ -88,7 +88,7 @@ partizan =
                         """That ability counts you as being +1 spaces of
                         elevation higher than your current elevation."""
                     ]
-                  , [ Text "If you're bloodied. you may also "
+                  , [ Text "If you're bloodied, you may also "
                     , Italic [ Ref (Name "Fly") [ Text "fly" ] ]
                     , Text " 2 before using the ability, or 4 if you're in "
                     , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
@@ -130,7 +130,7 @@ partizan =
           , colour: Name "Red"
           , description:
               [ Text
-                  """You can choose to push or pull up elemation. Your
+                  """You can choose to push or pull up elevation. Your
                   abilities gain: """
               , Bold [ Ref (Name "Dominant") [ Text "Dominant" ] ]
               , Text ": Increase all push and pull by +1."
@@ -155,7 +155,7 @@ partizan =
                   [ Bold [ Text "End your turn" ]
                   , Text
                       """ and choose a foe in range, then gain the following
-                      interrupt: """
+                      interrupt:"""
                   ]
                   $ AbilityInset
                       { name: Name "Drill Descent"
@@ -218,7 +218,7 @@ partizan =
           , colour: Name "Red"
           , description:
               [ Text
-                  """You heft a long spear with termendous force, pinning your
+                  """You heft a long spear with tremendous force, pinning your
                   foe to the ground."""
               ]
           , cost: One
@@ -304,12 +304,12 @@ partizan =
                         ]
                       , [ Text
                             """You or allies that enter or exit its space can
-                            use it to fling  yourself, """
+                            use it to fling yourself, """
                         , Ref (Name "Fly") [ Text "flying" ]
                         , Text " "
                         , Dice 1 D3
                         , Text
-                            """+1 spaces but reomving the javelin. You must fly
+                            """+1 spaces but removing the javelin. You must fly
                             the maximum spaces possible in a straight line."""
                         ]
                       ]

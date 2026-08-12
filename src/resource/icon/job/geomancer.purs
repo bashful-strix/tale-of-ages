@@ -251,8 +251,8 @@ geomancer =
           , steps:
               [ Step (KeywordStep (Name "Object")) (Just D6)
                   [ Text
-                      """Choose yourself or a chracter in range. At the end of
-                      that target's next turn, the ground beneath them ereupts.
+                      """Choose yourself or a character in range. At the end of
+                      that target's next turn, the ground beneath them erupts.
                       Create a height 1 or (4+) 2, or (6+) 3 spire """
                   , Italic [ Ref (Name "Object") [ Text "object" ] ]
                   , Text " under them, then push other adjacent characters 1."
@@ -286,7 +286,7 @@ geomancer =
                       Effects cannot be created in spaces occupied by
                       characters."""
                   , List Unordered
-                      [ [ Text "Create eight 1 rock spire "
+                      [ [ Text "Create a height 1 rock spire "
                         , Italic [ Ref (Name "Object") [ Text "object" ] ]
                         ]
                       , [ Text "Lower or raise terrain in a space by 1" ]

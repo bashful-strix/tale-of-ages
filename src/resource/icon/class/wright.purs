@@ -271,7 +271,7 @@ wright =
           , cost: One
           , tags:
               [ RangeTag (Range (NumVar 1) (NumVar 4))
-              , KeywordTag (Name "Bject")
+              , KeywordTag (Name "Object")
               ]
           , steps:
               [ Step (KeywordStep (Name "Object")) (Just D6)

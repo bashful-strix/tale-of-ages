@@ -239,7 +239,7 @@ chanter =
                         , Dice 3 D3
                         , Text
                             """+3. May heal over vigor maximum. At the end of an
-                            ally's turn, reduc down to their maximum if
+                            ally's turn, reduce down to their maximum if
                             higher."""
                         ]
                       , [ Text "Defeated: Automatically "
@@ -276,7 +276,7 @@ chanter =
                   , Italic [ Ref (Name "Fly") [ Text "flying" ] ]
                   , Text " when moving and gain "
                   , Italic [ Ref (Name "Strength") [ Text "strength" ] ]
-                  , Text " if you end their turn there."
+                  , Text " if they end their turn there."
                   ]
               , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text "Reduce action cost to 1." ]
@@ -316,8 +316,8 @@ chanter =
               , Step (KeywordStep (Name "Conserve")) Nothing
                   [ Text
                       """Increase the base size of the aura by +1 (max base aura
-                      3). This effect stacks, by ends and resets if you exit the
-                      aura."""
+                      3). This effect stacks, but ends and resets if you exit
+                      the aura."""
                   ]
               ]
           }
@@ -341,7 +341,7 @@ chanter =
                             can deal 2 """
                         , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
                         , Text
-                            """ damage to a foe in the aura. If you ally was in
+                            """ damage to a foe in the aura. If your ally was in
                             crisis, you deal damage to all foes in the aura
                             instead."""
                         ]

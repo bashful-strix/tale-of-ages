@@ -256,7 +256,7 @@ weepingAssassin =
                       , tags: []
                       , steps:
                           [ Step TriggerStep Nothing
-                              [ Text "Your marked foe end their turn." ]
+                              [ Text "Your marked foe ends their turn." ]
                           , Step Eff Nothing
                               [ Text
                                   """If your foe is in range 1-3, teleport to a
@@ -282,7 +282,7 @@ weepingAssassin =
           , colour: Name "Yellow"
           , description:
               [ Text
-                  """Dark aether coats your blade, preparing final rest for you
+                  """Dark aether coats your blade, preparing final rest for your
                   foe."""
               ]
           , cost: One

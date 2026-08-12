@@ -189,7 +189,7 @@ snowbinder =
                       , abilities:
                           [ Step SummonAction Nothing
                               [ Text
-                                  """All active rime weapons repeate the exact
+                                  """All active rime weapons repeat the exact
                                   area of the line that created them, dealing
                                   piercing damage in that area equal to the
                                   round number and pushing characters in the
@@ -287,8 +287,7 @@ snowbinder =
               [ InsetStep (KeywordStep (Name "Summon")) Nothing
                   [ Text
                       """Summon a snowball in a free adjacent space, and set out
-                      a power die, starting at 1.
-                      """
+                      a power die, starting at 1."""
                   ]
                   $ SummonInset
                       { name: Name "Snowball"
@@ -315,7 +314,7 @@ snowbinder =
                               , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
                               , Text
                                   """, then is pushed 1 and takes 2 piercing
-                                  dmmage per tick on the power die. Then tick
+                                  damage per tick on the power die. Then tick
                                   the die down by """
                               , Dice 1 D3
                               , Text

@@ -61,7 +61,7 @@ alchemist =
                   surgeons, pharmacologists, and doctors to ply their living.
                   Their meetings take place in secret refuges, where they share
                   advanced medical knowledge, secrets of the physical form, and
-                  attempt to commander the resources of the order towards some
+                  attempt to commandeer the resources of the order towards some
                   project or another of staggering ambition."""
               , Newline
               , Newline
@@ -262,7 +262,7 @@ alchemist =
           , colour: Name "Blue"
           , description:
               [ Text
-                  """You command the elements to dissovle - earth and flesh
+                  """You command the elements to dissolve - earth and flesh
                   alike bursts into a toxic vapor."""
               ]
           , cost: One
@@ -413,8 +413,8 @@ alchemist =
                   , Italic
                       [ Ref (Name "Dangerous Terrain") [ Text "dangerous" ] ]
                   , Text
-                      """ in terrain in free spaces in the area. Characters
-                      caught in the explosion alrady in """
+                      """ terrain in free spaces in the area. Characters caught
+                      in the explosion already in """
                   , Italic [ Text "dangerous" ]
                   , Text " terrain take "
                   , Dice 2 D3

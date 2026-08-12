@@ -52,7 +52,7 @@ fool =
                   Eld, part folk hero, and part hired killer. They have no
                   official organization, and cover their faces with masks to
                   hide their identity, wearing bells and motley to cover their
-                  collections of deadly weapons and explosives. Some people fear 
+                  collections of deadly weapons and explosives. Some people fear
                   the Fools, calling them self-interested thugs or anarchic
                   cultists of the Laughing Titan, the god of death. They may not
                   be entirely wrong, but none can deny their flair for the
@@ -63,7 +63,7 @@ fool =
                   """They are feared rightly by all would-be tyrants,
                   under-barons, and aspiring imperial lords. Wherever kin labor
                   under oppression, someone will take up the mask and knives and
-                  sent cold jolts of fear into the hearts of the rich and
+                  send cold jolts of fear into the hearts of the rich and
                   comfortable."""
               ]
           , trait: Name "Stacked Die"
@@ -131,7 +131,7 @@ fool =
                   deal 2 damage to all foes adjacent to that character. Increase
                   this to """
               , Dice 2 D3
-              , Text " against any these foes that are bloodied."
+              , Text " against any of these foes that are bloodied."
               ]
           }
       , Talent
@@ -168,7 +168,7 @@ fool =
                       place yourself adjacent to the """
                   , Italic [ Text "first" ]
                   , Text
-                      """ foe in that line, delivery a massive blow. This
+                      """ foe in that line, delivering a massive blow. This
                       ability has different effects depending on their position
                       on the line. Foes can save for half damage."""
                   , List Unordered
@@ -194,7 +194,7 @@ fool =
                       ]
                   , Text
                       """If there are no valid targets after rolling, the
-                      resolve and action cost of this ability if refunded."""
+                      resolve and action cost of this ability is refunded."""
                   ]
               , Step (KeywordStep (Name "Finishing Blow")) Nothing
                   [ Text
@@ -315,7 +315,7 @@ fool =
                               ]
                           , Step Eff (Just D6)
                               [ Text
-                                  """Snap you fingers and roll the effect die.
+                                  """Snap your fingers and roll the effect die.
                                   If your foe is at """
                               , Italic [ Dice 1 D6 ]
                               , Text

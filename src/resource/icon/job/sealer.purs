@@ -173,7 +173,7 @@ sealer =
                   ]
               , Step (KeywordStep (Name "Critical Hit")) Nothing
                   [ Text
-                      """Increase burst area by help the round number, rounded
+                      """Increase burst area by half the round number, rounded
                       up."""
                   ]
               ]
@@ -191,11 +191,11 @@ sealer =
           , steps:
               [ Step Eff Nothing
                   [ Text
-                      """Choose a blast 3 area in range. You an all adjacent
+                      """Choose a blast 3 area in range. You and all adjacent
                       allies may teleport into free space in the area, in any
                       order, then all foes in the area take 2 """
                   , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
-                  , Text " damage and must save of be "
+                  , Text " damage and must save or be "
                   , Italic [ Ref (Name "Brand") [ Text "branded" ] ]
                   , Text " and pushed 1 away from the center."
                   ]

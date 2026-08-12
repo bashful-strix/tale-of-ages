@@ -182,7 +182,7 @@ corvidian =
               , Step (KeywordStep (Name "Finishing Blow")) (Just D3)
                   [ Text
                       """Release a burst 1 (self) area effect, pushing all foes
-                      inside 1. If your foe is in crisis, push + """
+                      inside 1. If your foe is in crisis, push +"""
                   , Dice 1 D3
                   , Text "."
                   ]
@@ -267,8 +267,8 @@ corvidian =
                   , Text " and gain "
                   , Italic [ Ref (Name "Sturdy") [ Text "sturdy" ] ]
                   , Text
-                      """. Gain the following interrupt until the end your next
-                      turn."""
+                      """. Gain the following interrupt until the end of your
+                      next turn."""
                   ]
                   $ AbilityInset
                       { name: Name "Cut Down"
@@ -284,7 +284,7 @@ corvidian =
                               [ Text
                                   """Roll the effect die. If your foe's HP is
                                   under the effect die, they are instantly
-                                  defeated, ignoring all other effect. Then
+                                  defeated, ignoring all other effects. Then
                                   gain """
                               , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
                               , Text

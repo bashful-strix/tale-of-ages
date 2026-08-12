@@ -54,7 +54,7 @@ stormbender =
                   However, there are still those brave and hardy souls that live
                   on the islands around Arden Eld, and the merchants, sailors,
                   and travelers that rely on the sea for fast passage and the
-                  movement of cargo, the lifeblood of the continent’s great
+                  movement of cargo, the lifeblood of the continent's great
                   cities."""
               , Newline
               , Newline
@@ -72,9 +72,9 @@ stormbender =
                   Stormbenders can clear the skies with a swipe of their hands,
                   feel the currents ahead for aquatic monsters, turn weather
                   away from the hull of the ship, and blow wind into its sails.
-                  It doesn’t matter that many of them dabble in a little light
+                  It doesn't matter that many of them dabble in a little light
                   piracy on the side - they are the undisputed masters of their
-                  element, and they wouldn’t have it any other way."""
+                  element, and they wouldn't have it any other way."""
               ]
           , trait: Name "Dash on the Rocks"
           , keyword: Name "Impact"
@@ -118,7 +118,7 @@ stormbender =
           , description:
               [ Text "Once a combat, you can activate any "
               , Italic [ Ref (Name "Impact") [ Text "impact" ] ]
-              , Text " effect a character enters an "
+              , Text " effect if a character enters an "
               , Italic [ Ref (Name "Adverse Terrain") [ Text "adverse" ] ]
               , Text " terrain space during a push or pull."
               ]
@@ -273,7 +273,7 @@ stormbender =
           , colour: Name "Blue"
           , description:
               [ Text
-                  """You mark your foe with teh symbol of the Deep Water Titan.
+                  """You mark your foe with the symbol of the Deep Water Titan.
                   No matter where they step, the deeps come up to claim them."""
               ]
           , cost: One

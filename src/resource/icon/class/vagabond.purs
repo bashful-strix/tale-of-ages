@@ -48,7 +48,7 @@ vagabond =
           , complexity: [ Text "Medium" ]
           , description:
               [ Text
-                  """Vagabonds are the mercanaries and master scouts of Arden
+                  """Vagabonds are the mercenaries and master scouts of Arden
                   Eld. They know how to aim a crossbow bolt through the visor
                   of a knight or the weak spot of a monster, how to move
                   quietly and quickly, and how to fling a knife with deadly

@@ -168,7 +168,7 @@ slayer =
                   ]
               , Step Eff Nothing
                   [ Text
-                      """If you miss htis attack, ignore the last effect and
+                      """If you miss this attack, ignore the last effect and
                       refund 2 resolve. You can limit break again this
                       combat."""
                   ]
@@ -219,7 +219,8 @@ slayer =
                       , tags: []
                       , steps:
                           [ Step TriggerStep Nothing
-                              [ Text "A foe in range 1-2 damage you or an ally."
+                              [ Text
+                                  "A foe in range 1-2 damages you or an ally."
                               ]
                           , Step Eff Nothing
                               [ Text "The foe must save. They are "
@@ -238,7 +239,7 @@ slayer =
                                   ]
                               , Text
                                   """ before triggering this ability. On a
-                                  failed dave, your foe also doubles """
+                                  failed save, your foe also doubles """
                               , Italic [ Ref (Name "Daze") [ Text "daze" ] ]
                               , Text " and push."
                               ]
@@ -324,7 +325,7 @@ slayer =
                           ]
                       }
               , Step (KeywordStep (Name "Heavy")) Nothing
-                  [ Text "Interrup deals +4 more damage." ]
+                  [ Text "Interrupt deals +4 more damage." ]
               ]
           }
       ]

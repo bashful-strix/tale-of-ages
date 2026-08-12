@@ -166,7 +166,7 @@ stormscale =
                   [ Text
                       """For the rest of combat, you mantle the old gods of the
                       deeps, transforming into a titanic ocean creature
-                      surrounded by surging water aether. Tou gain a greatly
+                      surrounded by surging water aether. You gain a greatly
                       enhanced dash, with the following benefits:"""
                   , List Unordered
                       [ [ Text "All your movement gains "
@@ -321,7 +321,7 @@ stormscale =
                                   then pushing them 1. If you or your ally
                                   moved 3 or more spaces in a straight line
                                   without stopping before entering the spark,
-                                  increased this damage by +2 and push by +1, or
+                                  increase this damage by +2 and push by +1, or
                                   by +"""
                               , Dice 2 D3
                               , Text

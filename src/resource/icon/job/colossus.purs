@@ -54,7 +54,7 @@ colossus =
                   that reaches across all of Arden Eld. They largely forgo the
                   use of all weaponry in return for training their bodies to
                   perfection, forging their very hands and feat into killing
-                  implements, and using grappling techniques that can liquify
+                  implements, and using grappling techniques that can liquefy
                   rock. Colossi travel throughout the land seeking powerful
                   foes, and taking trophies to return to their great lodges to
                   offer in tribute to Arenheir in fierce hope of resurrecting
@@ -148,7 +148,7 @@ colossus =
                   , Italic [ Ref (Name "Sacrifice") [ Text "sacrifice" ] ]
                   , Text
                       """ 25% of you max hp. Your foe sacrifices 50% of their
-                      max hp, or 25% on a successfult save. Then:"""
+                      max hp, or 25% on a successful save. Then:"""
                   , List Unordered
                       [ [ Text "place yourself adjacent to your foe" ]
                       , [ Text "lower the terrain under your foe by 1" ]
@@ -220,7 +220,7 @@ colossus =
                       """When you enter this stance, or at the end of your turn,
                       you may grab an adjacent foe. A grabbed foe has attack """
                   , Weakness
-                  , Text " except against you, and your and they are "
+                  , Text " except against you, and you and they are "
                   , Italic [ Ref (Name "Immobile") [ Text "immobile" ] ]
                   , Text
                       """. A foe ends the grab after using an ability that

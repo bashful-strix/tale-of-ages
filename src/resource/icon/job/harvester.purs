@@ -120,7 +120,7 @@ harvester =
           , description:
               [ Text
                   """Once a round, when you reduce a character to 0 hp, you can
-                  immediately smake a free move, or grant it to an ally in range
+                  immediately make a free move, or grant it to an ally in range
                   1-3."""
               ]
           }
@@ -190,12 +190,12 @@ harvester =
                       , abilities:
                           [ Step SummonEff Nothing
                               [ Text
-                                  """While they have their soul knocked our,
+                                  """While they have their soul knocked out,
                                   foes can act normally. However, the soul can
                                   be targeted as if it was the body,
-                                  transferring all damage, mark, or statuses it
+                                  transferring all damage, marks, or statuses it
                                   would take to the body, no matter the distance
-                                  or line of sight. Other effect (such as pushes
+                                  or line of sight. Other effects (such as pushes
                                   or pulls) apply to the soul."""
                               , List Unordered
                                   [ [ Text "Damage transferred gains "
@@ -304,7 +304,7 @@ harvester =
                         , Text
                             """ character, the plants feed on life force and you
                             can cause the area to grow by 2 spaces, added to the
-                            total area in any way you choose. The could grow
+                            total area in any way you choose. This could grow
                             under characters."""
                         ]
                       ]

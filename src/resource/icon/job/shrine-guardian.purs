@@ -126,7 +126,7 @@ shrineGuardian =
           , colour: Name "Green"
           , description:
               [ Text
-                  """Your auras may also effect allies that are adjacent to any
+                  """Your auras may also affect allies that are adjacent to any
                   space affected by the aura."""
               ]
           }
@@ -165,7 +165,7 @@ shrineGuardian =
                       as final. Any foe that hits an attack while inside the
                       zone must re-roll it, taking the second result as final. A
                       character can only be affected by this zone once a round.
-                      The zone disperses at the end of you next turn,
+                      The zone disperses at the end of your next turn,
                       granting """
                   , Italic [ Ref (Name "Strength") [ Text "strength" ] ]
                   , Text " to yourself and all allies inside."
@@ -178,7 +178,7 @@ shrineGuardian =
           , description:
               [ Text
                   """You throw out a handful of glittering salt, scorching the
-                  spiritually inpure."""
+                  spiritually impure."""
               ]
           , cost: One
           , tags:

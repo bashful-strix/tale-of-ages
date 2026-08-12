@@ -191,7 +191,7 @@ freelancer =
                   [ Text "Mark your target. At the end of your target's turn:"
                   , List Unordered
                       [ [ Text
-                            """If they're in range 3 or your, they take 2 damage
+                            """If they're in range 3 of you, they take 2 damage
                             once (4+) twice, (6+) 3 times. If they're at """
                         , Italic [ Text "exactly" ]
                         , Text " 3 spaces away, they take triple damage."

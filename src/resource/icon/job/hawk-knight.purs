@@ -187,7 +187,7 @@ hawkKnight =
           , description:
               [ Text
                   """Your sword strokes are so fast you can slash the air
-                  multiple times in a blink, sending our cutting shockwaves."""
+                  multiple times in a blink, sending out cutting shockwaves."""
               ]
           , cost: Two
           , tags:
@@ -202,7 +202,7 @@ hawkKnight =
                   [ Text
                       """You may target one, (4+) two, (6+) or three
                         additional cross 1 in range, extending the area effect.
-                        The areas cannont overlap."""
+                        The areas cannot overlap."""
                   ]
               , Step (KeywordStep (Name "Excel")) Nothing
                   [ Text
@@ -244,9 +244,9 @@ hawkKnight =
                               ]
                           , Step Eff Nothing
                               [ Text
-                                  """Your ally halves incoming damage. Tou also
+                                  """Your ally halves incoming damage. You also
                                   take half the incoming damage. This damage is
-                                  colculated before reductions."""
+                                  calculated before reductions."""
                               ]
                           ]
                       }
@@ -284,7 +284,7 @@ hawkKnight =
                         , Text ": +2 damage."
                         ]
                       , [ Italic [ Text "Critical hit" ]
-                        , Text ": Increase pushed by +2 and foe is "
+                        , Text ": Increase pushes by +2 and foe is "
                         , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
                         , Text "."
                         ]

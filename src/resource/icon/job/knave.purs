@@ -42,12 +42,12 @@ knave =
           , description:
               [ Text
                   """Hatred is a unique negative status. A character suffering
-                  from hatred deals 1/2 dmaage to all characters other than you
-                  as long as you are not immune """
+                  from hatred deals 1/2 damage to all characters other than you
+                  as long as you are not """
               , Italic [ Ref (Name "Immune") [ Text "immune" ] ]
               , Text
                   """ to damage, and in line of sight and range 1-3 from them. A
-                  characters removed one hatred after using any ability that
+                  character removes one hatred after using any ability that
                   damages you."""
               ]
           }
@@ -110,12 +110,12 @@ knave =
               , Italic [ Ref (Name "Hatred") [ Text "hatred (-)" ] ]
               , Text
                   """. Hatred is a unique negative status. A character suffering
-                  from hatred deals 1/2 dmaage to all characters other than you
-                  as long as you are not immune """
+                  from hatred deals 1/2 damage to all characters other than you
+                  as long as you are not """
               , Italic [ Ref (Name "Immune") [ Text "immune" ] ]
               , Text
                   """ to damage, and in line of sight and range 1-3 from them. A
-                  characters removed one hatred after using any ability that
+                  character removes one hatred after using any ability that
                   damages you."""
               ]
           }
@@ -143,7 +143,7 @@ knave =
           , description:
               [ Text
                   """Once a round, when a foe in range 1-3 is defeated, you may
-                  transfer all stacks of one of its negatice statuses to any
+                  transfer all stacks of one of its negative statuses to any
                   other foe in range 1-3."""
               ]
           }
@@ -218,7 +218,7 @@ knave =
           , colour: Name "Red"
           , description:
               [ Text
-                  """With well places words, you rile up your foe into moving
+                  """With well placed words, you rile up your foe into moving
                   out of position."""
               ]
           , cost: One
@@ -235,14 +235,14 @@ knave =
                   , Italic [ Ref (Name "Immobile") [ Text "immobile" ] ]
                   , Text
                       """, and become unable to take interrupts. These effects
-                      last until the start of theur next turn."""
+                      last until the start of their next turn."""
                   ]
               , Step (KeywordStep (Name "Afflicted")) Nothing
                   [ Text "Foes take 2 "
                   , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
                   , Text " damage, or "
                   , Dice 2 D3
-                  , Text " if they are affilcted by 3 or more statuses."
+                  , Text " if they are afflicted by 3 or more statuses."
                   ]
               ]
           }

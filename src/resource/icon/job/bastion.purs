@@ -123,7 +123,7 @@ bastion =
           , name: Name "Presence"
           , colour: Name "Red"
           , description:
-              [ Text "Your abilities with teh aura tag gain "
+              [ Text "Your abilities with the aura tag gain "
               , Bold [ Text "Overdrive" ]
               , Text ": increase aura size by +1."
               ]
@@ -301,7 +301,7 @@ bastion =
                             aura from the outside takes """
                         , Dice 1 D6
                         , Text
-                            """ damage and is pushed 1, interrupting by not
+                            """ damage and is pushed 1, interrupting but not
                             ending movement. A foe can't trigger this effect
                             more than once a turn."""
                         ]

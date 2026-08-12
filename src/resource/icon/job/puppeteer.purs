@@ -50,9 +50,9 @@ puppeteer =
                   """Of all the major Leggio caravans, the story of the
                   thirteenth is perhaps the most tragic. Known most for its
                   mastery of the puppet theatre and its lifelike, life-sized
-                  marionettes, Its history, once carved into the wooden flanks
+                  marionettes, its history, once carved into the wooden flanks
                   of its colorful wagons, has been lost, chipped into splinters,
-                  an fed to the flames when it was betrayed by the guilds. Its
+                  and fed to the flames when it was betrayed by the guilds. Its
                   people were scattered to the winds, absorbed by other
                   caravans, or left to live a meagre existence as refugees."""
               , Newline
@@ -107,9 +107,9 @@ puppeteer =
                       ]
                   , Step SummonEff Nothing
                       [ Text
-                          """When the pupet would enter the space of a foe or it
-                          would be swapped with a foe, you may deal 2 damage to
-                          that foe, or """
+                          """When the puppet would enter the space of a foe or
+                          it would be swapped with a foe, you may deal 2 damage
+                          to that foe, or """
                       , Dice 2 D3
                       , Text " if the foe is in "
                       , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
@@ -219,7 +219,7 @@ puppeteer =
           , colour: Name "Yellow"
           , description:
               [ Text
-                  """Detatch shadowy strings that hook into the soul aether of
+                  """Detach shadowy strings that hook into the soul aether of
                   your target, dragging them where you will."""
               ]
           , cost: One
@@ -240,7 +240,7 @@ puppeteer =
                       target is a foe, for every ally, object, or allied summon
                       your character passes through during this movement, your
                       target takes 2 damage. A foe can pass a save at the end of
-                      thier turn to remove this mark."""
+                      their turn to remove this mark."""
                   ]
               ]
           }
@@ -321,7 +321,7 @@ puppeteer =
                               [ Text
                                   """The top can be targeted by effects that
                                   push, pull or teleport a character. Once a
-                                  round, after your push, pull or teleport a
+                                  round, after you push, pull or teleport a
                                   top, it spins and deal 2 damage to all
                                   adjacent foes."""
                               ]

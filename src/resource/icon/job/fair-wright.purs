@@ -214,7 +214,7 @@ fairWright =
                       , max: 3
                       , abilities:
                           [ Step SummonEff Nothing
-                              [ Text "The hob as aura 1. The aura is "
+                              [ Text "The hob has aura 1. The aura is "
                               , Italic
                                   [ Ref
                                       (Name "Dangerous Terrain")
@@ -225,7 +225,7 @@ fairWright =
                           , Step SummonAction (Just D6)
                               [ Text
                                   """Increase the aura of each festival hob by
-                                  +1. This effect stakcs (max +3) and lasts
+                                  +1. This effect stacks (max +3) and lasts
                                   until the hob is dismissed. However, on a
                                   (1-3) the hob explodes, """
                               , Italic [ Text "dismissing" ]
@@ -341,7 +341,7 @@ fairWright =
                                   """Each of these hobs links to a foe in range
                                   1-2 when summoned. If that foe ends their turn
                                   2 or more spaces away from the hob, """
-                              , Italic [ Text "dimiss" ]
+                              , Italic [ Text "dismiss" ]
                               , Text
                                   """ the hob and they must save. They take 2
                                   piercing damage and have """

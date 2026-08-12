@@ -141,6 +141,7 @@ herbalist =
                   """ on you and adjacent allies to +3 damage. The first time
                   you become bloodied in a combat, gain """
               , Italic [ Text "strength" ]
+              , Text "."
               ]
           }
       ]
@@ -206,7 +207,7 @@ herbalist =
                               , Italic [ Text "dismissing" ]
                               , Text
                                   """ the spore, gaining 1 vigor and ignoring
-                                  any terrain movement penalities or damage in
+                                  any terrain movement penalties or damage in
                                   this space. If this is the third spore or more
                                   they have popped this turn, increase vigor by
                                   +"""
@@ -238,7 +239,7 @@ herbalist =
                   , Italic [ Text "vines" ]
                   , Text
                       """ in range, which can be created under characters. A
-                      vine deal 2 piercing damage to any character in its area
+                      vine deals 2 piercing damage to any character in its area
                       when it is created, but a character can only take this
                       damage once a turn."""
                   ]

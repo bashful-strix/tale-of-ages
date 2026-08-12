@@ -94,7 +94,7 @@ blightrunner =
                         """Once a round, after you move 3 or more spaces in a
                         straight line without stopping, gain """
                     , Italic [ Text "evasion" ]
-                    , Text ", or two stacks if you moved 6 or more space."
+                    , Text ", or two stacks if you moved 6 or more spaces."
                     ]
                   , [ Text
                         """Your attacks deal +damage equal to half your stacks
@@ -116,7 +116,7 @@ blightrunner =
           , colour: Name "Yellow"
           , description:
               [ Text
-                  """When you move outside your tun, increase that movement by
+                  """When you move outside your turn, increase that movement by
                   +2."""
               ]
           }
@@ -210,7 +210,7 @@ blightrunner =
                       different adjacent foe."""
                   ]
               , Step (KeywordStep (Name "Overdrive")) Nothing
-                  [ Text "Increase all dashed by +3." ]
+                  [ Text "Increase all dashes by +3." ]
               ]
           }
       , Ability
@@ -235,7 +235,7 @@ blightrunner =
                         , Text " against all foes not adjacent to them"
                         ]
                       , [ Text
-                            """once a round, when your foe misses as attack,
+                            """once a round, when your foe misses an attack,
                             they stumble and you may push them """
                         , Dice 1 D3
                         , Text "+1 in any direction"
@@ -245,7 +245,7 @@ blightrunner =
                       """A foe may save at the end of their turn to end this
                       mark."""
                   ]
-              , Step (KeywordStep (Name "Mark")) Nothing
+              , Step (KeywordStep (Name "Overdrive")) Nothing
                   [ Text "Gains a further attack "
                   , Weakness
                   , Text " and push +2."
@@ -255,7 +255,7 @@ blightrunner =
       , Ability
           { name: Name "Zipline"
           , colour: Name "Yellow"
-          , description: [ Text "You go through when you can go over." ]
+          , description: [ Text "Why go through when you can go over?" ]
           , cost: One
           , tags: [ KeywordTag (Name "Zone"), AreaTag (Line (NumVar 4)), End ]
           , steps:
@@ -268,7 +268,7 @@ blightrunner =
                       ability to enter that space, then """
                   , Italic [ Ref (Name "Fly") [ Text "fly" ] ]
                   , Text
-                      """ to the other end othe zipline or as far as possible,
+                      """ to the other end of the zipline or as far as possible,
                       then gain """
                   , Italic [ Ref (Name "Haste") [ Text "haste" ] ]
                   , Text "."
@@ -290,7 +290,7 @@ blightrunner =
           , description:
               [ Text
                   """You turn your enemies' strikes to your own favor, spinning
-                  thier own momentum into a deadly force."""
+                  their own momentum into a deadly force."""
               ]
           , cost: One
           , tags: [ End ]
@@ -315,8 +315,8 @@ blightrunner =
                                   was 5 or less, they take """
                               , Dice 2 D3
                               , Text
-                                  """ instead. Double this damage if they are in
-                                  crisis."""
+                                  """ damage instead. Double this damage if they
+                                  are in crisis."""
                               ]
                           ]
                       }

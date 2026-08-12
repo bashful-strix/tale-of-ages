@@ -145,7 +145,7 @@ theurgist =
           , description:
               [ Text "Increase the effect of "
               , Italic [ Ref (Name "Keen") [ Text "keen" ] ]
-              , Text " for your and adjacent allies to "
+              , Text " for yourself and adjacent allies to "
               , Power
               , Power
               , Text
@@ -271,7 +271,7 @@ theurgist =
           , description:
               [ Text
                   """You link the soul Aether of you and a companion with a
-                  chain of pure fire aether, drawing from the strength of one
+                  chain of pure fire aether, drawing from the strength of one to
                   bolster the other."""
               ]
           , cost: One

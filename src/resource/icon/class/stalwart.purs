@@ -43,7 +43,7 @@ stalwart =
           , complexity: [ Text "Low" ]
           , description:
               [ Text
-                  """Stalwarts are consumate warriors and masters of martial
+                  """Stalwarts are consummate warriors and masters of martial
                   prowess. Tough, vigorous, and equally skilled at punishing
                   foes as they are protecting allies, they act as an anchor for
                   their teams, protecting areas of the battlefield, preventing
@@ -154,7 +154,7 @@ stalwart =
                     , Text " against the entire ability"
                     ]
                   , [ Text
-                        """Foes must spend +1 movement to exit a space adjecent
+                        """Foes must spend +1 movement to exit a space adjacent
                         to you"""
                     ]
                   ]

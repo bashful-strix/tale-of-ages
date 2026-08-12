@@ -162,7 +162,7 @@ auran =
                   [ Text
                       """Then, push the object 3 in a straight line in any
                       direction. The object can also be pushed by allies as
-                      though it were a chracter, or an ally can push it using
+                      though it were a character, or an ally can push it using
                       the """
                   , Italic
                       [ Ref (Name "Interact") [ Text "interact (1 action)" ] ]
@@ -172,7 +172,7 @@ auran =
                             """If the wrecking ball enters the space of a
                             character, they take """
                         , Dice 2 D3
-                        , Text " pericing damage, are pushed "
+                        , Text " piercing damage, are pushed "
                         , Italic [ Dice 2 D3 ]
                         , Text ", and gain "
                         , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
@@ -198,7 +198,7 @@ auran =
           , colour: Name "Blue"
           , description:
               [ Text
-                  """Spikes of iron whip from the earth, pericing the limbs of
+                  """Spikes of iron whip from the earth, piercing the limbs of
                   your foes."""
               ]
           , cost: Two

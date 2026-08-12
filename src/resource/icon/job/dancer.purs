@@ -52,7 +52,7 @@ dancer =
               , Newline
               , Newline
               , Text
-                  """Nowadays, true Dancers are few and far between. Dancing was 
+                  """Nowadays, true Dancers are few and far between. Dancing was
                   a way to commune with the gods and transmit the wishes,
                   dreams, and hopes of the common people. With their departure
                   and death, it is now a way to commune with their essences or

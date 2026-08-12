@@ -46,7 +46,7 @@ venomist =
           , description:
               [ Text
                   """A unique status. When taking a turn, a character afflicted
-                  by Shadow Venom cannont draw line of sight except to adjacent
+                  by Shadow Venom cannot draw line of sight except to adjacent
                   spaces until the end of that turn. They can ignore this effect
                   while they are adjacent to an ally."""
               ]
@@ -70,7 +70,7 @@ venomist =
                   secret and deadly society of Vermin Clans spread across Arden
                   Eld, each practicing and refining the Night Venom Techniques.
                   They are known for hunting and drawing out poisons from the
-                  deadliest creatures in Arden Eld, which which they coat their
+                  deadliest creatures in Arden Eld, with which they coat their
                   weapons and even ingest to build up immunity and practice
                   toxic enlightenment. As poison can fell anything, whether lord
                   or beast, it is a great leveler."""
@@ -102,7 +102,7 @@ venomist =
               , Ref (Name "Shadow Venom") [ Text "Shadow Venom (-)" ]
               , Text
                   """, a unique status. When taking a turn, a character
-                  afflicted by Shadow Venom cannont draw line of sight except to
+                  afflicted by Shadow Venom cannot draw line of sight except to
                   adjacent spaces until the end of that turn. They can ignore
                   this effect while they are adjacent to an ally."""
               ]
@@ -215,7 +215,7 @@ venomist =
           , steps:
               [ Step (KeywordStep (Name "Zone")) Nothing
                   [ Text
-                      """Slash a line 3 zone, which could be created over 
+                      """Slash a line 3 zone, which could be created over
                       characters. Each space of the zone is an """
                   , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
                   , Text " space and is "
@@ -232,7 +232,7 @@ venomist =
                   ]
               , Step (KeywordStep (Name "Afflicted")) Nothing
                   [ Text
-                      """If inititally targeting at least one afflicted foe,
+                      """If initially targeting at least one afflicted foe,
                       extend the line by +2. If that foe had 3 or more negative
                       statuses, extend the area by +6."""
                   ]
@@ -303,12 +303,12 @@ venomist =
                       , max: 4
                       , abilities:
                           [ Step SummonEff Nothing
-                              [ Text "The could is an "
+                              [ Text "The cloud is an "
                               , Italic
                                   [ Ref (Name "Obscured") [ Text "obscured" ] ]
                               , Text
                                   """ space. In addition, characters other than
-                                  you standing in or adjacent to a could do not
+                                  you standing in or adjacent to a cloud do not
                                   clear statuses at the end of their turn."""
                               ]
                           , Step SummonEff Nothing
@@ -321,14 +321,14 @@ venomist =
                               , Text " and "
                               , Italic
                                   [ Ref
-                                      (Name "Danagerous Terrain")
+                                      (Name "Dangerous Terrain")
                                       [ Text "dangerous terrain" ]
                                   ]
                               , Text "."
                               ]
                           , Step SummonAction Nothing
                               [ Text
-                                  """The could flies 2 spaces. It can enter or
+                                  """The cloud flies 2 spaces. It can enter or
                                   end this movement in character's spaces."""
                               ]
                           ]

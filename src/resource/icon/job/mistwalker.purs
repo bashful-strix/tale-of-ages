@@ -193,9 +193,9 @@ mistwalker =
                       """Any character in the area with vigor loses 2 vigor. If
                       that character is inside an """
                   , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
-                  , Text " space of "
+                  , Text " space or "
                   , Italic [ Ref (Name "Adverse Terrain") [ Text "adverse" ] ]
-                  , Text ", double this vigor loss."
+                  , Text " terrain, double this vigor loss."
                   ]
               , AttackStep
                   [ Text "3 damage" ]
@@ -228,11 +228,11 @@ mistwalker =
                   , Text "+1 with "
                   , Italic [ Ref (Name "Phasing") [ Text "phasing" ] ]
                   , Text
-                      """. Character may pass a save to avoid being pulled. One
+                      """. Characters may pass a save to avoid being pulled. One
                       (3+) two or (5+) all characters pulled this way leave
                       an """
                   , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
-                  , Text " space in the ifrst space they vacate."
+                  , Text " space in the first space they vacate."
                   ]
               ]
           }

@@ -45,7 +45,7 @@ runesmith =
           , class: Name "Wright"
           , description:
               [ Text
-                  """Powerful crafts-kin tutored in the old rune arts, mostly
+                  """Powerful crafts-kin tutored in the old rune arts, most
                   commonly found among the Troggs, but spread amongst all kin of
                   the furnace arts of Arden Eld. The power of carving runes with
                   flame Aether is very precise and requires a brawny arm, since
@@ -54,15 +54,15 @@ runesmith =
                   Weapons or equipment that carry rune kennings must have a
                   proper soul, forged with care and craftsmanship, or else they
                   will shatter under the tremendous weight of imbued ethereal
-                  power. Weak and mass produced armament such as those churned
+                  power. Weak and mass produced armaments such as those churned
                   out in the cities cannot bear them."""
               , Newline
               , Newline
               , Text
-                  """The Runesmiths and their ancient jotunn masters, the
+                  """The Runesmiths and their ancient Jotunn masters, the
                   Keepers of the Eld flame, originally made some of the most
                   powerful artifacts in Arden Eld - world altering weapons or
-                  armament. The new generations continue the work in some
+                  armaments. The new generations continue the work in some
                   manner, recovering lost knowledge and continually improving
                   their craft as the hammer slowly bends out hot metal."""
               ]
@@ -122,7 +122,7 @@ runesmith =
               , Italic [ Ref (Name "Quick") [ Text "quick" ] ]
               , Text
                   """ ability, you swap places with any character inside any
-                  zone you have created. Foes may save to avoid ths effect."""
+                  zone you have created. Foes may save to avoid this effect."""
               ]
           }
       , Talent
@@ -161,7 +161,7 @@ runesmith =
           , steps:
               [ Step (KeywordStep (Name "Zone")) Nothing
                   [ Text
-                      """Summon a massive run forge from below, height 1 object
+                      """Summon a massive rune forge from below, height 1 object
                       in range. A burst 1 area centered on the forge is a zone,
                       with the following effects:"""
                   , List Unordered
@@ -255,7 +255,7 @@ runesmith =
                         , Italic
                             [ Ref
                                 (Name "Dangerous Terrain")
-                                [ Text "danagerous" ]
+                                [ Text "dangerous" ]
                             ]
                         , Text " terrain."
                         ]
@@ -280,7 +280,7 @@ runesmith =
           , colour: Name "Blue"
           , description:
               [ Text
-                  """You carve a burning run of power into the very ground
+                  """You carve a burning rune of power into the very ground
                   beneath you."""
               ]
           , cost: One

@@ -111,7 +111,7 @@ wayfarer =
           , description:
               [ Text
                   """Once a round, when you create a zone, you can deal 2
-                  piercing samage to a foe adjacent to that zone."""
+                  piercing damage to a foe adjacent to that zone."""
               ]
           }
       , Talent
@@ -294,7 +294,7 @@ wayfarer =
                   [ Text
                       """Line effects that enter the zone can be drawn from any
                       other space of this zone as if it were an adjacent space,
-                      and can chaneg direction."""
+                      and can change direction."""
                   ]
               ]
           }

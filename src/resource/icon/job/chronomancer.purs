@@ -120,7 +120,9 @@ chronomancer =
                   """Once a round, when you teleport or teleport an ally, you
                   can teleport yourself or them again """
               , Dice 1 D3
-              , Text " space. Overdrive: +2 more spaces."
+              , Text " spaces. "
+              , Ref (Name "Overdrive") [ Text "Overdrive" ]
+              , Text ": +2 more spaces."
               ]
           }
       , Talent
@@ -161,10 +163,10 @@ chronomancer =
               , Step Eff Nothing
                   [ Text
                       """Choose an ally in range. Note the character's current
-                      position, hp vigor, and status effects. At the end of that
-                      character's turn, remove them from the battlefield, then
-                      reset them to the exact state they were in at the start of
-                      the turn."""
+                      position, hp, vigor, and status effects. At the end of
+                      that character's turn, remove them from the battlefield,
+                      then reset them to the exact state they were in at the
+                      start of the turn."""
                   ]
               ]
           }
@@ -269,7 +271,7 @@ chronomancer =
           , colour: Name "Green"
           , description:
               [ Text
-                  """Ripple of accelerated time bend around your ally's
+                  """Ripples of accelerated time bend around your ally's
                   movements, overlaying afterimages as they move."""
               ]
           , cost: Two

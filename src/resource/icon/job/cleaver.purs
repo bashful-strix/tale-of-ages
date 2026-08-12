@@ -54,13 +54,13 @@ cleaver =
                   build their own weapons and armament from the most durable
                   materials around - monster parts. Using anything from Wyrm
                   jawbones the size of a man, to blast beetle shell casings, to
-                  sawshark teeth, they construct anything from massive longblade
-                  to trick spears, serrated daggers, bone great swords, or even
-                  buzzsaws. The Cleavers, as they are known, are proud of their
-                  craftsmanship. They wield their monstrous and oversized
-                  weaponry with a reckless abandon, unbelievable strength, and a
-                  ferocious bloodlust, a terrifying sight to witness in
-                  battle."""
+                  sawshark teeth, they construct anything from massive
+                  longblades to trick spears, serrated daggers, bone great
+                  swords, or even buzzsaws. The Cleavers, as they are known, are
+                  proud of their craftsmanship. They wield their monstrous and
+                  oversized weaponry with a reckless abandon, unbelievable
+                  strength, and a ferocious bloodlust, a terrifying sight to
+                  witness in battle."""
               ]
           , trait: Name "Berserkergang"
           , keyword: Name "Reckless"
@@ -86,7 +86,7 @@ cleaver =
               [ Text
                   """At the start of your turn, if you are bloodied, you may
                   gain 2 vigor and clear one negative status. Increase this by
-                  + """
+                  +"""
               , Dice 1 D6
               , Text " and additionally become "
               , Italic [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
@@ -111,7 +111,7 @@ cleaver =
           , colour: Name "Red"
           , description:
               [ Text
-                  """If you're in crisis, all damage from your abilitiies with
+                  """If you're in crisis, all damage from your abilities with
                   the attack tag gains """
               , Italic [ Ref (Name "Pierce") [ Text "pierce" ] ]
               , Text "."

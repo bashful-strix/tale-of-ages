@@ -85,7 +85,7 @@ celestian =
           { name: Name "Heavenly Orrery"
           , description:
               [ Text
-                  """At the start of the orund, roll the effect die to see which
+                  """At the start of the round, roll the effect die to see which
                   position the heavens are in. Your abilities become altered
                   this round based on what you roll."""
               , List Unordered
@@ -132,7 +132,7 @@ celestian =
                   """Once a round, you may spend a free move to teleport
                   adjacent to any """
               , Italic [ Ref (Name "Isolate") [ Text "isolated" ] ]
-              , Text ", or teleport any "
+              , Text " ally, or teleport any "
               , Italic [ Text "isolated" ]
               , Text " ally adjacent to you."
               ]
@@ -279,7 +279,7 @@ celestian =
                       the round number, a meteor lands in the space, """
                   , Italic [ Ref (Name "Brand") [ Text "branding" ] ]
                   , Text
-                      """ them that character and creating a cross 1 explosion
+                      """ that character and creating a cross 1 explosion
                       centered on them for """
                   , Dice 1 D6
                   , Text "+4 damage (save for half). Then remove the zone."
@@ -296,7 +296,7 @@ celestian =
           , colour: Name "Green"
           , description:
               [ Text
-                  """You pull a bruning iron rock out of orbit and send it on
+                  """You pull a burning iron rock out of orbit and send it on
                   collision course with your unlucky foe."""
               ]
           , cost: One

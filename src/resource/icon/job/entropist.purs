@@ -78,7 +78,7 @@ entropist =
               , Newline
               , Text
                   """That chamber was burst open by a legendary but very foolish
-                  thief-lord. Ignorant of its contents, is liberator spilled
+                  thief-lord. Ignorant of its contents, its liberator spilled
                   them unfettered into the world, where they were sifted and
                   split apart by a select few. Now, that knowledge has its
                   students."""
@@ -105,11 +105,11 @@ entropist =
           { name: Name "Unmooring"
           , description:
               [ Text
-                  """Once a round, when you dmaage a foe, you can inflict them
+                  """Once a round, when you damage a foe, you can inflict them
                   with the """
               , Italic [ Ref (Name "Unmooring") [ Text "unmooring (-)" ] ]
               , Text
-                  """ unique status. At the end of that foe's turn, theleport
+                  """ unique status. At the end of that foe's turn, teleport
                   them """
               , Italic [ Dice 1 D3 ]
               , Text "+1, then remove a stack of this status."
@@ -291,7 +291,7 @@ entropist =
           , description:
               [ Text
                   """You intensify gravity's effect in an area, pulling foes to
-                  their needs."""
+                  their knees."""
               ]
           , cost: Two
           , tags:
@@ -322,7 +322,7 @@ entropist =
                         ]
                       , [ Italic [ Ref (Name "Afflicted") [ Text "Afflicted" ] ]
                         , Text
-                            """ foes cannot coluntarily dash, fly, swap, or
+                            """ foes cannot voluntarily dash, fly, swap, or
                             teleport when entering or exiting any space of the
                             zone."""
                         ]
@@ -351,7 +351,7 @@ entropist =
               , Step OnHit Nothing
                   [ Text "All "
                   , Italic [ Ref (Name "Afflicted") [ Text "afflicted" ] ]
-                  , Text " characters in the area take +2 damage, +1"
+                  , Text " characters in the area take +2 damage, +"
                   , Dice 1 D6
                   , Text " if they have 3 or more negative status tokens."
                   ]

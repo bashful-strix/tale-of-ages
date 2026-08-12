@@ -49,7 +49,7 @@ pathfinder =
                   between the mountain Chamber monasteries clear of obstacles,
                   monsters, and banditry. They are exceptionally skilled with
                   great bows and long rifles, able to make breathtaking shots in
-                  the mountain wind and cold air. Typically working along for
+                  the mountain wind and cold air. Typically working alone for
                   many months, they are a solitary lot, but value company and
                   keep many small comforts with them on their long journeys
                   between the monasteries, such as sweets, books, or coffee."""
@@ -176,8 +176,7 @@ pathfinder =
                   , Text " at 7+ spaces."
                   ]
               , Step (KeywordStep (Name "Critical Hit")) Nothing
-                  [ Text "All remaining characters in the line take 3 damage."
-                  ]
+                  [ Text "All remaining characters in the line take 3 damage." ]
               ]
           }
       , Ability

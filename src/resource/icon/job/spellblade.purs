@@ -132,7 +132,7 @@ spellblade =
               [ Text "I summon thee, bloody gods of the cutting art,"
               , Newline
               , Text
-                  """Let the might of the divine realm crash upen the piteous
+                  """Let the might of the divine realm crash upon the piteous
                   earth,"""
               , Newline
               , Text "Strike eighty thousand blows at once,"
@@ -152,7 +152,7 @@ spellblade =
                   , Text
                       """ damage to all characters caught in the cross, then
                       remove all characters out of the affected area and place
-                      them in the nearest fere space of your choice. Characters
+                      them in the nearest free space of your choice. Characters
                       may pass a save to choose to the space themselves."""
                   , Newline
                   , Newline
@@ -282,7 +282,7 @@ spellblade =
               , InsetStep OnHit Nothing
                   [ Bold [ Ref (Name "Mark") [ Text "Mark" ] ]
                   , Text
-                      """ your foe. then gain the following interrupt at the end
+                      """ your foe, then gain the following interrupt at the end
                       of your turns while your foe is marked. You can choose not
                       to trigger it."""
                   ]

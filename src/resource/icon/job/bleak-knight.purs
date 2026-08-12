@@ -213,10 +213,10 @@ bleakKnight =
           , steps:
               [ Step Eff Nothing
                   [ Text
-                      """Transfer all negative statuses from an alliy in range
+                      """Transfer all negative statuses from an ally in range
                       to you, then gain 1 vigor per status token transferred.
-                      If you're blooedied, you may repeat this effect on a
-                      second ally, If you're in crisis, you may repeat on """
+                      If you're bloodied, you may repeat this effect on a second
+                      ally, If you're in crisis, you may repeat on """
                   , Italic [ Text "all" ]
                   , Text " allies in range."
                   ]
@@ -263,7 +263,7 @@ bleakKnight =
           { name: Name "Quietus"
           , colour: Name "Red"
           , description:
-              [ Text "Dark eather coats your blade, cutting the soul." ]
+              [ Text "Dark aether coats your blade, cutting the soul." ]
           , cost: Two
           , tags: [ Attack, RangeTag Melee ]
           , steps:

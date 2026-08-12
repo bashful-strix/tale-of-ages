@@ -126,7 +126,7 @@ dragoon =
           , description:
               [ Text
                   """While you have 3 or more negative status tokens, increase
-                  the size of all blast or burst effects you crease by +1."""
+                  the size of all blast or burst effects you create by +1."""
               ]
           }
       ]
@@ -139,7 +139,7 @@ dragoon =
               [ Text
                   """Aether-focused direct energy weapon. Takes a long time to
                   charge, and a short time to show your enemies why getting in
-                  a fight with your was a bad idea."""
+                  a fight with you was a bad idea."""
               ]
           , cost: Two /\ 4
           , tags: [ AreaTag (Line (NumVar 9)) ]
@@ -223,7 +223,7 @@ dragoon =
                   [ Text
                       """Explode for a burst 1 (self) area effect. Characters
                       and summons caught inside other than yourself are pushed 1
-                      space, and characters tale 2 damage. Then you may fly """
+                      space, and characters take 2 damage. Then you may fly """
                   , Italic [ Dice 1 D6 ]
                   , Text " spaces."
                   ]
@@ -260,10 +260,10 @@ dragoon =
                       , abilities:
                           [ Step SummonEff Nothing
                               [ Text
-                                  """The rocket cna be targeted like a
+                                  """The rocket can be targeted like a
                                   character. If it would take any damage, it
                                   ignites, traveling in a line 4 path in a
-                                  direction of your choice until it meets and
+                                  direction of your choice until it meets an
                                   obstruction or the last space of the line."""
                               , List Unordered
                                   [ [ Text
@@ -314,8 +314,9 @@ dragoon =
                             into """
                         , Italic [ Ref (Name "Reckless") [ Text "reckless" ] ]
                         , Text
-                            """, including any statuses you are currently from,
-                            even if you couldn't gain more reckless."""
+                            """, including any statuses you are currently
+                            suffering from, even if you couldn't gain more
+                            reckless."""
                         ]
                       , [ Text "Reckless stacks up to 6." ]
                       , [ Text

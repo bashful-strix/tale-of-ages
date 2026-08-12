@@ -47,7 +47,7 @@ enochian =
           , description:
               [ Text
                   """The Enochian Orders of pyromancers are the most chaotic of
-                  the wright orders. Though sometimes associated with Chuners,
+                  the wright orders. Though sometimes associated with Churners,
                   they have no official organization, most of their members
                   being hedge wizards or self taught. Many Enochians disdain
                   authority and work for hire, sleeping and eating where they
@@ -284,7 +284,7 @@ enochian =
                   [ Text
                       """Pull all characters, objects, and summons at the
                       outside edge of the targeted area 1 space into the area.
-                      One a character in the area then gains """
+                      One character in the area then gains """
                   , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
                   , Text "."
                   ]
@@ -300,9 +300,9 @@ enochian =
           , colour: Name "Blue"
           , description:
               [ Text
-                  """You burn and condense your own aether into super consdensed
+                  """You burn and condense your own aether into super condensed
                   form, creating a crackling black orb that inflicts maximum
-                  desctruction. Without the time to stabilize this attack, its
+                  destruction. Without the time to stabilize this attack, its
                   use can rip away your very life force."""
               ]
           , cost: Two

@@ -33,10 +33,10 @@ mendicant =
           { name: Name "Mendicant"
           , colour: Name "Green"
           , sign: Sign "icon-[game-icons--caduceus]"
-          , tagline: [ Text "Wndering healer and storyteller." ]
+          , tagline: [ Text "Wandering healer and storyteller." ]
           , strengths:
               [ Text
-                  """Strong all-rounders, with may potent effects and the
+                  """Strong all-rounders, with many potent effects and the
                   ability to heal or move allies and lift negative statuses."""
               ]
           , weaknesses: [ Text "Low damage and reliant on allies." ]
@@ -215,7 +215,7 @@ mendicant =
               , Step AreaEff Nothing [ Text "3 damage." ]
               , Step Eff (Just D3)
                   [ Text
-                      """Allies in the area don't take samage but instead gain 2
+                      """Allies in the area don't take damage but instead gain 2
                       vigor. Bloodied allies gain """
                   , Italic [ Dice 1 D3 ]
                   , Text "+1 vigor instead."

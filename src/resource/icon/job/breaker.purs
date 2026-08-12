@@ -118,7 +118,7 @@ breaker =
           , colour: Name "Red"
           , description:
               [ Text
-                  """Once a round, when your cause a character or object to
+                  """Once a round, when you cause a character or object to
                   impact with another character, you can push the second
                   character 2 spaces and deal 2 damage to them."""
               ]

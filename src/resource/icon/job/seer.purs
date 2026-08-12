@@ -99,7 +99,7 @@ seer =
                   , [ Text "Then roll "
                     , Italic [ Dice 1 D6 ]
                     , Text
-                        """ and see what heppens after the triggering ability
+                        """ and see what happens after the triggering ability
                         resolves."""
                     , List Ordered
                         [ [ Bold [ Text "The Moon" ]
@@ -150,7 +150,7 @@ seer =
           , description:
               [ Text
                   """At the start of combat, you may pre-roll up to two effect
-                  dice. These dice are automatically the result of your nect two
+                  dice. These dice are automatically the result of your next two
                   effect rolls."""
               ]
           }
@@ -161,7 +161,7 @@ seer =
           , description:
               [ Text "You gain effect "
               , Power
-              , Text " at round 3 or alter, doubled at round 5 or later."
+              , Text " at round 3 or later, doubled at round 5 or later."
               ]
           }
       , Talent
@@ -336,7 +336,7 @@ seer =
               [ Step AreaEff Nothing
                   [ Text
                       """You shoot a card out along the line, releasing a cross
-                      explosion centered on iether the end space or the first
+                      explosion centered on either the end space or the first
                       character in the line. The size of the cross is equal to
                       the spaces the card traveled before impacting its target.
                       Foes in the area take 2 piercing damage, or """

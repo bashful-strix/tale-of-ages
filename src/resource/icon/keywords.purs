@@ -64,7 +64,7 @@ keywords =
               [ Text
                   """Characters take half damage from abilities they have cover
                   against. Characters can take cover by standing in an adjacent
-                  space to any obscured space, or in any space that’s 1 or more
+                  space to any obscured space, or in any space that's 1 or more
                   elevation higher than the space they are standing in. They
                   only gain cover against characters on the other side of their
                   cover. In addition, a character can never gain cover against
@@ -104,8 +104,8 @@ keywords =
           , category: General
           , description:
               [ Text
-                  """An effect that activates when you make a total attack of
-                  roll of 8+. Reduced by any effect that reduces critical
+                  """An effect that activates when you make a total attack roll
+                  of 8+. Reduced by any effect that reduces critical
                   threshold."""
               ]
           }
@@ -323,9 +323,9 @@ keywords =
           , description:
               [ Text
                   """When you use a weave effect, you gain the effect
-                  immediately, and then may repeat a copy of it as part of very
-                  next ability you use. If multiple weave effects trigger, you
-                  can choose the order. Copies of a weave cannot weave
+                  immediately, and then may repeat a copy of it as part of the
+                  very next ability you use. If multiple weave effects trigger,
+                  you can choose the order. Copies of a weave cannot weave
                   further."""
               ]
           }
@@ -396,7 +396,7 @@ keywords =
                   """Positive status. As long as you have one stealth token,
                   cannot be directly targeted by foes except from adjacent
                   spaces. After using any ability, or when ending any turn
-                  adjacent to a foe, dscard one."""
+                  adjacent to a foe, discard one."""
               ]
           }
 
@@ -417,7 +417,7 @@ keywords =
           , description:
               [ Text
                   """A powerful ongoing effect. You can only maintain one
-                  stance at a time. You may exit any stance vonuntarily at the
+                  stance at a time. You may exit any stance voluntarily at the
                   start of your turn."""
               ]
           }
