@@ -334,7 +334,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                             , "self-center"
                             , "size-[1em]"
                             , if p == Just n then "bg-sky-600"
-                              else "bg-stone-500 dark:bg-stone-700"
+                              else "bg-stone-400 dark:bg-stone-700"
                             ]
                         , DL.runOn_ DL.click $ setPrimary
                             if p == Just n then Nothing else Just n
@@ -509,7 +509,7 @@ editCharacterForm env@{ icon } setMode initChar = icon <#~> \icon_ -> Deku.do
                               , "self-center"
                               , "size-[1em]"
                               , if x then "bg-sky-600"
-                                else "bg-stone-500 dark:bg-stone-700"
+                                else "bg-stone-400 dark:bg-stone-700"
                               ]
                           , DL.runOn_ DL.click
                               $ modifyAt i (second not) jas

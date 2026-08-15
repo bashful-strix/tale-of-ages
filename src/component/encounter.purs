@@ -324,10 +324,10 @@ importEncounter env = Deku.do
                                         else
                                           [ "cursor-pointer"
                                           , "disabled:cursor-not-allowed"
-                                          , "bg-stone-500"
+                                          , "bg-stone-400"
                                           , "dark:bg-stone-700"
-                                          , "hover:bg-stone-400"
-                                          , "focus:bg-stone-400"
+                                          , "hover:bg-stone-500"
+                                          , "focus:bg-stone-500"
                                           , "dark:hover:bg-stone-500"
                                           , "dark:focus:bg-stone-500"
                                           ]

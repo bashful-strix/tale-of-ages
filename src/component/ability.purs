@@ -56,7 +56,7 @@ renderAbility icon@{ colours } a =
         [ css_
             [ "flex"
             , "justify-between"
-            , "bg-stone-500"
+            , "bg-stone-400"
             , "text-stone-800"
             , "dark:bg-stone-700"
             , "dark:text-stone-300"
@@ -259,7 +259,7 @@ renderInset icon@{ colours } = case _ of
           [ css_
               [ "flex"
               , "gap-x-1"
-              , "bg-stone-500"
+              , "bg-stone-400"
               , "text-stone-800"
               , "dark:bg-stone-700"
               , "dark:text-stone-300"
@@ -288,7 +288,7 @@ renderInset icon@{ colours } = case _ of
           [ css_
               [ "flex"
               , "justify-between"
-              , "bg-stone-500"
+              , "bg-stone-400"
               , "text-stone-800"
               , "dark:bg-stone-700"
               , "dark:text-stone-300"
@@ -329,7 +329,7 @@ renderInset icon@{ colours } = case _ of
           [ css_
               [ "flex"
               , "gap-x-1"
-              , "bg-stone-500"
+              , "bg-stone-400"
               , "text-stone-800"
               , "dark:bg-stone-700"
               , "dark:text-stone-300"

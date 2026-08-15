@@ -131,12 +131,12 @@ combatCharacterPage env@{ characters, icon } pathChar =
                         [ "px-2"
                         , "py-1"
                         , "rounded"
-                        , "bg-stone-500"
+                        , "bg-stone-400"
                         , "text-stone-800"
                         , "dark:bg-stone-700"
                         , "dark:text-stone-300"
-                        , "hover:bg-stone-400"
-                        , "focus:bg-stone-400"
+                        , "hover:bg-stone-500"
+                        , "focus:bg-stone-500"
                         , "dark:hover:bg-stone-500"
                         , "dark:focus:bg-stone-500"
                         ]
@@ -170,7 +170,7 @@ combatCharacterPage env@{ characters, icon } pathChar =
                       in
                         [ D.input
                             [ css_
-                                [ "bg-stone-500"
+                                [ "bg-stone-400"
                                 , "text-stone-800"
                                 , "dark:bg-stone-700"
                                 , "dark:text-stone-300"
@@ -205,7 +205,7 @@ combatCharacterPage env@{ characters, icon } pathChar =
                       [ css_ [ "flex" ] ] $ char # foldMap \c ->
                       [ D.input
                           [ css_
-                              [ "bg-stone-500"
+                              [ "bg-stone-400"
                               , "text-stone-800"
                               , "dark:bg-stone-700"
                               , "dark:text-stone-300"
@@ -396,7 +396,7 @@ renderResolve env char =
                       [ "rounded"
                       , "size-[1em]"
                       , if per >= x then "bg-amber-400"
-                        else "bg-stone-500 dark:bg-stone-700"
+                        else "bg-stone-400 dark:bg-stone-700"
                       ]
                   , DL.runOn_ DL.click $ (env ^. _saveChar)
                       (char # _currentPerRes .~ if per == x then x - 1 else x)
@@ -415,7 +415,7 @@ renderResolve env char =
                       [ "rounded"
                       , "size-[1em]"
                       , if par >= x then "bg-amber-400"
-                        else "bg-stone-500 dark:bg-stone-700"
+                        else "bg-stone-400 dark:bg-stone-700"
                       ]
                   , DL.runOn_ DL.click $ (env ^. _saveChar)
                       (char # _currentParRes .~ if par == x then x - 1 else x)
@@ -444,7 +444,7 @@ renderStatus env char status max =
                   [ "rounded"
                   , "size-[1em]"
                   , if n >= x then "bg-sky-600"
-                    else "bg-stone-500 dark:bg-stone-700"
+                    else "bg-stone-400 dark:bg-stone-700"
                   ]
               , DL.runOn_ DL.click $
                   setStatus if n == x then x - 1 else x
@@ -460,7 +460,7 @@ renderPowerDie env char name n =
         [ css_ [ "flex", "justify-between" ] ]
         [ D.input
             [ css_
-                [ "bg-stone-500"
+                [ "bg-stone-400"
                 , "text-stone-800"
                 , "dark:bg-stone-700"
                 , "dark:text-stone-300"
@@ -493,7 +493,7 @@ renderPowerDie env char name n =
                 [ "rounded"
                 , "size-[1em]"
                 , if n >= x then "bg-sky-600"
-                  else "bg-stone-500 dark:bg-stone-700"
+                  else "bg-stone-400 dark:bg-stone-700"
                 ]
             , DL.runOn_ DL.click $ (env ^. _saveChar)
                 ( char # _currentPowerDice <. at name ?~

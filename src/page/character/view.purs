@@ -60,6 +60,7 @@ import ToA.Data.Icon.Trait (_trait)
 import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
 import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((^::))
+import ToA.Util.Style as S
 
 viewCharacterPage :: Env -> Name -> Nut
 viewCharacterPage env@{ characters, icon } pathChar =
@@ -122,12 +123,12 @@ viewCharacterPage env@{ characters, icon } pathChar =
                         [ "px-2"
                         , "py-1"
                         , "rounded"
-                        , "bg-stone-500"
+                        , "bg-stone-400"
                         , "text-stone-800"
                         , "dark:bg-stone-700"
                         , "dark:text-stone-300"
-                        , "hover:bg-stone-400"
-                        , "focus:bg-stone-400"
+                        , "hover:bg-stone-500"
+                        , "focus:bg-stone-500"
                         , "dark:hover:bg-stone-500"
                         , "dark:focus:bg-stone-500"
                         ]
@@ -145,18 +146,7 @@ viewCharacterPage env@{ characters, icon } pathChar =
                         c # env ^. _deleteChar
                         (env ^. _navigate) (Characters Nothing)
                           Nothing
-                    , css_
-                        [ "px-2"
-                        , "py-1"
-                        , "rounded"
-                        , "bg-stone-500"
-                        , "text-stone-800"
-                        , "dark:bg-stone-700"
-                        , "dark:text-stone-300"
-                        , "dark:text-stone-300"
-                        , "hover:bg-red-400"
-                        , "focus:bg-red-400"
-                        ]
+                    , css_ S.buttonDanger
                     ]
                     [ D.text_ "Delete" ]
 
@@ -172,12 +162,12 @@ viewCharacterPage env@{ characters, icon } pathChar =
                         [ "px-2"
                         , "py-1"
                         , "rounded"
-                        , "bg-stone-500"
+                        , "bg-stone-400"
                         , "text-stone-800"
                         , "dark:bg-stone-700"
                         , "dark:text-stone-300"
-                        , "hover:bg-stone-400"
-                        , "focus:bg-stone-400"
+                        , "hover:bg-stone-500"
+                        , "focus:bg-stone-500"
                         , "dark:hover:bg-stone-500"
                         , "dark:focus:bg-stone-500"
                         ]
@@ -189,12 +179,12 @@ viewCharacterPage env@{ characters, icon } pathChar =
                       [ "px-2"
                       , "py-1"
                       , "rounded"
-                      , "bg-stone-500"
+                      , "bg-stone-400"
                       , "text-stone-800"
                       , "dark:bg-stone-700"
                       , "dark:text-stone-300"
-                      , "hover:bg-stone-400"
-                      , "focus:bg-stone-400"
+                      , "hover:bg-stone-500"
+                      , "focus:bg-stone-500"
                       , "dark:hover:bg-stone-500"
                       , "dark:focus:bg-stone-500"
                       ]

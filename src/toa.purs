@@ -40,7 +40,8 @@ toa env@{ route, systemTheme, theme } =
         , "text-stone-700"
         , "dark:bg-stone-900"
         , "dark:text-stone-400"
-        , "scheme-light-dark"
+        , "scheme-light"
+        , "dark:scheme-dark"
         , encode themeCodec (fromMaybe systemTheme t)
         ]
     ]

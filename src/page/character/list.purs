@@ -48,7 +48,7 @@ listCharacterPage env@{ characters, icon } =
                 , "sm:max-w-4/5"
                 , "md:max-w-3/5"
                 , "rounded"
-                , "bg-stone-500"
+                , "bg-stone-400"
                 , "text-stone-800"
                 ]
             ]
