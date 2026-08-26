@@ -74,9 +74,7 @@ listEncounterPage env@{ encounters, icon } =
                     [ D.text_ "Delete" ]
 
                 , exportEncounter
-                    ( S.interactable <>
-                        [ "flex", "grow", "items-center", "px-2" ]
-                    )
+                    [ "flex", "grow", "items-center", "px-2", "rounded-none" ]
                     enc
                 ]
             ]

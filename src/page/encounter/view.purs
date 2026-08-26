@@ -48,6 +48,7 @@ import ToA.Data.Icon.Foe
   , FoeTrait(..)
   , Faction(..)
   )
+import ToA.Data.Icon.Markup (length)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Route (Route(..), EncounterPath(..), routeCodec)
 import ToA.Util.Html (css_, hr)
@@ -758,7 +759,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                                     [ css_ [ "font-bold" ] ]
                                     [ D.text_ $ "Phase " <> show (i + 1) ]
                                 , markup icon p.description
-                                , guard (not $ null p.description) hr
+                                , guard (length p.description > 0) hr
                                 , D.div
                                     [ css_ [ "flex", "flex-col", "gap-2" ] ]
                                     $ p.traits

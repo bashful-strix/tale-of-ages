@@ -7,7 +7,21 @@ import Data.Codec (decode, encode)
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Name (Name(..))
 
-import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..), markup)
+import ToA.Data.Icon.Markup
+  ( ListKind(..)
+  , bold
+  , dice
+  , list
+  , italic
+  , newline
+  , power
+  , ref
+  , seq
+  , text
+  , weakness
+
+  , markup
+  )
 
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (AnyShow(..), shouldEqual)
@@ -17,20 +31,20 @@ spec = do
   describe "markup codec" do
     it "should roundtrip markup" do
       let
-        mu =
-          [ Text "before "
-          , List Unordered
-              [ [ Italic [ Ref (Name "test ref") [ Text "italic", Power ] ] ]
-              , [ Bold [ Ref (Name "test ref 2 ") [ Text "bold", Weakness ] ] ]
-              , [ List Ordered
-                    [ [ Text "inner list" ]
-                    , [ Text "roll ", Dice 3 D3, Text "+3" ]
-                    ]
-                ]
+        mu = seq
+          [ text "before "
+          , list Unordered
+              [ italic $ ref (Name "test ref") $ seq [ text "italic", power ]
+                  
+              , bold $ ref (Name "test ref 2 ") $ seq [ text "bold", weakness ]
+              , list Ordered
+                  [ text "inner list"
+                  , seq [ text "roll ", dice 3 D3, text "+3" ]
+                  ]
               ]
-          , Text " break"
-          , Newline
-          , Text "after."
+          , text " break"
+          , newline
+          , text "after."
           ]
 
       (AnyShow <$> (decode markup $ encode markup mu))

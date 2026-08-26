@@ -23,7 +23,15 @@ import ToA.Data.Icon.Ability
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
-import ToA.Data.Icon.Markup (MarkupItem(..))
+import ToA.Data.Icon.Markup
+  ( bold
+  , dice
+  , newline
+  , power
+  , ref
+  , seq
+  , text
+  )
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -46,8 +54,8 @@ chronomancer =
           , sign: Sign "icon-[game-icons--sands-of-time]"
           , soul: Name "Oracle"
           , class: Name "Mendicant"
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """Of those that tinker with fundamental forces in the great
                   Guild academies, the Chronomancers are perhaps the most
                   feared. Their quarry is mastery over the flow of time, a dread
@@ -55,9 +63,9 @@ chronomancer =
                   lengths, and with tremendous machinery, the chronomancers
                   examine every strand of Aether to determine the power of its
                   ebb and flow."""
-              , Newline
-              , Newline
-              , Text
+              , newline
+              , newline
+              , text
                   """In theory, chronomancy is a terrifying power. In practice,
                   chronomancy is an extremely ill-understood corner of the
                   Aetheric arts with very difficult conditions for its practice.
@@ -85,26 +93,21 @@ chronomancer =
   , traits:
       [ InsetTrait
           { name: Name "Chronal Echo"
-          , description:
-              [ Text
-                  """Once a round, when you or a character in range 1-3 of you
-                  starts their turn, you may summon a time echo of them in or
-                  adjacent to their space. At round 3+, you can trigger this
-                  effect twice a round."""
-              ]
+          , description: text
+              """Once a round, when you or a character in range 1-3 of you
+              starts their turn, you may summon a time echo of them in or
+              adjacent to their space. At round 3+, you can trigger this effect
+              twice a round."""
           , inset: SummonInset
               { name: Name "Chronal Echo"
               , colour: Name "Green"
               , max: 6
               , abilities:
-                  [ Step SummonEff Nothing
-                      [ Text
-                          """A character that enters the space of a chronal echo
-                          for any reason teleports to any space adjacent to you,
-                          or into the space of any other time echo in range 1-3.
-                          If that character is a foe, you may choose their
-                          destination."""
-                      ]
+                  [ Step SummonEff Nothing $ text
+                      """A character that enters the space of a chronal echo for
+                      any reason teleports to any space adjacent to you, or into
+                      the space of any other time echo in range 1-3. If that
+                      character is a foe, you may choose their destination."""
                   ]
               }
           }
@@ -115,34 +118,30 @@ chronomancer =
           { id: Id "stutter|talent|chronomancer"
           , name: Name "Stutter"
           , colour: Name "Green"
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """Once a round, when you teleport or teleport an ally, you
                   can teleport yourself or them again """
-              , Dice 1 D3
-              , Text " spaces. "
-              , Ref (Name "Overdrive") [ Text "Overdrive" ]
-              , Text ": +2 more spaces."
+              , dice 1 D3
+              , text " spaces. "
+              , ref (Name "Overdrive") $ text "Overdrive"
+              , text ": +2 more spaces."
               ]
           }
       , Talent
           { id: Id "chronodouble|talent|chronomancer"
           , name: Name "Chronodouble"
           , colour: Name "Green"
-          , description:
-              [ Text
-                  """At round 3+, each round, you can repeat one effect you
-                  could normally only produce once a round. At round 5+, you can
-                  repeat an effect you can only produce once a combat one more
-                  time."""
-              ]
+          , description: text
+              """At round 3+, each round, you can repeat one effect you could
+              normally only produce once a round. At round 5+, you can repeat an
+              effect you can only produce once a combat one more time."""
           }
       , Talent
           { id: Id "tick|talent|chronomancer"
           , name: Name "Tick"
           , colour: Name "Green"
-          , description:
-              [ Text "At round 4+, you gain +1 use of all interrupts." ]
+          , description: text "At round 4+, you gain +1 use of all interrupts."
           }
       ]
 
@@ -150,30 +149,25 @@ chronomancer =
       [ LimitBreak
           { name: Name "Rewind"
           , colour: Name "Green"
-          , description:
-              [ Text
-                  """You struggle against fate itself, undoing causality and
-                  defying the stars."""
-              ]
+          , description: text
+              """You struggle against fate itself, undoing causality and defying
+              the stars."""
           , cost: Interrupt (NumVar 1) /\ 4
           , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
           , steps:
-              [ Step TriggerStep Nothing
-                  [ Text "A character starts their turn." ]
-              , Step Eff Nothing
-                  [ Text
-                      """Choose an ally in range. Note the character's current
-                      position, hp, vigor, and status effects. At the end of
-                      that character's turn, remove them from the battlefield,
-                      then reset them to the exact state they were in at the
-                      start of the turn."""
-                  ]
+              [ Step TriggerStep Nothing $ text "A character starts their turn."
+              , Step Eff Nothing $ text
+                  """Choose an ally in range. Note the character's current
+                  position, hp, vigor, and status effects. At the end of that
+                  character's turn, remove them from the battlefield, then reset
+                  them to the exact state they were in at the start of the
+                  turn."""
               ]
           }
       , Ability
           { name: Name "Chronoripple"
           , colour: Name "Green"
-          , description: [ Text "Causality unmakes itself around you." ]
+          , description: text "Causality unmakes itself around you."
           , cost: One
           , tags:
               [ Attack
@@ -181,44 +175,40 @@ chronomancer =
               , AreaTag (Blast (NumVar 2))
               ]
           , steps:
-              [ AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D3 ]
-              , Step AreaEff Nothing [ Text "2 damage." ]
+              [ AttackStep (text "2 damage") (seq [ text "+", dice 1 D3 ])
+              , Step AreaEff Nothing $ text "2 damage."
               , InsetStep (KeywordStep (Name "Zone")) (Just D6)
-                  [ Text
+                  ( text
                       """Create one or (5+) two spaces of an accelerated time
                       zone in free spaces inside or adjacent to the area."""
-                  ]
+                  )
                   $ KeywordInset
                       { name: Name "Accelerated Time"
                       , colour: Name "Green"
                       , keyword: Name "Zone"
                       , steps:
-                          [ Step (KeywordStep (Name "Zone")) Nothing
-                              [ Text
-                                  """New spaces added to this area extend the
-                                  zone instead of replacing it. A character that
-                                  either starts or ends their turn inside takes
-                                  1 piercing damage and increases a positive or
-                                  negative status of your choice by 1."""
-                              ]
+                          [ Step (KeywordStep (Name "Zone")) Nothing $ text
+                              """New spaces added to this area extend the zone
+                              instead of replacing it. A character that either
+                              starts or ends their turn inside takes 1 piercing
+                              damage and increases a positive or negative status
+                              of your choice by 1."""
                           ]
                       }
-              , Step (KeywordStep (Name "Overdrive")) Nothing
-                  [ Text "All spaces deal +"
-                  , Dice 1 D3
-                  , Text " damage to foes and no damage to allies."
+              , Step (KeywordStep (Name "Overdrive")) Nothing $ seq
+                  [ text "All spaces deal +"
+                  , dice 1 D3
+                  , text " damage to foes and no damage to allies."
                   ]
               ]
           }
       , Ability
           { name: Name "The Chariot"
           , colour: Name "Green"
-          , description:
-              [ Text
-                  """You speed up time's flow in a small area, withering plant
-                  life, hastening wounds, and causing those crossing it to move
-                  in a flash."""
-              ]
+          , description: text
+              """You speed up time's flow in a small area, withering plant life,
+              hastening wounds, and causing those crossing it to move in a
+              flash."""
           , cost: Two
           , tags:
               [ KeywordTag (Name "Zone")
@@ -226,54 +216,48 @@ chronomancer =
               , AreaTag (Cross (NumVar 1))
               ]
           , steps:
-              [ Step (KeywordStep (Name "Zone")) Nothing
-                  [ Text
+              [ Step (KeywordStep (Name "Zone")) Nothing $ seq
+                  [ text
                       """You create a zone of rapidly flowing time in free
                       space in range. Inside the area, spaces always cost a
                       maximum of 1 movement to enter or exit, and all characters
                       take damage """
-                  , Power
-                  , Text " from attacks."
+                  , power
+                  , text " from attacks."
                   ]
-              , Step (KeywordStep (Name "Overdrive")) Nothing
-                  [ Text "Increase to cross 3." ]
+              , Step (KeywordStep (Name "Overdrive")) Nothing $ text
+                  "Increase to cross 3."
               ]
           }
       , Ability
           { name: Name "Sisyphus"
           , colour: Name "Green"
-          , description:
-              [ Text
-                  """You bend a character's timeline, reversing causality so
-                  that the very ground warps under their feet."""
-              ]
+          , description: text
+              """You bend a character's timeline, reversing causality so that
+              the very ground warps under their feet."""
           , cost: One
           , tags:
               [ RangeTag (Range (NumVar 1) (NumVar 5))
               , KeywordTag (Name "Mark")
               ]
           , steps:
-              [ Step (KeywordStep (Name "Mark")) Nothing
-                  [ Text
-                      """Mark a character in range. While marked, note their
-                      starting position at the start of their turn. At the end
-                      of their turn, if they are in 1-3 of their position, you
-                      may teleport that character to their starting position, or
-                      as close as possible if the space is occupied. Then,
-                      remove the mark. Otherwise, keep the mark."""
-                  ]
-              , Step (KeywordStep (Name "Overdrive")) Nothing
-                  [ Text "Checks for original position in range 1-6." ]
+              [ Step (KeywordStep (Name "Mark")) Nothing $ text
+                  """Mark a character in range. While marked, note their
+                  starting position at the start of their turn. At the end of
+                  their turn, if they are in 1-3 of their position, you may
+                  teleport that character to their starting position, or as
+                  close as possible if the space is occupied. Then, remove the
+                  mark. Otherwise, keep the mark."""
+              , Step (KeywordStep (Name "Overdrive")) Nothing $ text
+                  "Checks for original position in range 1-6."
               ]
           }
       , Ability
           { name: Name "Chronotemper"
           , colour: Name "Green"
-          , description:
-              [ Text
-                  """Ripples of accelerated time bend around your ally's
-                  movements, overlaying afterimages as they move."""
-              ]
+          , description: text
+              """Ripples of accelerated time bend around your ally's movements,
+              overlaying afterimages as they move."""
           , cost: Two
           , tags:
               [ KeywordTag (Name "Mark")
@@ -282,26 +266,24 @@ chronomancer =
               , KeywordTag (Name "Power Die")
               ]
           , steps:
-              [ Step (KeywordStep (Name "Mark")) Nothing
-                  [ Bold [ Text "End your turn" ]
-                  , Text
+              [ Step (KeywordStep (Name "Mark")) Nothing $ seq
+                  [ bold $ text "End your turn"
+                  , text
                       """ and mark an ally in range. While marked, they gain a
                       power die, starting at 6. They may tick the die down by 3
                       to make a free move at the end of any turn, even their
                       own. If the die reaches 0, roll """
-                  , Dice 1 D6
-                  , Text
+                  , dice 1 D6
+                  , text
                       """. This is not an effect roll. If you roll equal to or
                       under the round number, keep the die at its new value,
                       otherwise discard it and end this mark."""
                   ]
-              , Step (KeywordStep (Name "Isolate")) Nothing
-                  [ Text
-                      """If your foe has no other characters adjacent after they
-                      move, tick the die down by only 2 instead."""
-                  ]
-              , Step (KeywordStep (Name "Overdrive")) Nothing
-                  [ Text "Reduce action cost to 1." ]
+              , Step (KeywordStep (Name "Isolate")) Nothing $ text
+                  """If your foe has no other characters adjacent after they
+                  move, tick the die down by only 2 instead."""
+              , Step (KeywordStep (Name "Overdrive")) Nothing $ text
+                  "Reduce action cost to 1."
               ]
           }
       ]

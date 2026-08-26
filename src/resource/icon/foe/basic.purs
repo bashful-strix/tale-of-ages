@@ -25,7 +25,17 @@ import ToA.Data.Icon.Foe
   , FoeInsert(..)
   , FoeTrait(..)
   )
-import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
+import ToA.Data.Icon.Markup
+  ( ListKind(..)
+  , dice
+  , list
+  , italic
+  , power
+  , ref
+  , seq
+  , text
+  , weakness
+  )
 import ToA.Data.Icon.Name (Name(..))
 
 basic :: Icon
@@ -43,9 +53,9 @@ basic =
   , factions:
       [ Faction
           { name: Name "Basic"
-          , description: []
-          , template: { description: [], traits: [] }
-          , mechanic: { name: Name "", description: [] }
+          , description: seq []
+          , template: { description: seq [], traits: [] }
+          , mechanic: { name: Name "", description: seq [] }
           , keywords: []
           }
       ]
@@ -57,21 +67,21 @@ basic =
           , class: Name "Heavy"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text "Hard hitting foe that inflicts stun with a heavy blow." ]
-          , notes: []
+          , description: text
+              "Hard hitting foe that inflicts stun with a heavy blow."
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
                   { name: Name "Yank"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 3) (NumVar 4)) ]
-                  , description:
-                      [ Text "A character in range is pulled "
-                      , Dice 1 D3
-                      , Text ". If pulled adjacent, they take 3 "
-                      , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
-                      , Text " damage."
+                  , description: seq
+                      [ text "A character in range is pulled "
+                      , dice 1 D3
+                      , text ". If pulled adjacent, they take 3 "
+                      , italic $ ref (Name "Pierce") $ text "piercing"
+                      , text " damage."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -80,10 +90,10 @@ basic =
                   { name: Name "Block"
                   , cost: One
                   , tags: [ End ]
-                  , description:
-                      [ Text "Gain "
-                      , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
-                      , Text
+                  , description: seq
+                      [ text "Gain "
+                      , italic $ ref (Name "Shield") $ text "shield"
+                      , text
                           """ and the following interrupt until the start of its
                           next turn."""
                       ]
@@ -94,13 +104,10 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step TriggerStep Nothing
-                              [ Text
-                                  """This character or an adjacent ally is
-                                  attacked."""
-                              ]
-                          , Step Eff Nothing
-                              [ Text "The attack deals 1/2 damage." ]
+                          [ Step TriggerStep Nothing $ text
+                              "This character or an adjacent ally is attacked."
+                          , Step Eff Nothing $ text
+                              "The attack deals 1/2 damage."
                           ]
                       }
                   }
@@ -108,25 +115,25 @@ basic =
                   { name: Name "Shoulder Check"
                   , cost: One
                   , tags: [ KeywordTag (Name "Chain") ]
-                  , description:
-                      [ Text "Dash 1, then gain 2 vigor. Increase both by "
-                      , Dice 1 D3
-                      , Text " if bloodied."
+                  , description: seq
+                      [ text "Dash 1, then gain 2 vigor. Increase both by "
+                      , dice 1 D3
+                      , text " if bloodied."
                       ]
                   , chain: Just $ FoeAbility
                       { name: Name "Crushing Overhead"
                       , cost: Two
                       , tags: [ Attack, KeywordTag (Name "Chain") ]
-                      , description:
-                          [ Text "6 damage and the foe is "
-                          , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
-                          , Text ". "
-                          , Italic [ Text "Hit" ]
-                          , Text ": +"
-                          , Dice 2 D6
-                          , Text " and foe must save or additionally be "
-                          , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
-                          , Text "."
+                      , description: seq
+                          [ text "6 damage and the foe is "
+                          , italic $ ref (Name "Daze") $ text "dazed"
+                          , text ". "
+                          , italic $ text "Hit"
+                          , text ": +"
+                          , dice 2 D6
+                          , text " and foe must save or additionally be "
+                          , italic $ ref (Name "Stun") $ text "stunned"
+                          , text "."
                           ]
                       , chain: Nothing
                       , insert: Nothing
@@ -141,24 +148,22 @@ basic =
           , class: Name "Heavy"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """Basic melee fighter, controls the flow of combat with deft
-                  strikes and slashes."""
-              ]
-          , notes: []
+          , description: text
+              """Basic melee fighter, controls the flow of combat with deft
+              strikes and slashes."""
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
                   { name: Name "Deft Strike"
                   , cost: One
                   , tags: [ Attack ]
-                  , description:
-                      [ Text "2 damage. Hit: +"
-                      , Dice 1 D6
-                      , Text ". "
-                      , Italic [ Text "Afflicted" ]
-                      , Text " foes take +2 base damage."
+                  , description: seq
+                      [ text "2 damage. Hit: +"
+                      , dice 1 D6
+                      , text ". "
+                      , italic $ text "Afflicted"
+                      , text " foes take +2 base damage."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -167,8 +172,8 @@ basic =
                   { name: Name "Bash"
                   , cost: One
                   , tags: [ KeywordTag (Name "Repeatable") ]
-                  , description:
-                      [ Text "An adjacent foe takes 2 damage and is pushed 1." ]
+                  , description: text
+                      "An adjacent foe takes 2 damage and is pushed 1."
                   , chain: Nothing
                   , insert: Nothing
                   }
@@ -176,10 +181,10 @@ basic =
                   { name: Name "Block"
                   , cost: One
                   , tags: [ End ]
-                  , description:
-                      [ Text "Gain "
-                      , Italic [ Ref (Name "Shield") [ Text "shield" ] ]
-                      , Text
+                  , description: seq
+                      [ text "Gain "
+                      , italic $ ref (Name "Shield") $ text "shield"
+                      , text
                           """ and the following interrupt until the start of its
                           next turn."""
                       ]
@@ -190,13 +195,10 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step TriggerStep Nothing
-                              [ Text
-                                  """This character or an adjacent ally is
-                                  attacked."""
-                              ]
-                          , Step Eff Nothing
-                              [ Text "The attack deals 1/2 damage." ]
+                          [ Step TriggerStep Nothing $ text
+                              "This character or an adjacent ally is attacked."
+                          , Step Eff Nothing $ text
+                              "The attack deals 1/2 damage."
                           ]
                       }
                   }
@@ -208,12 +210,10 @@ basic =
           , class: Name "Heavy"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """Straightforward, hard hitting foe that attacks with
-                  sweeping, heavy attacks."""
-              ]
-          , notes: []
+          , description: text
+              """Straightforward, hard hitting foe that attacks with sweeping,
+              heavy attacks."""
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
@@ -225,14 +225,14 @@ basic =
                       , AreaTag (Line (NumVar 3))
                       , KeywordTag (Name "Chain")
                       ]
-                  , description:
-                      [ Text "2 damage. Hit: +"
-                      , Dice 1 D3
-                      , Text ". "
-                      , Italic [ Text "Area effect" ]
-                      , Text ": 2 damage. "
-                      , Italic [ Text "Effect" ]
-                      , Text
+                  , description: seq
+                      [ text "2 damage. Hit: +"
+                      , dice 1 D3
+                      , text ". "
+                      , italic $ text "Area effect"
+                      , text ": 2 damage. "
+                      , italic $ text "Effect"
+                      , text
                           """: Gains +2 base damage and area damage if catching
                           two or more foes in the area."""
                       ]
@@ -240,12 +240,12 @@ basic =
                       { name: Name "Whirlwind"
                       , cost: Two
                       , tags: [ RangeTag Melee, KeywordTag (Name "Chain") ]
-                      , description:
-                          [ Text "The Warrior "
-                          , Italic [ Text "dashes" ]
-                          , Text " 1 space, "
-                          , Italic [ Dice 1 D3 ]
-                          , Text
+                      , description: seq
+                          [ text "The Warrior "
+                          , italic $ text "dashes"
+                          , text " 1 space, "
+                          , italic $ dice 1 D3
+                          , text
                               """+1 times. After it moves, each time, it deals 3
                               damage to adjacent characters and pushes them 1."""
                           ]
@@ -258,11 +258,9 @@ basic =
                   { name: Name "Bulk Up"
                   , cost: One
                   , tags: [ TargetTag Self, End ]
-                  , description:
-                      [ Text
-                          """Remove a negative token from self, then gain 2
-                          vigor. Repeat this effect if in crisis."""
-                      ]
+                  , description: text
+                      """Remove a negative token from self, then gain 2
+                      vigor. Repeat this effect if in crisis."""
                   , chain: Nothing
                   , insert: Nothing
                   }
@@ -271,12 +269,10 @@ basic =
                   , cost: One
                   , tags:
                       [ AreaTag (Burst (NumVar 1) true), LimitTag 1 "combat" ]
-                  , description:
-                      [ Text
-                          """Grant self and each ally in the area 3 vigor. Those
-                          characters can also clear a negative condition if this
-                          character is bloodied."""
-                      ]
+                  , description: text
+                      """Grant self and each ally in the area 3 vigor. Those
+                      characters can also clear a negative condition if this
+                      character is bloodied."""
                   , chain: Nothing
                   , insert: Nothing
                   }
@@ -289,19 +285,18 @@ basic =
           , class: Name "Skirmisher"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text "A fighter that attacks in sweeping bursts." ]
-          , notes: []
+          , description: text "A fighter that attacks in sweeping bursts."
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
                   { name: Name "Razor Wind"
                   , cost: One
                   , tags: []
-                  , description:
-                      [ Text "Repeat the following effect "
-                      , Italic [ Dice 1 D3 ]
-                      , Text
+                  , description: seq
+                      [ text "Repeat the following effect "
+                      , italic $ dice 1 D3
+                      , text
                           """ times: Dash 2, then burst 1 (self): 2 damage.
                           Increase damage by +1 against bloodied foes, or +2
                           against foes in crisis."""
@@ -313,12 +308,12 @@ basic =
                   { name: Name "Western Wind"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 2)) ]
-                  , description:
-                      [ Text "The Dervish or an ally in range may fly "
-                      , Italic [ Dice 1 D3 ]
-                      , Text "+1 and gain "
-                      , Italic [ Ref (Name "Evasion") [ Text "evasion" ] ]
-                      , Text "."
+                  , description: seq
+                      [ text "The Dervish or an ally in range may fly "
+                      , italic $ dice 1 D3
+                      , text "+1 and gain "
+                      , italic $ ref (Name "Evasion") $ text "evasion"
+                      , text "."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -327,11 +322,11 @@ basic =
                   { name: Name "Fan of Knives"
                   , cost: Two
                   , tags: [ RangeTag Close, AreaTag (Blast (NumVar 3)) ]
-                  , description:
-                      [ Italic [ Text "Area effect" ]
-                      , Text ": "
-                      , Dice 1 D6
-                      , Text
+                  , description: seq
+                      [ italic $ text "Area effect"
+                      , text ": "
+                      , dice 1 D6
+                      , text
                           """+4, save for half. Deals +4 damage against foes
                           with no allies adjacent."""
                       ]
@@ -345,12 +340,12 @@ basic =
                       [ RangeTag (Range (NumVar 1) (NumVar 3))
                       , LimitTag 2 "combat"
                       ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """A foe in range must save. On a successful save,
                           they become """
-                      , Italic [ Ref (Name "Blind") [ Text "blinded" ] ]
-                      , Text
+                      , italic $ ref (Name "Blind") $ text "blinded"
+                      , text
                           """. On a failed save, they also become marked and
                           unable to draw line of sight to any space that is not
                           adjacent. They can ignore this mark if they are
@@ -368,19 +363,19 @@ basic =
           , class: Name "Skirmisher"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text "A mobile ranged attacker that hits multiple times." ]
-          , notes: []
+          , description: text
+              "A mobile ranged attacker that hits multiple times."
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
                   { name: Name "Riddle"
                   , cost: One
                   , tags: [ Attack, RangeTag (Range (NumVar 3) (NumVar 5)) ]
-                  , description:
-                      [ Text "2 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": 3 damage again, then 3 damage again."
+                  , description: seq
+                      [ text "2 damage. "
+                      , italic $ text "Hit"
+                      , text ": 3 damage again, then 3 damage again."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -389,13 +384,13 @@ basic =
                   { name: Name "Strafe"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 2) (NumVar 3)) ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """The Gunner dashes 2, then deals 2 damage to a foe
                           in range. If a foe is at exactly range 3, they
                           take """
-                      , Dice 1 D3
-                      , Text "+1 damage instead."
+                      , dice 1 D3
+                      , text "+1 damage instead."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -404,13 +399,10 @@ basic =
                   { name: Name "Overwatch"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 3) (NumVar 5)), End ]
-                  , description:
-                      [ Text
-                          """Target a blast 3 area in range, which could be
-                          placed over characters. Then gain the following
-                          interrupt until the start of this character's next
-                          turn."""
-                      ]
+                  , description: text
+                      """Target a blast 3 area in range, which could be placed
+                      over characters. Then gain the following interrupt until
+                      the start of this character's next turn."""
                   , chain: Nothing
                   , insert: Just $ AbilityInsert
                       { name: Name "Overwatch"
@@ -418,14 +410,12 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step TriggerStep Nothing
-                              [ Text "A foe voluntarily moves in the ares." ]
-                          , Step Eff Nothing
-                              [ Text
-                                  """All foes in the area must save. Foes take 2
-                                  damage. On a failed save, they take 2 damage
-                                  again, three more times."""
-                              ]
+                          [ Step TriggerStep Nothing $ text
+                              "A foe voluntarily moves in the ares."
+                          , Step Eff Nothing $ text
+                              """All foes in the area must save. Foes take 2
+                              damage. On a failed save, they take 2 damage
+                              again, three more times."""
                           ]
                       }
                   }
@@ -437,21 +427,21 @@ basic =
                       , AreaTag (Cross (NumVar 2))
                       , LimitTag 1 "combat"
                       ]
-                  , description:
-                      [ Italic [ Text "Area effect" ]
-                      , Text ": All foes take "
-                      , Dice 1 D6
-                      , Text "+4 damage (save for half) and are "
-                      , Italic [ Ref (Name "Blind") [ Text "blinded" ] ]
-                      , Text ". The center space then becomes an "
-                      , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
-                      , Text " space. "
-                      , Italic [ Text "Effect" ]
-                      , Text
+                  , description: seq
+                      [ italic $ text "Area effect"
+                      , text ": All foes take "
+                      , dice 1 D6
+                      , text "+4 damage (save for half) and are "
+                      , italic $ ref (Name "Blind") $ text "blinded"
+                      , text ". The center space then becomes an "
+                      , italic $ ref (Name "Obscured") $ text "obscured"
+                      , text " space. "
+                      , italic $ text "Effect"
+                      , text
                           """: If the Gunner catches itself or allies in the
                           area, they gain """
-                      , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
-                      , Text "."
+                      , italic $ ref (Name "Stealth") $ text "stealth"
+                      , text "."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -464,27 +454,27 @@ basic =
           , class: Name "Skirmisher"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text "A sneaky foe that hits hard against weakened foes." ]
-          , notes: []
+          , description: text
+              "A sneaky foe that hits hard against weakened foes."
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
                   { name: Name "Shank"
                   , cost: One
                   , tags: [ Attack, RangeTag Melee ]
-                  , description:
-                      [ Text "2 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +"
-                      , Dice 1 D6
-                      , Text ". "
-                      , Italic [ Text "Effect" ]
-                      , Text ": Deals damage "
-                      , Power
-                      , Text " to bloodied foes, and a further damage "
-                      , Power
-                      , Text " against afflicted foes."
+                  , description: seq
+                      [ text "2 damage. "
+                      , italic $ text "Hit"
+                      , text ": +"
+                      , dice 1 D6
+                      , text ". "
+                      , italic $ text "Effect"
+                      , text ": Deals damage "
+                      , power
+                      , text " to bloodied foes, and a further damage "
+                      , power
+                      , text " against afflicted foes."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -493,12 +483,12 @@ basic =
                   { name: Name "Throwing Blade"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 2) (NumVar 3)) ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """A foe in range takes 2 damage, ignoring cover,
                           increased by +"""
-                      , Dice 1 D6
-                      , Text " if target is in crisis."
+                      , dice 1 D6
+                      , text " if target is in crisis."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -507,10 +497,10 @@ basic =
                   { name: Name "Prowl"
                   , cost: One
                   , tags: []
-                  , description:
-                      [ Text "Dash 3, then gain "
-                      , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
-                      , Text "."
+                  , description: seq
+                      [ text "Dash 3, then gain "
+                      , italic $ ref (Name "Stealth") $ text "stealth"
+                      , text "."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -519,12 +509,12 @@ basic =
                   { name: Name "Dirty Trick"
                   , cost: One
                   , tags: [ End, LimitTag 2 "combat" ]
-                  , description:
-                      [ Text "An adjacent foe is "
-                      , Italic [ Ref (Name "Blind") [ Text "blinded" ] ]
-                      , Text " and must save or first lose "
-                      , Dice 1 D3
-                      , Text
+                  , description: seq
+                      [ text "An adjacent foe is "
+                      , italic $ ref (Name "Blind") $ text "blinded"
+                      , text " and must save or first lose "
+                      , dice 1 D3
+                      , text
                           """ positive status tokens. The Skulk may then
                           teleport 3."""
                       ]
@@ -540,12 +530,9 @@ basic =
           , class: Name "Leader"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """Divinely infused foes with the power to shield allies from
-                  harm."""
-              ]
-          , notes: []
+          , description: text
+              "Divinely infused foes with the power to shield allies from harm."
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
@@ -556,18 +543,18 @@ basic =
                       , AreaTag (Cross (NumVar 1))
                       , RangeTag (Range (NumVar 2) (NumVar 4))
                       ]
-                  , description:
-                      [ Text "2 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +"
-                      , Dice 1 D3
-                      , Text ". "
-                      , Italic [ Text "Area effect" ]
-                      , Text
+                  , description: seq
+                      [ text "2 damage. "
+                      , italic $ text "Hit"
+                      , text ": +"
+                      , dice 1 D3
+                      , text ". "
+                      , italic $ text "Area effect"
+                      , text
                           """: Allies in the area gain 2 vigor. Foes take 2
                           damage. Increase all damage or vigor by +"""
-                      , Dice 1 D3
-                      , Text " for bloodied characters."
+                      , dice 1 D3
+                      , text " for bloodied characters."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -576,10 +563,10 @@ basic =
                   { name: Name "Purge"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
-                  , description:
-                      [ Text "A foe in range chooses: either take "
-                      , Dice 1 D3
-                      , Text
+                  , description: seq
+                      [ text "A foe in range chooses: either take "
+                      , dice 1 D3
+                      , text
                           """+1 piercing damage or lose a positive status. If
                           they have no positive status, they automatically take
                           the damage."""
@@ -591,12 +578,12 @@ basic =
                   { name: Name "Diaga"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """An ally in range may immediately save to end all
                           stacks of a status. They gain """
-                      , Power
-                      , Text " on the save if they are bloodied."
+                      , power
+                      , text " on the save if they are bloodied."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -609,10 +596,10 @@ basic =
                       , KeywordTag (Name "Mark")
                       , LimitTag 2 "combat"
                       ]
-                  , description:
-                      [ Text "Allied character in range gains "
-                      , Italic [ Dice 1 D6, Text "+4" ]
-                      , Text
+                  , description: seq
+                      [ text "Allied character in range gains "
+                      , italic $ seq [ dice 1 D6, text "+4" ]
+                      , text
                           """ vigor and becomes marked. When marked, they take
                           take 1/2 damage. The first time in a turn the marked
                           character is damaged by an ability, they must save or
@@ -630,18 +617,16 @@ basic =
           , class: Name "Leader"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  "Martial leaders that are excellent at moving allies around."
-              ]
-          , notes: []
+          , description: text
+              "Martial leaders that are excellent at moving allies around."
+          , notes: seq []
           , traits:
               [ FoeTrait
                   { name: Name "Aura of Command"
-                  , description:
-                      [ Text "Aura 1. Allies in the area have attack "
-                      , Power
-                      , Text "."
+                  , description: seq
+                      [ text "Aura 1. Allies in the area have attack "
+                      , power
+                      , text "."
                       ]
                   }
               ]
@@ -650,17 +635,16 @@ basic =
                   { name: Name "Leader's Strike"
                   , cost: One
                   , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 3)) ]
-                  , description:
-                      [ Text "3 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +"
-                      , Dice 1 D3
-                      , Text ". "
-                      , Italic [ Text "Effect" ]
-                      , Text ": Up to three allies in range can dash 2 with "
-                      , Italic
-                          [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
-                      , Text "."
+                  , description: seq
+                      [ text "3 damage. "
+                      , italic $ text "Hit"
+                      , text ": +"
+                      , dice 1 D3
+                      , text ". "
+                      , italic $ text "Effect"
+                      , text ": Up to three allies in range can dash 2 with "
+                      , italic $ ref (Name "Unstoppable") $ text "unstoppable"
+                      , text "."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -669,17 +653,16 @@ basic =
                   { name: Name "Marching Orders"
                   , cost: Two
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
-                  , description:
-                      [ Text "The Sergeant and all allies in range dash "
-                      , Dice 2 D3
-                      , Text " and gain 1 "
-                      , Italic [ Ref (Name "Strength") [ Text "strength" ] ]
-                      , Text
+                  , description: seq
+                      [ text "The Sergeant and all allies in range dash "
+                      , dice 2 D3
+                      , text " and gain 1 "
+                      , italic $ ref (Name "Strength") $ text "strength"
+                      , text
                           """. If the Sergeant is bloodied, they are immune to
                           all damage and """
-                      , Italic
-                          [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
-                      , Text " during this movement."
+                      , italic $ ref (Name "Unstoppable") $ text "unstoppable"
+                      , text " during this movement."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -688,13 +671,11 @@ basic =
                   { name: Name "Takedown"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
-                  , description:
-                      [ Text
-                          """A foe in range must save. They take 1 damage once
-                          for every ally of the Sergeant adjacent to them, up to
-                          three times. On a failed save, they take 3 damage for
-                          each ally instead."""
-                      ]
+                  , description: text
+                      """A foe in range must save. They take 1 damage once for
+                      every ally of the Sergeant adjacent to them, up to three
+                      times. On a failed save, they take 3 damage for each ally
+                      instead."""
                   , chain: Nothing
                   , insert: Nothing
                   }
@@ -707,30 +688,28 @@ basic =
           , class: Name "Artillery"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """A rare wright using the power of light aether to punish
-                  foes trying to flee."""
-              ]
-          , notes: []
+          , description: text
+              """A rare wright using the power of light aether to punish foes
+              trying to flee."""
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
                   { name: Name "Judgement Bolt"
                   , cost: One
                   , tags: [ Attack, RangeTag (Range (NumVar 2) (NumVar 8)) ]
-                  , description:
-                      [ Text "2 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +"
-                      , Dice 1 D6
-                      , Text ". "
-                      , Italic [ Text "Effect" ]
-                      , Text ": gains attak "
-                      , Power
-                      , Text " and damage "
-                      , Power
-                      , Text
+                  , description: seq
+                      [ text "2 damage. "
+                      , italic $ text "Hit"
+                      , text ": +"
+                      , dice 1 D6
+                      , text ". "
+                      , italic $ text "Effect"
+                      , text ": gains attak "
+                      , power
+                      , text " and damage "
+                      , power
+                      , text
                           """ against foes 4 or more spaces away. Deals +2 base
                           damage against foes 7 or more spaces away."""
                       ]
@@ -741,17 +720,17 @@ basic =
                   { name: Name "Mighty Summoning"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 4) (NumVar 6)) ]
-                  , description:
-                      [ Text "An ally in range is pulled "
-                      , Italic [ Dice 1 D6 ]
-                      , Text " spaces and gains "
-                      , Italic [ Ref (Name "Keen") [ Text "keen" ] ]
-                      , Text ". Alternatively, pull self "
-                      , Italic [ Dice 1 D6 ]
-                      , Text
+                  , description: seq
+                      [ text "An ally in range is pulled "
+                      , italic $ dice 1 D6
+                      , text " spaces and gains "
+                      , italic $ ref (Name "Keen") $ text "keen"
+                      , text ". Alternatively, pull self "
+                      , italic $ dice 1 D6
+                      , text
                           " spaces towards an ally or object in range and gain "
-                      , Italic [ Ref (Name "Keen") [ Text "keen" ] ]
-                      , Text "."
+                      , italic $ ref (Name "Keen") $ text "keen"
+                      , text "."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -760,12 +739,9 @@ basic =
                   { name: Name "Punishment of Cowards"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 3) (NumVar 6)) ]
-                  , description:
-                      [ Text
-                          """The Justicar prepares for action and gains the
-                          following interrupt until the start of their next
-                          turn."""
-                      ]
+                  , description: text
+                      """The Justicar prepares for action and gains the
+                      following interrupt until the start of their next turn."""
                   , chain: Nothing
                   , insert: Just $ AbilityInsert
                       { name: Name "Punish Cowards"
@@ -773,18 +749,16 @@ basic =
                       , cost: Interrupt (NumVar 1)
                       , tags: []
                       , steps:
-                          [ Step TriggerStep Nothing
-                              [ Text
-                                  "A foe ends movement 4 or more spaces away."
-                              ]
-                          , Step Eff Nothing
-                              [ Text
+                          [ Step TriggerStep Nothing $ text
+                              "A foe ends movement 4 or more spaces away."
+                          , Step Eff Nothing $ seq
+                              [ text
                                   """The foe is pulled 1, then must save or be
                                   pulled an additional +"""
-                              , Dice 1 D3
-                              , Text " and become "
-                              , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
-                              , Text "."
+                              , dice 1 D3
+                              , text " and become "
+                              , italic $ ref (Name "Slow") $ text "slow"
+                              , text "."
                               ]
                           ]
                       }
@@ -797,15 +771,12 @@ basic =
                       , End
                       , KeywordTag (Name "Mark")
                       ]
-                  , description:
-                      [ Text
-                          """Choose a foe in range. At the end of that
-                          character's turn, as long as they're in range, they
-                          must save or take piercing damage equal to double the
-                          distance between this character and the marked foe, or
-                          just 2 piercing damage on a successful save. Then end
-                          the mark."""
-                      ]
+                  , description: text
+                      """Choose a foe in range. At the end of that character's
+                      turn, as long as they're in range, they must save or take
+                      piercing damage equal to double the distance between this
+                      character and the marked foe, or just 2 piercing damage on
+                      a successful save. Then end the mark."""
                   , chain: Nothing
                   , insert: Nothing
                   }
@@ -817,12 +788,10 @@ basic =
           , class: Name "Artillery"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """A wright of pure fire aether, summoning it to eradicate
-                  their foes."""
-              ]
-          , notes: []
+          , description: text
+              """A wright of pure fire aether, summoning it to eradicate their
+              foes."""
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
@@ -834,14 +803,14 @@ basic =
                       , AreaTag (Blast (NumVar 2))
                       , KeywordTag (Name "Chain")
                       ]
-                  , description:
-                      [ Text "3 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": 3 damage again. "
-                      , Italic [ Text "Area effect" ]
-                      , Text ": 3 damage. "
-                      , Italic [ Text "On hit" ]
-                      , Text
+                  , description: seq
+                      [ text "3 damage. "
+                      , italic $ text "Hit"
+                      , text ": 3 damage again. "
+                      , italic $ text "Area effect"
+                      , text ": 3 damage. "
+                      , italic $ text "On hit"
+                      , text
                           ": Create dangerous terrain under the attack target."
                       ]
                   , chain: Just $ FoeAbility
@@ -853,16 +822,16 @@ basic =
                           , AreaTag (Blast (NumVar 3))
                           , KeywordTag (Name "Chain")
                           ]
-                      , description:
-                          [ Text "3 damage. "
-                          , Italic [ Text "Hit" ]
-                          , Text ": +"
-                          , Dice 2 D6
-                          , Text ". "
-                          , Italic [ Text "Area effect" ]
-                          , Text ": 3 damage. "
-                          , Italic [ Text "Effect" ]
-                          , Text
+                      , description: seq
+                          [ text "3 damage. "
+                          , italic $ text "Hit"
+                          , text ": +"
+                          , dice 2 D6
+                          , text ". "
+                          , italic $ text "Area effect"
+                          , text ": 3 damage. "
+                          , italic $ text "Effect"
+                          , text
                               """: Deals +2 base or area damage to characters
                               standing in adverse terrain."""
                           ]
@@ -878,15 +847,13 @@ basic =
                       [ AreaTag (Cross (RollVar 1 D3))
                       , RangeTag (Range (NumVar 1) (NumVar 6))
                       ]
-                  , description:
-                      [ Italic [ Text "Area effect" ]
-                      , Text ": 2 piercing damage and create a "
-                      , Italic
-                          [ Ref
-                              (Name "Dangerous Terrain")
-                              [ Text "dangerous terrain" ]
-                          ]
-                      , Text " space in the center."
+                  , description: seq
+                      [ italic $ text "Area effect"
+                      , text ": 2 piercing damage and create a "
+                      , italic
+                          $ ref (Name "Dangerous Terrain")
+                          $ text "dangerous terrain"
+                      , text " space in the center."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -895,14 +862,14 @@ basic =
                   { name: Name "Flash Fire"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 6)) ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """A character in range takes 2 damage, then must save
                           or become """
-                      , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
-                      , Text ". "
-                      , Italic [ Ref (Name "Afflicted") [ Text "Afflicted" ] ]
-                      , Text
+                      , italic $ ref (Name "Slow") $ text "slow"
+                      , text ". "
+                      , italic $ ref (Name "Afflicted") $ text "Afflicted"
+                      , text
                           """ foes also explode for a burst 1 (target)
                           explosion for 3 piercing damage."""
                       ]
@@ -917,16 +884,14 @@ basic =
           , class: Name "Artillery"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """A foe using water and fire aether together to create
-                  pressurized bursts of steam and boiling vapor."""
-              ]
-          , notes: []
+          , description: text
+              """A foe using water and fire aether together to create
+              pressurized bursts of steam and boiling vapor."""
+          , notes: seq []
           , traits:
               [ FoeTrait
                   { name: Name "Vaporsight"
-                  , description: [ Text "Ignores cover from obscured spaces." ]
+                  , description: text "Ignores cover from obscured spaces."
                   }
               ]
           , abilities:
@@ -939,21 +904,21 @@ basic =
                       , AreaTag (Line (NumVar 6))
                       , KeywordTag (Name "Mark")
                       ]
-                  , description:
-                      [ Text "3 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +"
-                      , Dice 1 D3
-                      , Text ". "
-                      , Italic [ Text "Area effect" ]
-                      , Text ": 3 damage. "
-                      , Italic [ Text "Effect" ]
-                      , Text
+                  , description: seq
+                      [ text "3 damage. "
+                      , italic $ text "Hit"
+                      , text ": +"
+                      , dice 1 D3
+                      , text ". "
+                      , italic $ text "Area effect"
+                      , text ": 3 damage. "
+                      , italic $ text "Effect"
+                      , text
                           """: Mark the attack target. Attacks against the
                           marked target for the rest of sombat combat gain
                           attack """
-                      , Power
-                      , Text
+                      , power
+                      , text
                           """ and deal +2 damage on hit. This effect stacks.
                           Lose all stacks if a new target is marked."""
                       ]
@@ -967,10 +932,10 @@ basic =
                       [ RangeTag (Range (NumVar 1) (NumVar 6))
                       , AreaTag (Burst (NumVar 1) false)
                       ]
-                  , description:
-                      [ Text "2 piercing damage, and create an "
-                      , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
-                      , Text " space in the center space."
+                  , description: seq
+                      [ text "2 piercing damage, and create an "
+                      , italic $ ref (Name "Obscured") $ text "obscured"
+                      , text " space in the center space."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -979,10 +944,10 @@ basic =
                   { name: Name "Vaporize"
                   , cost: One
                   , tags: []
-                  , description:
-                      [ Text "Teleport self and all adjacent allies "
-                      , Dice 2 D3
-                      , Text "+1."
+                  , description: seq
+                      [ text "Teleport self and all adjacent allies "
+                      , dice 2 D3
+                      , text "+1."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -996,20 +961,14 @@ basic =
                       , AreaTag (Cross (NumVar 1))
                       , LimitTag 1 "combat"
                       ]
-                  , description:
-                      [ Text "The zone is "
-                      , Italic
-                          [ Ref
-                              (Name "Dangerous Terrain")
-                              [ Text "dangerous" ]
-                          ]
-                      , Text " and "
-                      , Italic
-                          [ Ref
-                              (Name "Difficult Terrain")
-                              [ Text "difficult" ]
-                          ]
-                      , Text
+                  , description: seq
+                      [ text "The zone is "
+                      , italic
+                          $ ref (Name "Dangerous Terrain") $ text "dangerous"
+                      , text " and "
+                      , italic
+                          $ ref (Name "Difficult Terrain") $ text "difficult"
+                      , text
                           """ terrain. Increase to cross 2 at round 3+, even if
                           already placed, and cross 4 at round 5+. This could
                           cause the zone to grow under characters."""
@@ -1026,22 +985,20 @@ basic =
           , class: Name "Heavy"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """Archons are armored, tough warriors that can be used to
-                  represent particularly hardy fighters, military leaders, or
-                  warlords. Alternately, they can be used to represent
-                  particularly ruthless or tough monsters."""
-              ]
-          , notes: []
+          , description: text
+              """Archons are armored, tough warriors that can be used to
+              represent particularly hardy fighters, military leaders, or
+              warlords. Alternately, they can be used to represent particularly
+              ruthless or tough monsters."""
+          , notes: seq []
           , hp: 80
           , defense: 3
           , move: 4
           , traits:
               [ FoeTrait
                   { name: Name "Enrage"
-                  , description:
-                      [ Text "In crisis, takes 1/2 damage from all sources." ]
+                  , description: text
+                      "In crisis, takes 1/2 damage from all sources."
                   }
               ]
           , abilities:
@@ -1049,16 +1006,16 @@ basic =
                   { name: Name "Blackheart"
                   , cost: One
                   , tags: [ Attack, KeywordTag (Name "Chain") ]
-                  , description:
-                      [ Text "2 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +"
-                      , Dice 1 D6
-                      , Text ". "
-                      , Italic [ Text "Effect" ]
-                      , Text ": Gains attack "
-                      , Power
-                      , Text
+                  , description: seq
+                      [ text "2 damage. "
+                      , italic $ text "Hit"
+                      , text ": +"
+                      , dice 1 D6
+                      , text ". "
+                      , italic $ text "Effect"
+                      , text ": Gains attack "
+                      , power
+                      , text
                           """ and deals +3 damage on hit against afflicted
                           characters."""
                       ]
@@ -1071,20 +1028,20 @@ basic =
                           , AreaTag (Blast (NumVar 2))
                           , KeywordTag (Name "Chain")
                           ]
-                      , description:
-                          [ Text "3 damage and shove 1. "
-                          , Italic [ Text "Hit" ]
-                          , Text ": +"
-                          , Dice 2 D6
-                          , Text " and shove +"
-                          , Italic [ Dice 1 D3 ]
-                          , Text ". "
-                          , Italic [ Text "Area effect" ]
-                          , Text
+                      , description: seq
+                          [ text "3 damage and shove 1. "
+                          , italic $ text "Hit"
+                          , text ": +"
+                          , dice 2 D6
+                          , text " and shove +"
+                          , italic $ dice 1 D3
+                          , text ". "
+                          , italic $ text "Area effect"
+                          , text
                               """: 3 damage. If foes are shoved into a an
                               obstruction, they must save or be """
-                          , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
-                          , Text "."
+                          , italic $ ref (Name "Stun") $ text "stunned"
+                          , text "."
                           ]
                       , chain: Nothing
                       , insert: Nothing
@@ -1095,17 +1052,17 @@ basic =
                   { name: Name "Hamstring"
                   , cost: One
                   , tags: [ KeywordTag (Name "Mark") ]
-                  , description:
-                      [ Italic [ Text "Effect" ]
-                      , Text ": An adjacent foe is "
-                      , Italic [ Ref (Name "Mark") [ Text "marked" ] ]
-                      , Text
+                  , description: seq
+                      [ italic $ text "Effect"
+                      , text ": An adjacent foe is "
+                      , italic $ ref (Name "Mark") $ text "marked"
+                      , text
                           """. If that foe voluntarily moves while marked, they
                           take """
-                      , Dice 2 D3
-                      , Text " "
-                      , Italic [ Ref (Name "Pierce") [ Text "piercing" ] ]
-                      , Text
+                      , dice 2 D3
+                      , text " "
+                      , italic $ ref (Name "Pierce") $ text "piercing"
+                      , text
                           """ damage. Reomve this mark if they end their turn
                           without moving voluntarily."""
                       ]
@@ -1116,18 +1073,17 @@ basic =
                   { name: Name "Great Slam"
                   , cost: One
                   , tags: []
-                  , description:
-                      [ Italic [ Text "Effect [X]" ]
-                      , Text
+                  , description: seq
+                      [ italic $ text "Effect [X]"
+                      , text
                           """: Dash 2 spaces, then one adjacent foe is either
                           (1-3) shoved 1 space (4+) or """"
-                      , Italic [ Ref (Name "Daze") [ Text "dazed" ] ]
-                      , Text ". While moving, become "
-                      , Italic
-                          [ Ref (Name "Unstoppable") [ Text "unstoppable" ] ]
-                      , Text " and "
-                      , Italic [ Ref (Name "Immune") [ Text "immune" ] ]
-                      , Text " to all damage."
+                      , italic $ ref (Name "Daze") $ text "dazed"
+                      , text ". While moving, become "
+                      , italic $ ref (Name "Unstoppable") $ text "unstoppable"
+                      , text " and "
+                      , italic $ ref (Name "Immune") $ text "immune"
+                      , text " to all damage."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -1136,16 +1092,16 @@ basic =
                   { name: Name "Great Shieldwall"
                   , cost: One
                   , tags: [ KeywordTag (Name "only usable when bloodied"), End ]
-                  , description:
-                      [ Text "Until start of the Archon's next turn, becomes "
-                      , Italic [ Ref (Name "Immobile") [ Text "immobile" ] ]
-                      , Text
+                  , description: seq
+                      [ text "Until start of the Archon's next turn, becomes "
+                      , italic $ ref (Name "Immobile") $ text "immobile"
+                      , text
                           """, but the Archon grants cover to allies, and
                           attacks against all adjacent allies deal damage """
-                      , Weakness
-                      , Text " and have attack "
-                      , Weakness
-                      , Text "."
+                      , weakness
+                      , text " and have attack "
+                      , weakness
+                      , text "."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -1158,13 +1114,11 @@ basic =
           , class: Name "Skirmisher"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """Rogues are quick witted and quick on their feet. They can
-                  be used to represent skilled thieves, scouts, or assassins, or
-                  particularly agile or bloodthirsty monsters."""
-              ]
-          , notes: []
+          , description: text
+              """Rogues are quick witted and quick on their feet. They can
+              be used to represent skilled thieves, scouts, or assassins, or
+              particularly agile or bloodthirsty monsters."""
+          , notes: seq []
           , hp: 64
           , defense: 6
           , move: 5
@@ -1174,16 +1128,16 @@ basic =
                   { name: Name "Disappearing Act"
                   , cost: Interrupt (NumVar 1)
                   , tags: []
-                  , description:
-                      [ Italic [ Text "Trigger" ]
-                      , Text ": When blooded. "
-                      , Italic [ Text "Effect" ]
-                      , Text
+                  , description: seq
+                      [ italic $ text "Trigger"
+                      , text ": When blooded. "
+                      , italic $ text "Effect"
+                      , text
                           """: Remove self from the battlefield. At the end of
                           the next player turn, return them to the battlefield
                           anywhere in range 1-3 of a character, with """
-                      , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
-                      , Text "."
+                      , italic $ ref (Name "Stealth") $ text "stealth"
+                      , text "."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -1192,10 +1146,10 @@ basic =
                   { name: Name "Dire Gouge"
                   , cost: One
                   , tags: [ Attack, RangeTag (Melee) ]
-                  , description:
-                      [ Text "2 damage. "
-                      , Italic [ Text "Hit [X]" ]
-                      , Text ": Deal 3 damage (4+) then 3 damage again."
+                  , description: seq
+                      [ text "2 damage. "
+                      , italic $ text "Hit [X]"
+                      , text ": Deal 3 damage (4+) then 3 damage again."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -1204,12 +1158,12 @@ basic =
                   { name: Name "Blinding Dust"
                   , cost: One
                   , tags: []
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """An adjacent foe takes 2 damage, then must save or
                           become """
-                      , Italic [ Ref (Name "Blind") [ Text "blinded" ] ]
-                      , Text ". The Rogue may then dash 4 spaces."
+                      , italic $ ref (Name "Blind") $ text "blinded"
+                      , text ". The Rogue may then dash 4 spaces."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -1221,12 +1175,12 @@ basic =
                       [ RangeTag (Range (NumVar 1) (NumVar 2))
                       , KeywordTag (Name "Chain")
                       ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """Swap two characters in range (including self), then
                           gain """
-                      , Italic [ Ref (Name "Evasion") [ Text "evasion" ] ]
-                      , Text "."
+                      , italic $ ref (Name "Evasion") $ text "evasion"
+                      , text "."
                       ]
                   , chain: Just $ FoeAbility
                       { name: Name "Foul Play"
@@ -1235,9 +1189,9 @@ basic =
                           [ RangeTag (Range (NumVar 1) (NumVar 3))
                           , KeywordTag (Name "Chain")
                           ]
-                      , description:
-                          [ Italic [ Text "Effect" ]
-                          , Text
+                      , description: seq
+                          [ italic $ text "Effect"
+                          , text
                               """: Teleport adjacent to a foe in range, then
                               deal 3 damage to that foe. Can repeat the effect,
                               but must choose a different foe in range each time
@@ -1259,54 +1213,50 @@ basic =
           , class: Name "Legend"
           , faction: Nothing
           , chapter: Nothing
-          , description:
-              [ Text
-                  """The Nocturnal relies on extreme mobility and fear to strike
-                  down its foes. It can be used to represent winged demons,
-                  master assassins, gargoyles, or other vicious and mobile
-                  foes."""
-              ]
-          , notes: []
-          , tactics: []
+          , description: text
+              """The Nocturnal relies on extreme mobility and fear to strike
+              down its foes. It can be used to represent winged demons,
+              master assassins, gargoyles, or other vicious and mobile
+              foes."""
+          , notes: seq []
+          , tactics: seq []
           , traits:
               [ FoeTrait
                   { name: Name "Master of the Night"
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """Can move diagonally. Additionally, the Nocturnal
                           has aura 2. It has permanent """
-                      , Italic [ Ref (Name "Evasion") [ Text "evasion" ] ]
-                      , Text " if there are no other characters in the aura."
+                      , italic $ ref (Name "Evasion") $ text "evasion"
+                      , text " if there are no other characters in the aura."
                       ]
                   }
               ]
           , roundActions:
               [ FoeTrait
                   { name: Name "Crippling Paranoia"
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """At the start of the round, the Nocturnal chooses a
                           foe. At the end of the round, that foe deals """
-                      , Dice 1 D6
-                      , Text
+                      , dice 1 D6
+                      , text
                           """ damage to all allies in adjacent spaces. If there
                           are no adjacent allies, that foe takes """
-                      , Dice 1 D6
-                      , Text " damage and is "
-                      , Italic [ Ref (Name "Stun") [ Text "stunned" ] ]
-                      , Text "."
+                      , dice 1 D6
+                      , text " damage and is "
+                      , italic $ ref (Name "Stun") $ text "stunned"
+                      , text "."
                       ]
                   }
               ]
           , phases:
-              { description:
-                  [ Text
-                      """Phase change triggers at the start of each round. The
-                      Nocturnal starts in phase I and goes up to phase II, then
-                      III, then back to I. """
-                  ]
+              { description: text
+                  """Phase change triggers at the start of each round. The
+                  Nocturnal starts in phase I and goes up to phase II, then III,
+                  then back to I. """
               , details:
-                  [ { description: []
+                  [ { description: seq []
                     , traits: []
                     , roundActions: []
                     , abilities:
@@ -1318,17 +1268,17 @@ basic =
                                 , RangeTag (Range (NumVar 1) (NumVar 2))
                                 , KeywordTag (Name "Chain")
                                 ]
-                            , description:
-                                [ Italic [ Text "Effect" ]
-                                , Text ": Teleport 1. "
-                                , Italic [ Text "Attack" ]
-                                , Text ": 3 damage. "
-                                , Italic [ Text "Miss" ]
-                                , Text ": +"
-                                , Dice 1 D6
-                                , Text ". "
-                                , Italic [ Text "Effect" ]
-                                , Text ": Teleport 1."
+                            , description: seq
+                                [ italic $ text "Effect"
+                                , text ": Teleport 1. "
+                                , italic $ text "Attack"
+                                , text ": 3 damage. "
+                                , italic $ text "Miss"
+                                , text ": +"
+                                , dice 1 D6
+                                , text ". "
+                                , italic $ text "Effect"
+                                , text ": Teleport 1."
                                 ]
                             , chain: Just $ FoeAbility
                                 { name: Name "The Agony"
@@ -1339,12 +1289,12 @@ basic =
                                     , AreaTag (Cross (NumVar 1))
                                     , KeywordTag (Name "Chain")
                                     ]
-                                , description:
-                                    [ Text "2 piercing damage. "
-                                    , Italic [ Text "Hit" ]
-                                    , Text ": +3 piercing damage. "
-                                    , Italic [ Text "Area effect" ]
-                                    , Text ": 2 piercing damage."
+                                , description: seq
+                                    [ text "2 piercing damage. "
+                                    , italic $ text "Hit"
+                                    , text ": +3 piercing damage. "
+                                    , italic $ text "Area effect"
+                                    , text ": 2 piercing damage."
                                     ]
                                 , chain: Just $ FoeAbility
                                     { name: Name "The Horror"
@@ -1354,14 +1304,14 @@ basic =
                                         , RangeTag Melee
                                         , KeywordTag (Name "Chain")
                                         ]
-                                    , description:
-                                        [ Text "2 damage. "
-                                        , Italic [ Text "Hit" ]
-                                        , Text ": +"
-                                        , Dice 2 D6
-                                        , Text ". "
-                                        , Italic [ Text "Effect" ]
-                                        , Text
+                                    , description: seq
+                                        [ text "2 damage. "
+                                        , italic $ text "Hit"
+                                        , text ": +"
+                                        , dice 2 D6
+                                        , text ". "
+                                        , italic $ text "Effect"
+                                        , text
                                             """: Deals 2 damage again to
                                             afflicted foes, then 2 damage again
                                             if the target is bloodied."""
@@ -1377,12 +1327,12 @@ basic =
                             { name: Name "Serrated Blade"
                             , cost: One
                             , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
-                            , description:
-                                [ Text
+                            , description: seq
+                                [ text
                                     """A foe in range takes 2 damage, increased
                                     by + """
-                                , Dice 1 D6
-                                , Text " if that foe is in crisis."
+                                , dice 1 D6
+                                , text " if that foe is in crisis."
                                 ]
                             , chain: Nothing
                             , insert: Nothing
@@ -1395,9 +1345,9 @@ basic =
                                 , AreaTag (Line (NumVar 3))
                                 , LimitTag 1 "round"
                                 ]
-                            , description:
-                                [ Italic [ Text "Area effect" ]
-                                , Text
+                            , description: seq
+                                [ italic $ text "Area effect"
+                                , text
                                     """: Foes in the area take 2 damage, once,
                                     for each foe in the area. The Nocturnal may
                                     then teleport 3."""
@@ -1413,9 +1363,9 @@ basic =
                                 , RangeTag (Range (NumVar 1) (NumVar 4))
                                 , LimitTag 2 "round"
                                 ]
-                            , description:
-                                [ Italic [ Text "Zone" ]
-                                , Text
+                            , description: seq
+                                [ italic $ text "Zone"
+                                , text
                                     """: Choose a free space in range.
                                     Characters that enter that space voluntarily
                                     or start their turn there are struck by a
@@ -1431,17 +1381,15 @@ basic =
                             { name: Name "Roundelay"
                             , cost: One
                             , tags: [ LimitTag 1 "round" ]
-                            , description:
-                                [ Text
-                                    """The Nocturnal teleports and gains vigor
-                                    equal to 1+ the round number. """
-                                ]
+                            , description: text
+                                """The Nocturnal teleports and gains vigor
+                                equal to 1+ the round number. """
                             , chain: Nothing
                             , insert: Nothing
                             }
                         ]
                     }
-                  , { description: [ Text "As phase I, but gains:" ]
+                  , { description: text "As phase I, but gains:"
                     , traits: []
                     , roundActions: []
                     , abilities:
@@ -1452,16 +1400,15 @@ basic =
                                 [ RangeTag (Range (NumVar 1) (NumVar 2))
                                 , LimitTag 1 "round"
                                 ]
-                            , description:
-                                [ Text
+                            , description: seq
+                                [ text
                                     """All foes in range are inflicted with
                                     supernatural fear. They must save or be
                                     pushed """
-                                , Italic [ Dice 1 D3, Text "+1" ]
-                                , Text " spaces and "
-                                , Italic
-                                    [ Ref (Name "Blind") [ Text "blinded" ] ]
-                                , Text
+                                , italic $ seq [ dice 1 D3, text "+1" ]
+                                , text " spaces and "
+                                , italic $ ref (Name "Blind") $ text "blinded"
+                                , text
                                     """, or 1 space and no blind on a successful
                                     save."""
                                 ]
@@ -1473,13 +1420,13 @@ basic =
                             , cost: One
                             , tags:
                                 [ KeywordTag (Name "Mark"), LimitTag 1 "round" ]
-                            , description:
-                                [ Text
+                            , description: seq
+                                [ text
                                     """The Nocturnal mark a foe in range. While
                                     marked, after that foe vonuntarily moves,
                                     they take """
-                                , Dice 1 D6
-                                , Text
+                                , dice 1 D6
+                                , text
                                     """+2 piercing damage. This effect can only
                                     trigger once a turn, but any number of times
                                     a round. This mark is cleared if a foes
@@ -1496,32 +1443,31 @@ basic =
                                 [ RangeTag (Range (NumVar 1) (NumVar 3))
                                 , LimitTag 1 "round"
                                 ]
-                            , description:
-                                [ Text
+                            , description: seq
+                                [ text
                                     """The Nocturnal chooses a foe in range that
                                     has not acted yet this round. At the end of
                                     that foe's turn: """
-                                , List Unordered
-                                    [ [ Text
-                                          """As long as they're in range,
-                                          teleport to an space adjacent to them,
-                                          deal """
-                                      , Dice 1 D6
-                                      , Text
-                                          " damage, three times to them, and "
-                                      , Italic
-                                          [ Ref (Name "Stun") [ Text "stun" ] ]
-                                      , Text " them."
-                                      ]
-                                    , [ Text
-                                          """Increase each instance of damage by
-                                          +2 if that character is bloodied, or
-                                          +4 if they are in crisis."""
-                                      ]
-                                    , [ Text
-                                          """If they are not in range, the
-                                          Nocturnal may teleport 3 instead."""
-                                      ]
+                                , list Unordered
+                                    [ seq
+                                        [ text
+                                            """As long as they're in range,
+                                            teleport to an space adjacent to
+                                            them, deal """
+                                        , dice 1 D6
+                                        , text
+                                            " damage, three times to them, and "
+                                        , italic
+                                            $ ref (Name "Stun") $ text "stun"
+                                        , text " them."
+                                        ]
+                                    , text
+                                        """Increase each instance of damage by
+                                        +2 if that character is bloodied, or +4
+                                        if they are in crisis."""
+                                    , text
+                                        """If they are not in range, the
+                                        Nocturnal may teleport 3 instead."""
                                     ]
                                 ]
                             , chain: Nothing
@@ -1529,18 +1475,16 @@ basic =
                             }
                         ]
                     }
-                  , { description: [ Text "As phase I, but gains:" ]
+                  , { description: text "As phase I, but gains:"
                     , traits: []
                     , roundActions:
                         [ FoeTrait
                             { name: Name "Bloody Nightmare"
-                            , description:
-                                [ Text
-                                    """For the rest of combat, all foes take
-                                    piercing damage at the end of their turns if
-                                    they are not adjacent to an ally equal to
-                                    the round number."""
-                                ]
+                            , description: text
+                                """For the rest of combat, all foes take
+                                piercing damage at the end of their turns if
+                                they are not adjacent to an ally equal to the
+                                round number."""
                             }
                         ]
                     , abilities:
@@ -1548,21 +1492,20 @@ basic =
                             { name: Name "Kidnap"
                             , cost: One
                             , tags: [ LimitTag 2 "round" ]
-                            , description:
-                                [ Text "The Nocturnal dashes 6 spaces with "
-                                , Italic
-                                    [ Ref (Name "Phasing") [ Text "phasing" ] ]
-                                , Text
+                            , description: seq
+                                [ text "The Nocturnal dashes 6 spaces with "
+                                , italic $ ref (Name "Phasing") $ text "phasing"
+                                , text
                                     """. One foe adjacent to any point during
                                     its dash is removed from the battlefield,
                                     then placed adjacent when it finishes its
                                     movement. That foe then becomes """
-                                , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
-                                , Text
+                                , italic $ ref (Name "Slow") $ text "slow"
+                                , text
                                     """. Foes can save to avoid being moved, but
                                     still become """
-                                , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
-                                , Text " on a successful save."
+                                , italic $ ref (Name "Slow") $ text "slow"
+                                , text " on a successful save."
                                 ]
                             , chain: Nothing
                             , insert: Nothing

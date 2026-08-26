@@ -5,14 +5,15 @@
         "path": "./",
         "core": {
           "dependencies": [
+            "aff",
             "arrays",
+            "bifunctors",
             "codec",
             "codec-json",
             "colors",
             "console",
             "control",
             "css",
-            "debug",
             "deku-core",
             "deku-dom",
             "dom-filereader",
@@ -20,6 +21,7 @@
             "either",
             "fast-vect",
             "filterable",
+            "fixed-points",
             "foldable-traversable",
             "foreign",
             "hyrule",
@@ -27,6 +29,7 @@
             "js-promise-aff",
             "js-uri",
             "json",
+            "matryoshka",
             "maybe",
             "newtype",
             "ordered-collections",
@@ -44,6 +47,7 @@
             "web-clipboard",
             "web-cssom-view",
             "web-events",
+            "web-file",
             "web-html",
             "web-pointerevents",
             "web-storage"
@@ -1214,6 +1218,19 @@
         "tuples"
       ]
     },
+    "fixed-points": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-Mj1281KvhL/l8GKKL0ZSdOUunz7J0/xn7O5yQgTKBpc=",
+      "dependencies": [
+        "control",
+        "exists",
+        "newtype",
+        "prelude",
+        "transformers",
+        "tuples"
+      ]
+    },
     "foldable-traversable": {
       "type": "registry",
       "version": "6.0.0",
@@ -1549,6 +1566,27 @@
         "prelude",
         "typelevel-prelude",
         "unsafe-coerce"
+      ]
+    },
+    "matryoshka": {
+      "type": "registry",
+      "version": "1.0.0",
+      "integrity": "sha256-vnLqowk7gEb2vMvxMmeIinID47JuEBqp6wsKyYBvIGY=",
+      "dependencies": [
+        "bifunctors",
+        "control",
+        "distributive",
+        "either",
+        "fixed-points",
+        "foldable-traversable",
+        "free",
+        "identity",
+        "lists",
+        "newtype",
+        "prelude",
+        "profunctor",
+        "transformers",
+        "tuples"
       ]
     },
     "maybe": {

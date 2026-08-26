@@ -1,14 +1,15 @@
 package:
   name: tale-of-ages
   dependencies:
+    - aff
     - arrays
+    - bifunctors
     - codec
     - codec-json
     - colors
     - console
     - control
     - css
-    - debug
     - deku-core
     - deku-dom
     - dom-filereader
@@ -16,6 +17,7 @@ package:
     - either
     - fast-vect
     - filterable
+    - fixed-points
     - foldable-traversable
     - foreign
     - hyrule
@@ -23,6 +25,7 @@ package:
     - js-promise-aff
     - js-uri
     - json
+    - matryoshka
     - maybe
     - newtype
     - ordered-collections
@@ -40,6 +43,7 @@ package:
     - web-clipboard
     - web-cssom-view
     - web-events
+    - web-file
     - web-html
     - web-pointerevents
     - web-storage

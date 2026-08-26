@@ -169,7 +169,7 @@ exportEncounter styles enc = Deku.do
 
   fixed
     [ D.button
-        [ css_ styles
+        [ css_ $ S.button <> styles
         , DL.runOn DL.click $ dialog <#> fromElement >>> traverse_ showModal
         ]
         [ D.text_ "Export" ]

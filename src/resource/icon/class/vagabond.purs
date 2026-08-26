@@ -24,7 +24,18 @@ import ToA.Data.Icon.Ability
 import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Colour (Colour(..))
 import ToA.Data.Icon.Dice (Die(..))
-import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
+import ToA.Data.Icon.Markup
+  ( ListKind(..)
+  , bold
+  , dice
+  , list
+  , italic
+  , newline
+  , power
+  , ref
+  , seq
+  , text
+  )
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Soul (Soul(..))
@@ -37,26 +48,20 @@ vagabond =
           { name: Name "Vagabond"
           , colour: Name "Yellow"
           , sign: Sign "icon-[game-icons--crossed-sabres]"
-          , tagline: [ Text "Cunning Wanderer" ]
-          , strengths:
-              [ Text
-                  """High mobility and damage, strong summons and marks, and
-                  strong against isolated foes."""
-              ]
-          , weaknesses:
-              [ Text "Relatively low durability, relies on support." ]
-          , complexity: [ Text "Medium" ]
-          , description:
-              [ Text
-                  """Vagabonds are the mercenaries and master scouts of Arden
-                  Eld. They know how to aim a crossbow bolt through the visor
-                  of a knight or the weak spot of a monster, how to move
-                  quietly and quickly, and how to fling a knife with deadly
-                  precision. They are very mobile compared to other jobs and
-                  are able to get where they need to go faster than most,
-                  using their follow up abilities to beat down injured or
-                  isolated foes."""
-              ]
+          , tagline: text "Cunning Wanderer"
+          , strengths: text
+              """High mobility and damage, strong summons and marks, and strong
+              against isolated foes."""
+          , weaknesses: text "Relatively low durability, relies on support."
+          , complexity: text "Medium"
+          , description: text
+              """Vagabonds are the mercenaries and master scouts of Arden Eld.
+              They know how to aim a crossbow bolt through the visor of a knight
+              or the weak spot of a monster, how to move quietly and quickly,
+              and how to fling a knife with deadly precision. They are very
+              mobile compared to other jobs and are able to get where they need
+              to go faster than most, using their follow up abilities to beat
+              down injured or isolated foes."""
           , hp: 32
           , defense: 6
           , move: 4
@@ -89,10 +94,10 @@ vagabond =
           , colour: Name "Yellow"
           , sign: Sign "icon-[game-icons--cloak-dagger]"
           , class: Name "Vagabond"
-          , description:
-              [ Text "The soul of one at home in the darkness."
-              , Newline
-              , Text
+          , description: seq
+              [ text "The soul of one at home in the darkness."
+              , newline
+              , text
                   """The darkness is a warm mother that holds many mysteries,
                     and can hide many weapons."""
               ]
@@ -102,10 +107,10 @@ vagabond =
           , colour: Name "Yellow"
           , sign: Sign "icon-[game-icons--crossed-pistols]"
           , class: Name "Vagabond"
-          , description:
-              [ Text "The soul of one ignited with flint and spark."
-              , Newline
-              , Text "The power of war is the power of change, after all."
+          , description: seq
+              [ text "The soul of one ignited with flint and spark."
+              , newline
+              , text "The power of war is the power of change, after all."
               ]
           }
       , Soul
@@ -113,10 +118,10 @@ vagabond =
           , colour: Name "Yellow"
           , sign: Sign "icon-[game-icons--daggers]"
           , class: Name "Vagabond"
-          , description:
-              [ Text "The soul of one that fights for the downtrodden."
-              , Newline
-              , Text
+          , description: seq
+              [ text "The soul of one that fights for the downtrodden."
+              , newline
+              , text
                   """Kin cannot be free as long as they are crushed by the
                   weight of gold."""
               ]
@@ -126,12 +131,12 @@ vagabond =
           , colour: Name "Yellow"
           , sign: Sign "icon-[game-icons--falling-leaf]"
           , class: Name "Vagabond"
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """The soul of one that fights to protect the Green and
                   channels its fury."""
-              , Newline
-              , Text
+              , newline
+              , text
                   """The forests do not care of the ways of kin. They will be
                   here long after we pass from this world."""
               ]
@@ -141,22 +146,20 @@ vagabond =
   , traits:
       [ Trait
           { name: Name "Skirmisher"
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """You are an agile fighter, able to dodge and weave around
                   the battlefield with skill and precision. You gain the
                   following benefits:"""
-              , Newline
-              , List Unordered
-                  [ [ Text "You can move diagonally" ]
-                  , [ Text
-                        """Once a round, when you make a single move, dash, fly,
-                        or teleport, you may extend it by +3"""
-                    ]
-                  , [ Text
-                        """You reduce all damage from missed attacks and
-                        successful saves to 1"""
-                    ]
+              , newline
+              , list Unordered
+                  [ text "You can move diagonally"
+                  , text
+                      """Once a round, when you make a single move, dash, fly,
+                      or teleport, you may extend it by +3"""
+                  , text
+                      """You reduce all damage from missed attacks and
+                      successful saves to 1"""
                   ]
               ]
           }
@@ -166,42 +169,43 @@ vagabond =
       [ Ability
           { name: Name "Wind's Kiss"
           , colour: Name "Yellow"
-          , description: [ Text "A flash of blades." ]
+          , description: text "A flash of blades."
           , cost: One
           , tags: [ Attack, RangeTag (Range (NumVar 1) (NumVar 2)) ]
           , steps:
-              [ Step Eff Nothing [ Text "Dash 1." ]
-              , AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D6 ]
-              , Step OnHit Nothing
-                  [ Text "Gain "
-                  , Italic [ Ref (Name "Haste") [ Text "haste" ] ]
-                  , Text "."
+              [ Step Eff Nothing $ text "Dash 1."
+              , AttackStep (text "2 damage") (seq [ text "+", dice 1 D6 ])
+              , Step OnHit Nothing $ seq
+                  [ text "Gain "
+                  , italic $ ref (Name "Haste") $ text "haste"
+                  , text "."
                   ]
-              , Step Eff Nothing [ Text "Dash 1." ]
+              , Step Eff Nothing $ text "Dash 1."
               ]
           }
       , Ability
           { name: Name "Track"
           , colour: Name "Yellow"
-          , description: [ Text "Pick your quarry carefully." ]
+          , description: text "Pick your quarry carefully."
           , cost: One
           , tags:
               [ RangeTag (Range (NumVar 1) (NumVar 4))
               , KeywordTag (Name "Mark")
               ]
           , steps:
-              [ Step (KeywordStep (Name "Mark")) Nothing
-                  [ Text "Mark your foe."
-                  , List Unordered
-                      [ [ Text "While marked, your attacks gain attack "
-                        , Power
-                        , Text
-                            " against them and they cannot gain cover from you."
-                        ]
-                      , [ Text
-                            """If they are bloodied, these bonuses apply to all
-                            your allies as well."""
-                        ]
+              [ Step (KeywordStep (Name "Mark")) Nothing $ seq
+                  [ text "Mark your foe."
+                  , list Unordered
+                      [ seq
+                          [ text "While marked, your attacks gain attack "
+                          , power
+                          , text
+                              """ against them and they cannot gain cover from
+                              you."""
+                          ]
+                      , text
+                          """If they are bloodied, these bonuses apply to all
+                          your allies as well."""
                       ]
                   ]
               ]
@@ -209,84 +213,79 @@ vagabond =
       , Ability
           { name: Name "Quick Step"
           , colour: Name "Yellow"
-          , description: [ Text "You move with surprising agility and speed." ]
+          , description: text "You move with surprising agility and speed."
           , cost: Quick
           , tags: []
           , steps:
-              [ Step Eff (Just D3)
-                  [ Text "Dash "
-                  , Italic [ Dice 1 D3 ]
-                  , Text " spaces. You can "
-                  , Italic [ Ref (Name "Phase") [ Text "phase" ] ]
-                  , Text " through foes during this movement."
+              [ Step Eff (Just D3) $ seq
+                  [ text "Dash "
+                  , italic $ dice 1 D3
+                  , text " spaces. You can "
+                  , italic $ ref (Name "Phase") $ text "phase"
+                  , text " through foes during this movement."
                   ]
               ]
           }
       , Ability
           { name: Name "Flash Powder"
           , colour: Name "Yellow"
-          , description:
-              [ Text "Throw sparking powder that confounds the eyes." ]
+          , description: text "Throw sparking powder that confounds the eyes."
           , cost: One
           , tags: [ RangeTag Melee, AreaTag (Burst (NumVar 1) true) ]
           , steps:
-              [ Step AreaEff (Just D6)
-                  [ Text "One, (4+) two or (6+) all foes in the area are "
-                  , Italic [ Ref (Name "Blind") [ Text "blinded" ] ]
-                  , Text "."
+              [ Step AreaEff (Just D6) $ seq
+                  [ text "One, (4+) two or (6+) all foes in the area are "
+                  , italic $ ref (Name "Blind") $ text "blinded"
+                  , text "."
                   ]
-              , Step Eff Nothing [ Text "Then teleport 3." ]
+              , Step Eff Nothing $ text "Then teleport 3."
               ]
           }
       , Ability
           { name: Name "Gouge"
           , colour: Name "Yellow"
-          , description:
-              [ Text
-                  """You unleash multiple slashes, shot or stabs against your
-                  foe, hitting weak spots."""
-              ]
+          , description: text
+              """You unleash multiple slashes, shot or stabs against your foe,
+              hitting weak spots."""
           , cost: Two
           , tags: [ Attack, RangeTag Melee ]
           , steps:
-              [ Step Eff Nothing [ Text "Dash 1." ]
-              , AttackStep [ Text "3 damage" ] [ Text "+", Dice 3 D3 ]
-              , Step OnHit Nothing
-                  [ Text "If your foe is "
-                  , Italic [ Ref (Name "Bloodied") [ Text "bloodied" ] ]
-                  , Text
+              [ Step Eff Nothing $ text "Dash 1."
+              , AttackStep (text "3 damage") (seq [ text "+", dice 3 D3 ])
+              , Step OnHit Nothing $ seq
+                  [ text "If your foe is "
+                  , italic $ ref (Name "Bloodied") $ text "bloodied"
+                  , text
                       """, strike your target again, dealing 3 damage. If your
                       foe is in """
-                  , Italic [ Ref (Name "Crisis") [ Text "crisis" ] ]
-                  , Text ", deal 3 damage twice instead."
+                  , italic $ ref (Name "Crisis") $ text "crisis"
+                  , text ", deal 3 damage twice instead."
                   ]
               ]
           }
       , Ability
           { name: Name "Smoke Bomb"
           , colour: Name "Yellow"
-          , description: [ Text "Prepare for the worst." ]
+          , description: text "Prepare for the worst."
           , cost: One
           , tags: [ TargetTag Self, End ]
           , steps:
-              [ Step Eff (Just D6)
-                  [ Bold [ Text "End your turn." ]
-                  , Text " Create an "
-                  , Italic [ Ref (Name "Obscured") [ Text "obscured" ] ]
-                  , Text " space under you (4+) and gain "
-                  , Italic [ Ref (Name "Stealth") [ Text "stealth" ] ]
-                  , Text "."
+              [ Step Eff (Just D6) $ seq
+                  [ bold $ text "End your turn."
+                  , text " Create an "
+                  , italic $ ref (Name "Obscured") $ text "obscured"
+                  , text " space under you (4+) and gain "
+                  , italic $ ref (Name "Stealth") $ text "stealth"
+                  , text "."
                   ]
               ]
           }
       , Ability
           { name: Name "Death Trap"
           , colour: Name "Yellow"
-          , description:
-              [ Text
-                  """You place a carefully crafted trap: flechette bomb, shard
-                  net, razor wire - the possibilities are endless."""
-              ]
+          , description: text
+              """You place a carefully crafted trap: flechette bomb, shard net,
+              razor wire - the possibilities are endless."""
           , cost: One
           , tags:
               [ RangeTag (Range (NumVar 1) (NumVar 2))
@@ -294,25 +293,22 @@ vagabond =
               ]
           , steps:
               [ InsetStep (KeywordStep (Name "Summon")) (Just D6)
-                  [ Text
+                  ( text
                       """Summon one or (5+) two death traps in a free space in
                       range. Traps arm at the end of your turn."""
-                  ]
+                  )
                   $ SummonInset
                       { name: Name "Death Trap"
                       , colour: Name "Yellow"
                       , max: 1
                       , abilities:
-                          [ Step SummonEff Nothing
-                              [ Text
-                                  """Mark out a cross 1 area centered on the
-                                  trap when it arms. When a foe starts their
-                                  turn in the area, or voluntarily enters the
-                                  area, it explodes for an area effect,
-                                  dismissing it. Characters inside must save or
-                                  take 4 damage, twice, or just once on a
-                                  successful save."""
-                              ]
+                          [ Step SummonEff Nothing $ text
+                              """Mark out a cross 1 area centered on the trap
+                              when it arms. When a foe starts their turn in the
+                              area, or voluntarily enters the area, it explodes
+                              for an area effect, dismissing it. Characters
+                              inside must save or take 4 damage, twice, or just
+                              once on a successful save."""
                           ]
                       }
               ]

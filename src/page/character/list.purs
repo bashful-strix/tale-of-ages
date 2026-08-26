@@ -74,9 +74,7 @@ listCharacterPage env@{ characters, icon } =
                     [ D.text_ "Delete" ]
 
                 , exportCharacter icon_
-                    ( S.interactable <>
-                        [ "flex", "grow", "items-center", "px-2" ]
-                    )
+                    [ "flex", "grow", "items-center", "px-2", "rounded-none" ]
                     char
                 ]
             ]

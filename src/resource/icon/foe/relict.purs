@@ -24,7 +24,19 @@ import ToA.Data.Icon.Foe
   , FoeTrait(..)
   )
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..))
-import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
+import ToA.Data.Icon.Markup
+  ( ListKind(..)
+  , bold
+  , dice
+  , list
+  , italic
+  , newline
+  , power
+  , ref
+  , seq
+  , text
+  , weakness
+  )
 import ToA.Data.Icon.Name (Name(..))
 
 relict :: Icon
@@ -41,8 +53,8 @@ relict =
   , factions:
       [ Faction
           { name: Name "Relict"
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """The Relict are the most common danger that adventurers face
                   in the ruins of Arden Eld. They are the spectral remnants of
                   the Arken Empire, souls bound in a semi-automated etheric
@@ -53,16 +65,16 @@ relict =
                   harnessed and stored en mass in a lightning aether powered
                   sarcophagus-like nodes buried deep in the darkness of the
                   earth, sunk there by the Doom in the days of eld."""
-              , Newline
-              , Newline
-              , Text
+              , newline
+              , newline
+              , text
                   """These networks and their central nodes, the Metachiron,
                   have run for untold centuries, using their stored souls as
                   power as they enact survival protocols hewn in cuneiform by
                   long dead priests."""
-              , Newline
-              , Newline
-              , Text
+              , newline
+              , newline
+              , text
                   """Now the great tomb-cities prepared for the populace now lie
                   beneath the earth, both dead and alive. Great monuments of
                   dead emperors peer over pitch black chasms lined with the
@@ -70,9 +82,9 @@ relict =
                   alcoves, or crumpled into a corner, until a node senses
                   intruders, the Relict within rippling out through conduits to
                   manifest in crackling undeath."""
-              , Newline
-              , Newline
-              , Text
+              , newline
+              , newline
+              , text
                   """There are some Relict, remnants of the Black Sun cult,
                   that have retained more sense of themselves and work at dark
                   purpose to resurrect the old empire and bring back the
@@ -81,59 +93,61 @@ relict =
                   surface world to its former glory."""
               ]
           , template:
-              { description:
-                  [ Text
+              { description: seq
+                  [ text
                       """To make any foe a Relict, you can add the following
                       traits. All Relict have these traits."""
-                  , Newline
-                  , Newline
-                  , Text "Most relict are mindless husks and are "
-                  , Bold [ Text "monsters" ]
-                  , Text ". Their more intelligent masters are "
-                  , Bold [ Text "kin" ]
-                  , Text " and usually have more complex motivations."
-                  , List Unordered
-                      [ [ Bold [ Text "Motivations: " ]
-                        , Text
-                            """Relict are usually dormant, but become active
-                            when their tomb-cities are intruded upon by unlucky
-                            treasure-seekers. They can also be stirred into
-                            wakefulness by the priests of the Black Sun, whose
-                            only goal is the reawakening of the old empire, the
-                            resurrection of the Arkenlords, and the reconquest
-                            and total subjugation of the world of the
-                            living."""
-                        ]
-                      , [ Text
-                            """Intelligent Relict are usually delirious or
-                            obsessive."""
-                        ]
+                  , newline
+                  , newline
+                  , text "Most relict are mindless husks and are "
+                  , bold $ text "monsters"
+                  , text ". Their more intelligent masters are "
+                  , bold $ text "kin"
+                  , text " and usually have more complex motivations."
+                  , list Unordered
+                      [ seq
+                          [ bold $ text "Motivations: "
+                          , text
+                              """Relict are usually dormant, but become active
+                              when their tomb-cities are intruded upon by
+                              unlucky treasure-seekers. They can also be stirred
+                              into wakefulness by the priests of the Black Sun,
+                              whose only goal is the reawakening of the old
+                              empire, the resurrection of the Arkenlords, and
+                              the reconquest and total subjugation of the world
+                              of the living."""
+                          ]
+                      , text
+                          """Intelligent Relict are usually delirious or
+                          obsessive."""
                       ]
                   ]
               , traits: [ Name "Legion of the Dead" ]
               }
           , mechanic:
               { name: Name "Legion of the Dead"
-              , description:
-                  [ Text
+              , description: seq
+                  [ text
                       """Relict are a legion of mindless husks, cursed with an
                       undying existence. This gives all relict except Legends
                       the following traits:"""
-                  , List Unordered
-                      [ [ Text "Add a "
-                        , Bold [ Text "Husk" ]
-                        , Text
-                            """ mob to any non-legend fight. This does not take
-                            up points in the encounter."""
-                        ]
-                      , [ Text
-                            """After being defeated, any relict sheds any of its
-                            mortal remains and becomes a weak shade of pure
-                            energy. When a relict is defeated, summon a """
-                        , Bold [ Text "husk" ]
-                        , Text
-                            " in its space, adding to the members of the mob."
-                        ]
+                  , list Unordered
+                      [ seq
+                          [ text "Add a "
+                          , bold $ text "Husk"
+                          , text
+                              """ mob to any non-legend fight. This does not
+                              take up points in the encounter."""
+                          ]
+                      , seq
+                          [ text
+                              """After being defeated, any relict sheds any of
+                              its mortal remains and becomes a weak shade of pure
+                              energy. When a relict is defeated, summon a """
+                          , bold $ text "husk"
+                          , text
+                              " in its space, adding to the members of the mob."
+                          ]
                       ]
                   ]
               }
@@ -145,11 +159,9 @@ relict =
       [ Keyword
           { name: Name "Horde"
           , category: General
-          , description:
-              [ Text
-                  """This ability becomes more powerful when 2 or more allies
-                  are adjacent to the target."""
-              ]
+          , description: text
+              """This ability becomes more powerful when 2 or more allies are
+              adjacent to the target."""
           }
       ]
 
@@ -159,35 +171,27 @@ relict =
           , colour: Name "Purple"
           , class: Name "Mob"
           , faction: Just $ Name "Relict"
-          , description:
-              [ Text
-                  """The shuffling mass of relict servitors, in thrall to the
-                  network."""
-              ]
-          , notes:
-              [ Text
-                  """This mob is always present in Relict fights. When new
-                  husks are summoned, they add to the current mob, or create a
-                  new one that can act on the following round if there isn’t
-                  one. """
-              ]
+          , description: text
+              """The shuffling mass of relict servitors, in thrall to the
+              network."""
+          , notes: text
+              """This mob is always present in Relict fights. When new
+              husks are summoned, they add to the current mob, or create a
+              new one that can act on the following round if there isn’t
+              one. """
           , traits:
               [ FoeTrait
                   { name: Name "Endless Dead"
-                  , description:
-                      [ Text
-                          """Add to this mob by 1 at the start of every round,
-                          placing a new member anywhere on the battlefield not
-                          adjacent to a foe."""
-                      ]
+                  , description: text
+                      """Add to this mob by 1 at the start of every round,
+                      placing a new member anywhere on the battlefield not
+                      adjacent to a foe."""
                   }
               , FoeTrait
                   { name: Name "Fading"
-                  , description:
-                      [ Text
-                          """This mob is defeated if all of its allies is
-                          defeated, and disintegrates."""
-                      ]
+                  , description: text
+                      """This mob is defeated if all of its allies is defeated,
+                      and disintegrates."""
                   }
               ]
           , abilities:
@@ -195,9 +199,9 @@ relict =
                   { name: Name "Frenzied Scrabbling"
                   , cost: Two
                   , tags: []
-                  , description:
-                      [ Italic [ Text "Effect" ]
-                      , Text
+                  , description: seq
+                      [ italic $ text "Effect"
+                      , text
                           """: All husks may dash 2. Then any foes adjacent to
                           one or more husks take 2 damage."""
                       ]
@@ -208,15 +212,15 @@ relict =
                   { name: Name "Soul Sacrifice"
                   , cost: Two
                   , tags: []
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """Choose a bloodied character adjacent to one or more
                           husks, then destroy any number of husks adjacent to
                           that character. If that character is an ally, they
                           gain 2 vigor per husk destroyed. If that character was
                           a foe, they must save or """
-                      , Italic [ Ref (Name "Sacrifice") [ Text "sacrifice" ] ]
-                      , Text
+                      , italic $ ref (Name "Sacrifice") $ text "sacrifice"
+                      , text
                           """ 2 per husk destroyed, or sacrifice 1 per husk on a
                           successful save."""
                       ]
@@ -232,21 +236,18 @@ relict =
           , class: Name "Leader"
           , faction: Just $ Name "Relict"
           , chapter: Just I
-          , description:
-              [ Text
-                  """The Priests of the Black Sun were the central cult of the
-                  Arken Imperium and foremost in political power and influence.
-                  It was they, under the leadership of their sorcerer-priests,
-                  that orchestrated the Ur-spell that necrotized what remained
-                  of the empire. The process of preserving the entire population
-                  of the empire required a great deal of work, and therefore the
-                  priests classes were split into many castes that labored at
-                  numerous terrible projects. In the end of days, in their
-                  desperation, they delved into deeper and darker magics and
-                  sacrificed their very souls for the purpose of the Great
-                  Work."""
-              ]
-          , notes: []
+          , description: text
+              """The Priests of the Black Sun were the central cult of the Arken
+              Imperium and foremost in political power and influence. It was
+              they, under the leadership of their sorcerer-priests, that
+              orchestrated the Ur-spell that necrotized what remained of the
+              empire. The process of preserving the entire population of the
+              empire required a great deal of work, and therefore the priests
+              classes were split into many castes that labored at numerous
+              terrible projects. In the end of days, in their desperation, they
+              delved into deeper and darker magics and sacrificed their very
+              souls for the purpose of the Great Work."""
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
@@ -257,18 +258,18 @@ relict =
                       , RangeTag (Range (NumVar 2) (NumVar 5))
                       , AreaTag (Cross (NumVar 2))
                       ]
-                  , description:
-                      [ Text "1 piercing damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +1 piercing damage. "
-                      , Italic [ Text "Area effect" ]
-                      , Text ": 1 piercing damage. "
-                      , Italic [ Text "On hit" ]
-                      , Text ": All foes in the area must sacrifice "
-                      , Italic [ Dice 1 D3 ]
-                      , Text " after this ability resolves. "
-                      , Italic [ Ref (Name "Horde") [ Text "Horde" ] ]
-                      , Text ": Double sacrifice ammount."
+                  , description: seq
+                      [ text "1 piercing damage. "
+                      , italic $ text "Hit"
+                      , text ": +1 piercing damage. "
+                      , italic $ text "Area effect"
+                      , text ": 1 piercing damage. "
+                      , italic $ text "On hit"
+                      , text ": All foes in the area must sacrifice "
+                      , italic $ dice 1 D3
+                      , text " after this ability resolves. "
+                      , italic $ ref (Name "Horde") $ text "Horde"
+                      , text ": Double sacrifice ammount."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -277,15 +278,16 @@ relict =
                   { name: Name "Rahaal"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           "Chose a character in range. That character chooses:"
-                      , List Unordered
-                          [ [ Text "foe: sacrifice 4 or gain 2 "
-                            , Italic [ Ref (Name "Brand") [ Text "branded" ] ]
-                            , Text "."
-                            ]
-                          , [ Text "ally: dash 2 or clear a negative status." ]
+                      , list Unordered
+                          [ seq
+                              [ text "foe: sacrifice 4 or gain 2 "
+                              , italic $ ref (Name "Brand") $ text "branded"
+                              , text "."
+                              ]
+                          , text "ally: dash 2 or clear a negative status."
                           ]
                       ]
                   , chain: Nothing
@@ -298,9 +300,9 @@ relict =
                       [ RangeTag (Range (NumVar 1) (NumVar 3))
                       , LimitTag 1 "combat"
                       ]
-                  , description:
-                      [ Italic [ Text "Effect" ]
-                      , Text
+                  , description: seq
+                      [ italic $ text "Effect"
+                      , text
                           """: A foe in range is marked. While marked, they deal
                           half damage. They may ignore this effect while
                           adjacent to an ally. At the end of the turn, they may
@@ -320,22 +322,20 @@ relict =
                       , End
                       , LimitTag 1 "combat"
                       ]
-                  , description:
-                      [ Italic [ Text "Area Effect" ]
-                      , Text
+                  , description: seq
+                      [ italic $ text "Area Effect"
+                      , text
                           """: Creates a one space grasping hands zone under
                           every foe or ally in the area. Any number of these
                           zones can be active. The zones are """
-                      , Italic
-                          [ Ref
-                              (Name "Difficult Terrain")
-                              [ Text "difficult terrain" ]
-                          ]
-                      , Text " for foes. While inside, foes deal damage "
-                      , Weakness
-                      , Text " and abilities used against them trigger all "
-                      , Italic [ Ref (Name "Horde") [ Text "horde" ] ]
-                      , Text " effects."
+                      , italic
+                          $ ref (Name "Difficult Terrain")
+                          $ text "difficult terrain"
+                      , text " for foes. While inside, foes deal damage "
+                      , weakness
+                      , text " and abilities used against them trigger all "
+                      , italic $ ref (Name "Horde") $ text "horde"
+                      , text " effects."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -349,14 +349,12 @@ relict =
           , class: Name "Artillery"
           , faction: Just $ Name "Relict"
           , chapter: Just I
-          , description:
-              [ Text
-                  """Former slave wrights of the old empire, turned into living
-                  weapons to fight back against the Doom. Tethered to the
-                  network, these relict can float on the air with eerie grace,
-                  flickering in and out of existence."""
-              ]
-          , notes: []
+          , description: text
+              """Former slave wrights of the old empire, turned into living
+              weapons to fight back against the Doom. Tethered to the network,
+              these relict can float on the air with eerie grace, flickering in
+              and out of existence."""
+          , notes: seq []
           , traits: []
           , abilities:
               [ FoeAbility
@@ -367,20 +365,18 @@ relict =
                       , RangeTag (Range (NumVar 1) (NumVar 5))
                       , KeywordTag (Name "Chain")
                       ]
-                  , description:
-                      [ Text "1 damage. "
-                      , Italic [ Text "Hit" ]
-                      , Text ": +"
-                      , Dice 1 D6
-                      , Text ". "
-                      , Italic [ Ref (Name "Horde") [ Text "Horde" ] ]
-                      , Text ": Create "
-                      , Italic
-                          [ Ref
-                              (Name "Dangerous Terrain")
-                              [ Text "dangerous terrain" ]
-                          ]
-                      , Text
+                  , description: seq
+                      [ text "1 damage. "
+                      , italic $ text "Hit"
+                      , text ": +"
+                      , dice 1 D6
+                      , text ". "
+                      , italic $ ref (Name "Horde") $ text "Horde"
+                      , text ": Create "
+                      , italic
+                          $ ref (Name "Dangerous Terrain")
+                          $ text "dangerous terrain"
+                      , text
                           """ under the target and every adjacent all of the
                           target."""
                       ]
@@ -393,20 +389,20 @@ relict =
                           , AreaTag (Cross (NumVar 3))
                           , KeywordTag (Name "Chain")
                           ]
-                      , description:
-                          [ Text "2 damage. "
-                          , Italic [ Text "Hit" ]
-                          , Text ": +"
-                          , Dice 2 D6
-                          , Text ". "
-                          , Italic [ Text "Area effect" ]
-                          , Text ": 2 damage. "
-                          , Italic [ Text "Effect" ]
-                          , Text
+                      , description: seq
+                          [ text "2 damage. "
+                          , italic $ text "Hit"
+                          , text ": +"
+                          , dice 2 D6
+                          , text ". "
+                          , italic $ text "Area effect"
+                          , text ": 2 damage. "
+                          , italic $ text "Effect"
+                          , text
                               """: Deals 3 damage again to all foes if catching
                               3 or more foes or """
-                          , Italic [ Text "soul sparks" ]
-                          , Text " in the area."
+                          , italic $ text "soul sparks"
+                          , text " in the area."
                           ]
                       , chain: Nothing
                       , insert: Nothing
@@ -417,12 +413,12 @@ relict =
                   { name: Name "Rift Tear"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
-                  , description:
-                      [ Text
+                  , description: seq
+                      [ text
                           """Teleport 3. Alternatively, teleport a character in
                           range 1. """
-                      , Italic [ Ref (Name "Horde") [ Text "Horde" ] ]
-                      , Text ": Teleport +2."
+                      , italic $ ref (Name "Horde") $ text "Horde"
+                      , text ": Teleport +2."
                       ]
                   , chain: Nothing
                   , insert: Nothing
@@ -434,10 +430,10 @@ relict =
                       [ RangeTag (Range (NumVar 1) (NumVar 6))
                       , KeywordTag (Name "Summon")
                       ]
-                  , description:
-                      [ Text "Create a "
-                      , Italic [ Text "Soul Spark" ]
-                      , Text " summon in free space in range."
+                  , description: seq
+                      [ text "Create a "
+                      , italic $ text "Soul Spark"
+                      , text " summon in free space in range."
                       ]
                   , chain: Nothing
                   , insert: Just $ SummonInsert
@@ -445,15 +441,15 @@ relict =
                       , colour: Name "Blue"
                       , max: 3
                       , effects:
-                          [ [ Text
-                                """All damage against foes adjacent to soul
-                                sparks gain damage """
-                            , Power
-                            , Text " and becomes "
-                            , Italic
-                                [ Ref (Name "Pierce") [ Text "piercing" ] ]
-                            , Text "."
-                            ]
+                          [ seq
+                              [ text
+                                  """All damage against foes adjacent to soul
+                                  sparks gain damage """
+                              , power
+                              , text " and becomes "
+                              , italic $ ref (Name "Pierce") $ text "piercing"
+                              , text "."
+                              ]
                           ]
                       }
                   }

@@ -2,6 +2,8 @@ module ToA.Resource.Icon.Job.Entropist
   ( entropist
   ) where
 
+import Prelude
+
 import Data.FastVect.FastVect ((:), empty)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
@@ -22,7 +24,17 @@ import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Id (Id(..))
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..), StatusType(..))
-import ToA.Data.Icon.Markup (MarkupItem(..), ListKind(..))
+import ToA.Data.Icon.Markup
+  ( ListKind(..)
+  , dice
+  , list
+  , italic
+  , newline
+  , power
+  , ref
+  , seq
+  , text
+  )
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -41,12 +53,12 @@ entropist =
       [ Keyword
           { name: Name "Unmooring"
           , category: Status Negative
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """When your turn ends, the character that inflicted this
                   status teleports you """
-              , Italic [ Dice 1 D3 ]
-              , Text "+1 spaces."
+              , italic $ dice 1 D3
+              , text "+1 spaces."
               ]
           }
       ]
@@ -58,8 +70,8 @@ entropist =
           , sign: Sign "icon-[game-icons--lightning-dissipation]"
           , soul: Name "Bolt"
           , class: Name "Wright"
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """Lightning Aether is a connective force, bringing all matter
                   together. The Arken manipulated this force to create
                   technological marvels - bridges that hung in the air, gates of
@@ -74,9 +86,9 @@ entropist =
                   scholar-priests, written on cuneiform scroll-cylinders, were
                   sealed in one of the great Chambers and forbidden by Kin,
                   deemed too dangerous and too destructive."""
-              , Newline
-              , Newline
-              , Text
+              , newline
+              , newline
+              , text
                   """That chamber was burst open by a legendary but very foolish
                   thief-lord. Ignorant of its contents, its liberator spilled
                   them unfettered into the world, where they were sifted and
@@ -103,16 +115,16 @@ entropist =
   , traits:
       [ Trait
           { name: Name "Unmooring"
-          , description:
-              [ Text
+          , description: seq
+              [ text
                   """Once a round, when you damage a foe, you can inflict them
                   with the """
-              , Italic [ Ref (Name "Unmooring") [ Text "unmooring (-)" ] ]
-              , Text
+              , italic $ ref (Name "Unmooring") $ text "unmooring (-)"
+              , text
                   """ unique status. At the end of that foe's turn, teleport
                   them """
-              , Italic [ Dice 1 D3 ]
-              , Text "+1, then remove a stack of this status."
+              , italic $ dice 1 D3
+              , text "+1, then remove a stack of this status."
               ]
           }
       ]
@@ -122,35 +134,33 @@ entropist =
           { id: Id "energize|talent|entropist"
           , name: Name "Energize"
           , colour: Name "Blue"
-          , description:
-              [ Text
-                  """At round 3+, increase all your teleports by +1, or +2 at
-                  round 5+."""
-              ]
+          , description: text
+              """At round 3+, increase all your teleports by +1, or +2 at round
+              5+."""
           }
       , Talent
           { id: Id "halt|talent|entropist"
           , name: Name "Halt"
           , colour: Name "Blue"
-          , description:
-              [ Italic [ Ref (Name "Afflicted") [ Text "Afflicted" ] ]
-              , Text " characters that end their turn adjacent to you gain "
-              , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
-              , Text
+          , description: seq
+              [ italic $ ref (Name "Afflicted") $ text "Afflicted"
+              , text " characters that end their turn adjacent to you gain "
+              , italic $ ref (Name "Slow") $ text "slow"
+              , text
                   """. If they have 3 or more negative statuses, they treat all
                   spaces adjacent to you as """
-              , Italic [ Ref (Name "Difficult Terrain") [ Text "difficult" ] ]
-              , Text " terrain."
+              , italic $ ref (Name "Difficult Terrain") $ text "difficult"
+              , text " terrain."
               ]
           }
       , Talent
           { id: Id "align|talent|entropist"
           , name: Name "Align"
           , colour: Name "Blue"
-          , description:
-              [ Text "The first time in a round you mark an ally, they gain "
-              , Italic [ Ref (Name "Keen") [ Text "keen" ] ]
-              , Text "."
+          , description: seq
+              [ text "The first time in a round you mark an ally, they gain "
+              , italic $ ref (Name "Keen") $ text "keen"
+              , text "."
               ]
           }
       ]
@@ -159,11 +169,9 @@ entropist =
       [ LimitBreak
           { name: Name "Howling Void"
           , colour: Name "Blue"
-          , description:
-              [ Text
-                  """A black bead streaks from your fingertips, ripping a
-                  screaming hole in space."""
-              ]
+          , description: text
+              """A black bead streaks from your fingertips, ripping a screaming
+              hole in space."""
           , cost: Two /\ 4
           , tags:
               [ KeywordTag (Name "Zone")
@@ -171,49 +179,46 @@ entropist =
               , AreaTag (Blast (NumVar 2))
               ]
           , steps:
-              [ Step (KeywordStep (Name "Zone")) Nothing
-                  [ Text
+              [ Step (KeywordStep (Name "Zone")) Nothing $ seq
+                  [ text
                       """You rip a massive tear in the gravitational aether of
                       the world, creating a black hole in range, with the
                       following effects:"""
-                  , List Unordered
-                      [ [ Text "the black hole is "
-                        , Italic
-                            [ Ref
-                                (Name "Dangerous Terrain")
-                                [ Text "dangerous" ]
-                            ]
-                        , Text " and "
-                        , Italic
-                            [ Ref
-                                (Name "Difficult Terrain")
-                                [ Text "difficult" ]
-                            ]
-                        , Text " terrain."
-                        ]
-                      , [ Text "this "
-                        , Italic [ Text "dangerous" ]
-                        , Text
-                            """ terrain deals additional damage equal to half
-                            the round number, rounded up."""
-                        ]
-                      , [ Text
-                            """any character that starts or ends their turn in
-                            the black hole's spaces is teleported 3 to a space
-                            of your choice."""
-                        ]
-                      , [ Text
-                            """objects that enter the black hole's space are
-                            destroyed, and summons are dismissed."""
-                        ]
-                      , [ Text
-                            """any character, summon, or object in range 2 of
-                            the black hole is pulled """
-                        , Italic [ Dice 1 D3 ]
-                        , Text
-                            """ towards the black hole when it is created, and
-                            at the end of each of your turns."""
-                        ]
+                  , list Unordered
+                      [ seq
+                          [ text "the black hole is "
+                          , italic
+                              $ ref (Name "Dangerous Terrain")
+                              $ text "dangerous"
+                          , text " and "
+                          , italic
+                              $ ref (Name "Difficult Terrain")
+                              $ text "difficult"
+                          , text " terrain."
+                          ]
+                      , seq
+                          [ text "this "
+                          , italic $ text "dangerous"
+                          , text
+                              """ terrain deals additional damage equal to half
+                              the round number, rounded up."""
+                          ]
+                      , text
+                          """any character that starts or ends their turn in
+                          the black hole's spaces is teleported 3 to a space
+                          of your choice."""
+                      , text
+                          """objects that enter the black hole's space are
+                          destroyed, and summons are dismissed."""
+                      , seq
+                          [ text
+                              """any character, summon, or object in range 2 of
+                              the black hole is pulled """
+                          , italic $ dice 1 D3
+                          , text
+                              """ towards the black hole when it is created, and
+                              at the end of each of your turns."""
+                          ]
                       ]
                   ]
               ]
@@ -221,32 +226,30 @@ entropist =
       , Ability
           { name: Name "Magnabolt"
           , colour: Name "Blue"
-          , description: [ Text "Dark lightning scathes your target." ]
+          , description: text "Dark lightning scathes your target."
           , cost: One
           , tags: [ Attack, AreaTag (Line (NumVar 6)) ]
           , steps:
-              [ AttackStep [ Text "2 damage" ] [ Text "+", Dice 1 D3 ]
-              , Step AreaEff Nothing [ Text "2 damage." ]
-              , Step OnHit Nothing
-                  [ Text
+              [ AttackStep (text "2 damage") (seq [ text "+", dice 1 D3 ])
+              , Step AreaEff Nothing $ text "2 damage."
+              , Step OnHit Nothing $ seq
+                  [ text
                       """Your target releases a burst 1 (self) area effect,
                       dealing 2 damage to all characters inside. This damage
                       becomes piercing if your target is """
-                  , Italic [ Ref (Name "Afflicted") [ Text "afflicted" ] ]
-                  , Text "."
+                  , italic $ ref (Name "Afflicted") $ text "afflicted"
+                  , text "."
                   ]
-              , Step Eff Nothing
-                  [ Text
-                      """If your targeted character is inside a zone, extend the
-                      above area effect to all characters inside the zone."""
-                  ]
+              , Step Eff Nothing $ text
+                  """If your targeted character is inside a zone, extend the
+                  above area effect to all characters inside the zone."""
               ]
           }
       , Ability
           { name: Name "Magnetism"
           , colour: Name "Blue"
-          , description:
-              [ Text "You charge your target with unstable magnetic energy." ]
+          , description: text
+              "You charge your target with unstable magnetic energy."
           , cost: One
           , tags:
               [ KeywordTag (Name "Mark")
@@ -256,29 +259,32 @@ entropist =
               , TargetTag Foe
               ]
           , steps:
-              [ Step (KeywordStep (Name "Mark")) Nothing
-                  [ Text
+              [ Step (KeywordStep (Name "Mark")) Nothing $ seq
+                  [ text
                       """At the end of target's turn, one of the following
                       effects takes place:"""
-                  , List Unordered
-                      [ [ Italic [ Text "Positive" ]
-                        , Text ": Push all adjacent characters "
-                        , Italic [ Dice 1 D3 ]
-                        , Text " spaces."
-                        ]
-                      , [ Italic [ Text "Negative" ]
-                        , Text ": Pull all characters in range 1-3 "
-                        , Italic [ Dice 1 D3 ]
-                        , Text " spaces."
-                        ]
-                      , [ Italic [ Text "Dissolution" ]
-                        , Text ": Teleport all characters 1."
-                        ]
+                  , list Unordered
+                      [ seq
+                          [ italic $ text "Positive"
+                          , text ": Push all adjacent characters "
+                          , italic $ dice 1 D3
+                          , text " spaces."
+                          ]
+                      , seq
+                          [ italic $ text "Negative"
+                          , text ": Pull all characters in range 1-3 "
+                          , italic $ dice 1 D3
+                          , text " spaces."
+                          ]
+                      , seq
+                          [ italic $ text "Dissolution"
+                          , text ": Teleport all characters 1."
+                          ]
                       ]
                   ]
-              , Step (KeywordStep (Name "Afflicted")) Nothing
-                  [ Italic [ Ref (Name "Afflicted") [ Text "Afflicted" ] ]
-                  , Text
+              , Step (KeywordStep (Name "Afflicted")) Nothing $ seq
+                  [ italic $ ref (Name "Afflicted") $ text "Afflicted"
+                  , text
                       """ characters are pushed, pulled, or teleported +1 more
                       spaces, or +2 more spaces if they have 3 or more negative
                       status tokens."""
@@ -288,11 +294,9 @@ entropist =
       , Ability
           { name: Name "Stop"
           , colour: Name "Blue"
-          , description:
-              [ Text
-                  """You intensify gravity's effect in an area, pulling foes to
-                  their knees."""
-              ]
+          , description: text
+              """You intensify gravity's effect in an area, pulling foes to
+              their knees."""
           , cost: Two
           , tags:
               [ KeywordTag (Name "Zone")
@@ -300,32 +304,34 @@ entropist =
               , AreaTag (Blast (NumVar 3))
               ]
           , steps:
-              [ Step (KeywordStep (Name "Zone")) Nothing
-                  [ Text
+              [ Step (KeywordStep (Name "Zone")) Nothing $ seq
+                  [ text
                       """You create a crackling zone of strong gravitational
                       collapse in free space in range, with the following
                       effects."""
-                  , List Unordered
-                      [ [ Text "The space is "
-                        , Italic
-                            [ Ref
-                                (Name "Difficult Terrain")
-                                [ Text "difficult" ]
-                            ]
-                        , Text " terrain."
-                        ]
-                      , [ Text
-                            """Foes that willingly enter the zone for the first
-                            time in a turn or start their turn there gain """
-                        , Italic [ Ref (Name "Slow") [ Text "slow" ] ]
-                        , Text "."
-                        ]
-                      , [ Italic [ Ref (Name "Afflicted") [ Text "Afflicted" ] ]
-                        , Text
-                            """ foes cannot voluntarily dash, fly, swap, or
-                            teleport when entering or exiting any space of the
-                            zone."""
-                        ]
+                  , list Unordered
+                      [ seq
+                          [ text "The space is "
+                          , italic
+                              $ ref (Name "Difficult Terrain")
+                              $ text "difficult"
+                          , text " terrain."
+                          ]
+                      , seq
+                          [ text
+                              """Foes that willingly enter the zone for the
+                              first time in a turn or start their turn there
+                              gain """
+                          , italic $ ref (Name "Slow") $ text "slow"
+                          , text "."
+                          ]
+                      , seq
+                          [ italic $ ref (Name "Afflicted") $ text "Afflicted"
+                          , text
+                              """ foes cannot voluntarily dash, fly, swap, or
+                              teleport when entering or exiting any space of the
+                              zone."""
+                          ]
                       ]
                   ]
               ]
@@ -333,35 +339,32 @@ entropist =
       , Ability
           { name: Name "Disintegrate"
           , colour: Name "Blue"
-          , description:
-              [ Text
-                  """You reverse matter's bond, ripping your targets apart at
-                  the fundamental level."""
-              ]
+          , description: text
+              """You reverse matter's bond, ripping your targets apart at
+              the fundamental level."""
           , cost: Two
           , tags: [ Attack, AreaTag (Line (NumVar 8)) ]
           , steps:
-              [ Step Eff Nothing
-                  [ Text "Passes through and destroys all objects on the line."
-                  ]
+              [ Step Eff Nothing $ text
+                  "Passes through and destroys all objects on the line."
               , AttackStep
-                  [ Text "2 piercing damage" ]
-                  [ Text "+", Dice 1 D6, Text " piercing" ]
-              , Step AreaEff Nothing [ Text "2 piercing damage." ]
-              , Step OnHit Nothing
-                  [ Text "All "
-                  , Italic [ Ref (Name "Afflicted") [ Text "afflicted" ] ]
-                  , Text " characters in the area take +2 damage, +"
-                  , Dice 1 D6
-                  , Text " if they have 3 or more negative status tokens."
+                  (text "2 piercing damage")
+                  (seq [ text "+", dice 1 D6, text " piercing" ])
+              , Step AreaEff Nothing $ text "2 piercing damage."
+              , Step OnHit Nothing $ seq
+                  [ text "All "
+                  , italic $ ref (Name "Afflicted") $ text "afflicted"
+                  , text " characters in the area take +2 damage, +"
+                  , dice 1 D6
+                  , text " if they have 3 or more negative status tokens."
                   ]
-              , Step (KeywordStep (Name "Precision")) Nothing
-                  [ Text "Gain attack "
-                  , Power
-                  , Text " at range 4+, or "
-                  , Power
-                  , Power
-                  , Text " at range 7+."
+              , Step (KeywordStep (Name "Precision")) Nothing $ seq
+                  [ text "Gain attack "
+                  , power
+                  , text " at range 4+, or "
+                  , power
+                  , power
+                  , text " at range 7+."
                   ]
               ]
           }

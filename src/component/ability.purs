@@ -13,7 +13,7 @@ import Prelude
 
 import CSS (backgroundColor, lighten, render, renderedInline)
 
-import Data.Foldable (foldMap, intercalate, length)
+import Data.Foldable (foldMap, intercalate)
 import Data.Lens ((^.), (^?), filtered, has, is, only, to, traversed, view)
 import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
@@ -44,6 +44,7 @@ import ToA.Data.Icon.Ability
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Dice (Die)
+import ToA.Data.Icon.Markup (length)
 import ToA.Data.Icon.Name (_name)
 import ToA.Util.Optic ((#~))
 import ToA.Util.Html (css_)

@@ -14,6 +14,7 @@ import ToA.Data.Icon.Ability (Ability(..), Action(..)) as A
 import ToA.Data.Icon.Id (Id(..), _id)
 import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Job (_abilities, _talents) as J
+import ToA.Data.Icon.Markup (seq)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Sign (Sign(..))
 import ToA.Data.Icon.Talent (Talent(..))
@@ -36,7 +37,7 @@ job = Job
   , sign: Sign "job-sign"
   , soul: Name "Soul"
   , class: Name "Class"
-  , description: []
+  , description: seq []
   , trait: Name "Trait"
   , keyword: Name "Keyword"
   , abilities:
@@ -55,14 +56,14 @@ talent = Talent
   { id: Id "id|talent"
   , name: Name "Talent"
   , colour: Name "Col"
-  , description: []
+  , description: seq []
   }
 
 ability :: A.Ability
 ability = A.Ability
   { name: Name "Ability"
   , colour: Name "Col"
-  , description: []
+  , description: seq []
   , cost: A.One
   , tags: []
   , steps: []
@@ -73,22 +74,22 @@ icon = mempty
   # _jobs <>~
       [ job # _name .~ Name "Primary"
       , job # _name .~ Name "Job 1"
-            # J._talents %~ set (term :: _ 0) (Id "talent-1|talent|job-1")
-            # J._talents %~ set (term :: _ 0) (Id "talent-2|talent|job-1")
-            # J._abilities %~ set (term :: _ 0) (I /\ Name "Active 1")
+          # J._talents %~ set (term :: _ 0) (Id "talent-1|talent|job-1")
+          # J._talents %~ set (term :: _ 0) (Id "talent-2|talent|job-1")
+          # J._abilities %~ set (term :: _ 0) (I /\ Name "Active 1")
       , job # _name .~ Name "Job 2"
-            # J._talents %~ set (term :: _ 1) (Id "talent-2|talent|job-2")
-            # J._abilities %~ set (term :: _ 0) (I /\ Name "Inactive 2")
+          # J._talents %~ set (term :: _ 1) (Id "talent-2|talent|job-2")
+          # J._abilities %~ set (term :: _ 0) (I /\ Name "Inactive 2")
       , job # _name .~ Name "Job 3"
       , job # _name .~ Name "Job 4"
       ]
   # _talents <>~
       [ talent # _id .~ Id "talent-1|talent|job-1"
-               # _name .~ Name "Talent 1"
+          # _name .~ Name "Talent 1"
       , talent # _id .~ Id "talent-2|talent|job-1"
-               # _name .~ Name "Talent 2"
+          # _name .~ Name "Talent 2"
       , talent # _id .~ Id "talent-2|talent|job-2"
-               # _name .~ Name "Talent 2"
+          # _name .~ Name "Talent 2"
       ]
   # _abilities <>~
       [ ability # _name .~ Name "Active 1"
@@ -171,14 +172,14 @@ Abilities
         i = mempty
           # _jobs <>~
               [ job # _name .~ Name "Tactician"
-                    # J._talents %~ set (term :: _ 0)
-                        (Id "vantage|talent|tactician")
+                  # J._talents %~ set (term :: _ 0)
+                      (Id "vantage|talent|tactician")
               , job # _name .~ Name "Spellblade"
               , job # _name .~ Name "Weeping Assassin"
               ]
           # _talents <>~
               [ talent # _id .~ Id "vantage|talent|tactician"
-                       # _name .~ Name "Vantage"
+                  # _name .~ Name "Vantage"
               ]
           # _abilities <>~
               [ ability # _name .~ Name "Pincer Attack"
