@@ -2,16 +2,29 @@ module ToA.Resource.Icon.Foe.Classes
   ( foeClasses
   ) where
 
+import ToA.Prelude
+
 import Color (fromInt)
 
 import Data.Maybe (Maybe(..))
 
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Ability (Action(..), Range(..), Tag(..), Variable(..))
+import ToA.Data.Icon.Ability
+  ( Action(..)
+  , Range(..)
+  , Step(..)
+  , StepType(..)
+  , Tag(..)
+  , Variable(..)
+  )
 import ToA.Data.Icon.Colour (Colour(..))
-import ToA.Data.Icon.Foe (FoeAbility(..), FoeClass(..), FoeTrait(..))
 import ToA.Data.Icon.Markup (text)
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Trait (Trait(..))
+
+import ToA.Data.Icon.Foe.Ability (Ability(..), FoeAbility(..))
+import ToA.Data.Icon.Foe.Class (FoeClass(..))
+import ToA.Data.Icon.Foe.Trait (FoeTrait(..))
 
 foeClasses :: Icon
 foeClasses =
@@ -36,10 +49,11 @@ foeClasses =
               """Slower, melee focused enemies that defend their allies with
               their higher hp and defensive traits."""
           , hp: 40
+          , maxVigor: Nothing
           , defense: 3
           , move: 4
           , traits:
-              [ FoeTrait
+              [ FoeTrait $ Trait
                   { name: Name "Guard"
                   , description: text
                       """Has 1 armor and conveys 1 armor to all adjacent allies
@@ -47,9 +61,9 @@ foeClasses =
                       foes to exit."""
                   }
               ]
-          , roundActions: []
           , abilities: []
           }
+
       , FoeClass
           { name: Name "Skirmisher"
           , colour: Name "Yellow"
@@ -57,19 +71,20 @@ foeClasses =
               """Fast, mobile, short ranged enemies that deal high damage but
               are fragile themselves."""
           , hp: 32
+          , maxVigor: Nothing
           , defense: 6
           , move: 4
           , traits:
-              [ FoeTrait
+              [ FoeTrait $ Trait
                   { name: Name "Skirmisher"
                   , description: text
                       """Can move diagonally. Reduces all damage from missed
                       attacks and successful saves to 1."""
                   }
               ]
-          , roundActions: []
           , abilities: []
           }
+
       , FoeClass
           { name: Name "Leader"
           , colour: Name "Green"
@@ -78,23 +93,24 @@ foeClasses =
               heal them. Have traits or auras and effects that improve or move
               their allies."""
           , hp: 48
+          , maxVigor: Nothing
           , defense: 4
           , move: 4
           , traits: []
-          , roundActions: []
           , abilities:
-              [ FoeAbility
+              [ FoeAbility $ Ability
                   { name: Name "Cure"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
-                  , description: text
-                      """A bloodied ally in range gains 3 vigor. Increase
-                      further by +3 if they are in crisis."""
-                  , chain: Nothing
-                  , insert: Nothing
+                  , steps:
+                      [ Step Eff Nothing $ text
+                          """A bloodied ally in range gains 3 vigor. Increase
+                          further by +3 if they are in crisis."""
+                      ]
                   }
               ]
           }
+
       , FoeClass
           { name: Name "Artillery"
           , colour: Name "Blue"
@@ -103,27 +119,29 @@ foeClasses =
               Deal the highest damage but relatively little defense or
               health."""
           , hp: 32
+          , maxVigor: Nothing
           , defense: 4
           , move: 4
           , traits:
-              [ FoeTrait
+              [ FoeTrait $ Trait
                   { name: Name "Aetherwall"
                   , description: text
                       "Takes 1/2 damage from foes 3 or more spaces away."
                   }
               ]
-          , roundActions: []
           , abilities: []
           }
+
       , FoeClass
           { name: Name "Mob"
           , colour: Name "Purple"
           , description: text "Mob"
           , hp: 2
+          , maxVigor: Just 6
           , defense: 4
           , move: 4
           , traits:
-              [ FoeTrait
+              [ FoeTrait $ Trait
                   { name: Name "Mob"
                   , description: text
                       """This character doesn’t trigger effects from being
@@ -132,38 +150,23 @@ foeClasses =
                       lower, and in crisis at 1/4 members or lower."""
                   }
               ]
-          , roundActions: []
           , abilities: []
           }
-      , FoeClass
-          { name: Name "Elite"
-          , colour: Name "Purple"
-          , description: text "Elite"
-          , hp: 40
-          , defense: 4
-          , move: 4
-          , traits:
-              [ FoeTrait
-                  { name: Name "Elite", description: text "Takes 2 turns." }
-              ]
-          , roundActions: []
-          , abilities: []
-          }
+
       , FoeClass
           { name: Name "Legend"
           , colour: Name "Purple"
           , description: text "Legend"
           , hp: 40
+          , maxVigor: Just 10
           , defense: 4
           , move: 4
           , traits:
-              [ FoeTrait
+              [ FoeTrait $ Trait
                   { name: Name "Legend"
                   , description: text "Takes 1 turn for each player character."
                   }
-              ]
-          , roundActions:
-              [ FoeTrait
+              , RoundAction $ Trait
                   { name: Name "Juggernaut"
                   , description: text
                       """At the start of the round, this character may clear a

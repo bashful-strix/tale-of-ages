@@ -1,12 +1,16 @@
 module ToA.Component.Ability
-  ( renderAbility
-  , printCost
+  ( printCost
   , printTag
+
+  , renderAbility
+  , renderActionSign
+  , renderAttackSign
   , renderCost
   , renderTagBox
   , renderTag
   , renderInset
   , renderStep
+  , renderSteps
   ) where
 
 import Prelude
@@ -24,11 +28,9 @@ import Deku.Core (Nut)
 import Deku.DOM as D
 import Deku.DOM.Attributes as DA
 
-import ToA.Component.Markup (markup)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
-  ( Ability
-  , Action(..)
+  ( Action(..)
   , Inset(..)
   , Pattern(..)
   , Range(..)
@@ -36,16 +38,16 @@ import ToA.Data.Icon.Ability
   , StepType(..)
   , Tag(..)
   , Target(..)
-  , _action
-  , _resolve
-  , _steps
-  , _tags
   )
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Markup (length)
 import ToA.Data.Icon.Name (_name)
+
+import ToA.Data.Icon.Pc.Ability (Ability, _action, _resolve, _steps, _tags)
+
+import ToA.Component.Markup (markup)
 import ToA.Util.Optic ((#~))
 import ToA.Util.Html (css_)
 

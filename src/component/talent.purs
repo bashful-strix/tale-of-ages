@@ -14,12 +14,14 @@ import Deku.Core (Nut)
 import Deku.DOM as D
 import Deku.DOM.Attributes as DA
 
-import ToA.Component.Markup (markup)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Name (_name)
-import ToA.Data.Icon.Talent (Talent)
+
+import ToA.Data.Icon.Pc.Talent (Talent)
+
+import ToA.Component.Markup (markup)
 import ToA.Util.Html (css_)
 import ToA.Util.Optic ((#~))
 

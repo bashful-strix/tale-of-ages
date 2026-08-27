@@ -9,6 +9,7 @@ import Data.Maybe (Maybe(..))
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -18,13 +19,6 @@ import ToA.Data.Icon.Ability
   )
 import ToA.Data.Icon.Chapter (Chapter(..))
 import ToA.Data.Icon.Dice (Die(..))
-import ToA.Data.Icon.Foe
-  ( Faction(..)
-  , Foe(..)
-  , FoeAbility(..)
-  , FoeInsert(..)
-  , FoeTrait(..)
-  )
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..))
 import ToA.Data.Icon.Markup
   ( ListKind(..)
@@ -39,6 +33,16 @@ import ToA.Data.Icon.Markup
   , weakness
   )
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Trait (Trait(..))
+
+import ToA.Data.Icon.Foe.Ability (Ability(..), FoeAbility(..))
+import ToA.Data.Icon.Foe.Faction
+  ( Faction(..)
+  , FactionMechanic(..)
+  , FactionTemplate(..)
+  )
+import ToA.Data.Icon.Foe.Job (FoeJob(..))
+import ToA.Data.Icon.Foe.Trait (FoeTrait(..))
 
 beast :: Icon
 beast =
@@ -92,7 +96,7 @@ beast =
                   enraged, a byproduct of their harsh environment - and
                   necessary for survival."""
               ]
-          , template:
+          , template: FactionTemplate
               { description: seq
                   [ text
                       """To make any foe a Beast, you can add the following
@@ -119,7 +123,7 @@ beast =
                   ]
               , traits: [ Name "Enrage" ]
               }
-          , mechanic:
+          , mechanic: FactionMechanic
               { name: Name "Enrage"
               , description: text
                   "While in crisis, take 1/2 damage from all sources."
@@ -149,93 +153,94 @@ beast =
           , colour: Name "Red"
           , class: Name "Heavy"
           , faction: Just $ Name "Beast"
-          , chapter: Just I
+          , chapter: I
           , description: text
               """The enormous and foul-smelling Halitoad uses its long tongue to
               strangle and digest its prey"""
-          , notes: seq []
+          , hp: Nothing
+          , maxVigor: Nothing
+          , defense: Nothing
+          , move: Nothing
           , traits:
-              [ FoeTrait
+              [ FoeTrait $ Trait
                   { name: Name "Stench"
                   , description: seq
                       [ text "Adjacent foes deal damage ", weakness ]
                   }
               ]
           , abilities:
-              [ FoeAbility
+              [ FoeAbility $ Ability
                   { name: Name "Buffeting Burp"
                   , cost: Two
                   , tags: [ Attack, RangeTag Close, AreaTag (Blast (NumVar 2)) ]
-                  , description: seq
-                      [ text "3 damage. "
-                      , italic $ text "Hit"
-                      , text " +"
-                      , dice 1 D6
-                      , text ". "
-                      , italic $ text "Area effect"
-                      , text ": 3 damage and push 1. "
-                      , italic $ text "Ferocity"
-                      , text ": Base damage and area damage +1, close blast 4."
+                  , steps:
+                      [ AttackStep
+                          (text "3 damage")
+                          (seq [ text "+", dice 1 D6 ])
+                      , Step AreaEff Nothing $ text "3 damage and push 1."
+                      , Step (KeywordStep (Name "Ferocity")) Nothing $ text
+                           "Base damage and area damage +1, close blast 4."
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Gob Spit"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
-                  , description: seq
-                      [ text
-                          """A character in range has a difficult terrain space
-                          created under them, then must save or become """
-                      , italic $ ref (Name "Daze") $ text "dazed"
-                      , text
-                          """. If it's an ally, they additionally gain 2 vigor,
-                          + """
-                      , dice 1 D6
-                      , text " if they are in crisis."
+                  , steps:
+                      [ Step Eff Nothing $ seq
+                          [ text
+                              """A character in range has a difficult terrain
+                              space created under them, then must save or
+                              become """
+                          , italic $ ref (Name "Daze") $ text "dazed"
+                          , text
+                              """. If it's an ally, they additionally gain 2
+                              vigor, +"""
+                          , dice 1 D6
+                          , text " if they are in crisis."
+                          ]
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Tongue Flick"
                   , cost: One
                   , tags:
                       [ RangeTag (Range (NumVar 2) (NumVar 3))
                       , KeywordTag (Name "Repeatable")
                       ]
-                  , description: text
-                      "The Halitoad pulls a character in range 1."
-                  , chain: Nothing
-                  , insert: Nothing
+                  , steps:
+                      [ Step Eff Nothing $ text
+                          "The Halitoad pulls a character in range 1."
+                      ]
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Bulky Block"
                   , cost: One
                   , tags: [ End ]
-                  , description: seq
-                      [ text "Gain "
-                      , italic $ ref (Name "Shield") $ text "shield"
-                      , text
-                          """ and the following interrupt until the start of its
-                          next turn. """
-                      , italic $ text "Ferocity"
-                      , text ": Interrupt 2."
+                  , steps:
+                      [ InsetStep Eff Nothing
+                          ( seq
+                              [ text "Gain "
+                              , italic $ ref (Name "Shield") $ text "shield"
+                              , text
+                                  """ and the following interrupt until the start of
+                                  its next turn. """
+                              ]
+                          ) $ AbilityInset
+                          { name: Name "Block"
+                          , colour: Name "Red"
+                          , cost: Interrupt (NumVar 1)
+                          , tags: []
+                          , steps:
+                              [ Step TriggerStep Nothing $ text
+                                  "This character or an adjacent ally is attacked."
+                              , Step Eff Nothing $ text
+                                  "The attack deals 1/2 damage."
+                              ]
+                          }
+                      , Step (KeywordStep (Name "Ferocity")) Nothing $
+                          text "Interrupt 2."
                       ]
-                  , chain: Nothing
-                  , insert: Just $ AbilityInsert
-                      { name: Name "Block"
-                      , colour: Name "Red"
-                      , cost: Interrupt (NumVar 1)
-                      , tags: []
-                      , steps:
-                          [ Step TriggerStep Nothing $ text
-                              "This character or an adjacent ally is attacked."
-                          , Step Eff Nothing $ text
-                              "The attack deals 1/2 damage."
-                          ]
-                      }
                   }
               ]
           }

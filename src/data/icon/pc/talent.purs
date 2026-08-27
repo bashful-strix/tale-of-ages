@@ -1,17 +1,15 @@
-module ToA.Data.Icon.Talent
+module ToA.Data.Icon.Pc.Talent
   ( Talent(..)
   , TalentData
   , _Talent
   , _InsetTalent
   ) where
 
-import Prelude
+import ToA.Prelude
 
 import Data.Lens.Lens (lens', lensStore)
 import Data.Lens.Prism (Prism', prism')
 import Data.Maybe (Maybe(..))
-
-import Type.Row (type (+))
 
 import ToA.Data.Icon.Ability (class Inseted, Inset)
 import ToA.Data.Icon.Colour (class Coloured)
@@ -19,6 +17,7 @@ import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Id (class Identified, Id)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (class Named, Name)
+
 import ToA.Util.Optic (key)
 
 type TalentData r =

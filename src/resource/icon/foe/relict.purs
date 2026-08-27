@@ -9,20 +9,16 @@ import Data.Maybe (Maybe(..))
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
   ( Action(..)
+  , Inset(..)
   , Pattern(..)
   , Range(..)
+  , Step(..)
+  , StepType(..)
   , Tag(..)
   , Variable(..)
   )
 import ToA.Data.Icon.Chapter (Chapter(..))
 import ToA.Data.Icon.Dice (Die(..))
-import ToA.Data.Icon.Foe
-  ( Faction(..)
-  , Foe(..)
-  , FoeAbility(..)
-  , FoeInsert(..)
-  , FoeTrait(..)
-  )
 import ToA.Data.Icon.Keyword (Keyword(..), Category(..))
 import ToA.Data.Icon.Markup
   ( ListKind(..)
@@ -38,6 +34,16 @@ import ToA.Data.Icon.Markup
   , weakness
   )
 import ToA.Data.Icon.Name (Name(..))
+import ToA.Data.Icon.Trait (Trait(..))
+
+import ToA.Data.Icon.Foe.Ability (Ability(..), FoeAbility(..))
+import ToA.Data.Icon.Foe.Faction
+  ( Faction(..)
+  , FactionMechanic(..)
+  , FactionTemplate(..)
+  )
+import ToA.Data.Icon.Foe.Job (FoeJob(..))
+import ToA.Data.Icon.Foe.Trait (FoeTrait(..))
 
 relict :: Icon
 relict =
@@ -92,7 +98,7 @@ relict =
                   their long stint with undeath and think only of returning the
                   surface world to its former glory."""
               ]
-          , template:
+          , template: FactionTemplate
               { description: seq
                   [ text
                       """To make any foe a Relict, you can add the following
@@ -124,7 +130,7 @@ relict =
                   ]
               , traits: [ Name "Legion of the Dead" ]
               }
-          , mechanic:
+          , mechanic: FactionMechanic
               { name: Name "Legion of the Dead"
               , description: seq
                   [ text
@@ -171,23 +177,29 @@ relict =
           , colour: Name "Purple"
           , class: Name "Mob"
           , faction: Just $ Name "Relict"
+          , chapter: I
           , description: text
               """The shuffling mass of relict servitors, in thrall to the
               network."""
+          , members: 2
+          , hp: Nothing
+          , maxVigor: Nothing
+          , defense: Nothing
+          , move: Nothing
           , notes: text
               """This mob is always present in Relict fights. When new
               husks are summoned, they add to the current mob, or create a
               new one that can act on the following round if there isn’t
               one. """
           , traits:
-              [ FoeTrait
+              [ FoeTrait $ Trait
                   { name: Name "Endless Dead"
                   , description: text
                       """Add to this mob by 1 at the start of every round,
                       placing a new member anywhere on the battlefield not
                       adjacent to a foe."""
                   }
-              , FoeTrait
+              , FoeTrait $ Trait
                   { name: Name "Fading"
                   , description: text
                       """This mob is defeated if all of its allies is defeated,
@@ -195,37 +207,34 @@ relict =
                   }
               ]
           , abilities:
-              [ FoeAbility
+              [ FoeAbility $ Ability
                   { name: Name "Frenzied Scrabbling"
                   , cost: Two
                   , tags: []
-                  , description: seq
-                      [ italic $ text "Effect"
-                      , text
-                          """: All husks may dash 2. Then any foes adjacent to
-                          one or more husks take 2 damage."""
+                  , steps:
+                      [ Step Eff Nothing $ text
+                          """All husks may dash 2. Then any foes adjacent to one
+                          or more husks take 2 damage."""
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Soul Sacrifice"
                   , cost: Two
                   , tags: []
-                  , description: seq
-                      [ text
-                          """Choose a bloodied character adjacent to one or more
-                          husks, then destroy any number of husks adjacent to
-                          that character. If that character is an ally, they
-                          gain 2 vigor per husk destroyed. If that character was
-                          a foe, they must save or """
-                      , italic $ ref (Name "Sacrifice") $ text "sacrifice"
-                      , text
-                          """ 2 per husk destroyed, or sacrifice 1 per husk on a
-                          successful save."""
+                  , steps:
+                      [ Step Eff Nothing $ seq
+                          [ text
+                              """Choose a bloodied character adjacent to one or
+                              more husks, then destroy any number of husks
+                              adjacent to that character. If that character is
+                              an ally, they gain 2 vigor per husk destroyed. If
+                              that character was a foe, they must save or """
+                          , italic $ ref (Name "Sacrifice") $ text "sacrifice"
+                          , text
+                              """ 2 per husk destroyed, or sacrifice 1 per husk
+                              on a successful save."""
+                          ]
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
               ]
           }
@@ -235,7 +244,7 @@ relict =
           , colour: Name "Green"
           , class: Name "Leader"
           , faction: Just $ Name "Relict"
-          , chapter: Just I
+          , chapter: I
           , description: text
               """The Priests of the Black Sun were the central cult of the Arken
               Imperium and foremost in political power and influence. It was
@@ -247,10 +256,13 @@ relict =
               terrible projects. In the end of days, in their desperation, they
               delved into deeper and darker magics and sacrificed their very
               souls for the purpose of the Great Work."""
-          , notes: seq []
+          , hp: Nothing
+          , maxVigor: Nothing
+          , defense: Nothing
+          , move: Nothing
           , traits: []
           , abilities:
-              [ FoeAbility
+              [ FoeAbility $ Ability
                   { name: Name "Unholy"
                   , cost: One
                   , tags:
@@ -258,61 +270,58 @@ relict =
                       , RangeTag (Range (NumVar 2) (NumVar 5))
                       , AreaTag (Cross (NumVar 2))
                       ]
-                  , description: seq
-                      [ text "1 piercing damage. "
-                      , italic $ text "Hit"
-                      , text ": +1 piercing damage. "
-                      , italic $ text "Area effect"
-                      , text ": 1 piercing damage. "
-                      , italic $ text "On hit"
-                      , text ": All foes in the area must sacrifice "
-                      , italic $ dice 1 D3
-                      , text " after this ability resolves. "
-                      , italic $ ref (Name "Horde") $ text "Horde"
-                      , text ": Double sacrifice ammount."
+                  , steps:
+                      [ AttackStep
+                          (text "1 piercing damage")
+                          (text "+1 piercing damage")
+                      , Step AreaEff Nothing $ text "1 piercing damage."
+                      , Step OnHit Nothing $ seq
+                          [ text ": All foes in the area must sacrifice "
+                          , italic $ dice 1 D3
+                          , text " after this ability resolves."
+                          ]
+                      , Step (KeywordStep (Name "Horde")) Nothing $ text
+                          "Double sacrifice ammount."
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Rahaal"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 4)) ]
-                  , description: seq
-                      [ text
-                          "Chose a character in range. That character chooses:"
-                      , list Unordered
-                          [ seq
-                              [ text "foe: sacrifice 4 or gain 2 "
-                              , italic $ ref (Name "Brand") $ text "branded"
-                              , text "."
+                  , steps:
+                      [ Step Eff Nothing $ seq
+                          [ text
+                              """Chose a character in range. That character
+                              chooses:"""
+                          , list Unordered
+                              [ seq
+                                  [ text "foe: sacrifice 4 or gain 2 "
+                                  , italic $ ref (Name "Brand") $ text "branded"
+                                  , text "."
+                                  ]
+                              , text "ally: dash 2 or clear a negative status."
                               ]
-                          , text "ally: dash 2 or clear a negative status."
                           ]
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Terrorize"
                   , cost: One
                   , tags:
                       [ RangeTag (Range (NumVar 1) (NumVar 3))
+                      , KeywordTag (Name "Mark")
                       , LimitTag 1 "combat"
                       ]
-                  , description: seq
-                      [ italic $ text "Effect"
-                      , text
-                          """: A foe in range is marked. While marked, they deal
+                  , steps:
+                      [ Step Eff Nothing $ text
+                          """A foe in range is marked. While marked, they deal
                           half damage. They may ignore this effect while
                           adjacent to an ally. At the end of the turn, they may
                           save to end this mark. End a turn adjacent to an ally,
                           ending this mark."""
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Call the Dead"
                   , cost: One
                   , tags:
@@ -322,23 +331,23 @@ relict =
                       , End
                       , LimitTag 1 "combat"
                       ]
-                  , description: seq
-                      [ italic $ text "Area Effect"
-                      , text
-                          """: Creates a one space grasping hands zone under
-                          every foe or ally in the area. Any number of these
-                          zones can be active. The zones are """
-                      , italic
-                          $ ref (Name "Difficult Terrain")
-                          $ text "difficult terrain"
-                      , text " for foes. While inside, foes deal damage "
-                      , weakness
-                      , text " and abilities used against them trigger all "
-                      , italic $ ref (Name "Horde") $ text "horde"
-                      , text " effects."
+                  , steps:
+                      [ Step AreaEff Nothing $ seq
+                          [ italic $ text "Area Effect"
+                          , text
+                              """: Creates a one space grasping hands zone under
+                              every foe or ally in the area. Any number of these
+                              zones can be active. The zones are """
+                          , italic
+                              $ ref (Name "Difficult Terrain")
+                              $ text "difficult terrain"
+                          , text " for foes. While inside, foes deal damage "
+                          , weakness
+                          , text " and abilities used against them trigger all "
+                          , italic $ ref (Name "Horde") $ text "horde"
+                          , text " effects."
+                          ]
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
               ]
           }
@@ -348,39 +357,43 @@ relict =
           , colour: Name "Blue"
           , class: Name "Artillery"
           , faction: Just $ Name "Relict"
-          , chapter: Just I
+          , chapter: I
           , description: text
               """Former slave wrights of the old empire, turned into living
               weapons to fight back against the Doom. Tethered to the network,
               these relict can float on the air with eerie grace, flickering in
               and out of existence."""
-          , notes: seq []
+          , hp: Nothing
+          , maxVigor: Nothing
+          , defense: Nothing
+          , move: Nothing
           , traits: []
           , abilities:
-              [ FoeAbility
-                  { name: Name "Gauntlet Bolt"
-                  , cost: One
-                  , tags:
-                      [ Attack
-                      , RangeTag (Range (NumVar 1) (NumVar 5))
-                      , KeywordTag (Name "Chain")
-                      ]
-                  , description: seq
-                      [ text "1 damage. "
-                      , italic $ text "Hit"
-                      , text ": +"
-                      , dice 1 D6
-                      , text ". "
-                      , italic $ ref (Name "Horde") $ text "Horde"
-                      , text ": Create "
-                      , italic
-                          $ ref (Name "Dangerous Terrain")
-                          $ text "dangerous terrain"
-                      , text
-                          """ under the target and every adjacent all of the
-                          target."""
-                      ]
-                  , chain: Just $ FoeAbility
+              [ ChainAbility
+                  [ Ability
+                      { name: Name "Gauntlet Bolt"
+                      , cost: One
+                      , tags:
+                          [ Attack
+                          , RangeTag (Range (NumVar 1) (NumVar 5))
+                          , KeywordTag (Name "Chain")
+                          ]
+                      , steps:
+                          [ AttackStep
+                              (text "1 damage")
+                              (seq [ text "+", dice 1 D6 ])
+                          , Step (KeywordStep (Name "Horde")) Nothing $ seq
+                              [ text " Create "
+                              , italic
+                                  $ ref (Name "Dangerous Terrain")
+                                  $ text "dangerous terrain"
+                              , text
+                                  """ under the target and every adjacent all of
+                                  the target."""
+                              ]
+                          ]
+                      }
+                  , Ability
                       { name: Name "Chain Lightning"
                       , cost: Two
                       , tags:
@@ -389,69 +402,66 @@ relict =
                           , AreaTag (Cross (NumVar 3))
                           , KeywordTag (Name "Chain")
                           ]
-                      , description: seq
-                          [ text "2 damage. "
-                          , italic $ text "Hit"
-                          , text ": +"
-                          , dice 2 D6
-                          , text ". "
-                          , italic $ text "Area effect"
-                          , text ": 2 damage. "
-                          , italic $ text "Effect"
-                          , text
-                              """: Deals 3 damage again to all foes if catching
-                              3 or more foes or """
-                          , italic $ text "soul sparks"
-                          , text " in the area."
+                      , steps:
+                          [ AttackStep
+                              (text "2 damage")
+                              (seq [ text "+", dice 2 D6 ])
+                          , Step AreaEff Nothing $ text "2 damage."
+                          , Step Eff Nothing $ seq
+                              [ text
+                                  """: Deals 3 damage again to all foes if
+                                  catching 3 or more foes or """
+                              , italic $ text "soul sparks"
+                              , text " in the area."
+                              ]
                           ]
-                      , chain: Nothing
-                      , insert: Nothing
                       }
-                  , insert: Nothing
-                  }
-              , FoeAbility
+                  ]
+              , FoeAbility $ Ability
                   { name: Name "Rift Tear"
                   , cost: One
                   , tags: [ RangeTag (Range (NumVar 1) (NumVar 3)) ]
-                  , description: seq
-                      [ text
+                  , steps:
+                      [ Step Eff Nothing $ text
                           """Teleport 3. Alternatively, teleport a character in
                           range 1. """
-                      , italic $ ref (Name "Horde") $ text "Horde"
-                      , text ": Teleport +2."
+                      , Step (KeywordStep (Name "Horde")) Nothing $ text
+                          "Teleport +2."
                       ]
-                  , chain: Nothing
-                  , insert: Nothing
                   }
-              , FoeAbility
+              , FoeAbility $ Ability
                   { name: Name "Soul Spark"
                   , cost: One
                   , tags:
                       [ RangeTag (Range (NumVar 1) (NumVar 6))
                       , KeywordTag (Name "Summon")
                       ]
-                  , description: seq
-                      [ text "Create a "
-                      , italic $ text "Soul Spark"
-                      , text " summon in free space in range."
-                      ]
-                  , chain: Nothing
-                  , insert: Just $ SummonInsert
-                      { name: Name "Soul Spark"
-                      , colour: Name "Blue"
-                      , max: 3
-                      , effects:
-                          [ seq
-                              [ text
-                                  """All damage against foes adjacent to soul
-                                  sparks gain damage """
-                              , power
-                              , text " and becomes "
-                              , italic $ ref (Name "Pierce") $ text "piercing"
-                              , text "."
+                  , steps:
+                      [ InsetStep Eff Nothing
+                          ( seq
+                              [ text "Create a "
+                              , italic $ text "Soul Spark"
+                              , text " summon in free space in range."
                               ]
-                          ]
-                      }
+                          ) $ SummonInset
+                          { name: Name "Soul Spark"
+                          , colour: Name "Blue"
+                          , max: 3
+                          , abilities:
+                              [ Step Eff Nothing $ seq
+                                  [ text
+                                      """All damage against foes adjacent to
+                                      soul sparks gain damage """
+                                  , power
+                                  , text " and becomes "
+                                  , italic
+                                      $ ref (Name "Pierce")
+                                      $ text "piercing"
+                                  , text "."
+                                  ]
+                              ]
+                          }
+                      ]
                   }
               ]
           }

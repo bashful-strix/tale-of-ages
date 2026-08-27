@@ -1,6 +1,5 @@
 module ToA.Data.Icon.Ability
-  ( Ability(..)
-  , Action(..)
+  ( Action(..)
   , Inset(..)
   , Pattern(..)
   , Range(..)
@@ -15,110 +14,28 @@ module ToA.Data.Icon.Ability
   , class Inseted
   , _inset
 
-  , _Ability
-  , _LimitBreak
-  , _action
-  , _resolve
-  , _steps
-  , _tags
+  , class Abilitied
+  , _abilities
   ) where
 
 import Prelude
 
 import Data.Array.NonEmpty (NonEmptyArray)
-import Data.Lens (Lens', view, _1, _2)
+import Data.Lens (Lens')
 import Data.Lens.AffineTraversal (AffineTraversal')
-import Data.Lens.Lens (lens', lensStore)
-import Data.Lens.Prism (Prism', prism')
-import Data.Maybe (Maybe(..))
-import Data.Tuple.Nested (type (/\))
+import Data.Maybe (Maybe)
 
-import ToA.Data.Icon.Colour (class Coloured)
-import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Dice (Die)
 import ToA.Data.Icon.Markup (Markup)
-import ToA.Data.Icon.Name (class Named, Name, _name)
-import ToA.Util.Optic (key)
+import ToA.Data.Icon.Name (Name)
 
-type AbilityData a =
-  { name :: Name
-  , colour :: Name
-  , description :: Markup
+type AbilityData a r =
+  ( name :: Name
   , cost :: a
   , tags :: Array Tag
   , steps :: Array Step
-  }
-
-data Ability
-  = Ability (AbilityData Action)
-  | LimitBreak (AbilityData (Action /\ Int))
-
-instance Eq Ability where
-  eq (Ability { name: n }) (Ability { name: m }) = n == m
-  eq (LimitBreak { name: n }) (LimitBreak { name: m }) = n == m
-  eq _ _ = false
-
-instance Ord Ability where
-  compare a b =
-    let ac = comparing (view _action) a b
-    in
-      if ac == EQ then comparing (view _name) a b
-      else ac
-
-instance Named Ability where
-  _name = lens' case _ of
-    Ability a -> map Ability <$> lensStore k a
-    LimitBreak a -> map LimitBreak <$> lensStore k a
-    where
-    k = key @"name"
-
-instance Coloured Ability where
-  _colour = lens' case _ of
-    Ability a -> map Ability <$> lensStore k a
-    LimitBreak a -> map LimitBreak <$> lensStore k a
-    where
-    k = key @"colour"
-
-instance Described Ability where
-  _desc = lens' case _ of
-    Ability a -> map Ability <$> lensStore k a
-    LimitBreak a -> map LimitBreak <$> lensStore k a
-    where
-    k = key @"description"
-
-_Ability :: Prism' Ability (AbilityData Action)
-_Ability = prism' Ability case _ of
-  Ability a -> Just a
-  _ -> Nothing
-
-_LimitBreak :: Prism' Ability (AbilityData (Action /\ Int))
-_LimitBreak = prism' LimitBreak case _ of
-  LimitBreak a -> Just a
-  _ -> Nothing
-
-_action :: Lens' Ability Action
-_action = lens' case _ of
-  Ability a -> map Ability <$> lensStore k a
-  LimitBreak a -> map LimitBreak <$> lensStore (k <<< _1) a
-  where
-  k = key @"cost"
-
-_resolve :: AffineTraversal' Ability Int
-_resolve = _LimitBreak <<< key @"cost" <<< _2
-
-_tags :: Lens' Ability (Array Tag)
-_tags = lens' case _ of
-  Ability a -> map Ability <$> lensStore k a
-  LimitBreak a -> map LimitBreak <$> lensStore k a
-  where
-  k = key @"tags"
-
-_steps :: Lens' Ability (Array Step)
-_steps = lens' case _ of
-  Ability a -> map Ability <$> lensStore k a
-  LimitBreak a -> map LimitBreak <$> lensStore k a
-  where
-  k = key @"steps"
+  | r
+  )
 
 data Variable
   = NumVar Int
@@ -221,3 +138,6 @@ data Step
   = Step StepType (Maybe Die) Markup
   | AttackStep Markup Markup
   | InsetStep StepType (Maybe Die) Markup Inset
+
+class Abilitied a b | a -> b where
+  _abilities :: Lens' a b

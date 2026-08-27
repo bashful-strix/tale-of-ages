@@ -10,8 +10,7 @@ import Data.Maybe (Maybe(..))
 
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
-  ( Ability(..)
-  , Action(..)
+  ( Action(..)
   , Inset(..)
   , Pattern(..)
   , Range(..)
@@ -21,7 +20,6 @@ import ToA.Data.Icon.Ability
   , Target(..)
   , Variable(..)
   )
-import ToA.Data.Icon.Class (Class(..))
 import ToA.Data.Icon.Colour (Colour(..))
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Markup
@@ -38,8 +36,11 @@ import ToA.Data.Icon.Markup
   )
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Sign (Sign(..))
-import ToA.Data.Icon.Soul (Soul(..))
 import ToA.Data.Icon.Trait (Trait(..))
+
+import ToA.Data.Icon.Pc.Ability (Ability(..))
+import ToA.Data.Icon.Pc.Class (Class(..))
+import ToA.Data.Icon.Pc.Soul (Soul(..))
 
 vagabond :: Icon
 vagabond =

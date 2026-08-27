@@ -4,7 +4,6 @@ module ToA.Page.Encounter.View
 
 import ToA.Prelude
 
-import Color (lighten)
 import CSS (backgroundColor, render, renderedInline)
 
 import Data.Foldable (foldMap, null)
@@ -14,6 +13,10 @@ import Data.Lens
   , (^?)
   , _Just
   , filtered
+  , folded
+  , has
+  , is
+  , only
   , preview
   , to
   , traversed
@@ -24,7 +27,6 @@ import Data.Lens.Common (simple)
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Monoid (guard)
-import Data.Newtype (unwrap, wrap)
 
 import Deku.Core (Nut)
 import Deku.DOM as D
@@ -34,25 +36,48 @@ import Deku.Hooks ((<#~>))
 
 import Routing.Duplex (print)
 
-import ToA.Component.Ability (renderCost, renderStep, renderTag)
-import ToA.Component.Markup (markup)
-import ToA.Data.Env (Env, _deleteEnc, _navigate)
 import ToA.Data.Icon (Icon)
-import ToA.Data.Icon.Colour (_value)
+import ToA.Data.Icon.Ability (Tag(..), _abilities)
+import ToA.Data.Icon.Class (_class)
+import ToA.Data.Icon.Colour (_colour, _value)
+import ToA.Data.Icon.Description (_desc)
 import ToA.Data.Icon.Encounter (FoeEntry(..))
-import ToA.Data.Icon.Foe
-  ( Foe(..)
-  , FoeAbility(..)
-  , FoeClass(..)
-  , FoeInsert(..)
-  , FoeTrait(..)
-  , Faction(..)
-  )
-import ToA.Data.Icon.Markup (length)
+import ToA.Data.Icon.Markup (length, text)
 import ToA.Data.Icon.Name (Name(..), _name)
+import ToA.Data.Icon.Trait (Trait(..), _trait)
+
+import ToA.Data.Icon.Foe.Ability
+  ( Ability
+  , FoeAbility(..)
+  , _action
+  , _steps
+  , _tags
+  )
+import ToA.Data.Icon.Foe.Class (FoeClass(..))
+import ToA.Data.Icon.Foe.Faction (Faction(..), _mechanic)
+import ToA.Data.Icon.Foe.Job
+  ( Phase
+  , _Elite
+  , _Legend
+  , _details
+  , _faction
+  , _phases
+  )
+import ToA.Data.Icon.Foe.Trait (FoeTrait(..), _FoeTrait, _RoundAction)
+
+import ToA.Data.Env (Env, _deleteEnc, _navigate)
 import ToA.Data.Route (Route(..), EncounterPath(..), routeCodec)
+
+import ToA.Component.Ability
+  ( renderActionSign
+  , renderAttackSign
+  , renderCost
+  , renderSteps
+  , renderTag
+  )
+import ToA.Component.Markup (markup)
 import ToA.Util.Html (css_, hr)
-import ToA.Util.Optic ((^::))
+import ToA.Util.Optic ((^::), (#~))
 
 viewEncounterPage :: Env -> Name -> Nut
 viewEncounterPage env@{ encounters, icon } pathEnc =
@@ -179,8 +204,8 @@ viewEncounterPage env@{ encounters, icon } pathEnc =
                 , guard
                     ( not $ null $ enc
                         ^. _Just
-                        <<< simple _Newtype
-                        <<< to _.reserves
+                          <<< simple _Newtype
+                          <<< to _.reserves
                     ) $
                     D.div
                       [ css_
@@ -216,347 +241,100 @@ renderFoeEntry :: Icon -> FoeEntry -> Nut
 renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
   foes
     ^. traversed
-      <<< filtered (view _name >>> eq fe.name)
-      <<< to case _ of
-        Foe f ->
-          let
-            fef = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.faction)
-            fet = foeClasses
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.template)
-            ff = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq f.faction)
-            cls = foeClasses
-              ^? traversed
-                <<< filtered (view _name >>> eq f.class)
-            trs =
-              foldMap (unwrap >>> _.traits) fet
-                <> foldMap (unwrap >>> _.traits) cls
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) fef
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) ff
-                <> f.traits
-            abs =
-              foldMap (unwrap >>> _.abilities) fet
-                <> foldMap (unwrap >>> _.abilities) cls
-                <> f.abilities
-          in
-            D.div
-              [ css_ [ "flex", "flex-col", "flex-1", "overflow-hidden" ] ]
-              [ D.div
-                  [ css_
-                      [ "flex"
-                      , "justify-between"
-                      , "bg-stone-500"
-                      , "text-stone-800"
-                      , "dark:bg-stone-700"
-                      , "dark:text-stone-300"
-                      ]
-                  ]
-                  [ D.div
-                      [ css_ [ "flex", "items-center", "gap-x-1" ] ]
-                      [ fe.template # foldMap \(Name tn) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<<
-                                  backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ tn ]
-                      , fef # foldMap \(Faction fef_) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<<
-                                  backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ $ fef_.name ^. simple _Newtype ]
-                      , D.span
-                          [ css_ [ "text-white", "font-bold" ]
-                          , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                              =<<
-                                backgroundColor
-                              <$> colours
-                              ^? traversed
-                                <<< filtered (view _name >>> eq f.colour)
-                                <<< _value
-                          ]
-                          [ D.text_ $ f.name ^. simple _Newtype
-                          ]
-                      , cls # foldMap \(FoeClass c) ->
-                          D.span
-                            [ css_ [ "flex", "items-center", "gap-x-2", "ml-1" ]
-                            ]
-                            [ D.span
-                                [ css_ [ "flex", "items-center" ] ]
-                                [ D.span
-                                    [ css_
-                                        [ "icon-[game-icons--checked-shield]" ]
-                                    , DA.title_ "Defense"
-                                    ]
-                                    []
-                                , D.span [] [ D.text_ $ show c.defense ]
-                                ]
-                            , D.span
-                                [ css_ [ "flex", "items-center" ] ]
-                                [ D.span
-                                    [ css_ [ "icon-[game-icons--wingfoot]" ]
-                                    , DA.title_ "Free move"
-                                    ]
-                                    []
-                                , D.span [] [ D.text_ $ show c.move ]
-                                ]
-                            ]
-                      ]
-                  , D.span []
-                      [ fe.alias # foldMap \fa ->
-                          D.span
-                            [ css_ [ "ml-2", "italic" ] ]
-                            [ D.text_ fa ]
-                      , D.span
-                          [ css_ [ "mx-2", "font-bold" ] ]
-                          [ D.text_ $ "x" <> show fe.count ]
-                      ]
-                  ]
-              , D.div
-                  [ css_ [ "overflow-y-auto" ] ]
-                  [ D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs
-                      <#> \(FoeTrait ft) ->
-                        D.div []
-                          [ D.div
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ $ unwrap ft.name ]
-                          , markup icon ft.description
-                          ]
-                  , guard (not $ null trs) hr
-                  , D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ abs
-                      <#> renderAbility icon
-                  ]
-              ]
+      <. filtered (view _name >>> eq fe.name)
+      <. to \f ->
+        let
+          fef = factions
+            ^? traversed
+              <<< filtered (preview _name >>> eq fe.faction)
+          fet = foeClasses
+            ^? traversed
+              <<< filtered (preview _name >>> eq fe.template)
+          ff = factions
+            ^? traversed
+              <<< filtered (preview _name >>> eq (f ^. _faction))
+          cls = foeClasses
+            ^? traversed
+              <<< filtered (view _name >>> eq (f ^. _class))
+          mcs = (fef ^:: _Just <. _mechanic) <> (ff ^:: _Just <. _mechanic)
+          trs =
+            fet
+              ^. _Just <. _trait
+                <>
+                  ( f ^:: filtered (has _Elite) <. to \_ -> FoeTrait $ Trait
+                      { name: Name "Elite"
+                      , description: text "Takes 2 turns."
+                      }
+                  )
+                <> cls
+              ^. _Just <. _trait
+                <> f
+              ^. _trait
+          abs =
+            fet
+              ^. _Just <. _abilities
+                <> cls
+              ^. _Just <. _abilities
+                <> f
+              ^. _abilities
 
-        Mob f ->
-          let
-            fef = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.faction)
-            fet = foeClasses
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.template)
-            ff = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq f.faction)
-            cls = foeClasses
-              ^? traversed
-                <<< filtered (view _name >>> eq f.class)
-            trs =
-              foldMap (unwrap >>> _.traits) fet
-                <> foldMap (unwrap >>> _.traits) cls
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) fef
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) ff
-                <> f.traits
-            abs =
-              foldMap (unwrap >>> _.abilities) fet
-                <> foldMap (unwrap >>> _.abilities) cls
-                <> f.abilities
-          in
-            D.div
-              [ css_ [ "flex", "flex-col", "flex-1", "overflow-hidden" ] ]
-              [ D.div
-                  [ css_
-                      [ "flex"
-                      , "justify-between"
-                      , "bg-stone-500"
-                      , "text-stone-800"
-                      , "dark:bg-stone-700"
-                      , "dark:text-stone-300"
-                      ]
-                  ]
-                  [ D.div
-                      [ css_ [ "flex", "gap-x-1" ] ]
-                      [ fe.template # foldMap \(Name tn) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<<
-                                  backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ tn ]
-                      , fef # foldMap \(Faction fef_) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<<
-                                  backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ $ fef_.name ^. simple _Newtype ]
-                      , D.span
+        in
+          D.div
+            [ css_ [ "flex", "flex-col", "flex-1", "overflow-hidden" ] ]
+            [ D.div
+                [ css_
+                    [ "flex"
+                    , "justify-between"
+                    , "bg-stone-500"
+                    , "text-stone-800"
+                    , "dark:bg-stone-700"
+                    , "dark:text-stone-300"
+                    ]
+                ]
+                [ D.div
+                    [ css_ [ "flex", "gap-x-1" ] ]
+                    [ fe.template # foldMap \(Name tn) ->
+                        D.span
                           [ css_ [ "text-white", "font-bold" ]
                           , DA.style_ $ fromMaybe "" $ renderedInline $ render
                               =<<
                                 backgroundColor
                               <$> colours
                               ^? traversed
-                                <<< filtered (view _name >>> eq f.colour)
+                                <<< filtered
+                                  (view _name >>> eq (Name "Purple"))
                                 <<< _value
                           ]
-                          [ D.text_ $ f.name ^. simple _Newtype ]
-                      , cls # foldMap \(FoeClass c) ->
-                          D.span
-                            [ css_ [ "flex", "items-center", "gap-x-2", "ml-2" ]
-                            ]
-                            [ D.span
-                                [ css_ [ "flex", "items-center" ] ]
-                                [ D.span
-                                    [ css_
-                                        [ "icon-[game-icons--checked-shield]" ]
-                                    , DA.title_ "Defense"
-                                    ]
-                                    []
-                                , D.span [] [ D.text_ $ show c.defense ]
-                                ]
-                            , D.span
-                                [ css_ [ "flex", "items-center" ] ]
-                                [ D.span
-                                    [ css_ [ "icon-[game-icons--wingfoot]" ]
-                                    , DA.title_ "Free move"
-                                    ]
-                                    []
-                                , D.span [] [ D.text_ $ show c.move ]
-                                ]
-                            ]
-                      ]
-                  , fe.alias # foldMap \fa ->
-                      D.span
-                        [ css_ [ "mx-2", "italic" ] ]
-                        [ D.text_ fa ]
-                  ]
-              , D.div
-                  [ css_ [ "overflow-y-auto" ] ]
-                  [ D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs
-                      <#> \(FoeTrait ft) ->
-                        D.div []
-                          [ D.div
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ $ unwrap ft.name ]
-                          , markup icon ft.description
-                          ]
-                  , guard (not $ null trs) hr
-                  , D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ abs
-                      <#> renderAbility icon
-                  ]
-              ]
-
-        Elite f ->
-          let
-            fef = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.faction)
-            fet = foeClasses
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.template)
-            ff = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq f.faction)
-            cls = foeClasses
-              ^? traversed
-                <<< filtered (view _name >>> eq f.class)
-            el = foeClasses
-              ^? traversed
-                <<< filtered (view _name >>> eq (Name "Elite"))
-            trs =
-              foldMap (unwrap >>> _.traits) el
-                <> foldMap (unwrap >>> _.traits) fet
-                <> foldMap (unwrap >>> _.traits) cls
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) fef
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) ff
-                <> f.traits
-            abs =
-              foldMap (unwrap >>> _.abilities) fet
-                <> foldMap (unwrap >>> _.abilities) cls
-                <> f.abilities
-          in
-            D.div
-              [ css_ [ "flex", "flex-col", "flex-1", "overflow-hidden" ] ]
-              [ D.div
-                  [ css_
-                      [ "flex"
-                      , "justify-between"
-                      , "bg-stone-500"
-                      , "text-stone-800"
-                      , "dark:bg-stone-700"
-                      , "dark:text-stone-300"
-                      ]
-                  ]
-                  [ D.div
-                      [ css_ [ "flex", "gap-x-1" ] ]
-                      [ fe.template # foldMap \(Name tn) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<< backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ tn ]
-                      , fef # foldMap \(Faction fef_) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<<
-                                  backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ $ fef_.name ^. simple _Newtype ]
-                      , D.span
+                          [ D.text_ tn ]
+                    , fef # foldMap \(Faction fef_) ->
+                        D.span
                           [ css_ [ "text-white", "font-bold" ]
                           , DA.style_ $ fromMaybe "" $ renderedInline $ render
                               =<<
                                 backgroundColor
                               <$> colours
                               ^? traversed
-                                <<< filtered (view _name >>> eq f.colour)
+                                <<< filtered
+                                  (view _name >>> eq (Name "Purple"))
                                 <<< _value
                           ]
-                          [ D.text_ $ f.name ^. simple _Newtype ]
-                      , D.span
-                          [ css_ [ "flex", "items-center", "gap-x-2", "ml-2" ] ]
+                          [ D.text_ $ fef_.name ^. simple _Newtype ]
+                    , D.span
+                        [ css_ [ "text-white", "font-bold" ]
+                        , DA.style_ $ fromMaybe "" $ renderedInline $ render
+                            =<<
+                              backgroundColor
+                            <$> colours
+                            ^? traversed
+                              <<< filtered (view _name >>> eq (f ^. _colour))
+                              <<< _value
+                        ]
+                        [ D.text_ $ f ^. _name <. _Newtype
+                        ]
+                    , cls # foldMap \(FoeClass c) ->
+                        D.span
+                          [ css_ [ "flex", "items-center", "gap-x-2", "ml-2" ]
+                          ]
                           [ D.span
                               [ css_ [ "flex", "items-center" ] ]
                               [ D.span
@@ -565,7 +343,7 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                                   , DA.title_ "Defense"
                                   ]
                                   []
-                              , D.span [] [ D.text_ $ show f.defense ]
+                              , D.span [] [ D.text_ $ show c.defense ]
                               ]
                           , D.span
                               [ css_ [ "flex", "items-center" ] ]
@@ -574,315 +352,165 @@ renderFoeEntry icon@{ colours, factions, foes, foeClasses } (FoeEntry fe) =
                                   , DA.title_ "Free move"
                                   ]
                                   []
-                              , D.span [] [ D.text_ $ show f.move ]
+                              , D.span [] [ D.text_ $ show c.move ]
                               ]
                           ]
-                      ]
-                  , D.span []
-                      [ fe.alias # foldMap \fa ->
-                          D.span
-                            [ css_ [ "ml-2", "italic" ] ]
-                            [ D.text_ fa ]
-                      , D.span
-                          [ css_ [ "mx-2", "font-bold" ] ]
-                          [ D.text_ $ "x" <> show fe.count ]
-                      ]
-                  ]
-              , D.div
-                  [ css_ [ "overflow-y-auto" ] ]
-                  [ D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs
-                      <#> \(FoeTrait ft) ->
-                        D.div []
-                          [ D.div
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ $ unwrap ft.name ]
-                          , markup icon ft.description
-                          ]
-                  , guard (not $ null trs) hr
-                  , D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ abs
-                      <#> renderAbility icon
-                  ]
-              ]
+                    ]
+                , D.span []
+                    [ fe.alias # foldMap \fa ->
+                        D.span
+                          [ css_ [ "ml-2", "italic" ] ]
+                          [ D.text_ fa ]
+                    , D.span
+                        [ css_ [ "mx-2", "font-bold" ] ]
+                        [ D.text_ $ "x" <> show fe.count ]
+                    ]
+                ]
 
-        Legend f ->
-          let
-            fef = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.faction)
-            fet = foeClasses
-              ^? traversed
-                <<< filtered (preview _name >>> eq fe.template)
-            ff = factions
-              ^? traversed
-                <<< filtered (preview _name >>> eq f.faction)
-            cls = foeClasses
-              ^? traversed
-                <<< filtered (view _name >>> eq f.class)
-            trs =
-              foldMap (unwrap >>> _.traits) fet
-                <> foldMap (unwrap >>> _.traits) cls
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) fef
-                <> foldMap (unwrap >>> _.mechanic >>> wrap >>> pure) ff
-                <> f.traits
-            ras =
-              foldMap (unwrap >>> _.roundActions) fet
-                <> foldMap (unwrap >>> _.roundActions) cls
-                <> f.roundActions
-          in
-            D.div
-              [ css_ [ "flex", "flex-col", "flex-1", "overflow-hidden" ] ]
-              [ D.div
-                  [ css_
-                      [ "flex"
-                      , "justify-between"
-                      , "bg-stone-500"
-                      , "text-stone-800"
-                      , "dark:bg-stone-700"
-                      , "dark:text-stone-300"
-                      ]
-                  ]
-                  [ D.div
-                      [ css_ [ "flex", "gap-x-1" ] ]
-                      [ fe.template # foldMap \(Name tn) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<<
-                                  backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ tn ]
-                      , fef # foldMap \(Faction fef_) ->
-                          D.span
-                            [ css_ [ "text-white", "font-bold" ]
-                            , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                                =<<
-                                  backgroundColor
-                                <$> colours
-                                ^? traversed
-                                  <<< filtered
-                                    (view _name >>> eq (Name "Purple"))
-                                  <<< _value
-                            ]
-                            [ D.text_ $ fef_.name ^. simple _Newtype ]
-                      , D.span
-                          [ css_ [ "text-white", "font-bold" ]
-                          , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                              =<<
-                                backgroundColor
-                              <$> colours
-                              ^? traversed
-                                <<< filtered (view _name >>> eq f.colour)
-                                <<< _value
-                          ]
-                          [ D.text_ $ f.name ^. simple _Newtype
-                          ]
-                      , cls # foldMap \(FoeClass c) ->
-                          D.span
-                            [ css_ [ "flex", "items-center", "gap-x-2", "ml-2" ]
-                            ]
-                            [ D.span
-                                [ css_ [ "flex", "items-center" ] ]
-                                [ D.span
-                                    [ css_
-                                        [ "icon-[game-icons--checked-shield]" ]
-                                    , DA.title_ "Defense"
-                                    ]
-                                    []
-                                , D.span [] [ D.text_ $ show c.defense ]
-                                ]
-                            , D.span
-                                [ css_ [ "flex", "items-center" ] ]
-                                [ D.span
-                                    [ css_ [ "icon-[game-icons--wingfoot]" ]
-                                    , DA.title_ "Free move"
-                                    ]
-                                    []
-                                , D.span [] [ D.text_ $ show c.move ]
-                                ]
-                            ]
-                      ]
-                  , D.span []
-                      [ fe.alias # foldMap \fa ->
-                          D.span
-                            [ css_ [ "ml-2", "italic" ] ]
-                            [ D.text_ fa ]
-                      , D.span
-                          [ css_ [ "mx-2", "font-bold" ] ]
-                          [ D.text_ $ "x" <> show fe.count ]
-                      ]
-                  ]
-              , D.div
-                  [ css_ [ "overflow-y-auto" ] ]
-                  [ D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ trs
-                      <#> \(FoeTrait ft) ->
-                        D.div []
-                          [ D.div
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ $ unwrap ft.name ]
-                          , markup icon ft.description
-                          ]
-                  , guard (not $ null trs) hr
-                  , D.div
-                      [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                      $ ras
-                      <#> \(FoeTrait ft) ->
-                        D.div []
-                          [ D.div
-                              [ css_ [ "font-bold" ] ]
-                              [ D.text_ $ unwrap ft.name <> " (round action)"
-                              ]
-                          , markup icon ft.description
-                          ]
-                  , guard (not $ null ras) hr
-                  , D.div
+            , D.div
+                [ css_ [ "overflow-y-auto" ] ]
+                [ D.div
+                    [ css_ [ "flex", "flex-col", "gap-2" ] ]
+                    $ mcs
+                    <#> \m ->
+                      D.div []
+                        [ D.div
+                            [ css_ [ "font-bold" ] ]
+                            [ D.text_ $ m ^. _name <. _Newtype ]
+                        , markup icon $ m ^. _desc
+                        ]
+
+                , guard (not $ null mcs) hr
+
+                , D.div
+                    [ css_ [ "flex", "flex-col", "gap-2" ] ]
+                    $ trs
+                    ^:: folded
+                    <. filtered (has _FoeTrait)
+                    <. to (renderTrait icon)
+
+                , guard (trs # has (folded <. _FoeTrait)) hr
+
+                , D.div
+                    [ css_ [ "flex", "flex-col", "gap-2" ] ]
+                    $ trs
+                    ^:: folded
+                    <. filtered (has _RoundAction)
+                    <. to (renderTrait icon)
+
+                , guard (trs # has (folded <. _RoundAction)) hr
+
+                , D.div
+                    [ css_ [ "flex", "flex-col", "gap-2" ] ]
+                    $ abs
+                    <#> renderFoeAbility icon
+
+                , f ^. _Legend <. _phases <. to \ps ->
+                    D.div
                       [ css_ [ "flex", "flex-col", "gap-2", "px-4" ] ]
                       [ D.h4 [ css_ [ "font-bold" ] ] [ D.text_ "Phases" ]
-                      , D.div [] [ markup icon f.phases.description ]
+                      , D.div [] [ markup icon $ ps ^. _desc ]
                       , hr
                       , D.div
                           [ css_ [ "flex", "gap-2" ] ]
-                          $ f.phases.details
-                          # mapWithIndex \i p ->
-                              D.div []
-                                [ D.div
-                                    [ css_ [ "font-bold" ] ]
-                                    [ D.text_ $ "Phase " <> show (i + 1) ]
-                                , markup icon p.description
-                                , guard (length p.description > 0) hr
-                                , D.div
-                                    [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                                    $ p.traits
-                                    <#> \(FoeTrait ft) ->
-                                      D.div []
-                                        [ D.div
-                                            [ css_ [ "font-bold" ] ]
-                                            [ D.text_ $ unwrap ft.name ]
-                                        , markup icon ft.description
-                                        ]
-                                , guard (not $ null p.traits) hr
-                                , D.div
-                                    [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                                    $ p.roundActions
-                                    <#> \(FoeTrait ft) ->
-                                      D.div []
-                                        [ D.div
-                                            [ css_ [ "font-bold" ] ]
-                                            [ D.text_ $ unwrap ft.name <>
-                                                " (round action)"
-                                            ]
-                                        , markup icon ft.description
-                                        ]
-                                , guard (not $ null p.roundActions) hr
-                                , D.div
-                                    [ css_ [ "flex", "flex-col", "gap-2" ] ]
-                                    $ p.abilities
-                                    <#> renderAbility icon
-                                ]
+                          $ ps ^. _details
+                          # mapWithIndex (renderPhase icon)
                       ]
-                  ]
-              ]
+                ]
+            ]
 
-renderAbility :: Icon -> FoeAbility -> Nut
-renderAbility icon@{ colours } (FoeAbility fa) =
+renderFoeAbility :: Icon -> FoeAbility -> Nut
+renderFoeAbility icon (FoeAbility fa) = renderAbility icon fa
+renderFoeAbility icon (ChainAbility fa) =
+  D.div []
+    [ D.ul
+        [ css_ [ "ml-4", "list-disc" ] ]
+        $ fa
+        ^:: traversed
+        <. to \a ->
+          D.li [] [ renderAbility icon a ]
+    ]
+
+renderAbility :: Icon -> Ability -> Nut
+renderAbility icon a =
+  D.div
+    [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
+    [ D.div
+        [ css_
+            [ "flex"
+            , "justify-between"
+            , "bg-stone-400"
+            , "text-stone-800"
+            , "dark:bg-stone-700"
+            , "dark:text-stone-300"
+            ]
+        ]
+        [ D.h3
+            [ css_ [ "text-white", "font-bold" ] ]
+            [ D.text_ $ a ^. _name <<< _Newtype ]
+        , D.div
+            [ css_ [ "flex", "items-center", "gap-2", "mr-2" ] ]
+            [ a
+                ^. _tags
+                  <<< traversed
+                  <<< filtered (has $ only Attack)
+                  <<< to \_ -> renderAttackSign
+            , renderActionSign $ a ^. _action
+            ]
+        ]
+
+    , D.div
+        [ css_ [ "flex", "flex-wrap", "gap-1" ] ]
+        [ a # _action #~ renderCost
+        , a # _tags <<< traversed #~ renderTag
+        ]
+
+    , renderSteps icon $ a ^. _steps
+    ]
+
+renderPhase :: Icon -> Int -> Phase -> Nut
+renderPhase icon i p =
   D.div []
     [ D.div
         [ css_ [ "font-bold" ] ]
-        [ D.text_ $ unwrap fa.name ]
-    , D.div
-        [ css_ [ "flex", "flex-wrap", "gap-1" ] ]
-        $ [ renderCost fa.cost ]
-        <> (renderTag <$> fa.tags)
-    , markup icon fa.description
-    , fa.chain # foldMap \fac ->
-        D.ul
-          [ css_ [ "ml-4", "list-disc" ] ]
-          [ D.li [] [ renderAbility icon fac ] ]
-    , fa.insert # foldMap case _ of
-        AbilityInsert ai ->
-          D.div
-            [ css_ [ "ml-8" ] ]
-            [ D.div
-                [ css_
-                    [ "flex"
-                    , "gap-x-1"
-                    , "bg-stone-500"
-                    , "text-stone-800"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    ]
-                ]
-                [ D.span
-                    [ css_ [ "text-white", "font-bold" ]
-                    , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                        =<< (backgroundColor <<< lighten 0.2)
-                        <$> colours
-                        ^? traversed
-                          <<< filtered (view _name >>> eq ai.colour)
-                          <<< _value
-                    ]
-                    [ D.text_ $ unwrap ai.name ]
-                ]
-            , D.div
-                [ css_ [ "flex", "flex-wrap", "gap-1" ] ]
-                $ [ renderCost fa.cost ]
-                <> (renderTag <$> fa.tags)
-            , D.div []
-                [ D.ol
-                    [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-                    $ ai.steps
-                    <#> renderStep icon
-                ]
-            ]
+        [ D.text_ $ "Phase " <> show (i + 1) ]
 
-        SummonInsert si ->
-          D.div
-            [ css_ [ "ml-8" ] ]
-            [ D.div
-                [ css_
-                    [ "flex"
-                    , "gap-x-1"
-                    , "bg-stone-500"
-                    , "text-stone-800"
-                    , "dark:bg-stone-700"
-                    , "dark:text-stone-300"
-                    ]
-                ]
-                [ D.span
-                    [ css_ [ "text-white", "font-bold" ]
-                    , DA.style_ $ fromMaybe "" $ renderedInline $ render
-                        =<< (backgroundColor <<< lighten 0.2)
-                        <$> colours
-                        ^? traversed
-                          <<< filtered (view _name >>> eq si.colour)
-                          <<< _value
-                    ]
-                    [ D.text_ $ unwrap si.name ]
-                ]
-            , D.div
-                [ css_ [ "italic" ] ]
-                [ D.text_ $ "Summon (" <> show si.max <> ")" ]
-            , D.div []
-                [ D.ol
-                    [ css_ [ "flex", "flex-col", "gap-y-1" ] ]
-                    $ si.effects
-                    <#> \eff ->
-                      D.li []
-                        [ D.span
-                            [ css_ [ "font-bold" ] ]
-                            [ D.text_ "Summon effect: " ]
-                        , markup icon eff
-                        ]
-                ]
-            ]
+    , markup icon $ p ^. _desc
+    , guard (length (p ^. _desc) > 0) hr
+
+    , D.div
+        [ css_ [ "flex", "flex-col", "gap-2" ] ]
+        $ p
+        ^:: _trait
+        <. folded
+        <. filtered (has _FoeTrait)
+        <. to (renderTrait icon)
+
+    , guard (p # has (_trait <. folded <. _FoeTrait)) hr
+
+    , D.div
+        [ css_ [ "flex", "flex-col", "gap-2" ] ]
+        $ p
+        ^:: _trait
+        <. folded
+        <. filtered (has _RoundAction)
+        <. to (renderTrait icon)
+
+    , guard (p # has (_trait <. folded <. _RoundAction)) hr
+
+    , D.div
+        [ css_ [ "flex", "flex-col", "gap-2" ] ]
+        $ p ^. _abilities <#> renderFoeAbility icon
+    ]
+
+renderTrait :: Icon -> FoeTrait -> Nut
+renderTrait icon ft =
+  D.div []
+    [ D.div
+        [ css_ [ "font-bold" ] ]
+        [ D.text_
+            $ ft ^. _trait <. _name <. _Newtype
+            <> guard (ft # is _RoundAction) " (Round Action)"
+        ]
+    , markup icon $ ft ^. _trait <. _desc
     ]

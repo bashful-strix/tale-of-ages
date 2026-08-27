@@ -51,13 +51,17 @@ import ToA.Data.Icon.Character
   , _primary
   , _talents
   )
-import ToA.Data.Icon.Class (_basic, _class, _defense, _hp, _move)
+import ToA.Data.Icon.Class (_class)
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Id (_id)
-import ToA.Data.Icon.Job (_limitBreak)
 import ToA.Data.Icon.Name (Name, _name)
 import ToA.Data.Icon.Trait (_trait)
+
+import ToA.Data.Icon.Pc.Class (_basic, _defense, _hp, _move)
+import ToA.Data.Icon.Pc.Job (_limitBreak)
+
 import ToA.Data.Route (Route(..), CharacterPath(..), routeCodec)
+
 import ToA.Util.Html (css_, hr)
 import ToA.Util.Optic ((^::))
 import ToA.Util.Style as S

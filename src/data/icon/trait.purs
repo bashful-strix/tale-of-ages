@@ -3,23 +3,23 @@ module ToA.Data.Icon.Trait
   , TraitData
   , _Trait
   , _InsetTrait
+
   , class Traited
   , _trait
   ) where
 
-import Prelude
+import ToA.Prelude
 
 import Data.Lens (Lens')
 import Data.Lens.Lens (lens', lensStore)
 import Data.Lens.Prism (Prism', prism')
 import Data.Maybe (Maybe(..))
 
-import Type.Row (type (+))
-
 import ToA.Data.Icon.Ability (class Inseted, Inset)
 import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
+
 import ToA.Util.Optic (key)
 
 type TraitData r =
@@ -64,5 +64,5 @@ _InsetTrait = prism' InsetTrait case _ of
   InsetTrait a -> Just a
   _ -> Nothing
 
-class Traited a where
-  _trait :: Lens' a Name
+class Traited a b | a -> b where
+  _trait :: Lens' a b

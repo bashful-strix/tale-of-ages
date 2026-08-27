@@ -90,11 +90,13 @@ import Parsing.String.Basic (intDecimal, skipSpaces)
 
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon (_abilities, _classes, _jobs, _talents) as I
-import ToA.Data.Icon.Class (_hp) as C
 import ToA.Data.Icon.Id (Id, _id, jsonId)
-import ToA.Data.Icon.Job (Job, JobLevel, jobLevelP, jsonJobLevel)
-import ToA.Data.Icon.Job (_abilities, _talents) as J
 import ToA.Data.Icon.Name (Name(..), class Named, _name, jsonName)
+
+import ToA.Data.Icon.Pc.Class (_hp) as C
+import ToA.Data.Icon.Pc.Job (Job, JobLevel, jobLevelP, jsonJobLevel)
+import ToA.Data.Icon.Pc.Job (_abilities, _talents) as J
+
 import ToA.Util.Optic ((^::), key)
 
 type CharacterData =

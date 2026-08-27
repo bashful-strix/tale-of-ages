@@ -10,14 +10,16 @@ import Data.Map (empty, fromFoldable) as M
 import Data.Tuple.Nested ((/\))
 
 import ToA.Data.Icon (Icon, _abilities, _jobs, _talents)
-import ToA.Data.Icon.Ability (Ability(..), Action(..)) as A
+import ToA.Data.Icon.Ability (Action(..)) as A
 import ToA.Data.Icon.Id (Id(..), _id)
-import ToA.Data.Icon.Job (Job(..), JobLevel(..))
-import ToA.Data.Icon.Job (_abilities, _talents) as J
 import ToA.Data.Icon.Markup (seq)
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Sign (Sign(..))
-import ToA.Data.Icon.Talent (Talent(..))
+
+import ToA.Data.Icon.Pc.Ability (Ability(..))
+import ToA.Data.Icon.Pc.Job (Job(..), JobLevel(..))
+import ToA.Data.Icon.Pc.Job (_abilities, _talents) as J
+import ToA.Data.Icon.Pc.Talent (Talent(..))
 
 import ToA.Data.Icon.Character
   ( Character(..)
@@ -59,8 +61,8 @@ talent = Talent
   , description: seq []
   }
 
-ability :: A.Ability
-ability = A.Ability
+ability :: Ability
+ability = Ability
   { name: Name "Ability"
   , colour: Name "Col"
   , description: seq []

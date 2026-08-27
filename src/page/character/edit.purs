@@ -75,14 +75,18 @@ import ToA.Data.Icon.Character
   , _talents
   )
 import ToA.Data.Icon.Character (fromInt, toInt) as L
-import ToA.Data.Icon.Class (_apprentice, _class, _hp)
+import ToA.Data.Icon.Class (_class)
 import ToA.Data.Icon.Colour (_colour, _value)
 import ToA.Data.Icon.Id (Id(..), _id)
-import ToA.Data.Icon.Job (JobLevel(..), stringJobLevel, _soul)
-import ToA.Data.Icon.Job (_abilities, _talents) as J
 import ToA.Data.Icon.Name (Name(..), _name)
 import ToA.Data.Icon.Trait (_trait)
+
+import ToA.Data.Icon.Pc.Class (_apprentice, _hp)
+import ToA.Data.Icon.Pc.Job (JobLevel(..), stringJobLevel, _soul)
+import ToA.Data.Icon.Pc.Job (_abilities, _talents) as J
+
 import ToA.Data.Route (Route(..), CharacterPath(..))
+
 import ToA.Util.Html (css_, hr, style_)
 import ToA.Util.Optic ((^::), (#~))
 import ToA.Util.Style as S

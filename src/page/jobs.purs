@@ -2,8 +2,7 @@ module ToA.Page.Jobs
   ( jobsPage
   ) where
 
-import Prelude
-import PointFree ((~$))
+import ToA.Prelude
 
 import Color (darken, lighten)
 import CSS (backgroundColor, color, render, renderedInline)
@@ -25,7 +24,6 @@ import Data.Lens
   )
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (fromMaybe)
-import Data.Tuple.Nested ((/\))
 
 import Deku.Core (Nut)
 import Deku.Do as Deku
@@ -36,16 +34,20 @@ import Deku.Hooks ((<#~>), guard, useState)
 
 import FRP.Poll (Poll)
 
-import ToA.Component.Ability (renderAbility, renderInset)
-import ToA.Component.Markup (markup, printMarkup)
-import ToA.Component.Panel (tripanel)
 import ToA.Data.Env (Env, _navigate)
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability (_inset)
-import ToA.Data.Icon.Class
+import ToA.Data.Icon.Class (_class)
+import ToA.Data.Icon.Colour (_colour, _value)
+import ToA.Data.Icon.Description (_desc)
+import ToA.Data.Icon.Id (_id)
+import ToA.Data.Icon.Name (class Named, Name, _name)
+import ToA.Data.Icon.Sign (_sign)
+import ToA.Data.Icon.Trait (_trait)
+
+import ToA.Data.Icon.Pc.Class
   ( _apprentice
   , _basic
-  , _class
   , _complexity
   , _defense
   , _hp
@@ -55,20 +57,19 @@ import ToA.Data.Icon.Class
   , _tagline
   , _weaknesses
   )
-import ToA.Data.Icon.Colour (_colour, _value)
-import ToA.Data.Icon.Description (_desc)
-import ToA.Data.Icon.Id (_id)
-import ToA.Data.Icon.Job
+import ToA.Data.Icon.Pc.Job
   ( JobLevel(..)
   , _abilities
   , _limitBreak
   , _talents
   , _soul
   )
-import ToA.Data.Icon.Name (class Named, Name, _name)
-import ToA.Data.Icon.Sign (_sign)
-import ToA.Data.Icon.Trait (_trait)
+
 import ToA.Data.Route (Route(..), JobPath(..))
+
+import ToA.Component.Ability (renderAbility, renderInset)
+import ToA.Component.Markup (markup, printMarkup)
+import ToA.Component.Panel (tripanel)
 import ToA.Util.Optic ((^::), (#~))
 import ToA.Util.Html (css, css_, hr)
 

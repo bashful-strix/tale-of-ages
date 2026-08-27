@@ -1,0 +1,95 @@
+module ToA.Data.Icon.Pc.Class
+  ( Class(..)
+  , _tagline
+  , _strengths
+  , _weaknesses
+  , _complexity
+  , _hp
+  , _defense
+  , _move
+  , _basic
+  , _keywords
+  , _apprentice
+  ) where
+
+import Prelude
+
+import Data.Lens (Lens')
+import Data.Lens.Iso.Newtype (_Newtype)
+import Data.Newtype (class Newtype)
+
+import ToA.Data.Icon.Colour (class Coloured)
+import ToA.Data.Icon.Description (class Described)
+import ToA.Data.Icon.Markup (Markup)
+import ToA.Data.Icon.Name (class Named, Name)
+import ToA.Data.Icon.Sign (class Signed, Sign)
+import ToA.Data.Icon.Trait (class Traited)
+
+import ToA.Util.Optic (key)
+
+newtype Class = Class
+  { name :: Name
+  , colour :: Name
+  , sign :: Sign
+  , tagline :: Markup
+  , strengths :: Markup
+  , weaknesses :: Markup
+  , complexity :: Markup
+  , description :: Markup
+  , hp :: Int
+  , defense :: Int
+  , move :: Int
+  , trait :: Name
+  , basic :: Name
+  , keywords :: Array Name
+  , apprentice :: Array Name
+  }
+
+derive instance Newtype Class _
+instance Eq Class where
+  eq (Class { name: n }) (Class { name: m }) = n == m
+
+instance Named Class where
+  _name = _Newtype <<< key @"name"
+
+instance Coloured Class where
+  _colour = _Newtype <<< key @"colour"
+
+instance Signed Class where
+  _sign = _Newtype <<< key @"sign"
+
+instance Described Class where
+  _desc = _Newtype <<< key @"description"
+
+instance Traited Class Name where
+  _trait = _Newtype <<< key @"trait"
+
+_tagline :: Lens' Class Markup
+_tagline = _Newtype <<< key @"tagline"
+
+_strengths :: Lens' Class Markup
+_strengths = _Newtype <<< key @"strengths"
+
+_weaknesses :: Lens' Class Markup
+_weaknesses = _Newtype <<< key @"weaknesses"
+
+_complexity :: Lens' Class Markup
+_complexity = _Newtype <<< key @"complexity"
+
+_hp :: Lens' Class Int
+_hp = _Newtype <<< key @"hp"
+
+_defense :: Lens' Class Int
+_defense = _Newtype <<< key @"defense"
+
+_move :: Lens' Class Int
+_move = _Newtype <<< key @"move"
+
+_basic :: Lens' Class Name
+_basic = _Newtype <<< key @"basic"
+
+_keywords :: Lens' Class (Array Name)
+_keywords = _Newtype <<< key @"keywords"
+
+_apprentice :: Lens' Class (Array Name)
+_apprentice = _Newtype <<< key @"apprentice"

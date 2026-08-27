@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Job
+module ToA.Data.Icon.Pc.Job
   ( Job(..)
   , _soul
   , _keyword
@@ -17,8 +17,7 @@ module ToA.Data.Icon.Job
   , jsonJobLevel
   ) where
 
-import Prelude
-import PointFree ((~$))
+import ToA.Prelude
 
 import Data.Codec (Codec', codec')
 import Data.Codec.JSON as CJ
@@ -29,7 +28,6 @@ import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Lens.Prism (Prism', only)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Data.Tuple.Nested (type (/\))
 
 import Parsing (Parser, ParseError, runParser)
 import Parsing.Combinators (choice)
@@ -43,6 +41,7 @@ import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (class Named, Name)
 import ToA.Data.Icon.Sign (Sign, class Signed)
 import ToA.Data.Icon.Trait (class Traited)
+
 import ToA.Util.Optic (key)
 
 newtype Job = Job
@@ -78,7 +77,7 @@ instance Classed Job where
 instance Described Job where
   _desc = _Newtype <<< key @"description"
 
-instance Traited Job where
+instance Traited Job Name where
   _trait = _Newtype <<< key @"trait"
 
 _soul :: Lens' Job Name

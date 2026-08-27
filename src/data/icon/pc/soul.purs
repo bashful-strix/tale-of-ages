@@ -1,4 +1,4 @@
-module ToA.Data.Icon.Soul
+module ToA.Data.Icon.Pc.Soul
   ( Soul(..)
   ) where
 
@@ -13,6 +13,7 @@ import ToA.Data.Icon.Description (class Described)
 import ToA.Data.Icon.Markup (Markup)
 import ToA.Data.Icon.Name (Name, class Named)
 import ToA.Data.Icon.Sign (Sign, class Signed)
+
 import ToA.Util.Optic (key)
 
 newtype Soul = Soul

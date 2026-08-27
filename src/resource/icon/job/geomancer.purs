@@ -2,16 +2,14 @@ module ToA.Resource.Icon.Job.Geomancer
   ( geomancer
   ) where
 
-import Prelude
+import ToA.Prelude
 
 import Data.FastVect.FastVect ((:), empty)
 import Data.Maybe (Maybe(..))
-import Data.Tuple.Nested ((/\))
 
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability
-  ( Ability(..)
-  , Action(..)
+  ( Action(..)
   , Pattern(..)
   , Range(..)
   , Step(..)
@@ -22,7 +20,6 @@ import ToA.Data.Icon.Ability
   )
 import ToA.Data.Icon.Dice (Die(..))
 import ToA.Data.Icon.Id (Id(..))
-import ToA.Data.Icon.Job (Job(..), JobLevel(..))
 import ToA.Data.Icon.Markup
   ( ListKind(..)
   , dice
@@ -35,8 +32,11 @@ import ToA.Data.Icon.Markup
   )
 import ToA.Data.Icon.Name (Name(..))
 import ToA.Data.Icon.Sign (Sign(..))
-import ToA.Data.Icon.Talent (Talent(..))
 import ToA.Data.Icon.Trait (Trait(..))
+
+import ToA.Data.Icon.Pc.Ability (Ability(..))
+import ToA.Data.Icon.Pc.Talent (Talent(..))
+import ToA.Data.Icon.Pc.Job (Job(..), JobLevel(..))
 
 geomancer :: Icon
 geomancer =
