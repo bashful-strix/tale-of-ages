@@ -21,16 +21,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "4.3.3"
   },
   "devDependencies": {
-    "@iconify/json": "2.2.478",
+    "@iconify/json": "2.2.531",
     "@iconify/tailwind4": "1.2.3",
-    "@tailwindcss/vite": "4.3.0",
+    "@tailwindcss/vite": "4.3.3",
     "purescript": "0.15.16",
     "purs-tidy": "0.11.1",
     "spago": "1.0.4",
-    "surge": "0.27.4",
-    "vite": "8.0.14"
+    "surge": "0.44.3",
+    "vite": "8.3.0"
   }
 }
