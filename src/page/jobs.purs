@@ -7,11 +7,12 @@ import ToA.Prelude
 import Color (darken, lighten)
 import CSS (backgroundColor, color, render, renderedInline)
 
-import Data.Filterable (filter)
+import Data.Filterable (compact, filter)
 import Data.Foldable (elem)
 import Data.Lens
   ( (^.)
   , (^?)
+  , preview
   , view
   , elemOf
   , filtered
@@ -21,11 +22,12 @@ import Data.Lens
   , traversed
   , _1
   , _2
+  , _Just
   )
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (fromMaybe)
 
-import Deku.Core (Nut)
+import Deku.Core (Nut, fixed)
 import Deku.Do as Deku
 import Deku.DOM as D
 import Deku.DOM.Attributes as DA
@@ -35,6 +37,8 @@ import Deku.Hooks ((<#~>), guard, useState)
 import FRP.Poll (Poll)
 
 import ToA.Data.Env (Env, _navigate)
+import ToA.Data.Route (Route(..), JobPath(..), _Jobs)
+
 import ToA.Data.Icon (Icon)
 import ToA.Data.Icon.Ability (_inset)
 import ToA.Data.Icon.Class (_class)
@@ -65,22 +69,23 @@ import ToA.Data.Icon.Pc.Job
   , _soul
   )
 
-import ToA.Data.Route (Route(..), JobPath(..))
-
 import ToA.Component.Ability (renderAbility, renderInset)
 import ToA.Component.Markup (markup, printMarkup)
 import ToA.Component.Panel (tripanel)
 import ToA.Util.Optic ((^::), (#~))
 import ToA.Util.Html (css, css_, hr)
 
-jobsPage :: Env -> JobPath -> Nut
-jobsPage env@{ icon } path = Deku.do
-  setOpen /\ open <- useState $ case path of
-    None -> true
-    _ -> false
+jobsPage :: Env -> Nut
+jobsPage env@{ icon, route } = Deku.do
+  setOpen /\ openToggle <- useState false
+
+  let
+    isJob = has (_Just <. _Jobs) <$> route
+    path = compact (preview (_Just <. _Jobs) <$> route)
+    open = openToggle <|> (has (_Just <. _Jobs <. only None) <$> route)
 
   D.div
-    [ css_ [ "flex", "grow", "gap-2" ] ]
+    [ css $ isJob <#> if _ then [ "flex", "grow", "gap-2" ] else [ "hidden" ] ]
     [ D.div
         [ css $ open <#> \o ->
             [ "flex"
@@ -138,37 +143,38 @@ jobsPage env@{ icon } path = Deku.do
               , DL.runOn_ DL.click $ setOpen false
               ]
               []
-        ] <> case path of
-          None -> [ D.text_ "Nothing selected" ]
-          WithClass c ->
-            [ icon <#~> \icon_ -> tripanel
-                (renderClassDesc icon_ c)
-                (renderClassPassives icon_ c)
-                (renderClassAbilities icon_ c)
-            ]
+        , path <#~> fixed <<< case _ of
+            None -> [ D.text_ "Nothing selected" ]
+            WithClass c ->
+              [ icon <#~> \icon_ -> tripanel
+                  (renderClassDesc icon_ c)
+                  (renderClassPassives icon_ c)
+                  (renderClassAbilities icon_ c)
+              ]
 
-          WithSoul _ s ->
-            [ D.div
-                [ css_
-                    [ "flex"
-                    , "grow"
-                    , "overflow-hidden"
-                    , "p-2"
-                    , "border"
-                    , "border-solid"
-                    , "border-rounded-sm"
-                    , "border-sky-800"
-                    ]
-                ]
-                [ renderSoul icon s ]
-            ]
+            WithSoul _ s ->
+              [ D.div
+                  [ css_
+                      [ "flex"
+                      , "grow"
+                      , "overflow-hidden"
+                      , "p-2"
+                      , "border"
+                      , "border-solid"
+                      , "border-rounded-sm"
+                      , "border-sky-800"
+                      ]
+                  ]
+                  [ renderSoul icon s ]
+              ]
 
-          WithJob _ _ j ->
-            [ icon <#~> \icon_ -> tripanel
-                (renderJobDesc icon_ j)
-                (renderJobPassives icon_ j)
-                (renderJobAbilities icon_ j)
-            ]
+            WithJob _ _ j ->
+              [ icon <#~> \icon_ -> tripanel
+                  (renderJobDesc icon_ j)
+                  (renderJobPassives icon_ j)
+                  (renderJobAbilities icon_ j)
+              ]
+        ]
     ]
 
 viewName :: ∀ a. Named a => a -> String

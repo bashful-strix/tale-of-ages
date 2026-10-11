@@ -48,9 +48,10 @@ toa env@{ route, systemTheme, theme } =
     [ titleBar env
     , D.div
         [ css_ [ "flex", "grow", "overflow-hidden", "m-2" ] ]
-        [ route <#~> case _ of
+        [ jobsPage env
+        , route <#~> case _ of
             Just Home -> homePage env
-            Just (Jobs path) -> jobsPage env path
+            Just (Jobs _path) -> mempty
             Just (Characters path) -> case path of
               Nothing -> listCharacterPage env
               Just subpath -> case subpath of
